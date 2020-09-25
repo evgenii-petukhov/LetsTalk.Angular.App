@@ -1,5 +1,5 @@
 <div class="jumbotron bg-transparent text-center">
-    <div *ngIf="!user" class="card text-center">
+    <div *ngIf="!socialUser" class="card text-center">
       <h6 class="card-header">
         Social Login Demo
       </h6>
@@ -11,16 +11,16 @@
         <button class="btn btn-social-icon btn-facebook mx-1" (click)="signInWithFB()"><span class="fa fa-facebook"></span></button>
       </div>
     </div>
-    <div *ngIf="user" class="card text-center">
+    <div *ngIf="socialUser" class="card text-center">
       <h6 class="card-header">
         Social Login Demo
       </h6>
       <div class="card-block"></div>
-      <img *ngIf="user.photoUrl" class="card-img-top img-responsive photo" src="{{ user.photoUrl }}">
+      <img *ngIf="socialUser.photoUrl" class="card-img-top img-responsive photo" src="{{ socialUser.photoUrl }}">
       <div class="card-block">
-        <h4 class="card-title">{{ user.name }}</h4>
-        <p class="card-text">{{ user.email }}</p>
-        <p class="card-text">Logged in with {{ user.provider }}</p>
+        <h4 class="card-title">{{ socialUser.name }}</h4>
+        <p class="card-text">{{ socialUser.email }}</p>
+        <p class="card-text">Logged in with {{ socialUser.provider }}</p>
       </div>
       <div class="card-block">
         <button class="btn btn-danger" (click)="signOut()">Sign out</button>

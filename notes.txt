@@ -1,0 +1,17 @@
+==================================================
+ Mic recorder
+==================================================
+https://github.com/paraself/mic-recorder
+
+==================================================
+ OAuth
+==================================================
+https://codinglatte.com/posts/angular/facebook-login-angular-rest-api/
+https://www.npmjs.com/package/angularx-social-login
+https://github.com/veliksergey/angularx-social-login-vk
+https://github.com/abacritt/angularx-social-login
+
+==================================================
+ Bindings
+==================================================
+https://medium.com/@venkateshece1105/different-types-of-data-binding-in-angular-8-0-f84c17ca7eb0

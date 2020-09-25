@@ -13,21 +13,21 @@ import {
 })
 export class AuthComponent implements OnInit {
 
-  user: SocialUser;
+  socialUser: SocialUser;
 
-  constructor(private authService: SocialAuthService) { }
+  constructor(private socialAuthService: SocialAuthService) { }
 
   ngOnInit() {
-    this.authService.authState.subscribe(user => {
-      this.user = user;
+    this.socialAuthService.authState.subscribe(user => {
+      this.socialUser = user;
     });
   }
 
   signInWithFB(): void {
-    this.authService.signIn(FacebookLoginProvider.PROVIDER_ID);
+    this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID);
   }
 
   signOut(): void {
-    this.authService.signOut();
+    this.socialAuthService.signOut();
   }
 }
