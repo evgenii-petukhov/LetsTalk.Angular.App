@@ -15,3 +15,10 @@ https://github.com/abacritt/angularx-social-login
  Bindings
 ==================================================
 https://medium.com/@venkateshece1105/different-types-of-data-binding-in-angular-8-0-f84c17ca7eb0
+https://stackoverflow.com/questions/35269179/angular-conditional-class-with-ngclass
+
+==================================================
+ Bootstrap
+==================================================
+https://ng-bootstrap.github.io/
+https://stackoverflow.com/questions/48735689/bootstrap-navbar-not-working-correctly-angularcli/48736308#48736308
