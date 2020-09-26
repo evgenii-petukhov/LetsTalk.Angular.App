@@ -10,6 +10,7 @@ https://codinglatte.com/posts/angular/facebook-login-angular-rest-api/
 https://www.npmjs.com/package/angularx-social-login
 https://github.com/veliksergey/angularx-social-login-vk
 https://github.com/abacritt/angularx-social-login
+https://stackoverflow.com/questions/24068883/verify-facebook-api-access-token-userid-via-php-sdk
 
 ==================================================
  Bindings
@@ -38,3 +39,8 @@ https://indepth.dev/create-your-standalone-angular-library-in-10-minutes/
  Routing
 ==================================================
 https://stackoverflow.com/questions/34660263/angular2-conditional-routing
+
+==================================================
+ Sending requests over http
+==================================================
+https://angular.io/guide/http
