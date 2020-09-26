@@ -9,6 +9,7 @@ import { AppComponent } from './app.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ChatComponent } from './components/chat/chat.component';
+import { authInterceptorProviders } from './helpers/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { ChatComponent } from './components/chat/chat.component';
     HttpClientModule
   ],
   providers: [
+    authInterceptorProviders,
     {
       provide: 'SocialAuthServiceConfig',
       useValue: {

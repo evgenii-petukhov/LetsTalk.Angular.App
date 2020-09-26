@@ -22,3 +22,19 @@ https://stackoverflow.com/questions/35269179/angular-conditional-class-with-ngcl
 ==================================================
 https://ng-bootstrap.github.io/
 https://stackoverflow.com/questions/48735689/bootstrap-navbar-not-working-correctly-angularcli/48736308#48736308
+
+==================================================
+ JWT tokens
+==================================================
+https://bezkoder.com/angular-jwt-authentication/
+https://blog.angular-university.io/angular-jwt-authentication/
+
+==================================================
+ Standalone library
+==================================================
+https://indepth.dev/create-your-standalone-angular-library-in-10-minutes/
+
+==================================================
+ Routing
+==================================================
+https://stackoverflow.com/questions/34660263/angular2-conditional-routing
