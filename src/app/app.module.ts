@@ -6,9 +6,9 @@ import { FacebookLoginProvider } from 'angularx-social-login';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AuthComponent } from './auth/auth.component';
+import { AuthComponent } from './components/auth/auth.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ChatComponent } from './chat/chat.component';
+import { ChatComponent } from './components/chat/chat.component';
 
 @NgModule({
   declarations: [
