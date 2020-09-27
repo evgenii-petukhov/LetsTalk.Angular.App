@@ -10,12 +10,15 @@ import { AuthComponent } from './components/auth/auth.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ChatComponent } from './components/chat/chat.component';
 import { authInterceptorProviders } from './helpers/auth.interceptor';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { AuthGuardService } from './services/auth-guard.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     AuthComponent,
-    ChatComponent
+    ChatComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
@@ -26,6 +29,7 @@ import { authInterceptorProviders } from './helpers/auth.interceptor';
   ],
   providers: [
     authInterceptorProviders,
+    AuthGuardService,
     {
       provide: 'SocialAuthServiceConfig',
       useValue: {

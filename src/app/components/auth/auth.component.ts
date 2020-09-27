@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { SocialAuthService, SocialUser } from 'angularx-social-login';
 
-import { SocialAuthService } from 'angularx-social-login';
-import { SocialUser } from 'angularx-social-login';
-import {
-  FacebookLoginProvider,
-} from 'angularx-social-login';
-import { AuthService } from 'src/app/services/auth.service';
+import { FacebookLoginProvider } from 'angularx-social-login';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
+import { ApiService } from 'src/app/services/api.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth',
@@ -19,8 +17,9 @@ export class AuthComponent implements OnInit {
 
   constructor(
     private socialAuthService: SocialAuthService,
-    private authService: AuthService,
-    private tokenStorage: TokenStorageService) { }
+    private apiService: ApiService,
+    private tokenStorage: TokenStorageService,
+    private router: Router) { }
 
   ngOnInit() {
     this.socialAuthService.authState.subscribe(user => {
@@ -31,11 +30,11 @@ export class AuthComponent implements OnInit {
   signInWithFB(): void {
     this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID)
       .then(facebookResponse => {
-        this.authService.loginViaFacebook(facebookResponse).subscribe(
+        this.apiService.loginViaFacebook(facebookResponse).subscribe(
           data => {
             this.tokenStorage.saveToken(data.token);
             this.tokenStorage.saveUser(data);
-            this.reloadPage();
+            this.router.navigate(['chats']);
           }
         );
       });

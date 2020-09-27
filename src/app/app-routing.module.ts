@@ -1,11 +1,29 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
+import { AuthComponent } from './components/auth/auth.component';
+import { ChatComponent } from './components/chat/chat.component';
+import { AuthGuardService } from './services/auth-guard.service';
 
-const routes: Routes = [];
+const routes: Routes = [
+  {
+    path: '',
+    redirectTo: '/chats',
+    pathMatch: 'full'
+  },
+  {
+    path: 'auth',
+    component: AuthComponent
+  },
+  {
+    path: 'chats',
+    component: ChatComponent,
+    canActivate: [AuthGuardService]
+  }
+];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  imports: [ RouterModule.forRoot(routes) ],
+  exports: [ RouterModule ]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
