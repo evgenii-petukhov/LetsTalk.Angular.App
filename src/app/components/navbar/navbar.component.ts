@@ -15,6 +15,8 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoggedIn = this.tokenStorageService.isLoggedIn();
+    this.tokenStorageService.isLoggedInObservable
+      .subscribe(isLoggedIn => this.isLoggedIn = isLoggedIn);
   }
 
   toggleNavbarCollapsing() {
