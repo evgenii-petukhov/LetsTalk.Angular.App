@@ -14,23 +14,23 @@ export class TokenStorageService {
   private isLoggedInInternal: ReplaySubject<boolean> = new ReplaySubject(1);
 
   signOut() {
-    window.sessionStorage.clear();
+    window.localStorage.clear();
     this.isLoggedInInternal.next(false);
   }
 
   saveToken(token: string) {
-    window.sessionStorage.removeItem(TOKEN_KEY);
-    window.sessionStorage.setItem(TOKEN_KEY, token);
+    window.localStorage.removeItem(TOKEN_KEY);
+    window.localStorage.setItem(TOKEN_KEY, token);
     this.isLoggedInInternal.next(true);
   }
 
   saveUser(user: any) {
-    window.sessionStorage.removeItem(USER_KEY);
-    window.sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+    window.localStorage.removeItem(USER_KEY);
+    window.localStorage.setItem(USER_KEY, JSON.stringify(user));
   }
 
   getToken(): string {
-    return sessionStorage.getItem(TOKEN_KEY);
+    return localStorage.getItem(TOKEN_KEY);
   }
 
   isLoggedIn(): boolean {
@@ -38,7 +38,7 @@ export class TokenStorageService {
   }
 
   getUser() {
-    return JSON.parse(sessionStorage.getItem(USER_KEY));
+    return JSON.parse(localStorage.getItem(USER_KEY));
   }
 
   get isLoggedInObservable(): Observable<boolean> {
