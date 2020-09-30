@@ -30,7 +30,7 @@ export class AuthComponent implements OnInit {
   signInWithFB(): void {
     this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID)
       .then(facebookResponse => {
-        this.apiService.loginViaFacebook(facebookResponse).subscribe(
+        this.apiService.login(facebookResponse).subscribe(
           data => {
             this.tokenStorage.saveToken(data.token);
             this.tokenStorage.saveUser(data);

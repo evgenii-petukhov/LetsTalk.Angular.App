@@ -17,7 +17,7 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  loginViaFacebook(data: any): Observable<any> {
+  login(data: any): Observable<any> {
     return this.http.post(LOGIN_URL, data, httpOptions);
   }
 
