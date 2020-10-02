@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-login';
 import { FacebookLoginProvider } from 'angularx-social-login';
+import { VKLoginProvider } from '../app/services/vk-login-provider'
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -38,7 +39,13 @@ import { AuthGuardService } from './services/auth-guard.service';
           {
             id: FacebookLoginProvider.PROVIDER_ID,
             provider: new FacebookLoginProvider('1391147151094704'),
-          }
+          },
+          {
+            id: VKLoginProvider.PROVIDER_ID,
+            provider: new VKLoginProvider(
+              '7615545'
+            ),
+          },
         ],
       } as SocialAuthServiceConfig,
     }

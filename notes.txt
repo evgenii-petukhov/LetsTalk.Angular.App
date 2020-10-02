@@ -49,3 +49,28 @@ https://stackoverflow.com/questions/34660263/angular2-conditional-routing
  Sending requests over http
 ==================================================
 https://angular.io/guide/http
+
+==================================================
+ rxjs
+==================================================
+https://stackoverflow.com/questions/40719237/how-can-i-append-items-to-observable
+https://stackoverflow.com/questions/37006264/angular-2-updating-objects-in-real-time/37006432#37006432
+https://stackoverflow.com/questions/48677327/rxjs-append-observable-to-observable-array-list-in-typescript
+
+==================================================
+ Compare the forked repository to the source one
+==================================================
+https://stackoverflow.com/questions/3792989/how-to-view-diff-of-a-forked-github-project
+
+==================================================
+ Deferred implementation
+==================================================
+https://stackoverflow.com/questions/36609998/angular-2-and-typescript-promises
+
+==================================================
+ Fixing npm package
+==================================================
+https://itnext.io/step-by-step-building-and-publishing-an-npm-typescript-package-44fe7164964c
+https://medium.com/@nodkz/how-to-fix-nodejs-packages-within-your-app-and-send-pull-request-with-your-changes-8b4dcb89492b
+https://medium.com/articode/fixing-broken-npm-packages-d8f808657d8e
+https://medium.com/dailyjs/how-to-use-npm-link-7375b6219557
