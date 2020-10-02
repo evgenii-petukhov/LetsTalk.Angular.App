@@ -8,7 +8,7 @@ export class VKLoginProvider extends BaseLoginProvider {
     private clientId: string,
     private initOptions: any = {
       fields: 'photo_max,contacts',
-      version: '5.78',
+      version: '5.124',
     }
   ) {
     super();
