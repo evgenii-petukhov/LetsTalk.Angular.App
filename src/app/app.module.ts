@@ -13,6 +13,7 @@ import { ChatComponent } from './components/chat/chat.component';
 import { authInterceptorProviders } from './helpers/auth.interceptor';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { AuthGuardService } from './services/auth-guard.service';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { AuthGuardService } from './services/auth-guard.service';
     AppRoutingModule,
     SocialLoginModule,
     NgbModule,
-    HttpClientModule
+    HttpClientModule,
+    FontAwesomeModule
   ],
   providers: [
     authInterceptorProviders,

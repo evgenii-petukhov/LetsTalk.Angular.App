@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable  } from 'rxjs';
-import { Chat } from '../models/chat';
+import { Chat } from '../models/api/chat';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 const LOGIN_URL = 'api/auth/login';

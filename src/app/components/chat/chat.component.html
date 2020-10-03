@@ -1,5 +1,5 @@
 <div *ngIf="chats">
   <ul>
-    <li *ngFor="let chat of chats">{{ chat.fullname }}</li>
+    <li *ngFor="let chat of chats">{{ chat.name }}<fa-icon [icon]="chat.icon"></fa-icon></li>
   </ul>
 </div>
