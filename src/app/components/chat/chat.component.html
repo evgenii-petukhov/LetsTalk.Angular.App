@@ -1,5 +1,13 @@
-<div *ngIf="chats">
-  <ul>
-    <li *ngFor="let chat of chats">{{ chat.name }}<fa-icon [icon]="chat.icon"></fa-icon></li>
-  </ul>
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <div *ngIf="chats">
+        <ul>
+          <li *ngFor="let chat of chats">
+            {{ chat.name }}<fa-icon [icon]="chat.icon"></fa-icon>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>

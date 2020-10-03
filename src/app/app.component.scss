@@ -1,0 +1,34 @@
+@import '~bootstrap/scss/functions';
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+}
+
+app-root,
+app-navbar,
+app-chat {
+  display: block;
+}
+
+@include media-breakpoint-down(sm) {
+    .navbar-collapse {
+        position: absolute;
+        top: 50px;
+        width: 100%;
+        left: 0;
+        background: #ffffff;
+        z-index: 1000;
+      
+        .navbar-nav {
+            margin: 0 10px;
+        }
+      }
+  }
+
+
