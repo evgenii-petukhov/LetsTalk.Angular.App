@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { SocialLoginModule, SocialAuthServiceConfig } from 'angularx-social-login';
 import { FacebookLoginProvider } from 'angularx-social-login';
-import { VKLoginProvider } from '../app/services/vk-login-provider'
+import { VKLoginProvider } from './auth-providers/vk-login-provider'
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';

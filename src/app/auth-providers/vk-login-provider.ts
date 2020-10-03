@@ -60,14 +60,14 @@ export class VKLoginProvider extends BaseLoginProvider {
       if (loginResponse.status === 'connected') {
         this.getUser(
           loginResponse.session.mid,
-          loginResponse.session.sig,
+          loginResponse.session.sid,
           resolve
         );
       }
     });
   }
 
-  private getUser(userId: any, sessionSig: any, resolve: any) {
+  private getUser(userId: any, token: any, resolve: any) {
     VK.Api.call(
       this.VK_API_GET_USER,
       {
@@ -78,7 +78,7 @@ export class VKLoginProvider extends BaseLoginProvider {
       (userResponse: any) => {
         resolve(
           this.createUser(
-            Object.assign({}, { token: sessionSig }, userResponse.response[0])
+            Object.assign({}, { token }, userResponse.response[0])
           )
         );
       }
@@ -90,7 +90,7 @@ export class VKLoginProvider extends BaseLoginProvider {
       if (loginResponse.status === 'connected') {
         this.getUser(
           loginResponse.session.mid,
-          loginResponse.session.sig,
+          loginResponse.session.sid,
           resolve
         );
       }

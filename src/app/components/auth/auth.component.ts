@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SocialAuthService, SocialUser } from 'angularx-social-login';
 
 import { FacebookLoginProvider } from 'angularx-social-login';
-import { VKLoginProvider } from '../../services/vk-login-provider';
+import { VKLoginProvider } from '../../auth-providers/vk-login-provider';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
