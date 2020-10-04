@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
-import { Chat } from '../../models/rendering/chat';
 import { faVk, faFacebook } from '@fortawesome/free-brands-svg-icons';
 import { AccountTypes } from '../../constants/accounttypes';
+import { Chat } from '../../models/rendering/chat';
+import { User } from '../../models/rendering/user';
 
 @Component({
   selector: 'app-chat',
@@ -22,15 +23,17 @@ export class ChatComponent implements OnInit {
     this.apiService.getChats().subscribe((data) => {
       this.chats = data.map((x) => {
         const output = new Chat();
-        output.id = x.id;
-        output.name = x.name;
-        switch (+x.accounttype) {
+        output.user = new User();
+        output.user.id = x.user.id;
+        output.user.firstname = x.user.firstname;
+        output.user.lastname = x.user.lastname;
+        switch (+x.user.accounttype_id) {
           case AccountTypes.FACEBOOK:
-            output.icon = faFacebook;
+            output.user.icon = faFacebook;
             break;
 
           case AccountTypes.VK:
-            output.icon = faVk;
+            output.user.icon = faVk;
             break;
         }
 

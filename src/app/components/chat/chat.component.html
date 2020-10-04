@@ -4,7 +4,7 @@
       <div *ngIf="chats">
         <ul>
           <li *ngFor="let chat of chats">
-            {{ chat.name }}<fa-icon [icon]="chat.icon"></fa-icon>
+            {{ chat.user.firstname }} {{ chat.user.lastname }}<fa-icon [icon]="chat.user.icon"></fa-icon>
           </li>
         </ul>
       </div>

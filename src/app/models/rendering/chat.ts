@@ -1,7 +1,5 @@
-import { IconDefinition } from '@fortawesome/free-brands-svg-icons';
+import { User } from './user';
 
 export class Chat {
-    id: number;
-    name: string;
-    icon: IconDefinition;
+    user: User;
 }

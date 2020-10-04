@@ -1,5 +1,5 @@
+import { User } from './user';
+
 export class Chat {
-    id: number;
-    name: string;
-    accounttype: number;
+    user: User;
 }
