@@ -1,34 +1,29 @@
-@import '~bootstrap/scss/functions';
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/mixins";
-
 html {
   height: 100%;
 }
 
 body {
   min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-app-root,
-app-navbar,
+app-root {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
 app-chat {
-  display: block;
+  flex: 1 1 auto;
+  display: flex;
 }
 
-@include media-breakpoint-down(sm) {
-    .navbar-collapse {
-        position: absolute;
-        top: 50px;
-        width: 100%;
-        left: 0;
-        background: #ffffff;
-        z-index: 1000;
-      
-        .navbar-nav {
-            margin: 0 10px;
-        }
-      }
-  }
-
-
+.main-app-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 6px 1px rgba(0,0,0,0.5);
+  width: 1000px;
+  margin: 0 auto;
+}

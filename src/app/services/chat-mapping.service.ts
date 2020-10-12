@@ -21,7 +21,8 @@ export class ChatMappingService {
     output.user.id = input.user.id;
     output.user.firstname = input.user.firstname;
     output.user.lastname = input.user.lastname;
-    switch (+input.user.accounttype_id) {
+    output.user.pictureUrl = input.user.pictureUrl;
+    switch (+input.user.accounttypeId) {
       case AccountTypes.FACEBOOK:
         output.user.icon = faFacebook;
         break;

@@ -1,13 +1,20 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-8">
-      <div *ngIf="chats">
-        <ul>
-          <li *ngFor="let chat of chats">
-            {{ chat.user.firstname }} {{ chat.user.lastname }}<fa-icon [icon]="chat.user.icon"></fa-icon>
-          </li>
-        </ul>
-      </div>
-    </div>
+<div class="contacts-container">
+  <div *ngIf="chats">
+    <ul>
+      <li *ngFor="let chat of chats">
+        <a href="#">
+          <div class="user-photo" [ngStyle]="{ 'background-image': 'url(' + chat.user.pictureUrl + ')'}"></div>
+          <div class="user-details">
+            <div class="user-name">
+              {{ chat.user.firstname }} {{ chat.user.lastname }}
+            </div>
+            <div class="social-media">
+              <fa-icon [icon]="chat.user.icon"></fa-icon>
+            </div>
+          </div>
+        </a>
+      </li>
+    </ul>
   </div>
 </div>
+<div class="chat-container"></div>
