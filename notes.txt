@@ -74,3 +74,21 @@ https://itnext.io/step-by-step-building-and-publishing-an-npm-typescript-package
 https://medium.com/@nodkz/how-to-fix-nodejs-packages-within-your-app-and-send-pull-request-with-your-changes-8b4dcb89492b
 https://medium.com/articode/fixing-broken-npm-packages-d8f808657d8e
 https://medium.com/dailyjs/how-to-use-npm-link-7375b6219557
+
+==================================================
+ GitHub
+==================================================
+https://opensource.com/article/19/7/create-pull-request-github
+
+==================================================
+ Commands
+==================================================
+
+create a new app:
+ng new angular-tour-of-heroes
+
+restore monules:
+npm install
+
+ng generate component heroes
+ng generate service
