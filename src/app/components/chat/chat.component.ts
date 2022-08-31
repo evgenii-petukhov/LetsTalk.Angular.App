@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { Chat } from '../../models/rendering/chat';
 import { ChatMappingService } from '../../services/chat-mapping.service';
+import { Button } from 'src/react-component-library/cjs';
 
 @Component({
   selector: 'app-chat',
@@ -20,5 +21,7 @@ export class ChatComponent implements OnInit {
     this.apiService.getChats().subscribe((data) => {
       this.chats = data.map(this.chatMappingService.map);
     });
+
+    Button.renderExternally({ label: 'test', clickCallback: () => { console.log('btn clk'); }}, document.getElementById('bbb'));
   }
 }
