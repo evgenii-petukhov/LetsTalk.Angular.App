@@ -92,3 +92,10 @@ npm install
 
 ng generate component heroes
 ng generate service
+
+==================================================
+ React components in Angular
+==================================================
+https://github.com/transitive-bullshit/create-react-library
+https://dev.to/alexeagleson/how-to-create-and-publish-a-react-component-library-2oe
+https://thalava.com/how-to-use-react-web-components-in-angular
