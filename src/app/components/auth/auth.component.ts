@@ -7,57 +7,51 @@ import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-auth',
-  templateUrl: './auth.component.html',
-  styleUrls: ['./auth.component.scss']
+    selector: 'app-auth',
+    templateUrl: './auth.component.html',
+    styleUrls: ['./auth.component.scss']
 })
 export class AuthComponent implements OnInit {
 
-  socialUser: SocialUser;
+    socialUser: SocialUser;
 
-  constructor(
-    private socialAuthService: SocialAuthService,
-    private apiService: ApiService,
-    private tokenStorage: TokenStorageService,
-    private router: Router) { }
+    constructor(
+        private socialAuthService: SocialAuthService,
+        private apiService: ApiService,
+        private tokenStorage: TokenStorageService,
+        private router: Router) { }
 
-  ngOnInit() {
-    this.socialAuthService.authState.subscribe(user => {
-      this.socialUser = user;
-    });
-  }
+    ngOnInit() {
+        this.socialAuthService.authState.subscribe(user => {
+            this.socialUser = user;
+        });
+    }
 
-  signInWithFB(): void {
-    this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID)
-      .then(response => {
-        this.apiService.login(response).subscribe(
-          data => {
-            this.tokenStorage.saveToken(data.token);
-            this.tokenStorage.saveUser(data);
-            this.router.navigate(['chats']);
-          }
-        );
-      });
-  }
+    signInWithFB(): void {
+        this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID)
+            .then(async response => {
+                const data = await this.apiService.login(response);
+                this.tokenStorage.saveToken(data.token);
+                this.tokenStorage.saveUser(data);
+                this.router.navigate(['chats']);
+            });
+    }
 
-  signInWithVK(): void {
-    this.socialAuthService.signIn(VKLoginProvider.PROVIDER_ID)
-      .then(response => {
-        this.apiService.login(response).subscribe(
-          data => {
-            this.tokenStorage.saveToken(data.token);
-            this.tokenStorage.saveUser(data);
-            this.router.navigate(['chats']);
-          }
-        );
-      });
-  }
+    signInWithVK(): void {
+        this.socialAuthService.signIn(VKLoginProvider.PROVIDER_ID)
+            .then(async response => {
+                const data = await this.apiService.login(response);
+                this.tokenStorage.saveToken(data.token);
+                this.tokenStorage.saveUser(data);
+                this.router.navigate(['chats']);
+            });
+    }
 
-  signOut(): void {
-    this.socialAuthService.signOut();
-  }
+    signOut(): void {
+        this.socialAuthService.signOut();
+    }
 
-  reloadPage() {
-    window.location.reload();
-  }
+    reloadPage() {
+        window.location.reload();
+    }
 }

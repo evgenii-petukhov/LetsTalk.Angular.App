@@ -4,6 +4,7 @@ export class User {
     id: number;
     firstname: string;
     lastname: string;
+    loginname: string;
     icon: IconDefinition;
     pictureUrl: string;
 }

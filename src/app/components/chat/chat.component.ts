@@ -7,6 +7,7 @@ import { ChatMappingService } from '../../services/chat-mapping.service';
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss'],
+    providers: [ChatMappingService]
 })
 export class ChatComponent implements OnInit {
   chats: Chat[];
@@ -16,9 +17,9 @@ export class ChatComponent implements OnInit {
     private chatMappingService: ChatMappingService
   ) {}
 
-  ngOnInit(): void {
-    this.apiService.getChats().subscribe((data) => {
-      this.chats = data.map(this.chatMappingService.map);
-    });
-  }
+    ngOnInit(): void {
+        this.apiService.getChats().subscribe((data) => {
+            this.chats = data.map((chat) => this.chatMappingService.map(chat));
+        });
+    }
 }
