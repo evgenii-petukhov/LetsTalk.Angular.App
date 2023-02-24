@@ -22,8 +22,8 @@ export class Client {
      * @param body (optional) 
      * @return Success
      */
-    login(body: AuthRequest | undefined): Promise<AuthResponse> {
-        let url_ = this.baseUrl + "/api/Auth/login";
+    login(body: LoginRequest | undefined): Promise<LoginResponse> {
+        let url_ = this.baseUrl + "/api/Authentication/login";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -42,14 +42,14 @@ export class Client {
         });
     }
 
-    protected processLogin(response: Response): Promise<AuthResponse> {
+    protected processLogin(response: Response): Promise<LoginResponse> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AuthResponse.fromJS(resultData200);
+            result200 = LoginResponse.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -57,11 +57,11 @@ export class Client {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<AuthResponse>(null as any);
+        return Promise.resolve<LoginResponse>(null as any);
     }
 }
 
-export class AuthRequest implements IAuthRequest {
+export class LoginRequest implements ILoginRequest {
     provider?: string | undefined;
     id?: string | undefined;
     email?: string | undefined;
@@ -71,7 +71,7 @@ export class AuthRequest implements IAuthRequest {
     lastName?: string | undefined;
     authToken?: string | undefined;
 
-    constructor(data?: IAuthRequest) {
+    constructor(data?: ILoginRequest) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -93,9 +93,9 @@ export class AuthRequest implements IAuthRequest {
         }
     }
 
-    static fromJS(data: any): AuthRequest {
+    static fromJS(data: any): LoginRequest {
         data = typeof data === 'object' ? data : {};
-        let result = new AuthRequest();
+        let result = new LoginRequest();
         result.init(data);
         return result;
     }
@@ -114,7 +114,7 @@ export class AuthRequest implements IAuthRequest {
     }
 }
 
-export interface IAuthRequest {
+export interface ILoginRequest {
     provider?: string | undefined;
     id?: string | undefined;
     email?: string | undefined;
@@ -125,13 +125,13 @@ export interface IAuthRequest {
     authToken?: string | undefined;
 }
 
-export class AuthResponse implements IAuthResponse {
+export class LoginResponse implements ILoginResponse {
     id?: string | undefined;
     userName?: string | undefined;
     email?: string | undefined;
     token?: string | undefined;
 
-    constructor(data?: IAuthResponse) {
+    constructor(data?: ILoginResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -149,9 +149,9 @@ export class AuthResponse implements IAuthResponse {
         }
     }
 
-    static fromJS(data: any): AuthResponse {
+    static fromJS(data: any): LoginResponse {
         data = typeof data === 'object' ? data : {};
-        let result = new AuthResponse();
+        let result = new LoginResponse();
         result.init(data);
         return result;
     }
@@ -166,7 +166,7 @@ export class AuthResponse implements IAuthResponse {
     }
 }
 
-export interface IAuthResponse {
+export interface ILoginResponse {
     id?: string | undefined;
     userName?: string | undefined;
     email?: string | undefined;

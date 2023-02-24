@@ -5,7 +5,7 @@ import { Observable  } from 'rxjs';
 import { Chat } from '../models/api/chat';
 import { User } from '../models/api/user';
 import { MappingService } from './mapping-service';
-import { AuthRequest, AuthResponse, Client } from './service-client';
+import { LoginRequest, LoginResponse, Client } from './service-client';
 
 const CHAT_URL = 'api/chat';
 const USER_URL = 'api/user';
@@ -20,8 +20,8 @@ export class ApiService {
         private client: Client,
         private mappingService: MappingService) { }
 
-    login(data: SocialUser): Promise<AuthResponse> {
-        const request = this.mappingService.map(data, AuthRequest);
+    login(data: SocialUser): Promise<LoginResponse> {
+        const request = this.mappingService.map(data, LoginRequest);
         return this.client.login(request);
     }
 
