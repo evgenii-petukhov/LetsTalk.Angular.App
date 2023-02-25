@@ -3,7 +3,7 @@
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
-      "json": "{\r\n  \"openapi\": \"3.0.1\",\r\n  \"info\": {\r\n    \"title\": \"LetsTalk.Server.API\",\r\n    \"version\": \"1.0\"\r\n  },\r\n  \"paths\": {\r\n    \"/api/Authentication/login\": {\r\n      \"post\": {\r\n        \"tags\": [\r\n          \"Authentication\"\r\n        ],\r\n        \"requestBody\": {\r\n          \"content\": {\r\n            \"application/json\": {\r\n              \"schema\": {\r\n                \"$ref\": \"#/components/schemas/LoginRequest\"\r\n              }\r\n            },\r\n            \"text/json\": {\r\n              \"schema\": {\r\n                \"$ref\": \"#/components/schemas/LoginRequest\"\r\n              }\r\n            },\r\n            \"application/*+json\": {\r\n              \"schema\": {\r\n                \"$ref\": \"#/components/schemas/LoginRequest\"\r\n              }\r\n            }\r\n          }\r\n        },\r\n        \"responses\": {\r\n          \"200\": {\r\n            \"description\": \"Success\",\r\n            \"content\": {\r\n              \"text/plain\": {\r\n                \"schema\": {\r\n                  \"$ref\": \"#/components/schemas/LoginResponse\"\r\n                }\r\n              },\r\n              \"application/json\": {\r\n                \"schema\": {\r\n                  \"$ref\": \"#/components/schemas/LoginResponse\"\r\n                }\r\n              },\r\n              \"text/json\": {\r\n                \"schema\": {\r\n                  \"$ref\": \"#/components/schemas/LoginResponse\"\r\n                }\r\n              }\r\n            }\r\n          }\r\n        }\r\n      }\r\n    }\r\n  },\r\n  \"components\": {\r\n    \"schemas\": {\r\n      \"LoginRequest\": {\r\n        \"type\": \"object\",\r\n        \"properties\": {\r\n          \"provider\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          },\r\n          \"id\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          },\r\n          \"email\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          },\r\n          \"name\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          },\r\n          \"photoUrl\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          },\r\n          \"firstName\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          },\r\n          \"lastName\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          },\r\n          \"authToken\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          }\r\n        },\r\n        \"additionalProperties\": false\r\n      },\r\n      \"LoginResponse\": {\r\n        \"type\": \"object\",\r\n        \"properties\": {\r\n          \"id\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          },\r\n          \"userName\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          },\r\n          \"email\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          },\r\n          \"token\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          }\r\n        },\r\n        \"additionalProperties\": false\r\n      }\r\n    }\r\n  }\r\n}",
+      "json": "{\r\n  \"openapi\": \"3.0.1\",\r\n  \"info\": {\r\n    \"title\": \"LetsTalk.Server.API\",\r\n    \"version\": \"1.0\"\r\n  },\r\n  \"paths\": {\r\n    \"/api/Authentication/login\": {\r\n      \"post\": {\r\n        \"tags\": [\r\n          \"Authentication\"\r\n        ],\r\n        \"requestBody\": {\r\n          \"content\": {\r\n            \"application/json\": {\r\n              \"schema\": {\r\n                \"$ref\": \"#/components/schemas/LoginRequest\"\r\n              }\r\n            },\r\n            \"text/json\": {\r\n              \"schema\": {\r\n                \"$ref\": \"#/components/schemas/LoginRequest\"\r\n              }\r\n            },\r\n            \"application/*+json\": {\r\n              \"schema\": {\r\n                \"$ref\": \"#/components/schemas/LoginRequest\"\r\n              }\r\n            }\r\n          }\r\n        },\r\n        \"responses\": {\r\n          \"200\": {\r\n            \"description\": \"Success\",\r\n            \"content\": {\r\n              \"text/plain\": {\r\n                \"schema\": {\r\n                  \"$ref\": \"#/components/schemas/LoginResponseDto\"\r\n                }\r\n              },\r\n              \"application/json\": {\r\n                \"schema\": {\r\n                  \"$ref\": \"#/components/schemas/LoginResponseDto\"\r\n                }\r\n              },\r\n              \"text/json\": {\r\n                \"schema\": {\r\n                  \"$ref\": \"#/components/schemas/LoginResponseDto\"\r\n                }\r\n              }\r\n            }\r\n          }\r\n        }\r\n      }\r\n    }\r\n  },\r\n  \"components\": {\r\n    \"schemas\": {\r\n      \"LoginRequest\": {\r\n        \"type\": \"object\",\r\n        \"properties\": {\r\n          \"provider\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          },\r\n          \"id\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          },\r\n          \"authToken\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          }\r\n        },\r\n        \"additionalProperties\": false\r\n      },\r\n      \"LoginResponseDto\": {\r\n        \"type\": \"object\",\r\n        \"properties\": {\r\n          \"success\": {\r\n            \"type\": \"boolean\"\r\n          },\r\n          \"token\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          }\r\n        },\r\n        \"additionalProperties\": false\r\n      }\r\n    }\r\n  }\r\n}",
       "url": "https://localhost:7102/swagger/v1/swagger.json",
       "output": null,
       "newLineBehavior": "Auto"
@@ -11,16 +11,16 @@
   },
   "codeGenerators": {
     "openApiToTypeScriptClient": {
-      "className": "{controller}Client",
+      "className": "ApiClient",
       "moduleName": "",
       "namespace": "",
       "typeScriptVersion": 2.7,
-      "template": "Fetch",
+      "template": "Angular",
       "promiseType": "Promise",
       "httpClass": "HttpClient",
       "withCredentials": false,
       "useSingletonProvider": false,
-      "injectionTokenType": "OpaqueToken",
+      "injectionTokenType": "InjectionToken",
       "rxJsVersion": 6.0,
       "dateTimeType": "Date",
       "nullValue": "Undefined",
@@ -30,7 +30,7 @@
       "exportTypes": true,
       "wrapDtoExceptions": false,
       "exceptionClass": "ApiException",
-      "clientBaseClass": null,
+      "clientBaseClass": "",
       "wrapResponses": false,
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
@@ -70,7 +70,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "src/app/services/service-client.ts",
+      "output": "src/app/services/api-client.ts",
       "newLineBehavior": "Auto"
     }
   }

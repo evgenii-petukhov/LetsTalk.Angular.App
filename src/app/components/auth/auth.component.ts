@@ -30,20 +30,22 @@ export class AuthComponent implements OnInit {
     signInWithFB(): void {
         this.socialAuthService.signIn(FacebookLoginProvider.PROVIDER_ID)
             .then(async response => {
-                const data = await this.apiService.login(response);
-                this.tokenStorage.saveToken(data.token);
-                this.tokenStorage.saveUser(data);
-                this.router.navigate(['chats']);
+                this.apiService.login(response).subscribe(data => {
+                    this.tokenStorage.saveToken(data.token);
+                    this.tokenStorage.saveUser(data);
+                    this.router.navigate(['chats']);
+                });
             });
     }
 
     signInWithVK(): void {
         this.socialAuthService.signIn(VKLoginProvider.PROVIDER_ID)
             .then(async response => {
-                const data = await this.apiService.login(response);
-                this.tokenStorage.saveToken(data.token);
-                this.tokenStorage.saveUser(data);
-                this.router.navigate(['chats']);
+                this.apiService.login(response).subscribe(data => {
+                    this.tokenStorage.saveToken(data.token);
+                    this.tokenStorage.saveUser(data);
+                    this.router.navigate(['chats']);
+                });
             });
     }
 

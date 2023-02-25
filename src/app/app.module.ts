@@ -15,7 +15,8 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { AuthGuardService } from './services/auth-guard.service';
 import config from './config';
 import { authInterceptorProvider } from './providers/auth-interceptor-provider';
-import { serviceClientProvider } from './providers/service-client-provider';
+import { ApiClient, API_BASE_URL } from './services/api-client';
+import { ApiClientProvider } from './providers/api-client-provider';
 
 @NgModule({
     declarations: [
@@ -37,7 +38,7 @@ import { serviceClientProvider } from './providers/service-client-provider';
     providers: [
         authInterceptorProvider,
         AuthGuardService,
-        serviceClientProvider,
+        ApiClientProvider,
         {
             provide: 'SocialAuthServiceConfig',
             useValue: {
@@ -52,6 +53,12 @@ import { serviceClientProvider } from './providers/service-client-provider';
                         provider: new VKLoginProvider(config.vkAppId),
                     }],
             } as SocialAuthServiceConfig,
+        },
+        {
+            provide: API_BASE_URL,
+            useFactory: () => {
+                return config.apiBaseUrl;
+            }
         }
     ],
     bootstrap: [AppComponent]
