@@ -4,7 +4,6 @@ import { SocialUser } from 'angularx-social-login';
 import { Observable  } from 'rxjs';
 import { Chat } from '../models/api/chat';
 import { User } from '../models/api/user';
-import { MappingService } from './mapping-service';
 import { LoginRequest, LoginResponseDto, ApiClient } from './api-client';
 
 const CHAT_URL = 'api/chat';
@@ -17,11 +16,13 @@ export class ApiService {
 
     constructor(
         private http: HttpClient,
-        private client: ApiClient,
-        private mappingService: MappingService) { }
+        private client: ApiClient) { }
 
     login(data: SocialUser): Observable<LoginResponseDto> {
-        const request = this.mappingService.map(data, LoginRequest);
+        const request = new LoginRequest();
+        request.id = data.id.toString();
+        request.provider = data.provider;
+        request.authToken = data.authToken;
         return this.client.login(request);
     }
 
