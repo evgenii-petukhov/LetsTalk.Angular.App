@@ -1,7 +1,7 @@
 <div *ngIf="accounts">
     <ul>
         <li *ngFor="let account of accounts">
-            <a href="#">
+            <a href="#" (click)="onAccountSelected(account.id)">
                 <div class="user-photo" [ngStyle]="{ 'background-image': 'url(' + account.pictureUrl + ')'}"></div>
                 <div class="user-details">
                     <div class="user-name">

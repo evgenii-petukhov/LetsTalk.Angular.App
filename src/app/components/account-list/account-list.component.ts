@@ -1,25 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { ApiService } from '../../services/api.service';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Account } from '../../models/rendering/account';
-import { AccountMappingService } from '../../services/account-mapping.service';
 
 @Component({
     selector: 'app-account-list',
     templateUrl: './account-list.component.html',
     styleUrls: ['./account-list.component.scss'],
-    providers: [AccountMappingService]
 })
-export class AccountListComponent implements OnInit {
-    accounts: Account[];
+export class AccountListComponent {
+    @Input() accounts: Account[];
+    @Output() accountSelectedEvent = new EventEmitter<number>();
 
-    constructor(
-        private apiService: ApiService,
-        private accountMappingService: AccountMappingService
-    ) { }
-
-    ngOnInit(): void {
-        this.apiService.getAccounts().subscribe((accounts) => {
-            this.accounts = accounts.map((account) => this.accountMappingService.map(account));
-        });
+    onAccountSelected(accountId: number): boolean {
+        this.accountSelectedEvent.emit(accountId);
+        return false;
     }
 }

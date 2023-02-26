@@ -1,2 +1,2 @@
-<app-account-list></app-account-list>
-<app-chat></app-chat>
+<app-account-list [accounts]="accounts" (accountSelectedEvent)="onAccountSelected($event)"></app-account-list>
+<app-chat [accountId]="accountId"></app-chat>
