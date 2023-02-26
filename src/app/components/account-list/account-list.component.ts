@@ -18,7 +18,7 @@ export class AccountListComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.apiService.getChats().subscribe((accounts) => {
+        this.apiService.getAccounts().subscribe((accounts) => {
             this.accounts = accounts.map((account) => this.accountMappingService.map(account));
         });
     }

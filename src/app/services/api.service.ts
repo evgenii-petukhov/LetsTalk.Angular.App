@@ -5,7 +5,6 @@ import { Observable  } from 'rxjs';
 import { User } from '../models/api/user';
 import { LoginRequest, LoginResponseDto, ApiClient, AccountDto } from './api-client';
 
-const CHAT_URL = 'api/chat';
 const USER_URL = 'api/user';
 
 @Injectable({
@@ -25,7 +24,7 @@ export class ApiService {
         return this.client.login(request);
     }
 
-    getChats(): Observable<AccountDto[]> {
+    getAccounts(): Observable<AccountDto[]> {
         return this.client.account();
     }
 
