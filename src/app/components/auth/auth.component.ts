@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { SocialAuthService, SocialUser } from 'angularx-social-login';
-
-import { FacebookLoginProvider, VKLoginProvider } from 'angularx-social-login';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
+import { SocialUser, SocialAuthService, FacebookLoginProvider, VKLoginProvider } from '@abacritt/angularx-social-login';
 
 @Component({
     selector: 'app-auth',

@@ -1,6 +1,6 @@
+import { SocialUser } from '@abacritt/angularx-social-login';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SocialUser } from 'angularx-social-login';
 import { Observable  } from 'rxjs';
 import { User } from '../models/api/user';
 import { LoginRequest, LoginResponseDto, ApiClient, AccountDto } from './api-client';

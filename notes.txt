@@ -92,3 +92,12 @@ npm install
 
 ng generate component heroes
 ng generate service
+
+==================================================
+ Update dependencies
+==================================================
+ng update
+
+npm i -g npm-check-updates
+npm-check-updates -u
+npm install
