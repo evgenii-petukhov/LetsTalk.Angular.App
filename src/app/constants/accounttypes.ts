@@ -1,13 +1,5 @@
 export class AccountTypes {
+    static FACEBOOK = 1;
 
-    static SITE_USER = 1;
-
-    static FACEBOOK = 2;
-
-    static VK = 3;
-
-    static INSTAGRAM = 1;
-
-    static GOOGLE = 1;
-
+    static VK = 2;
 }

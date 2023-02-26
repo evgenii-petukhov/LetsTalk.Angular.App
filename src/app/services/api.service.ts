@@ -2,9 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { SocialUser } from 'angularx-social-login';
 import { Observable  } from 'rxjs';
-import { Chat } from '../models/api/chat';
 import { User } from '../models/api/user';
-import { LoginRequest, LoginResponseDto, ApiClient } from './api-client';
+import { LoginRequest, LoginResponseDto, ApiClient, AccountDto } from './api-client';
 
 const CHAT_URL = 'api/chat';
 const USER_URL = 'api/user';
@@ -26,8 +25,8 @@ export class ApiService {
         return this.client.login(request);
     }
 
-    getChats(): Observable<Chat[]> {
-        return this.http.get<Chat[]>(CHAT_URL);
+    getChats(): Observable<AccountDto[]> {
+        return this.client.account();
     }
 
     getUser(): Observable<User> {

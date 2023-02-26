@@ -1,25 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
-import { Chat } from '../../models/rendering/chat';
-import { ChatMappingService } from '../../services/chat-mapping.service';
+import { Account } from '../../models/rendering/account';
+import { AccountMappingService } from '../../services/account-mapping.service';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss'],
-    providers: [ChatMappingService]
+    providers: [AccountMappingService]
 })
 export class ChatComponent implements OnInit {
-  chats: Chat[];
+  accounts: Account[];
 
   constructor(
     private apiService: ApiService,
-    private chatMappingService: ChatMappingService
+    private accountMappingService: AccountMappingService
   ) {}
 
     ngOnInit(): void {
-        this.apiService.getChats().subscribe((data) => {
-            this.chats = data.map((chat) => this.chatMappingService.map(chat));
+        this.apiService.getChats().subscribe((accounts) => {
+            this.accounts = accounts.map((account) => this.accountMappingService.map(account));
         });
     }
 }

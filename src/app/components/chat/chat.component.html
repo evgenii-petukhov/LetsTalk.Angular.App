@@ -1,15 +1,15 @@
 <div class="contacts-container">
-  <div *ngIf="chats">
+  <div *ngIf="accounts">
     <ul>
-      <li *ngFor="let chat of chats">
+      <li *ngFor="let account of accounts">
         <a href="#">
-          <div class="user-photo" [ngStyle]="{ 'background-image': 'url(' + chat.user.pictureUrl + ')'}"></div>
+          <div class="user-photo" [ngStyle]="{ 'background-image': 'url(' + account.pictureUrl + ')'}"></div>
           <div class="user-details">
             <div class="user-name">
-              {{ chat.user.firstname }} {{ chat.user.lastname }}
+              {{ account.firstname }} {{ account.lastname }}
             </div>
             <div class="social-media">
-              <fa-icon [icon]="chat.user.icon"></fa-icon>
+              <fa-icon [icon]="account.icon"></fa-icon>
             </div>
           </div>
         </a>
