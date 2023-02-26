@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { faVk, faFacebook, IconDefinition } from '@fortawesome/free-brands-svg-icons';
-import { AccountTypes } from '../constants/accounttypes';
+import { AccountTypes } from '../constants/account-types';
 
 @Injectable({
     providedIn: 'root'

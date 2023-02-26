@@ -1,20 +1,2 @@
-<div class="contacts-container">
-  <div *ngIf="accounts">
-    <ul>
-      <li *ngFor="let account of accounts">
-        <a href="#">
-          <div class="user-photo" [ngStyle]="{ 'background-image': 'url(' + account.pictureUrl + ')'}"></div>
-          <div class="user-details">
-            <div class="user-name">
-              {{ account.firstname }} {{ account.lastname }}
-            </div>
-            <div class="social-media">
-              <fa-icon [icon]="account.icon"></fa-icon>
-            </div>
-          </div>
-        </a>
-      </li>
-    </ul>
-  </div>
-</div>
+<app-account-list></app-account-list>
 <div class="chat-container"></div>

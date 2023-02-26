@@ -17,6 +17,7 @@ import config from './config';
 import { authInterceptorProvider } from './providers/auth-interceptor-provider';
 import { ApiClient, API_BASE_URL } from './services/api-client';
 import { ApiClientProvider } from './providers/api-client-provider';
+import { AccountListComponent } from './components/account-list/account-list.component';
 
 @NgModule({
     declarations: [
@@ -24,7 +25,8 @@ import { ApiClientProvider } from './providers/api-client-provider';
         AuthComponent,
         ChatComponent,
         NavbarComponent,
-        ProfileComponent
+        ProfileComponent,
+        AccountListComponent
     ],
     imports: [
         BrowserModule,
