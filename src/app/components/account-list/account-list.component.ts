@@ -10,8 +10,7 @@ export class AccountListComponent {
     @Input() accounts: Account[];
     @Output() accountSelectedEvent = new EventEmitter<number>();
 
-    onAccountSelected(accountId: number): boolean {
+    onAccountSelected(accountId: number): void {
         this.accountSelectedEvent.emit(accountId);
-        return false;
     }
 }

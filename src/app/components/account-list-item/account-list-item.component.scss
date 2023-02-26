@@ -1,0 +1,35 @@
+a {
+    display: flex;
+    text-decoration: none;
+    color: #000;
+    padding: 10px;
+
+    .user-photo {
+        flex: 0 1 40px;
+        height: 40px;
+        border-radius: 50% 50%;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+
+    .user-details {
+        flex: 1 1 auto;
+        display: flex;
+        padding: 0 0 0 10px;
+
+        .user-name {
+            flex: 0 1 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .social-media {
+            flex: 1 1 auto;
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+    }
+}

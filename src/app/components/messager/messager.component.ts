@@ -13,7 +13,7 @@ export class MessagerComponent implements OnInit {
 
     accounts = new Array<Account>();
 
-    accountId: number = null;
+    account: Account = null;
 
     constructor(
         private apiService: ApiService,
@@ -29,6 +29,6 @@ export class MessagerComponent implements OnInit {
     }
 
     onAccountSelected(accountId: number): void {
-        this.accountId = accountId;
+        this.account = this.accounts.find(x => x.id === accountId);
     }
 }

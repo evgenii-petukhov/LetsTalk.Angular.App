@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges } from "@angular/core";
+import { Account } from "src/app/models/rendering/account";
 
 @Component({
     selector: 'app-chat',
@@ -6,9 +7,9 @@ import { Component, Input, OnChanges } from "@angular/core";
     styleUrls: ['./chat.component.scss'],
 })
 export class ChatComponent implements OnChanges {
-    @Input() accountId: number;
+    @Input() account: Account;
 
     ngOnChanges(): void {
-        console.log(`Current accountId=${this.accountId}`);
+        
     }
 }

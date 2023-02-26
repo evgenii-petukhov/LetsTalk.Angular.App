@@ -19,6 +19,7 @@ import { ApiClient, API_BASE_URL } from './services/api-client';
 import { ApiClientProvider } from './providers/api-client-provider';
 import { AccountListComponent } from './components/account-list/account-list.component';
 import { MessagerComponent } from './components/messager/messager.component';
+import { AccountListItemComponent } from './components/account-list-item/account-list-item.component';
 
 @NgModule({
     declarations: [
@@ -28,7 +29,8 @@ import { MessagerComponent } from './components/messager/messager.component';
         NavbarComponent,
         ProfileComponent,
         AccountListComponent,
-        MessagerComponent
+        MessagerComponent,
+        AccountListItemComponent
     ],
     imports: [
         BrowserModule,

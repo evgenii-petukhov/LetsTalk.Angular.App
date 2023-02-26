@@ -1,17 +1,7 @@
 <div *ngIf="accounts">
     <ul>
         <li *ngFor="let account of accounts">
-            <a href="#" (click)="onAccountSelected(account.id)">
-                <div class="user-photo" [ngStyle]="{ 'background-image': 'url(' + account.pictureUrl + ')'}"></div>
-                <div class="user-details">
-                    <div class="user-name">
-                        {{ account.firstname }} {{ account.lastname }}
-                    </div>
-                    <div class="social-media">
-                        <fa-icon [icon]="account.icon"></fa-icon>
-                    </div>
-                </div>
-            </a>
+            <app-account-list-item [account]="account" (onAccountSelectedCallback)="onAccountSelected($event)"></app-account-list-item>
         </li>
     </ul>
 </div>

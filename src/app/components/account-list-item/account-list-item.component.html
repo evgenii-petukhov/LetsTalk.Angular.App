@@ -1,0 +1,11 @@
+<a href="#" (click)="onAccountSelected()">
+    <div class="user-photo" [ngStyle]="{ 'background-image': 'url(' + account.pictureUrl + ')'}"></div>
+    <div class="user-details">
+        <div class="user-name">
+            {{ account.firstname }} {{ account.lastname }}
+        </div>
+        <div class="social-media">
+            <fa-icon [icon]="account.icon"></fa-icon>
+        </div>
+    </div>
+</a>
