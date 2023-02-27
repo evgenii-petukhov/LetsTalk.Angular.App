@@ -101,3 +101,11 @@ ng update
 npm i -g npm-check-updates
 npm-check-updates -u
 npm install
+
+==================================================
+ SignalR
+==================================================
+https://www.c-sharpcorner.com/article/signalr-introduction-and-implementation-using-the-net-core-6-web-api-and-angula/
+https://learn.microsoft.com/en-us/aspnet/core/tutorials/signalr?view=aspnetcore-7.0&tabs=visual-studio
+https://stackoverflow.com/questions/52086158/angular-signalr-error-failed-to-complete-negotiation-with-the-server
+https://stackoverflow.com/questions/70216272/failed-to-start-the-connection-error-websocket-failed-to-connect
