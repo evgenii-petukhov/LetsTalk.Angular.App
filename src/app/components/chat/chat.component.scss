@@ -5,30 +5,98 @@
 
     .messages-container {
         flex: 1 1 auto;
+        overflow-y: scroll;
 
         ul {
             display: flex;
             flex-direction: column;
             margin: 0;
             padding: 0;
-    
+
             li {
                 display: flex;
 
                 &.mine {
-                    align-self: end;
+                    justify-content: end;
                 }
 
-                .baloon {
-                    padding: 5px 10px;
-                    margin: 0 20px 10px 20px;
-                    border: 1px solid #000;
+                .border {
+                    border: 2px solid #666 !important;
+                }
+
+                // https://codepen.io/Founts/pen/AJyVOr
+                .talk-bubble {
+                    margin: 0 15px 15px 15px;
+                    display: inline-block;
+                    position: relative;
+                    max-width: 45%;
+                    height: auto;
+                    background-color: lightyellow;
+                }
+
+                .tri-right.border.btm-left:before {
+                    content: ' ';
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    left: -1.5px;
+                    right: auto;
+                    top: auto;
+                    bottom: -10px;
+                    border: 9px solid;
+                    border-color: transparent transparent transparent #666;
+                }
+
+                .tri-right.btm-left:after {
+                    content: ' ';
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    left: 0px;
+                    right: auto;
+                    top: auto;
+                    bottom: -6px;
+                    border: 7px solid;
+                    border-color: transparent transparent transparent lightyellow;
+                }
+
+                .tri-right.border.btm-right:before {
+                    content: ' ';
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    left: auto;
+                    right: -1.5px;
+                    bottom: -10px;
+                    border: 5px solid;
+                    border-color: #666 #666 transparent transparent;
+                }
+
+                .tri-right.btm-right:after {
+                    content: ' ';
+                    position: absolute;
+                    width: 0;
+                    height: 0;
+                    left: auto;
+                    right: 0px;
+                    bottom: -6px;
+                    border: 5px solid;
+                    border-color: lightyellow lightyellow transparent transparent;
+                }
+
+                .talktext {
+                    padding: 5px 15px;
+                }
+
+                .talktext p {
+                    margin: 0;
+                    word-wrap: break-word;
                 }
             }
         }
     }
-    
-    .send-message-container{
+
+    .send-message-container {
         display: flex;
 
         textarea {
