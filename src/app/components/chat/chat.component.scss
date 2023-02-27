@@ -5,6 +5,27 @@
 
     .messages-container {
         flex: 1 1 auto;
+
+        ul {
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
+    
+            li {
+                display: flex;
+
+                &.mine {
+                    align-self: end;
+                }
+
+                .baloon {
+                    padding: 5px 10px;
+                    margin: 0 20px 10px 20px;
+                    border: 1px solid #000;
+                }
+            }
+        }
     }
     
     .send-message-container{
@@ -12,6 +33,7 @@
 
         textarea {
             flex: 1 1 auto;
+            resize: none;
         }
 
         button {

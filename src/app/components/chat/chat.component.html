@@ -1,7 +1,17 @@
 <div class="chat-header">
     <app-account-list-item [account]="account"></app-account-list-item>
 </div>
-<div class="messages-container"></div>
+<div class="messages-container">
+    <div *ngIf="messages">
+        <ul>
+            <li *ngFor="let message of messages" [ngClass]="message.isMine && 'mine'">
+                <div class="baloon">
+                    {{message.text}}
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
 <div class="send-message-container">
     <textarea [(ngModel)]="message"></textarea>
     <button (click)="send()">Send</button>

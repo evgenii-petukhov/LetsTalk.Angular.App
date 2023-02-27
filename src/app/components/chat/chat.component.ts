@@ -1,5 +1,6 @@
-import { Component, Input } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { Account } from "src/app/models/rendering/account";
+import { Message } from "src/app/models/rendering/message";
 import { ApiService } from '../../services/api.service';
 
 @Component({
@@ -9,6 +10,8 @@ import { ApiService } from '../../services/api.service';
 })
 export class ChatComponent {
     @Input() account: Account;
+    @Input() messages: Message[];
+    @Output() messageSentEvent = new EventEmitter<Message>();
     message = '';
 
     constructor(private apiService: ApiService) {
@@ -16,8 +19,13 @@ export class ChatComponent {
     }
 
     send(): void {
-        this.apiService.sendMessage(this.account.id, this.message).subscribe(data => {
+        this.apiService.sendMessage(this.account.id, this.message).subscribe(response => {
             this.message = '';
+            const message = new Message();
+            message.date = response.created;
+            message.text = response.text;
+            message.isMine = true;
+            this.messageSentEvent.emit(message);
         });
     }
 }
