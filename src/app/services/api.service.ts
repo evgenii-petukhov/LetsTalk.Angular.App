@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable  } from 'rxjs';
 import { User } from '../models/api/user';
-import { LoginRequest, LoginResponseDto, ApiClient, AccountDto } from './api-client';
+import { LoginRequest, LoginResponseDto, ApiClient, AccountDto, CreateMessageRequest, MessageDto } from './api-client';
 
 const USER_URL = 'api/user';
 
@@ -26,6 +26,13 @@ export class ApiService {
 
     getAccounts(): Observable<AccountDto[]> {
         return this.client.account();
+    }
+
+    sendMessage(recipientId: number, text: string): Observable<MessageDto> {
+        const request = new CreateMessageRequest();
+        request.recipientId = recipientId;
+        request.text = text;
+        return this.client.message(request);
     }
 
     getUser(): Observable<User> {

@@ -6,8 +6,7 @@ import { AccountMappingService } from '../../services/account-mapping.service';
 @Component({
     selector: 'app-messager',
     templateUrl: './messager.component.html',
-    styleUrls: ['./messager.component.scss'],
-    providers: [AccountMappingService]
+    styleUrls: ['./messager.component.scss']
 })
 export class MessagerComponent implements OnInit {
 

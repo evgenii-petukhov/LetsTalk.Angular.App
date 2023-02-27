@@ -139,6 +139,62 @@ export class ApiClient {
         }
         return _observableOf(null as any);
     }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    message(body: CreateMessageRequest | undefined): Observable<MessageDto> {
+        let url_ = this.baseUrl + "/api/Message";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMessage(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMessage(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MessageDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MessageDto>;
+        }));
+    }
+
+    protected processMessage(response: HttpResponseBase): Observable<MessageDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MessageDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 export class AccountDto implements IAccountDto {
@@ -191,6 +247,46 @@ export interface IAccountDto {
     photoUrl?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+}
+
+export class CreateMessageRequest implements ICreateMessageRequest {
+    text?: string | undefined;
+    recipientId?: number;
+
+    constructor(data?: ICreateMessageRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.text = _data["text"];
+            this.recipientId = _data["recipientId"];
+        }
+    }
+
+    static fromJS(data: any): CreateMessageRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateMessageRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["text"] = this.text;
+        data["recipientId"] = this.recipientId;
+        return data;
+    }
+}
+
+export interface ICreateMessageRequest {
+    text?: string | undefined;
+    recipientId?: number;
 }
 
 export class LoginRequest implements ILoginRequest {
@@ -275,6 +371,58 @@ export class LoginResponseDto implements ILoginResponseDto {
 export interface ILoginResponseDto {
     success?: boolean;
     token?: string | undefined;
+}
+
+export class MessageDto implements IMessageDto {
+    id?: number;
+    text?: string | undefined;
+    senderId?: number;
+    recipientId?: number;
+    created?: Date;
+
+    constructor(data?: IMessageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.text = _data["text"];
+            this.senderId = _data["senderId"];
+            this.recipientId = _data["recipientId"];
+            this.created = _data["created"] ? new Date(_data["created"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): MessageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MessageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["text"] = this.text;
+        data["senderId"] = this.senderId;
+        data["recipientId"] = this.recipientId;
+        data["created"] = this.created ? this.created.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IMessageDto {
+    id?: number;
+    text?: string | undefined;
+    senderId?: number;
+    recipientId?: number;
+    created?: Date;
 }
 
 export class ApiException extends Error {
