@@ -5,12 +5,15 @@
     <div *ngIf="messages">
         <ul>
             <li *ngFor="let message of messages">
-                <app-message [message]="message" [ngClass]="message.isMine && 'mine'" #scrollItem></app-message>
+                <app-message #scrollItem
+                    [message]="message"
+                    [ngClass]="message.isMine && 'mine'">
+                </app-message>
             </li>
         </ul>
     </div>
 </div>
 <div class="send-message-container">
     <textarea [(ngModel)]="message"></textarea>
-    <button (click)="send()">Send</button>
+    <button (click)="send()" [disabled]="!message.trim()">Send</button>
 </div>
