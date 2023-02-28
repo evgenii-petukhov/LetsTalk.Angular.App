@@ -17,9 +17,16 @@ import { ApiClientProvider } from './providers/api-client-provider';
 import { AccountListComponent } from './components/account-list/account-list.component';
 import { MessagerComponent } from './components/messager/messager.component';
 import { AccountListItemComponent } from './components/account-list-item/account-list-item.component';
-import { SocialLoginModule, FacebookLoginProvider, VKLoginProvider, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
+import {
+    SocialLoginModule, 
+    FacebookLoginProvider, 
+    VKLoginProvider, 
+    SocialAuthServiceConfig 
+} from '@abacritt/angularx-social-login';
 import { BrowserModule } from '@angular/platform-browser';
 import { MessageComponent } from './components/message/message.component';
+import { ToastrModule } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
     declarations: [
@@ -40,7 +47,9 @@ import { MessageComponent } from './components/message/message.component';
         NgbModule,
         HttpClientModule,
         FontAwesomeModule,
-        FormsModule
+        FormsModule,
+        BrowserAnimationsModule,
+        ToastrModule.forRoot()
     ],
     providers: [
         authInterceptorProvider,

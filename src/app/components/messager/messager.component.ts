@@ -4,6 +4,7 @@ import { Account } from '../../models/rendering/account';
 import { AccountMappingService } from '../../services/account-mapping.service';
 import { Message } from 'src/app/models/rendering/message';
 import { SignalService } from 'src/app/services/signalr.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-messager',
@@ -21,7 +22,8 @@ export class MessagerComponent implements OnInit {
     constructor(
         private apiService: ApiService,
         private accountMappingService: AccountMappingService,
-        private signalService: SignalService
+        private signalService: SignalService,
+        private toastr: ToastrService
     ) {
 
     }
@@ -32,12 +34,15 @@ export class MessagerComponent implements OnInit {
         });
 
         this.signalService.init(data => {
-            if (data.senderId === this.selectedAccount.id) {
+            if (data.senderId === this.selectedAccount?.id) {
                 const message = new Message();
                 message.text = data.text;
                 message.date = data.created;
                 message.isMine = false;
                 this.messages.push(message);
+            } else {
+                const sender = this.accounts.find(account => account.id === data.senderId);
+                this.toastr.info(data.text, `${sender.firstname} ${sender.lastname}`);
             }
         });
     }
