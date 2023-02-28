@@ -12,7 +12,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { AuthGuardService } from './services/auth-guard.service';
 import config from './config';
 import { authInterceptorProvider } from './providers/auth-interceptor-provider';
-import { API_BASE_URL } from './services/api-client';
+import { API_BASE_URL } from './api-client/api-client';
 import { ApiClientProvider } from './providers/api-client-provider';
 import { AccountListComponent } from './components/account-list/account-list.component';
 import { MessagerComponent } from './components/messager/messager.component';

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Account as AccountRenderingModel } from '../models/rendering/account';
 import { AccountTypeMappingService } from './account-type.service';
-import { AccountDto } from './api-client';
+import { AccountDto } from '../api-client/api-client';
 
 @Injectable({
     providedIn: 'root'

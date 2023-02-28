@@ -1,4 +1,4 @@
-import { ApiClient } from "../services/api-client";
+import { ApiClient } from "../api-client/api-client";
 
 export const ApiClientProvider =
 {

@@ -3,7 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable  } from 'rxjs';
 import { User } from '../models/api/user';
-import { LoginRequest, LoginResponseDto, ApiClient, AccountDto, CreateMessageRequest, MessageDto } from './api-client';
+import { 
+    LoginRequest, 
+    LoginResponseDto, 
+    ApiClient, 
+    AccountDto, 
+    CreateMessageRequest, 
+    MessageDto 
+} from '../api-client/api-client';
 
 const USER_URL = 'api/user';
 
