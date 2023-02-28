@@ -19,6 +19,7 @@ import { MessagerComponent } from './components/messager/messager.component';
 import { AccountListItemComponent } from './components/account-list-item/account-list-item.component';
 import { SocialLoginModule, FacebookLoginProvider, VKLoginProvider, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
 import { BrowserModule } from '@angular/platform-browser';
+import { MessageComponent } from './components/message/message.component';
 
 @NgModule({
     declarations: [
@@ -29,7 +30,8 @@ import { BrowserModule } from '@angular/platform-browser';
         ProfileComponent,
         AccountListComponent,
         MessagerComponent,
-        AccountListItemComponent
+        AccountListItemComponent,
+        MessageComponent
     ],
     imports: [
         BrowserModule,

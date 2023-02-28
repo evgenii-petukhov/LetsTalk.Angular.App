@@ -16,16 +16,13 @@ export class SignalService {
             transport: HttpTransportType.WebSockets
         }).configureLogging(LogLevel.Information).build();
 
-        hubConnectionBuilder.start()
-            .then(async () => {
-                console.log('Connection started.......!');
-                await hubConnectionBuilder.invoke("Authorize", this.tokenService.getToken());
-            })
-            .catch(() => console.log('Error while connect with server'));
+        hubConnectionBuilder.start().then(async () => {
+            console.log('Connection started.......!');
+            await hubConnectionBuilder.invoke("Authorize", this.tokenService.getToken());
+        }).catch(() => console.log('Error while connect with server'));
 
         hubConnectionBuilder.on('SendOffersToUser', (result: any) => {
             console.log(result);
         });
     }
-
 }

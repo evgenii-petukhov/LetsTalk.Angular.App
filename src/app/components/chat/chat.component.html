@@ -4,14 +4,8 @@
 <div class="messages-container">
     <div *ngIf="messages">
         <ul>
-            <li *ngFor="let message of messages" [ngClass]="message.isMine && 'mine'">
-                <div class="talk-bubble border tri-right" [ngClass]="message.isMine ? 'btm-right' : 'btm-left'">
-                    <div class="talktext">
-                        <p>
-                            {{message.text}}
-                        </p>
-                    </div>
-                </div>
+            <li *ngFor="let message of messages">
+                <app-message [message]="message" [ngClass]="message.isMine && 'mine'"></app-message>
             </li>
         </ul>
     </div>
