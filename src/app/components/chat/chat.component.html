@@ -1,11 +1,11 @@
 <div class="chat-header">
     <app-account-list-item [account]="account"></app-account-list-item>
 </div>
-<div class="messages-container">
+<div class="messages-container" #scrollFrame>
     <div *ngIf="messages">
         <ul>
             <li *ngFor="let message of messages">
-                <app-message [message]="message" [ngClass]="message.isMine && 'mine'"></app-message>
+                <app-message [message]="message" [ngClass]="message.isMine && 'mine'" #scrollItem></app-message>
             </li>
         </ul>
     </div>
