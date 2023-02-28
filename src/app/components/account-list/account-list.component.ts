@@ -8,6 +8,7 @@ import { Account } from '../../models/rendering/account';
 })
 export class AccountListComponent {
     @Input() accounts: Account[];
+    @Input() selectedAccountId: Account[];
     @Output() accountSelectedEvent = new EventEmitter<number>();
 
     onAccountSelected(accountId: number): void {

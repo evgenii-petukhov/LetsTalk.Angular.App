@@ -1,5 +1,6 @@
 :host {
     flex: 0 1 300px;
+    min-width: 300px;
     border-right: 1px solid rgba(0, 0, 0, 0.5);
     overflow-y: auto;
 
@@ -10,6 +11,16 @@
 
         li {
             display: block;
+
+            &:hover {
+                background:rgba(0, 0, 0, .05);
+                transition: background-color .2s ease;
+            }
+
+            &.selected {
+                background:rgba(0, 0, 0, .1);
+                transition: background-color .2s ease;
+            }
         }
     }
 }

@@ -1,9 +1,10 @@
 <app-account-list
     [accounts]="accounts"
+    [selectedAccountId]="selectedAccount?.id"
     (accountSelectedEvent)="onAccountSelected($event)">
 </app-account-list>
-<app-chat *ngIf="account"
-    [account]="account"
+<app-chat *ngIf="selectedAccount"
+    [account]="selectedAccount"
     [messages]="messages"
     (messageSentEvent)="onMessageSent($event)">
 </app-chat>

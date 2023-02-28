@@ -1,7 +1,10 @@
 <div *ngIf="accounts">
     <ul>
-        <li *ngFor="let account of accounts">
-            <app-account-list-item [account]="account" (onAccountSelectedCallback)="onAccountSelected($event)"></app-account-list-item>
+        <li *ngFor="let account of accounts"
+            [ngClass]="selectedAccountId === account.id && 'selected'">
+            <app-account-list-item [account]="account"
+                (onAccountSelectedCallback)="onAccountSelected($event)">
+            </app-account-list-item>
         </li>
     </ul>
 </div>

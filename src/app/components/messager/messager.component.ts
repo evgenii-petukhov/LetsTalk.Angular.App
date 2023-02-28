@@ -14,7 +14,7 @@ export class MessagerComponent implements OnInit {
 
     accounts = new Array<Account>();
 
-    account: Account = null;
+    selectedAccount: Account = null;
 
     messages = new Array<Message>();
 
@@ -32,7 +32,7 @@ export class MessagerComponent implements OnInit {
         });
 
         this.signalService.init(data => {
-            if (data.senderId === this.account.id) {
+            if (data.senderId === this.selectedAccount.id) {
                 const message = new Message();
                 message.text = data.text;
                 message.date = data.created;
@@ -43,7 +43,7 @@ export class MessagerComponent implements OnInit {
     }
 
     onAccountSelected(accountId: number): void {
-        this.account = this.accounts.find(x => x.id === accountId);
+        this.selectedAccount = this.accounts.find(x => x.id === accountId);
         this.messages.splice(0);
         this.apiService.getMessages(accountId).subscribe((messages) => {
             this.messages.push(...messages.map((m) => {
