@@ -31,7 +31,15 @@ export class MessagerComponent implements OnInit {
             this.accounts.push(...accounts.map((account) => this.accountMappingService.map(account)));
         });
 
-        this.signalService.init();
+        this.signalService.init(data => {
+            if (data.senderId === this.account.id) {
+                const message = new Message();
+                message.text = data.text;
+                message.date = data.created;
+                message.isMine = false;
+                this.messages.push(message);
+            }
+        });
     }
 
     onAccountSelected(accountId: number): void {
