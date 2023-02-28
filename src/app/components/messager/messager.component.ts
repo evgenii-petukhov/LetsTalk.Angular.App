@@ -24,13 +24,16 @@ export class MessagerComponent implements OnInit {
         private accountMappingService: AccountMappingService,
         private signalService: SignalService,
         private toastr: ToastrService
-    ) {
-
-    }
+    ) {}
 
     ngOnInit(): void {
         this.apiService.getAccounts().subscribe((accounts) => {
             this.accounts.push(...accounts.map((account) => this.accountMappingService.map(account)));
+
+            if (this.accounts.length) {
+                this.selectedAccount = this.accounts[0];
+                this.loadMessages(this.accounts[0].id);
+            }
         });
 
         this.signalService.init(data => {
@@ -42,13 +45,23 @@ export class MessagerComponent implements OnInit {
                 this.messages.push(message);
             } else {
                 const sender = this.accounts.find(account => account.id === data.senderId);
-                this.toastr.info(data.text, `${sender.firstname} ${sender.lastname}`);
+                if (sender) {
+                    this.toastr.info(data.text, `${sender.firstname} ${sender.lastname}`);
+                }
             }
         });
     }
 
     onAccountSelected(accountId: number): void {
         this.selectedAccount = this.accounts.find(x => x.id === accountId);
+        this.loadMessages(accountId);
+    }
+
+    onMessageSent(message: Message): void {
+        this.messages.push(message);
+    }
+
+    private loadMessages(accountId: number): void {
         this.messages.splice(0);
         this.apiService.getMessages(accountId).subscribe((messages) => {
             this.messages.push(...messages.map((m) => {
@@ -59,9 +72,5 @@ export class MessagerComponent implements OnInit {
                 return message;
             }));
         });
-    }
-
-    onMessageSent(message: Message): void {
-        this.messages.push(message);
     }
 }
