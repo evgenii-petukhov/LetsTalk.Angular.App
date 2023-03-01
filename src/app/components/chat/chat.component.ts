@@ -9,10 +9,10 @@ import {
     ViewChild,
     ViewChildren
 } from "@angular/core";
-import { Account } from "src/app/models/rendering/account";
 import { Message } from "src/app/models/rendering/message";
 import { ApiService } from '../../services/api.service';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
+import { AccountDto } from "src/app/api-client/api-client";
 
 @Component({
     selector: 'app-chat',
@@ -20,7 +20,7 @@ import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
     styleUrls: ['./chat.component.scss'],
 })
 export class ChatComponent implements AfterViewInit {
-    @Input() account: Account;
+    @Input() account: AccountDto;
     @Input() messages: Message[];
     @Output() messageSentEvent = new EventEmitter<Message>();
     //https://pumpingco.de/blog/automatic-scrolling-only-if-a-user-already-scrolled-the-bottom-of-a-page-in-angular/

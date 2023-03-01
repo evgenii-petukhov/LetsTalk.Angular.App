@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Account } from '../../models/rendering/account';
+import { AccountDto } from 'src/app/api-client/api-client';
 
 @Component({
     selector: 'app-account-list',
@@ -7,8 +7,8 @@ import { Account } from '../../models/rendering/account';
     styleUrls: ['./account-list.component.scss'],
 })
 export class AccountListComponent {
-    @Input() accounts: Account[];
-    @Input() selectedAccountId: Account[];
+    @Input() accounts: AccountDto[];
+    @Input() selectedAccountId: AccountDto[];
     @Output() accountSelectedEvent = new EventEmitter<number>();
 
     onAccountSelected(accountId: number): void {

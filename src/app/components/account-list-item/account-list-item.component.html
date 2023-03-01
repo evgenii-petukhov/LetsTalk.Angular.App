@@ -1,13 +1,13 @@
 <a href="#" *ngIf="account" (click)="onAccountSelected()">
     <div class="user-photo"
-        [ngStyle]="account.pictureUrl && { 'background-image': 'url(' + account.pictureUrl + ')'}">
+        [ngStyle]="account.photoUrl && { 'background-image': 'url(' + account.photoUrl + ')'}">
     </div>
     <div class="user-details">
         <div class="user-name">
-            {{ account.firstname }} {{ account.lastname }}
+            {{ account.firstName }} {{ account.lastName }}
         </div>
         <div class="icon">
-            <fa-icon [icon]="account.icon"></fa-icon>
+            <app-social-media-icon [iconTypeId]="account.accountTypeId"></app-social-media-icon>
         </div>
     </div>
 </a>

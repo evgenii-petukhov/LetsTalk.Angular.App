@@ -27,6 +27,7 @@ import { MessageComponent } from './components/message/message.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoggedInUserComponent } from './components/logged-in-user/logged-in-user.component';
+import { SocialMediaIconComponent } from './components/social-media-icon/social-media-icon.component';
 
 @NgModule({
     declarations: [
@@ -38,7 +39,8 @@ import { LoggedInUserComponent } from './components/logged-in-user/logged-in-use
         MessagerComponent,
         AccountListItemComponent,
         MessageComponent,
-        LoggedInUserComponent
+        LoggedInUserComponent,
+        SocialMediaIconComponent
     ],
     imports: [
         BrowserModule,

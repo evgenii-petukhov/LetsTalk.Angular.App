@@ -35,7 +35,7 @@ export class ApiService {
         return this.client.account();
     }
 
-    getMessages(accountId): Observable<MessageDto[]> {
+    getMessages(accountId: number): Observable<MessageDto[]> {
         return this.client.messageAll(accountId);
     }
 
@@ -49,9 +49,4 @@ export class ApiService {
         request.text = text;
         return this.client.message(request);
     }
-
-    getUser(): Observable<User> {
-        return this.http.get<User>(USER_URL);
-    }
-
 }

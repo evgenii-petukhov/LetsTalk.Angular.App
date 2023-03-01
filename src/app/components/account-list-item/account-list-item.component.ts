@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Account } from 'src/app/models/rendering/account';
+import { AccountDto } from 'src/app/api-client/api-client';
 
 @Component({
     selector: 'app-account-list-item',
@@ -7,7 +7,7 @@ import { Account } from 'src/app/models/rendering/account';
     styleUrls: ['./account-list-item.component.scss']
 })
 export class AccountListItemComponent{
-    @Input() account: Account;
+    @Input() account: AccountDto;
     @Output() onAccountSelectedCallback = new EventEmitter<number>();
 
     onAccountSelected(): boolean {

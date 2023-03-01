@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
-import { Account } from '../../models/rendering/account';
-import { AccountMappingService } from '../../services/account-mapping.service';
 import { Message } from 'src/app/models/rendering/message';
 import { SignalService } from 'src/app/services/signalr.service';
 import { ToastrService } from 'ngx-toastr';
+import { AccountDto } from 'src/app/api-client/api-client';
 
 @Component({
     selector: 'app-messager',
@@ -13,28 +12,27 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class MessagerComponent implements OnInit {
 
-    accounts = new Array<Account>();
+    accounts = new Array<AccountDto>();
 
-    selectedAccount: Account = null;
+    selectedAccount: AccountDto = null;
 
-    me: Account = null;
+    me: AccountDto = null;
 
     messages = new Array<Message>();
 
     constructor(
         private apiService: ApiService,
-        private accountMappingService: AccountMappingService,
         private signalService: SignalService,
         private toastr: ToastrService
     ) {}
 
     ngOnInit(): void {
         this.apiService.getMe().subscribe(account => {
-            this.me = this.accountMappingService.map(account);
+            this.me = account;
         });
 
         this.apiService.getAccounts().subscribe(accounts => {
-            this.accounts.push(...accounts.map(account => this.accountMappingService.map(account)));
+            this.accounts.push(...accounts);
 
             if (this.accounts.length) {
                 this.selectedAccount = this.accounts[0];
@@ -52,7 +50,7 @@ export class MessagerComponent implements OnInit {
             } else {
                 const sender = this.accounts.find(account => account.id === data.senderId);
                 if (sender) {
-                    this.toastr.info(data.text, `${sender.firstname} ${sender.lastname}`);
+                    this.toastr.info(data.text, `${sender.firstName} ${sender.lastName}`);
                 }
             }
         });
