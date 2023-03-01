@@ -1,0 +1,9 @@
+<div class="user-photo"
+    [ngStyle]="account.pictureUrl && { 'background-image': 'url(' + account.pictureUrl + ')'}">
+</div>
+<div class="user-details">
+    <div class="user-name">You</div>
+    <a href="#" class="icon" (click)="logout()">
+        <fa-icon [icon]="faRightFromBracket"></fa-icon>
+    </a>
+</div>

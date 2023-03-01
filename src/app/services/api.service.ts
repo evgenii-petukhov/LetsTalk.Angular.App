@@ -39,6 +39,10 @@ export class ApiService {
         return this.client.messageAll(accountId);
     }
 
+    getMe(): Observable<MessageDto> {
+        return this.client.me();
+    }
+
     sendMessage(recipientId: number, text: string): Observable<MessageDto> {
         const request = new CreateMessageRequest();
         request.recipientId = recipientId;

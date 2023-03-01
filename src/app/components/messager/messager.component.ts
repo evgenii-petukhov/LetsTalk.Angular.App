@@ -17,6 +17,8 @@ export class MessagerComponent implements OnInit {
 
     selectedAccount: Account = null;
 
+    me: Account = null;
+
     messages = new Array<Message>();
 
     constructor(
@@ -27,8 +29,12 @@ export class MessagerComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.apiService.getAccounts().subscribe((accounts) => {
-            this.accounts.push(...accounts.map((account) => this.accountMappingService.map(account)));
+        this.apiService.getMe().subscribe(account => {
+            this.me = this.accountMappingService.map(account);
+        });
+
+        this.apiService.getAccounts().subscribe(accounts => {
+            this.accounts.push(...accounts.map(account => this.accountMappingService.map(account)));
 
             if (this.accounts.length) {
                 this.selectedAccount = this.accounts[0];
@@ -63,7 +69,7 @@ export class MessagerComponent implements OnInit {
 
     private loadMessages(accountId: number): void {
         this.messages.splice(0);
-        this.apiService.getMessages(accountId).subscribe((messages) => {
+        this.apiService.getMessages(accountId).subscribe(messages => {
             this.messages.push(...messages.map((m) => {
                 const message = new Message();
                 message.text = m.text;

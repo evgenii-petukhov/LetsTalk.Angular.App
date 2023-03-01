@@ -1,8 +1,12 @@
-<app-account-list
-    [accounts]="accounts"
-    [selectedAccountId]="selectedAccount?.id"
-    (accountSelectedEvent)="onAccountSelected($event)">
-</app-account-list>
+<div class="sidebar">
+    <app-logged-in-user *ngIf="me" [account]="me">
+    </app-logged-in-user>
+    <app-account-list
+        [accounts]="accounts"
+        [selectedAccountId]="selectedAccount?.id"
+        (accountSelectedEvent)="onAccountSelected($event)">
+    </app-account-list>
+</div>
 <app-chat *ngIf="selectedAccount"
     [account]="selectedAccount"
     [messages]="messages"

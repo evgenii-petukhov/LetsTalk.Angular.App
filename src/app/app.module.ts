@@ -26,6 +26,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { MessageComponent } from './components/message/message.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { LoggedInUserComponent } from './components/logged-in-user/logged-in-user.component';
 
 @NgModule({
     declarations: [
@@ -36,7 +37,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         AccountListComponent,
         MessagerComponent,
         AccountListItemComponent,
-        MessageComponent
+        MessageComponent,
+        LoggedInUserComponent
     ],
     imports: [
         BrowserModule,
