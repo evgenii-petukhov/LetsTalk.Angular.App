@@ -49,15 +49,15 @@ export class ChatComponent implements AfterViewInit {
     }
 
     send(): void {
-        if (this.message.trim()) {
-            this.apiService.sendMessage(this.account.id, this.message).subscribe(response => {
-                this.message = '';
-                const message = new Message();
-                message.date = response.created;
-                message.text = response.text;
-                message.isMine = true;
-                this.messageSentEvent.emit(message);
-            });
-        }
+        if (!this.message.trim()) return;
+        
+        this.apiService.sendMessage(this.account.id, this.message).subscribe(response => {
+            this.message = '';
+            const message = new Message();
+            message.date = response.created;
+            message.text = response.text;
+            message.isMine = true;
+            this.messageSentEvent.emit(message);
+        });
     }
 }
