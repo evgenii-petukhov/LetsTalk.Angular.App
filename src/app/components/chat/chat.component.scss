@@ -22,13 +22,34 @@
     .send-message-container {
         display: flex;
 
-        textarea {
+        .textarea-container {
             flex: 1 1 auto;
-            resize: none;
+            padding: 6px;
+            display: flex;
+            textarea {
+                flex: 1 1 auto;
+                resize: none;
+                border: 2px solid #666;
+                border-radius: 8px;
+                outline: none;
+            }
         }
 
-        button {
+        .submit-container {
             flex: 0 1 auto;
+            padding: 0 6px 0 0;
+            display: flex;
+            button {
+                flex: 0 1 auto;
+                background: none;
+                border: none;
+                font-size: 21px;
+                padding: 0 8px;
+                color: #5a5a5a;
+                &[disabled] {
+                    color: #aaa9a9;
+                }
+            }
         }
     }
 }

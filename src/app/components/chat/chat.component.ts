@@ -12,6 +12,7 @@ import {
 import { Account } from "src/app/models/rendering/account";
 import { Message } from "src/app/models/rendering/message";
 import { ApiService } from '../../services/api.service';
+import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 
 @Component({
     selector: 'app-chat',
@@ -26,6 +27,7 @@ export class ChatComponent implements AfterViewInit {
     @ViewChild('scrollFrame', { static: false }) scrollFrame: ElementRef;
     @ViewChildren('scrollItem') itemElements: QueryList<any>;
     message = '';
+    faPaperPlane = faPaperPlane;
 
     private scrollContainer: any;
 
