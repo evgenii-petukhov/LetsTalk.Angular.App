@@ -28,6 +28,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoggedInUserComponent } from './components/logged-in-user/logged-in-user.component';
 import { SocialMediaIconComponent } from './components/social-media-icon/social-media-icon.component';
+import { ChatHeaderComponent } from './components/chat-header/chat-header.component';
 
 @NgModule({
     declarations: [
@@ -40,7 +41,8 @@ import { SocialMediaIconComponent } from './components/social-media-icon/social-
         AccountListItemComponent,
         MessageComponent,
         LoggedInUserComponent,
-        SocialMediaIconComponent
+        SocialMediaIconComponent,
+        ChatHeaderComponent
     ],
     imports: [
         BrowserModule,

@@ -1,6 +1,5 @@
-<div class="chat-header">
-    <app-account-list-item [account]="account"></app-account-list-item>
-</div>
+<app-chat-header [account]="account"  *ngIf="account">
+</app-chat-header>
 <div class="messages-container" #scrollFrame>
     <div *ngIf="messages">
         <ul>
