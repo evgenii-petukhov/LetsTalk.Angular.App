@@ -1,8 +1,6 @@
 <div class="sidebar">
     <app-logged-in-user *ngIf="me" [account]="me"></app-logged-in-user>
     <app-account-list
-        [accounts]="accounts"
-        [selectedAccountId]="(selectedAccount$ | async)?.id"
         (accountSelectedEvent)="onAccountSelected($event)">
     </app-account-list>
 </div>

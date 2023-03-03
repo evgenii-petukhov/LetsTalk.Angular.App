@@ -9,6 +9,7 @@ import { selectMessages } from 'src/app/state/messages/messages.selectors';
 import { selectSelectedAccount } from 'src/app/state/selected-account/selectedSelectedAccount.selectors';
 import { MessagesActions } from 'src/app/state/messages/messages.actions';
 import { SelectedAccountActions } from 'src/app/state/selected-account/selectedAccount.actions';
+import { AccountsActions } from 'src/app/state/accounts/accounts.actions';
 
 @Component({
     selector: 'app-messager',
@@ -40,13 +41,16 @@ export class MessagerComponent implements OnInit {
         });
 
         this.apiService.getAccounts().subscribe(accounts => {
-            this.accounts.push(...accounts);
+            this.accounts = accounts;
+            this.store.dispatch(AccountsActions.init({
+                accounts: accounts
+            }))
 
-            if (this.accounts.length) {
+            if (accounts.length) {
                 this.store.dispatch(SelectedAccountActions.init({
-                    account: this.accounts[0]
+                    account: accounts[0]
                 }));
-                this.loadMessages(this.accounts[0].id);
+                this.loadMessages(accounts[0].id);
             }
         });
 

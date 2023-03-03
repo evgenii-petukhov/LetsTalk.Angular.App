@@ -32,6 +32,7 @@ import { ChatHeaderComponent } from './components/chat-header/chat-header.compon
 import { StoreModule } from '@ngrx/store';
 import { messagesReducer } from './state/messages/messages.reducer';
 import { selectedAccountReducer } from './state/selected-account/selectedAccount.reducer';
+import { accountsReducer } from './state/accounts/accounts.reducer';
 
 @NgModule({
     declarations: [
@@ -57,7 +58,11 @@ import { selectedAccountReducer } from './state/selected-account/selectedAccount
         FormsModule,
         BrowserAnimationsModule,
         ToastrModule.forRoot(),
-        StoreModule.forRoot({ messages: messagesReducer, selectedAccount: selectedAccountReducer})
+        StoreModule.forRoot({
+            messages: messagesReducer, 
+            selectedAccount: selectedAccountReducer,
+            accounts: accountsReducer
+        })
     ],
     providers: [
         authInterceptorProvider,

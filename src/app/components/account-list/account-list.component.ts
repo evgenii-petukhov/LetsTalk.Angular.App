@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { AccountDto } from 'src/app/api-client/api-client';
+import { Store } from '@ngrx/store';
+import { selectAccounts } from 'src/app/state/accounts/accounts.selectors';
+import { selectSelectedAccount } from 'src/app/state/selected-account/selectedSelectedAccount.selectors';
 
 @Component({
     selector: 'app-account-list',
@@ -7,9 +9,13 @@ import { AccountDto } from 'src/app/api-client/api-client';
     styleUrls: ['./account-list.component.scss'],
 })
 export class AccountListComponent {
-    @Input() accounts: AccountDto[];
-    @Input() selectedAccountId: AccountDto[];
     @Output() accountSelectedEvent = new EventEmitter<number>();
+
+    accounts$ = this.store.select(selectAccounts);
+
+    selectedAccount$ = this.store.select(selectSelectedAccount);
+
+    constructor(private store: Store) {}
 
     onAccountSelected(accountId: number): void {
         this.accountSelectedEvent.emit(accountId);
