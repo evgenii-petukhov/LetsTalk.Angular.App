@@ -2,4 +2,4 @@
     <app-logged-in-user *ngIf="me" [account]="me"></app-logged-in-user>
     <app-account-list></app-account-list>
 </div>
-<app-chat *ngIf="(selectedAccount$ | async)"></app-chat>
+<app-chat *ngIf="(selectedAccountId$ | async)"></app-chat>

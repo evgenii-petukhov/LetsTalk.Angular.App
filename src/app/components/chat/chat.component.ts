@@ -10,10 +10,9 @@ import {
 import { Message } from "src/app/models/rendering/message";
 import { ApiService } from '../../services/api.service';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
-import { AccountDto } from "src/app/api-client/api-client";
 import { Store } from "@ngrx/store";
-import { selectSelectedAccount } from "src/app/state/selected-account/selectedSelectedAccount.selectors";
-import { selectMessages } from "src/app/state/messages/messages.selectors";
+import { selectSelectedAccountId } from "src/app/state/selected-account-id/select-selected-account-id.selectors";
+import { selectMessages } from "src/app/state/messages/messages.selector";
 import { MessagesActions } from "src/app/state/messages/messages.actions";
 
 @Component({
@@ -27,11 +26,11 @@ export class ChatComponent implements OnInit, AfterViewInit {
     @ViewChildren('scrollItem') itemElements: QueryList<any>;
     message = '';
     faPaperPlane = faPaperPlane;
-    account$= this.store.select(selectSelectedAccount);
     messages$ = this.store.select(selectMessages);
 
+    private accountId$ = this.store.select(selectSelectedAccountId);
     private scrollContainer: any;
-    private account: AccountDto;
+    private accountId: number;
 
     constructor(
         private apiService: ApiService,
@@ -39,9 +38,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
     ) { }
 
     ngOnInit(): void {
-        this.account$.subscribe(account => {
-            this.account = account;
-            this.loadMessages(account.id);
+        this.accountId$.subscribe(accountId => {
+            this.accountId = accountId;
+            this.loadMessages(accountId);
         });
     }
 
@@ -61,7 +60,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     send(): void {
         if (!this.message.trim()) return;
         
-        this.apiService.sendMessage(this.account.id, this.message).subscribe(response => {
+        this.apiService.sendMessage(this.accountId, this.message).subscribe(response => {
             this.message = '';
             const message = new Message();
             message.date = response.created;

@@ -1,10 +1,10 @@
-<div class="user-photo" [ngStyle]="account.photoUrl && { 'background-image': 'url(' + account.photoUrl + ')'}">
+<div class="user-photo" [ngStyle]="(account$ | async).photoUrl && { 'background-image': 'url(' + (account$ | async).photoUrl + ')'}">
 </div>
 <div class="user-details">
     <div class="user-name">
-        {{ account.firstName }} {{ account.lastName }}
+        {{ (account$ | async).firstName }} {{ (account$ | async).lastName }}
     </div>
     <div class="icon">
-        <app-social-media-icon [iconTypeId]="account.accountTypeId"></app-social-media-icon>
+        <app-social-media-icon [iconTypeId]="(account$ | async).accountTypeId"></app-social-media-icon>
     </div>
 </div>

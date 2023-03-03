@@ -4,7 +4,7 @@ import { AccountsActions } from './accounts.actions';
 
 export const initialState: Array<AccountDto> = [];
 
-export const accountsReducer = createReducer(
+export const AccountsReducer = createReducer(
     initialState,
     on(AccountsActions.init, (_state, {accounts}) => accounts)
 );

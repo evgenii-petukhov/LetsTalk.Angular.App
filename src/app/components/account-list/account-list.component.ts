@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AccountDto } from 'src/app/api-client/api-client';
-import { selectAccounts } from 'src/app/state/accounts/accounts.selectors';
-import { SelectedAccountActions } from 'src/app/state/selected-account/selectedAccount.actions';
-import { selectSelectedAccount } from 'src/app/state/selected-account/selectedSelectedAccount.selectors';
+import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
+import { SelectedAccountIdActions } from 'src/app/state/selected-account-id/selected-account-id.actions';
+import { selectSelectedAccountId } from 'src/app/state/selected-account-id/select-selected-account-id.selectors';
 
 @Component({
     selector: 'app-account-list',
@@ -15,7 +15,7 @@ export class AccountListComponent implements OnInit {
 
     accounts$ = this.store.select(selectAccounts);
 
-    selectedAccount$ = this.store.select(selectSelectedAccount);
+    selectedAccountId$ = this.store.select(selectSelectedAccountId);
 
     constructor(private store: Store) {}
 
@@ -26,8 +26,8 @@ export class AccountListComponent implements OnInit {
     }
 
     onAccountSelected(accountId: number): void {
-        this.store.dispatch(SelectedAccountActions.init({
-            account: this.accounts.find(account => account.id === accountId)
+        this.store.dispatch(SelectedAccountIdActions.init({
+            accountId: accountId
         }));
     }
 }

@@ -1,5 +1,4 @@
-<app-chat-header [account]="(account$ | async)">
-</app-chat-header>
+<app-chat-header></app-chat-header>
 <div class="messages-container" #scrollFrame>
     <ul>
         <li *ngFor="let message of (messages$ | async)">

@@ -30,9 +30,9 @@ import { LoggedInUserComponent } from './components/logged-in-user/logged-in-use
 import { SocialMediaIconComponent } from './components/social-media-icon/social-media-icon.component';
 import { ChatHeaderComponent } from './components/chat-header/chat-header.component';
 import { StoreModule } from '@ngrx/store';
-import { messagesReducer } from './state/messages/messages.reducer';
-import { selectedAccountReducer } from './state/selected-account/selectedAccount.reducer';
-import { accountsReducer } from './state/accounts/accounts.reducer';
+import { MessagesReducer } from './state/messages/messages.reducer';
+import { SelectedAccountIdReducer } from './state/selected-account-id/selected-account-id.reducer';
+import { AccountsReducer } from './state/accounts/accounts.reducer';
 
 @NgModule({
     declarations: [
@@ -59,9 +59,9 @@ import { accountsReducer } from './state/accounts/accounts.reducer';
         BrowserAnimationsModule,
         ToastrModule.forRoot(),
         StoreModule.forRoot({
-            messages: messagesReducer, 
-            selectedAccount: selectedAccountReducer,
-            accounts: accountsReducer
+            messages: MessagesReducer, 
+            selectedAccountId: SelectedAccountIdReducer,
+            accounts: AccountsReducer
         })
     ],
     providers: [
