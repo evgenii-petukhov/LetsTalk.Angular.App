@@ -9,6 +9,6 @@
 </div>
 <app-chat *ngIf="selectedAccount"
     [account]="selectedAccount"
-    [messages]="messages"
+    [messages]="(messages$ | async)!"
     (messageSentEvent)="onMessageSent($event)">
 </app-chat>

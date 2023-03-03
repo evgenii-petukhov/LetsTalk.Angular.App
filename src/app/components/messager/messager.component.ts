@@ -4,6 +4,9 @@ import { Message } from 'src/app/models/rendering/message';
 import { SignalService } from 'src/app/services/signalr.service';
 import { ToastrService } from 'ngx-toastr';
 import { AccountDto } from 'src/app/api-client/api-client';
+import { Store } from '@ngrx/store';
+import { selectMessages } from 'src/app/state/messages.selectors';
+import { MessagesActions } from 'src/app/state/messages.actions';
 
 @Component({
     selector: 'app-messager',
@@ -18,12 +21,13 @@ export class MessagerComponent implements OnInit {
 
     me: AccountDto = null;
 
-    messages = new Array<Message>();
+    messages$ = this.store.select(selectMessages);
 
     constructor(
         private apiService: ApiService,
         private signalService: SignalService,
-        private toastr: ToastrService
+        private toastr: ToastrService,
+        private store: Store
     ) {}
 
     ngOnInit(): void {
@@ -46,7 +50,7 @@ export class MessagerComponent implements OnInit {
                 message.text = data.text;
                 message.date = data.created;
                 message.isMine = false;
-                this.messages.push(message);
+                this.store.dispatch(MessagesActions.add({message}));
             } else {
                 const sender = this.accounts.find(account => account.id === data.senderId);
                 if (sender) {
@@ -62,18 +66,19 @@ export class MessagerComponent implements OnInit {
     }
 
     onMessageSent(message: Message): void {
-        this.messages.push(message);
+        this.store.dispatch(MessagesActions.add({message}));
     }
 
     private loadMessages(accountId: number): void {
-        this.messages.splice(0);
         this.apiService.getMessages(accountId).subscribe(messages => {
-            this.messages.push(...messages.map((m) => {
-                const message = new Message();
-                message.text = m.text;
-                message.date = m.created;
-                message.isMine = m.senderId !== accountId
-                return message;
+            this.store.dispatch(MessagesActions.init({
+                messages: messages.map((m) => {
+                    const message = new Message();
+                    message.text = m.text;
+                    message.date = m.created;
+                    message.isMine = m.senderId !== accountId
+                    return message;
+                })
             }));
         });
     }

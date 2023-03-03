@@ -29,6 +29,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoggedInUserComponent } from './components/logged-in-user/logged-in-user.component';
 import { SocialMediaIconComponent } from './components/social-media-icon/social-media-icon.component';
 import { ChatHeaderComponent } from './components/chat-header/chat-header.component';
+import { StoreModule } from '@ngrx/store';
+import { messagesReducer } from './state/messages.reducer';
 
 @NgModule({
     declarations: [
@@ -53,7 +55,8 @@ import { ChatHeaderComponent } from './components/chat-header/chat-header.compon
         FontAwesomeModule,
         FormsModule,
         BrowserAnimationsModule,
-        ToastrModule.forRoot()
+        ToastrModule.forRoot(),
+        StoreModule.forRoot({ messages: messagesReducer})
     ],
     providers: [
         authInterceptorProvider,
