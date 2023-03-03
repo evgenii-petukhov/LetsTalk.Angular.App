@@ -5,10 +5,10 @@ import { SignalService } from 'src/app/services/signalr.service';
 import { ToastrService } from 'ngx-toastr';
 import { AccountDto } from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
-import { selectMessages } from 'src/app/state/messages.selectors';
-import { selectSelectedAccount } from 'src/app/state/selectedSelectedAccount.selectors';
-import { MessagesActions } from 'src/app/state/messages.actions';
-import { SelectedAccountActions } from 'src/app/state/selectedAccount.actions';
+import { selectMessages } from 'src/app/state/messages/messages.selectors';
+import { selectSelectedAccount } from 'src/app/state/selected-account/selectedSelectedAccount.selectors';
+import { MessagesActions } from 'src/app/state/messages/messages.actions';
+import { SelectedAccountActions } from 'src/app/state/selected-account/selectedAccount.actions';
 
 @Component({
     selector: 'app-messager',
@@ -21,11 +21,11 @@ export class MessagerComponent implements OnInit {
     
     selectedAccount$ = this.store.select(selectSelectedAccount);
 
-    selectedAccountId: number;
-
     me: AccountDto = null;
 
     messages$ = this.store.select(selectMessages);
+
+    private selectedAccountId: number;
 
     constructor(
         private apiService: ApiService,

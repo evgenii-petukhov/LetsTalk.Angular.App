@@ -12,9 +12,9 @@ import { ApiService } from '../../services/api.service';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { AccountDto } from "src/app/api-client/api-client";
 import { Store } from "@ngrx/store";
-import { selectSelectedAccount } from "src/app/state/selectedSelectedAccount.selectors";
-import { selectMessages } from "src/app/state/messages.selectors";
-import { MessagesActions } from "src/app/state/messages.actions";
+import { selectSelectedAccount } from "src/app/state/selected-account/selectedSelectedAccount.selectors";
+import { selectMessages } from "src/app/state/messages/messages.selectors";
+import { MessagesActions } from "src/app/state/messages/messages.actions";
 
 @Component({
     selector: 'app-chat',
@@ -28,10 +28,10 @@ export class ChatComponent implements OnInit, AfterViewInit {
     message = '';
     faPaperPlane = faPaperPlane;
     account$= this.store.select(selectSelectedAccount);
-    account: AccountDto;
     messages$ = this.store.select(selectMessages);
 
     private scrollContainer: any;
+    private account: AccountDto;
 
     constructor(
         private apiService: ApiService,

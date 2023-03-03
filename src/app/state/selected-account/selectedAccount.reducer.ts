@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { AccountDto } from '../api-client/api-client';
+import { AccountDto } from '../../api-client/api-client';
 import { SelectedAccountActions } from './selectedAccount.actions';
 
 export const initialState: AccountDto = null;

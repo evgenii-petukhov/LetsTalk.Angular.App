@@ -30,8 +30,8 @@ import { LoggedInUserComponent } from './components/logged-in-user/logged-in-use
 import { SocialMediaIconComponent } from './components/social-media-icon/social-media-icon.component';
 import { ChatHeaderComponent } from './components/chat-header/chat-header.component';
 import { StoreModule } from '@ngrx/store';
-import { messagesReducer } from './state/messages.reducer';
-import { selectedAccountReducer } from './state/selectedAccount.reducer';
+import { messagesReducer } from './state/messages/messages.reducer';
+import { selectedAccountReducer } from './state/selected-account/selectedAccount.reducer';
 
 @NgModule({
     declarations: [
