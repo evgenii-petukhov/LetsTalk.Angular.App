@@ -41,6 +41,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.account$.subscribe(account => {
             this.account = account;
+            this.loadMessages(account.id);
         });
     }
 
@@ -67,6 +68,20 @@ export class ChatComponent implements OnInit, AfterViewInit {
             message.text = response.text;
             message.isMine = true;
             this.store.dispatch(MessagesActions.add({message}));
+        });
+    }
+
+    private loadMessages(accountId: number): void {
+        this.apiService.getMessages(accountId).subscribe(messages => {
+            this.store.dispatch(MessagesActions.init({
+                messages: messages.map((m) => {
+                    const message = new Message();
+                    message.text = m.text;
+                    message.date = m.created;
+                    message.isMine = m.senderId !== accountId
+                    return message;
+                })
+            }));
         });
     }
 }

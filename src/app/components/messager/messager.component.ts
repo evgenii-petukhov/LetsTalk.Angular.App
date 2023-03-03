@@ -50,7 +50,6 @@ export class MessagerComponent implements OnInit {
                 this.store.dispatch(SelectedAccountActions.init({
                     account: accounts[0]
                 }));
-                this.loadMessages(accounts[0].id);
             }
         });
 
@@ -71,27 +70,6 @@ export class MessagerComponent implements OnInit {
                     this.toastr.info(data.text, `${sender.firstName} ${sender.lastName}`);
                 }
             }
-        });
-    }
-
-    onAccountSelected(accountId: number): void {
-        this.store.dispatch(SelectedAccountActions.init({
-            account: this.accounts.find(account => account.id === accountId)
-        }));
-        this.loadMessages(accountId);
-    }
-
-    private loadMessages(accountId: number): void {
-        this.apiService.getMessages(accountId).subscribe(messages => {
-            this.store.dispatch(MessagesActions.init({
-                messages: messages.map((m) => {
-                    const message = new Message();
-                    message.text = m.text;
-                    message.date = m.created;
-                    message.isMine = m.senderId !== accountId
-                    return message;
-                })
-            }));
         });
     }
 }
