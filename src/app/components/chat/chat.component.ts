@@ -2,9 +2,7 @@ import {
     AfterViewInit,
     Component,
     ElementRef,
-    EventEmitter,
-    Input,
-    Output,
+    OnInit,
     QueryList,
     ViewChild,
     ViewChildren
@@ -13,27 +11,38 @@ import { Message } from "src/app/models/rendering/message";
 import { ApiService } from '../../services/api.service';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { AccountDto } from "src/app/api-client/api-client";
+import { Store } from "@ngrx/store";
+import { selectSelectedAccount } from "src/app/state/selectedSelectedAccount.selectors";
+import { selectMessages } from "src/app/state/messages.selectors";
+import { MessagesActions } from "src/app/state/messages.actions";
 
 @Component({
     selector: 'app-chat',
     templateUrl: './chat.component.html',
     styleUrls: ['./chat.component.scss'],
 })
-export class ChatComponent implements AfterViewInit {
-    @Input() account: AccountDto;
-    @Input() messages: Message[];
-    @Output() messageSentEvent = new EventEmitter<Message>();
+export class ChatComponent implements OnInit, AfterViewInit {
     //https://pumpingco.de/blog/automatic-scrolling-only-if-a-user-already-scrolled-the-bottom-of-a-page-in-angular/
     @ViewChild('scrollFrame', { static: false }) scrollFrame: ElementRef;
     @ViewChildren('scrollItem') itemElements: QueryList<any>;
     message = '';
     faPaperPlane = faPaperPlane;
+    account$= this.store.select(selectSelectedAccount);
+    account: AccountDto;
+    messages$ = this.store.select(selectMessages);
 
     private scrollContainer: any;
 
     constructor(
-        private apiService: ApiService
+        private apiService: ApiService,
+        private store: Store
     ) { }
+
+    ngOnInit(): void {
+        this.account$.subscribe(account => {
+            this.account = account;
+        });
+    }
 
     ngAfterViewInit() {
         this.scrollContainer = this.scrollFrame.nativeElement;
@@ -57,7 +66,7 @@ export class ChatComponent implements AfterViewInit {
             message.date = response.created;
             message.text = response.text;
             message.isMine = true;
-            this.messageSentEvent.emit(message);
+            this.store.dispatch(MessagesActions.add({message}));
         });
     }
 }

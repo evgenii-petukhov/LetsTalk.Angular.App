@@ -6,7 +6,9 @@ import { ToastrService } from 'ngx-toastr';
 import { AccountDto } from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
 import { selectMessages } from 'src/app/state/messages.selectors';
+import { selectSelectedAccount } from 'src/app/state/selectedSelectedAccount.selectors';
 import { MessagesActions } from 'src/app/state/messages.actions';
+import { SelectedAccountActions } from 'src/app/state/selectedAccount.actions';
 
 @Component({
     selector: 'app-messager',
@@ -16,8 +18,10 @@ import { MessagesActions } from 'src/app/state/messages.actions';
 export class MessagerComponent implements OnInit {
 
     accounts = new Array<AccountDto>();
+    
+    selectedAccount$ = this.store.select(selectSelectedAccount);
 
-    selectedAccount: AccountDto = null;
+    selectedAccountId: number;
 
     me: AccountDto = null;
 
@@ -39,13 +43,19 @@ export class MessagerComponent implements OnInit {
             this.accounts.push(...accounts);
 
             if (this.accounts.length) {
-                this.selectedAccount = this.accounts[0];
+                this.store.dispatch(SelectedAccountActions.init({
+                    account: this.accounts[0]
+                }));
                 this.loadMessages(this.accounts[0].id);
             }
         });
 
+        this.selectedAccount$.subscribe(selectedAccount => {
+            this.selectedAccountId = selectedAccount?.id
+        });
+
         this.signalService.init(data => {
-            if (data.senderId === this.selectedAccount?.id) {
+            if (data.senderId === this.selectedAccountId) {
                 const message = new Message();
                 message.text = data.text;
                 message.date = data.created;
@@ -61,12 +71,10 @@ export class MessagerComponent implements OnInit {
     }
 
     onAccountSelected(accountId: number): void {
-        this.selectedAccount = this.accounts.find(x => x.id === accountId);
+        this.store.dispatch(SelectedAccountActions.init({
+            account: this.accounts.find(account => account.id === accountId)
+        }));
         this.loadMessages(accountId);
-    }
-
-    onMessageSent(message: Message): void {
-        this.store.dispatch(MessagesActions.add({message}));
     }
 
     private loadMessages(accountId: number): void {

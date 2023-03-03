@@ -31,6 +31,7 @@ import { SocialMediaIconComponent } from './components/social-media-icon/social-
 import { ChatHeaderComponent } from './components/chat-header/chat-header.component';
 import { StoreModule } from '@ngrx/store';
 import { messagesReducer } from './state/messages.reducer';
+import { selectedAccountReducer } from './state/selectedAccount.reducer';
 
 @NgModule({
     declarations: [
@@ -56,7 +57,7 @@ import { messagesReducer } from './state/messages.reducer';
         FormsModule,
         BrowserAnimationsModule,
         ToastrModule.forRoot(),
-        StoreModule.forRoot({ messages: messagesReducer})
+        StoreModule.forRoot({ messages: messagesReducer, selectedAccount: selectedAccountReducer})
     ],
     providers: [
         authInterceptorProvider,

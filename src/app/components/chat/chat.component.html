@@ -1,16 +1,14 @@
-<app-chat-header [account]="account"  *ngIf="account">
+<app-chat-header [account]="(account$ | async)">
 </app-chat-header>
 <div class="messages-container" #scrollFrame>
-    <div *ngIf="messages">
-        <ul>
-            <li *ngFor="let message of messages">
-                <app-message #scrollItem
-                    [message]="message"
-                    [ngClass]="message.isMine && 'mine'">
-                </app-message>
-            </li>
-        </ul>
-    </div>
+    <ul>
+        <li *ngFor="let message of (messages$ | async)">
+            <app-message #scrollItem
+                [message]="message"
+                [ngClass]="message.isMine && 'mine'">
+            </app-message>
+        </li>
+    </ul>
 </div>
 <div class="send-message-container">
     <div class="textarea-container">
