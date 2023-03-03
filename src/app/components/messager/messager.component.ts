@@ -5,7 +5,6 @@ import { SignalService } from 'src/app/services/signalr.service';
 import { ToastrService } from 'ngx-toastr';
 import { AccountDto } from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
-import { selectMessages } from 'src/app/state/messages/messages.selector';
 import { selectSelectedAccountId } from 'src/app/state/selected-account-id/select-selected-account-id.selectors';
 import { MessagesActions } from 'src/app/state/messages/messages.actions';
 import { SelectedAccountIdActions } from 'src/app/state/selected-account-id/selected-account-id.actions';
@@ -17,9 +16,7 @@ import { AccountsActions } from 'src/app/state/accounts/accounts.actions';
     styleUrls: ['./messager.component.scss']
 })
 export class MessagerComponent implements OnInit {
-    
     selectedAccountId$ = this.store.select(selectSelectedAccountId);
-
     me: AccountDto = null;
 
     private accounts = new Array<AccountDto>();

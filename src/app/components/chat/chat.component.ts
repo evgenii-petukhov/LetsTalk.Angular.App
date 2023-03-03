@@ -49,14 +49,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
         this.itemElements.changes.subscribe(() => this.scrollToBottom());
     }
 
-    private scrollToBottom(): void {
-        this.scrollContainer.scroll({
-            top: this.scrollContainer.scrollHeight,
-            left: 0,
-            behavior: 'smooth'
-        });
-    }
-
     send(): void {
         if (!this.message.trim()) return;
         
@@ -67,6 +59,14 @@ export class ChatComponent implements OnInit, AfterViewInit {
             message.text = response.text;
             message.isMine = true;
             this.store.dispatch(MessagesActions.add({message}));
+        });
+    }
+
+    private scrollToBottom(): void {
+        this.scrollContainer.scroll({
+            top: this.scrollContainer.scrollHeight,
+            left: 0,
+            behavior: 'smooth'
         });
     }
 
