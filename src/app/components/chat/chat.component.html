@@ -1,21 +1,23 @@
-<app-chat-header></app-chat-header>
-<div class="messages-container" #scrollFrame>
-    <ul>
-        <li *ngFor="let message of (messages$ | async)">
-            <app-message #scrollItem
-                [message]="message"
-                [ngClass]="message.isMine && 'mine'">
-            </app-message>
-        </li>
-    </ul>
-</div>
-<div class="send-message-container">
-    <div class="textarea-container">
-        <textarea [(ngModel)]="message" (keydown.enter)="send()"></textarea>
+<div class="chat-container">
+    <app-chat-header></app-chat-header>
+    <div class="messages-container" #scrollFrame>
+        <ul>
+            <li *ngFor="let message of (messages$ | async)">
+                <app-message #scrollItem
+                    [message]="message"
+                    [ngClass]="message.isMine && 'mine'">
+                </app-message>
+            </li>
+        </ul>
     </div>
-    <div class="submit-container">
-        <button (click)="send()" [disabled]="!message.trim()">
-            <fa-icon [icon]="faPaperPlane"></fa-icon>
-        </button>
+    <div class="send-message-container">
+        <div class="textarea-container">
+            <textarea [(ngModel)]="message" (keydown.enter)="send()"></textarea>
+        </div>
+        <div class="submit-container">
+            <button (click)="send()" [disabled]="!message.trim()">
+                <fa-icon [icon]="faPaperPlane"></fa-icon>
+            </button>
+        </div>
     </div>
 </div>

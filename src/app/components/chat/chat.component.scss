@@ -1,53 +1,56 @@
 :host {
-    flex: 1 1 auto;
     display: flex;
-    flex-direction: column;
+    flex: 1 1 auto;
 
-    .messages-container {
-        flex: 1 1 auto;
-        overflow-y: auto;
-
-        ul {
-            display: flex;
-            flex-direction: column;
-            margin: 0;
-            padding: 0;
-
-            li {
-                display: flex;       
-            }
-        }
-    }
-
-    .send-message-container {
+    .chat-container {
         display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
 
-        .textarea-container {
+        .messages-container {
             flex: 1 1 auto;
-            padding: 6px;
-            display: flex;
-            textarea {
-                flex: 1 1 auto;
-                resize: none;
-                border: 2px solid #666;
-                border-radius: 8px;
-                outline: none;
+            overflow-y: auto;
+    
+            ul {
+                margin: 0;
+                padding: 0;
+    
+                li {
+                    display: flex;       
+                }
             }
         }
-
-        .submit-container {
-            flex: 0 1 auto;
-            padding: 0 6px 0 0;
+    
+        .send-message-container {
             display: flex;
-            button {
+    
+            .textarea-container {
+                flex: 1 1 auto;
+                padding: 6px;
+                display: flex;
+                textarea {
+                    flex: 1 1 auto;
+                    resize: none;
+                    border: 2px solid #666;
+                    border-radius: 8px;
+                    outline: none;
+                }
+            }
+    
+            .submit-container {
                 flex: 0 1 auto;
-                background: none;
-                border: none;
-                font-size: 21px;
-                padding: 0 8px;
-                color: #5a5a5a;
-                &[disabled] {
-                    color: #aaa9a9;
+                padding: 0 6px 0 0;
+                display: flex;
+                button {
+                    flex: 0 1 auto;
+                    background: none;
+                    border: none;
+                    font-size: 21px;
+                    padding: 0 8px;
+                    color: #5a5a5a;
+                    &[disabled] {
+                        color: #aaa9a9;
+                    }
                 }
             }
         }
