@@ -12,14 +12,17 @@ export class SocialMediaIconComponent implements OnInit {
         switch (+this.iconTypeId) {
             case AccountTypes.FACEBOOK:
                 this.icon = faFacebook;
+                this.title = 'Facebook';
                 break;
 
             case AccountTypes.VK:
                 this.icon = faVk;
+                this.title = 'VK';
                 break;
         }
     }
 
     icon: IconDefinition;
+    title: string;
     @Input() iconTypeId: number;
 }
