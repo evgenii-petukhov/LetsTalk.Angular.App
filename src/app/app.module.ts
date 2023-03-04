@@ -31,6 +31,7 @@ import { SocialMediaIconComponent } from './components/social-media-icon/social-
 import { ChatHeaderComponent } from './components/chat-header/chat-header.component';
 import { StoreModule } from '@ngrx/store';
 import { StoreConfig } from './state/store-config';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 @NgModule({
     declarations: [
@@ -44,7 +45,8 @@ import { StoreConfig } from './state/store-config';
         MessageComponent,
         LoggedInUserComponent,
         SocialMediaIconComponent,
-        ChatHeaderComponent
+        ChatHeaderComponent,
+        SidebarComponent
     ],
     imports: [
         BrowserModule,
