@@ -53,6 +53,7 @@ export class MessagerComponent implements OnInit {
                 message.date = data.created;
                 message.isMine = false;
                 this.store.dispatch(MessagesActions.add({message}));
+                this.apiService.markAsRead(data.id).subscribe();
             } else {
                 const sender = this.accounts.find(account => account.id === data.senderId);
                 if (sender) {

@@ -9,7 +9,8 @@ import {
     ApiClient, 
     AccountDto, 
     CreateMessageRequest, 
-    MessageDto 
+    MessageDto, 
+    MarkAsReadRequest
 } from '../api-client/api-client';
 
 const USER_URL = 'api/user';
@@ -48,5 +49,11 @@ export class ApiService {
         request.recipientId = recipientId;
         request.text = text;
         return this.client.message(request);
+    }
+
+    markAsRead(messageId: number): Observable<void> {
+        const request = new MarkAsReadRequest();
+        request.messageId = messageId;
+        return this.client.markAsRead(request);
     }
 }
