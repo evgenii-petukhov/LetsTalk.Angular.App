@@ -4,7 +4,7 @@ import { Message } from "../../models/rendering/message";
 export const MessagesActions = createActionGroup({
     source: 'Messages',
     events: {
-        'init': props<{messages: Message[]}>(),
+        'init': props<{messages: ReadonlyArray<Message>}>(),
         'add': props<{message: Message}>(),
     }
 });

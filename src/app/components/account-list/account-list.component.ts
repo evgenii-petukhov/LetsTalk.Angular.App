@@ -11,7 +11,7 @@ import { selectSelectedAccountId } from 'src/app/state/selected-account-id/selec
     styleUrls: ['./account-list.component.scss'],
 })
 export class AccountListComponent implements OnInit {
-    accounts = new Array<AccountDto>();
+    accounts: ReadonlyArray<AccountDto> = [];
 
     accounts$ = this.store.select(selectAccounts);
 

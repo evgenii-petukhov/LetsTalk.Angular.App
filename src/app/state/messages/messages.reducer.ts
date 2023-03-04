@@ -2,7 +2,7 @@ import { createReducer, on } from '@ngrx/store';
 import { Message } from '../../models/rendering/message';
 import { MessagesActions } from './messages.actions';
 
-export const initialState: Array<Message> = [];
+export const initialState: ReadonlyArray<Message> = [];
 
 export const MessagesReducer = createReducer(
     initialState,

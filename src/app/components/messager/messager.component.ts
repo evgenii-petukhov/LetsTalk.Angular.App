@@ -19,7 +19,7 @@ export class MessagerComponent implements OnInit {
     selectedAccountId$ = this.store.select(selectSelectedAccountId);
     me: AccountDto = null;
 
-    private accounts = new Array<AccountDto>();
+    private accounts: ReadonlyArray<AccountDto> = [];
     private selectedAccountId: number;
 
     constructor(
