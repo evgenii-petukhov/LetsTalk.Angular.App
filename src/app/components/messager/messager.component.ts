@@ -17,7 +17,6 @@ import { AccountsActions } from 'src/app/state/accounts/accounts.actions';
 })
 export class MessagerComponent implements OnInit {
     selectedAccountId$ = this.store.select(selectSelectedAccountId);
-    me: AccountDto = null;
 
     private accounts: ReadonlyArray<AccountDto> = [];
     private selectedAccountId: number;
@@ -30,10 +29,6 @@ export class MessagerComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.apiService.getMe().subscribe(account => {
-            this.me = account;
-        });
-
         this.apiService.getAccounts().subscribe(accounts => {
             this.accounts = accounts;
             this.store.dispatch(AccountsActions.init({

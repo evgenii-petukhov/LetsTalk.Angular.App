@@ -18,15 +18,13 @@ a {
         padding: 0 0 0 10px;
 
         .user-name {
-            flex: 0 1 auto;
+            flex: 1 1 auto;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
         .icon {
-            flex: 1 1 auto;
-            text-align: right;
             display: flex;
             flex-direction: column;
             justify-content: center;

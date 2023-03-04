@@ -1,9 +1,11 @@
-<div class="user-photo"
-    [ngStyle]="account.photoUrl && { 'background-image': 'url(' + account.photoUrl + ')'}">
-</div>
-<div class="user-details">
-    <div class="user-name">You</div>
-    <a href="#" class="icon" (click)="logout()" title="Log out">
-        <fa-icon [icon]="faRightFromBracket"></fa-icon>
-    </a>
+<div *ngIf="(account$ | async)" class="logged-in-user-container">
+    <div class="user-photo"
+        [ngStyle]="(account$ | async).photoUrl && { 'background-image': 'url(' + (account$ | async).photoUrl + ')'}">
+    </div>
+    <div class="user-details">
+        <div class="user-name">You</div>
+        <a href="#" class="icon" (click)="logout()" title="Log out">
+            <fa-icon [icon]="faRightFromBracket"></fa-icon>
+        </a>
+    </div>
 </div>
