@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import { AccountDto } from 'src/app/api-client/api-client';
-import { LoggedInUserActions } from './selected-account-id.actions';
+import { LoggedInUserActions } from './logged-in-user.actions';
 
 export const initialState: AccountDto = null;
 

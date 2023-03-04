@@ -3,8 +3,8 @@ import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { ApiService } from 'src/app/services/api.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
-import { selectLoggedInUser } from 'src/app/state/logged-in-user/select-selected-account-id.selectors';
-import { LoggedInUserActions } from 'src/app/state/logged-in-user/selected-account-id.actions';
+import { selectLoggedInUser } from 'src/app/state/logged-in-user/logged-in-user.selectors';
+import { LoggedInUserActions } from 'src/app/state/logged-in-user/logged-in-user.actions';
 
 @Component({
     selector: 'app-logged-in-user',
