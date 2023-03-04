@@ -8,75 +8,80 @@
     }      
 
     .border {
-        border: 2px solid #666 !important;
+        border: 1px solid #666 !important;
         border-radius: 7px;
     }
 
     .talk-bubble {
-        margin: 0 15px 8px 15px;
         display: inline-block;
         position: relative;
         max-width: 45%;
         background-color: lightyellow;
 
-        &.border.btm-left:before {
-            content: ' ';
-            position: absolute;
-            width: 0;
-            height: 0;
-            left: -9px;
-            right: auto;
-            top: auto;
-            bottom: -1.75px;
-            border: 8px solid;
-            border-color: transparent transparent #666 transparent;
+        &.btm-left{
+            margin: 0 0 0 15px;
+
+            &:before {
+                content: ' ';
+                position: absolute;
+                width: 0;
+                height: 0;
+                left: -6px;
+                right: auto;
+                top: auto;
+                bottom: -1px;
+                border: 6px solid;
+                border-color: transparent transparent #666 transparent;
+            }
+
+            &:after {
+                content: ' ';
+                position: absolute;
+                width: 0;
+                height: 0;
+                left: -5px;
+                right: auto;
+                top: auto;
+                bottom: 0;
+                border: 6px solid;
+                border-color: transparent transparent lightyellow transparent;
+            }
         }
         
-        &.btm-left:after {
-            content: ' ';
-            position: absolute;
-            width: 0;
-            height: 0;
-            left: -5px;
-            right: auto;
-            top: auto;
-            bottom: 0;
-            border: 6px solid;
-            border-color: transparent transparent lightyellow transparent;
-        }
-        
-        &.border.btm-right:before {
-            content: ' ';
-            position: absolute;
-            width: 0;
-            height: 0;
-            left: auto;
-            right: -9px;
-            bottom: -1.75px;
-            border: 8px solid;
-            border-color: transparent transparent #666 transparent;
-        }
-        
-        &.btm-right:after {
-            content: ' ';
-            position: absolute;
-            width: 0;
-            height: 0;
-            left: auto;
-            right: -5px;
-            bottom: 0;
-            border: 6px solid;
-            border-color: transparent transparent lightyellow transparent;
+        &.btm-right{
+            margin: 0 15px 0 0;
+
+            &:before {
+                content: ' ';
+                position: absolute;
+                width: 0;
+                height: 0;
+                left: auto;
+                right: -7px;
+                bottom: -1px;
+                border: 7px solid;
+                border-color: transparent transparent #666 transparent;
+            }
+
+            &:after {
+                content: ' ';
+                position: absolute;
+                width: 0;
+                height: 0;
+                left: auto;
+                right: -5px;
+                bottom: 0;
+                border: 6px solid;
+                border-color: transparent transparent lightyellow transparent;
+            }
         }
     }
     
     .talktext {
-        padding: 5px 15px;
-
-        p {
-            margin: 0;
-            word-wrap: break-word;
-            line-height: 21px;
-        }
+        padding: 5px 8px;
+        margin: 0;
+        word-wrap: break-word;
+        font-size: 14px;
+        line-height: 20px;
     }
 }

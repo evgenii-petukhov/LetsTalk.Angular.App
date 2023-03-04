@@ -13,20 +13,25 @@
     
             ul {
                 margin: 0;
-                padding: 0;
+                padding: 10px 0 0 0;
     
                 li {
-                    display: flex;       
+                    display: flex;
+                    margin: 0 0 10px 0;
+
+                    &:last-child {
+                        margin: 0;
+                    }
                 }
             }
         }
     
         .send-message-container {
             display: flex;
+            padding: 10px 6px 6px 6px;
     
             .textarea-container {
                 flex: 1 1 auto;
-                padding: 6px;
                 display: flex;
                 textarea {
                     flex: 1 1 auto;
@@ -39,7 +44,6 @@
     
             .submit-container {
                 flex: 0 1 auto;
-                padding: 0 6px 0 0;
                 display: flex;
                 button {
                     flex: 0 1 auto;
