@@ -1,16 +1,33 @@
-.bg-transparent {
-  background-color: transparent;
-}
-
 :host {
-  height: 100%;
-}
+    flex: 1 1 auto;
+    justify-content: center;
+    align-items: center;
+    display: flex;
 
-.photo {
-  object-fit: contain;
-}
+    .login-container {
+        flex: 0 1 auto;
+        background: #fff;
+        box-shadow: 0 0 0 7px rgb(255 255 255 / 40%);
+        border-radius: 5px;
+        padding: 45px;
 
-.card {
-  width: 20rem;
-  margin: 0 auto;
+        .login-text {
+            margin: 0 0 20px 0;
+            text-align: center;
+        }
+
+        .login-options {
+            button {
+                margin: 0 20px 0 0;
+
+                &:last-child {
+                    margin: 0;
+                }
+
+                app-social-media-icon {
+                    margin: 0 5px 0 0;
+                }
+            }
+        }
+    }
 }

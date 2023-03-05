@@ -1,7 +1,11 @@
-<div class="jumbotron bg-transparent text-center">
-  <p>Sign in with Facebook</p>
-  <p>
-    <button class="btn" (click)="signInWithFB()"><span class="fa fa-facebook"></span>Facebook</button>
-    <button class="btn" (click)="signInWithVK()"><span class="fa fa-facebook"></span>VK</button>
-  </p>
+<div class="login-container">
+    <div class="login-text">Sign in with social media</div>
+    <div class="login-options">
+        <button class="btn btn-outline-primary" (click)="signInWithFB()">
+            <app-social-media-icon [iconTypeId]="1"></app-social-media-icon>Facebook
+        </button>
+        <button class="btn btn-outline-primary" (click)="signInWithFB()">
+            <app-social-media-icon [iconTypeId]="2"></app-social-media-icon>VK
+        </button>
+    </div>
 </div>
