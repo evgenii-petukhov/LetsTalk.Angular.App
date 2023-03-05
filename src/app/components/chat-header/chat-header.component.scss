@@ -17,20 +17,19 @@
         flex: 1 1 auto;
         display: flex;
         padding: 0 0 0 10px;
+        align-items: center;
 
         .user-name {
-            flex: 0 1 auto;
+            flex: 1 1 auto;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
-        .icon {
-            flex: 1 1 auto;
-            text-align: right;
+        .social-icon {
+            width: 20px;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            justify-content: end;
         }
     }
 }

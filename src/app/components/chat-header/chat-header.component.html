@@ -4,7 +4,7 @@
     <div class="user-name">
         {{ (account$ | async).firstName }} {{ (account$ | async).lastName }}
     </div>
-    <div class="icon">
+    <div class="social-icon">
         <app-social-media-icon [iconTypeId]="(account$ | async).accountTypeId"></app-social-media-icon>
     </div>
 </div>

@@ -369,6 +369,7 @@ export class AccountDto implements IAccountDto {
     photoUrl?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    unreadCount?: number;
 
     constructor(data?: IAccountDto) {
         if (data) {
@@ -386,6 +387,7 @@ export class AccountDto implements IAccountDto {
             this.photoUrl = _data["photoUrl"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
+            this.unreadCount = _data["unreadCount"];
         }
     }
 
@@ -403,6 +405,7 @@ export class AccountDto implements IAccountDto {
         data["photoUrl"] = this.photoUrl;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
+        data["unreadCount"] = this.unreadCount;
         return data;
     }
 }
@@ -413,6 +416,7 @@ export interface IAccountDto {
     photoUrl?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    unreadCount?: number;
 }
 
 export class CreateMessageRequest implements ICreateMessageRequest {

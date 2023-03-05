@@ -6,7 +6,10 @@
         <div class="user-name">
             {{ account.firstName }} {{ account.lastName }}
         </div>
-        <div class="icon">
+        <div class="unread-count" *ngIf="account.unreadCount">
+            {{account.unreadCount}}
+        </div>
+        <div class="social-icon">
             <app-social-media-icon [iconTypeId]="account.accountTypeId"></app-social-media-icon>
         </div>
     </div>

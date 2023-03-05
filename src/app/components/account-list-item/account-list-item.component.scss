@@ -16,6 +16,7 @@ a {
         flex: 1 1 auto;
         display: flex;
         padding: 0 0 0 10px;
+        align-items: center;
 
         .user-name {
             flex: 1 1 auto;
@@ -24,10 +25,14 @@ a {
             justify-content: center;
         }
 
-        .icon {
+        .unread-count {
+            margin: 0 10px 0 0;
+        }
+
+        .social-icon {
+            width: 20px;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            justify-content: end;
         }
     }
 }

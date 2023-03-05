@@ -43,7 +43,7 @@ export class MessagerComponent implements OnInit {
         });
 
         this.selectedAccountId$.subscribe(accountId => {
-            this.selectedAccountId = accountId
+            this.selectedAccountId = accountId;
         });
 
         this.signalService.init(data => {

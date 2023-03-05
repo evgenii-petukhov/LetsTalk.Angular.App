@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { faVk, faFacebook, IconDefinition } from '@fortawesome/free-brands-svg-icons';
 import { AccountTypes } from 'src/app/constants/account-types';
 
@@ -7,8 +7,8 @@ import { AccountTypes } from 'src/app/constants/account-types';
     templateUrl: './social-media-icon.component.html',
     styleUrls: ['./social-media-icon.component.scss']
 })
-export class SocialMediaIconComponent implements OnInit {
-    ngOnInit(): void {
+export class SocialMediaIconComponent implements OnChanges {
+    ngOnChanges(): void {
         switch (+this.iconTypeId) {
             case AccountTypes.FACEBOOK:
                 this.icon = faFacebook;
