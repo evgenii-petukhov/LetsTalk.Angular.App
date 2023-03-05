@@ -4,6 +4,7 @@ import { AccountDto } from 'src/app/api-client/api-client';
 import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
 import { SelectedAccountIdActions } from 'src/app/state/selected-account-id/selected-account-id.actions';
 import { selectSelectedAccountId } from 'src/app/state/selected-account-id/select-selected-account-id.selectors';
+import { AccountsActions } from 'src/app/state/accounts/accounts.actions';
 
 @Component({
     selector: 'app-account-list',
@@ -27,6 +28,10 @@ export class AccountListComponent implements OnInit {
 
     onAccountSelected(accountId: number): void {
         this.store.dispatch(SelectedAccountIdActions.init({
+            accountId: accountId
+        }));
+
+        this.store.dispatch(AccountsActions.readall({
             accountId: accountId
         }));
     }

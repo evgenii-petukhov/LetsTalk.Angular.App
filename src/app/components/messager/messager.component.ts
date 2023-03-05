@@ -7,7 +7,6 @@ import { AccountDto } from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
 import { selectSelectedAccountId } from 'src/app/state/selected-account-id/select-selected-account-id.selectors';
 import { MessagesActions } from 'src/app/state/messages/messages.actions';
-import { SelectedAccountIdActions } from 'src/app/state/selected-account-id/selected-account-id.actions';
 import { AccountsActions } from 'src/app/state/accounts/accounts.actions';
 
 @Component({
@@ -34,12 +33,6 @@ export class MessagerComponent implements OnInit {
             this.store.dispatch(AccountsActions.init({
                 accounts: accounts
             }));
-
-            if (accounts.length) {
-                this.store.dispatch(SelectedAccountIdActions.init({
-                    accountId: accounts[0].id
-                }));
-            }
         });
 
         this.selectedAccountId$.subscribe(accountId => {
@@ -58,6 +51,9 @@ export class MessagerComponent implements OnInit {
                 const sender = this.accounts.find(account => account.id === data.senderId);
                 if (sender) {
                     this.toastr.info(data.text, `${sender.firstName} ${sender.lastName}`);
+                    this.store.dispatch(AccountsActions.increment({
+                        accountId: data.senderId
+                    }));
                 }
             }
         });

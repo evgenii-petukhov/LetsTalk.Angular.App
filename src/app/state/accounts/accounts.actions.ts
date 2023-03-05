@@ -4,6 +4,8 @@ import { AccountDto } from "src/app/api-client/api-client";
 export const AccountsActions = createActionGroup({
     source: 'Accounts',
     events: {
-        'init': props<{accounts: ReadonlyArray<AccountDto>}>()
+        'init': props<{accounts: ReadonlyArray<AccountDto>}>(),
+        'readAll': props<{accountId: number}>(),
+        'increment': props<{accountId: number}>(),
     }
 });
