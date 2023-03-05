@@ -27,12 +27,25 @@ a {
 
         .unread-count {
             margin: 0 10px 0 0;
+            width: 24px;
+            height: 24px;
+            background: #ffd356;
+            border-radius: 50% 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .unread-count-text {
+                flex: 0 1 auto;
+                font-size: 13px;
+                line-height: 13px;
+            }
         }
 
         .social-icon {
             width: 20px;
             display: flex;
-            justify-content: end;
+            justify-content: flex-end;
         }
     }
 }

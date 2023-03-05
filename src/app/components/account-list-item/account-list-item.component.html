@@ -7,7 +7,9 @@
             {{ account.firstName }} {{ account.lastName }}
         </div>
         <div class="unread-count" *ngIf="account.unreadCount">
-            {{account.unreadCount}}
+            <div class="unread-count-text">
+                {{account.unreadCount}}
+            </div>
         </div>
         <div class="social-icon">
             <app-social-media-icon [iconTypeId]="account.accountTypeId"></app-social-media-icon>
