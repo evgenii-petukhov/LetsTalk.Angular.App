@@ -1,2 +1,5 @@
-<app-sidebar></app-sidebar>
-<app-chat *ngIf="(selectedAccountId$ | async)"></app-chat>
+<app-sidebar [ngClass]="(layout$ | async).activeArea === 'contacts' && 'active'"></app-sidebar>
+<app-chat
+    *ngIf="(selectedAccountId$ | async)"
+    [ngClass]="(layout$ | async).activeArea === 'chat' && 'active'">
+</app-chat>

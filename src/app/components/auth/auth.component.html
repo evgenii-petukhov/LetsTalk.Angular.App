@@ -1,11 +1,17 @@
 <div class="login-container">
     <div class="login-text">Sign in with social media</div>
     <div class="login-options">
-        <button class="btn btn-outline-primary" (click)="signInWithFB()">
-            <app-social-media-icon [iconTypeId]="1"></app-social-media-icon>Facebook
-        </button>
-        <button class="btn btn-outline-primary" (click)="signInWithVK()">
-            <app-social-media-icon [iconTypeId]="2"></app-social-media-icon>VK
-        </button>
+        <ul>
+            <li>
+                <button class="btn btn-outline-primary" (click)="signInWithFB()">
+                    <app-social-media-icon [iconTypeId]="1"></app-social-media-icon>Facebook
+                </button>
+            </li>
+            <li>
+                <button class="btn btn-outline-primary" (click)="signInWithVK()">
+                    <app-social-media-icon [iconTypeId]="2"></app-social-media-icon>VK
+                </button>
+            </li>
+        </ul>
     </div>
 </div>

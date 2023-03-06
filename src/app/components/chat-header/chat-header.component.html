@@ -1,3 +1,6 @@
+<button class="back" (click)="onBackClicked()">
+    <fa-icon [icon]="faArrowLeft" [title]="'Back'"></fa-icon>
+</button>
 <div class="user-photo" [ngStyle]="(account$ | async).photoUrl && { 'background-image': 'url(' + (account$ | async).photoUrl + ')'}">
 </div>
 <div class="user-details">

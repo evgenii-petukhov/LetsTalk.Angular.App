@@ -1,5 +1,20 @@
+@import "bootstrap/scss/bootstrap";
+
 :host {
     display: flex;
+    flex: 0 1 300px;
+    min-width: 300px;
     flex-direction: column;
     border-right: 1px solid rgba(0, 0, 0, 0.5);
+
+    @include media-breakpoint-down(md) {
+        flex: 1 1 auto;
+        min-width: auto;
+        display: none;
+        border-right: none;
+
+        &.active {
+            display: flex;
+        }
+    }
 }
