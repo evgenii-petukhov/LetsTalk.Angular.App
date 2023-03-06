@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
-import { Message } from 'src/app/models/rendering/message';
 import { SignalService } from 'src/app/services/signalr.service';
 import { ToastrService } from 'ngx-toastr';
-import { AccountDto } from 'src/app/api-client/api-client';
+import { IAccountDto } from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
 import { selectSelectedAccountId } from 'src/app/state/selected-account-id/select-selected-account-id.selectors';
 import { MessagesActions } from 'src/app/state/messages/messages.actions';
@@ -19,7 +18,7 @@ export class MessagerComponent implements OnInit {
     selectedAccountId$ = this.store.select(selectSelectedAccountId);
     layout$ = this.store.select(selectLayoutSettings);
 
-    private accounts: ReadonlyArray<AccountDto> = [];
+    private accounts: ReadonlyArray<IAccountDto> = [];
     private selectedAccountId: number;
 
     constructor(
@@ -43,10 +42,11 @@ export class MessagerComponent implements OnInit {
 
         this.signalService.init(data => {
             if (data.senderId === this.selectedAccountId) {
-                const message = new Message();
-                message.text = data.text;
-                message.date = data.created;
-                message.isMine = false;
+                const message = {
+                    text: data.text,
+                    date: data.created,
+                    isMine: false
+                };
                 this.store.dispatch(MessagesActions.add({message}));
                 this.apiService.markAsRead(data.id).subscribe();
             } else {

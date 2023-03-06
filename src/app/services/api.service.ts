@@ -6,9 +6,9 @@ import {
     LoginRequest, 
     LoginResponseDto, 
     ApiClient, 
-    AccountDto, 
+    IAccountDto, 
     CreateMessageRequest, 
-    MessageDto, 
+    IMessageDto, 
     MarkAsReadRequest
 } from '../api-client/api-client';
 
@@ -31,19 +31,19 @@ export class ApiService {
         return this.client.login(request);
     }
 
-    getAccounts(): Observable<AccountDto[]> {
+    getAccounts(): Observable<IAccountDto[]> {
         return this.client.account();
     }
 
-    getMessages(accountId: number): Observable<MessageDto[]> {
+    getMessages(accountId: number): Observable<IMessageDto[]> {
         return this.client.messageAll(accountId);
     }
 
-    getMe(): Observable<MessageDto> {
+    getMe(): Observable<IMessageDto> {
         return this.client.me();
     }
 
-    sendMessage(recipientId: number, text: string): Observable<MessageDto> {
+    sendMessage(recipientId: number, text: string): Observable<IMessageDto> {
         const request = new CreateMessageRequest();
         request.recipientId = recipientId;
         request.text = text;

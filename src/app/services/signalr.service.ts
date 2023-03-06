@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpTransportType, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import config from 'src/app/config';
-import { MessageDto } from '../api-client/api-client';
+import { IMessageDto } from '../api-client/api-client';
 import { TokenStorageService } from './token-storage.service';
 
 @Injectable({
@@ -11,7 +11,7 @@ export class SignalService {
 
     constructor(private tokenService: TokenStorageService) { }
 
-    init(messageHandler: (message: MessageDto) => void) {
+    init(messageHandler: (message: IMessageDto) => void) {
         const hubConnectionBuilder = new HubConnectionBuilder().withUrl(`${config.apiBaseUrl}/messagehub`, {
             skipNegotiation: true,
             transport: HttpTransportType.WebSockets

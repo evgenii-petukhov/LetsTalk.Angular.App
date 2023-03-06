@@ -7,7 +7,6 @@ import {
     ViewChild,
     ViewChildren
 } from "@angular/core";
-import { Message } from "src/app/models/rendering/message";
 import { ApiService } from '../../services/api.service';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { Store } from "@ngrx/store";
@@ -52,10 +51,11 @@ export class ChatComponent implements OnInit, AfterViewInit {
     send(): boolean {
         if (!this.message.trim()) return;
         this.apiService.sendMessage(this.accountId, this.message).subscribe(response => {
-            const message = new Message();
-            message.date = response.created;
-            message.text = response.text;
-            message.isMine = true;
+            const message = {
+                date: response.created,
+                text: response.text,
+                isMine: true
+            };
             this.store.dispatch(MessagesActions.add({message}));
         });
         this.message = '';
@@ -74,11 +74,11 @@ export class ChatComponent implements OnInit, AfterViewInit {
         this.apiService.getMessages(accountId).subscribe(messages => {
             this.store.dispatch(MessagesActions.init({
                 messages: messages.map((m) => {
-                    const message = new Message();
-                    message.text = m.text;
-                    message.date = m.created;
-                    message.isMine = m.senderId !== accountId
-                    return message;
+                    return {
+                        text: m.text,
+                        date: m.created,
+                        isMine: m.senderId !== accountId
+                    };
                 })
             }));
         });
