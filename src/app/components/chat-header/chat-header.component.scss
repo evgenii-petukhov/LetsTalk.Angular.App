@@ -26,6 +26,7 @@
 
     .user-photo {
         flex: 0 1 40px;
+        min-width: 40px;
         height: 40px;
         border-radius: 50% 50%;
         background-repeat: no-repeat;
@@ -37,18 +38,22 @@
         display: flex;
         padding: 0 0 0 10px;
         align-items: center;
+        overflow: hidden;
 
         .user-name {
             flex: 1 1 auto;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         .social-icon {
             width: 20px;
             display: flex;
             justify-content: flex-end;
+            margin: 0 0 0 10px;
         }
     }
 }
