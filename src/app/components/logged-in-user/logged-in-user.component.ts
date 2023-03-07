@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { ApiService } from 'src/app/services/api.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { selectLoggedInUser } from 'src/app/state/logged-in-user/logged-in-user.selectors';
-import { LoggedInUserActions } from 'src/app/state/logged-in-user/logged-in-user.actions';
+import { StoreService } from 'src/app/services/store.service';
 
 @Component({
     selector: 'app-logged-in-user',
@@ -18,14 +18,13 @@ export class LoggedInUserComponent implements OnInit {
     constructor(
         private tokenStorageService: TokenStorageService,
         private apiService: ApiService,
-        private store: Store
+        private store: Store,
+        private storeService: StoreService
     ) { }
 
     ngOnInit(): void {
         this.apiService.getMe().subscribe(account => {
-            this.store.dispatch(LoggedInUserActions.init({
-                account: account
-            }));
+            this.storeService.setLoggedInUser(account);
         });
     }
 

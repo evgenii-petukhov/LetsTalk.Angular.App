@@ -8,5 +8,7 @@ export const initialState: ILayoutSettngs = {
 
 export const LayoutSettingsReducer = createReducer(
     initialState,
-    on(LayoutSettingsActions.init, (_state, { settings }) => settings)
+    on(LayoutSettingsActions.init, (_state, { settings }) => {
+        return {..._state, settings }.settings;
+    })
 );

@@ -12,7 +12,7 @@ import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { Store } from "@ngrx/store";
 import { selectSelectedAccountId } from "src/app/state/selected-account-id/select-selected-account-id.selectors";
 import { selectMessages } from "src/app/state/messages/messages.selector";
-import { MessagesActions } from "src/app/state/messages/messages.actions";
+import { StoreService } from "src/app/services/store.service";
 
 @Component({
     selector: 'app-chat',
@@ -33,7 +33,8 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
     constructor(
         private apiService: ApiService,
-        private store: Store
+        private store: Store,
+        private storeService: StoreService
     ) { }
 
     ngOnInit(): void {
@@ -56,7 +57,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
                 text: response.text,
                 isMine: true
             };
-            this.store.dispatch(MessagesActions.add({message}));
+            this.storeService.addMessage(message);
         });
         this.message = '';
         return false;
@@ -72,15 +73,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
     private loadMessages(accountId: number): void {
         this.apiService.getMessages(accountId).subscribe(messages => {
-            this.store.dispatch(MessagesActions.init({
-                messages: messages.map((m) => {
-                    return {
-                        text: m.text,
-                        created: m.created,
-                        isMine: m.isMine
-                    };
-                })
-            }));
+            this.storeService.initMessages(messages);
         });
     }
 }

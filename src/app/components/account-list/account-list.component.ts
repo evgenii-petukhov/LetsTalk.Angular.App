@@ -2,10 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { IAccountDto } from 'src/app/api-client/api-client';
 import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
-import { SelectedAccountIdActions } from 'src/app/state/selected-account-id/selected-account-id.actions';
 import { selectSelectedAccountId } from 'src/app/state/selected-account-id/select-selected-account-id.selectors';
-import { AccountsActions } from 'src/app/state/accounts/accounts.actions';
-import { LayoutSettingsActions } from 'src/app/state/layout-settings/layout-settings.actions';
+import { StoreService } from 'src/app/services/store.service';
 
 @Component({
     selector: 'app-account-list',
@@ -17,7 +15,9 @@ export class AccountListComponent implements OnInit {
     accounts$ = this.store.select(selectAccounts);
     selectedAccountId$ = this.store.select(selectSelectedAccountId);
 
-    constructor(private store: Store) {}
+    constructor(
+        private store: Store,
+        private storeService: StoreService) {}
 
     ngOnInit(): void {
         this.accounts$.subscribe(accounts => {
@@ -26,18 +26,8 @@ export class AccountListComponent implements OnInit {
     }
 
     onAccountSelected(accountId: number): void {
-        this.store.dispatch(SelectedAccountIdActions.init({
-            accountId: accountId
-        }));
-
-        this.store.dispatch(AccountsActions.readall({
-            accountId: accountId
-        }));
-
-        this.store.dispatch(LayoutSettingsActions.init({
-            settings: {
-                activeArea: 'chat'
-            }
-        }));
+        this.storeService.setSelectedAccountId(accountId);
+        this.storeService.readAllMessages(accountId);
+        this.storeService.setLayoutSettings({ activeArea: 'chat' });
     }
 }

@@ -39,7 +39,7 @@ export class ApiService {
         return this.client.messageAll(accountId);
     }
 
-    getMe(): Observable<IMessageDto> {
+    getMe(): Observable<IAccountDto> {
         return this.client.me();
     }
 
