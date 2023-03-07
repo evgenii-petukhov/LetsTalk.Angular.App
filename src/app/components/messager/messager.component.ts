@@ -41,20 +41,20 @@ export class MessagerComponent implements OnInit {
         });
 
         this.signalService.init(data => {
-            if (data.senderId === this.selectedAccountId) {
+            if (data.accountId === this.selectedAccountId) {
                 const message = {
                     text: data.text,
-                    date: data.created,
+                    created: data.created,
                     isMine: false
                 };
                 this.store.dispatch(MessagesActions.add({message}));
                 this.apiService.markAsRead(data.id).subscribe();
             } else {
-                const sender = this.accounts.find(account => account.id === data.senderId);
+                const sender = this.accounts.find(account => account.id === data.accountId);
                 if (sender) {
                     this.toastr.info(data.text, `${sender.firstName} ${sender.lastName}`);
                     this.store.dispatch(AccountsActions.increment({
-                        accountId: data.senderId
+                        accountId: data.accountId
                     }));
                 }
             }

@@ -1,8 +1,8 @@
 import { createReducer, on } from '@ngrx/store';
-import { Message } from '../../models/rendering/message';
+import { IMessageDto } from 'src/app/api-client/api-client';
 import { MessagesActions } from './messages.actions';
 
-export const initialState: ReadonlyArray<Message> = [];
+export const initialState: ReadonlyArray<IMessageDto> = [];
 
 export const MessagesReducer = createReducer(
     initialState,

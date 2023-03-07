@@ -52,7 +52,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
         if (!this.message.trim()) return;
         this.apiService.sendMessage(this.accountId, this.message).subscribe(response => {
             const message = {
-                date: response.created,
+                created: response.created,
                 text: response.text,
                 isMine: true
             };
@@ -76,8 +76,8 @@ export class ChatComponent implements OnInit, AfterViewInit {
                 messages: messages.map((m) => {
                     return {
                         text: m.text,
-                        date: m.created,
-                        isMine: m.senderId !== accountId
+                        created: m.created,
+                        isMine: m.isMine
                     };
                 })
             }));

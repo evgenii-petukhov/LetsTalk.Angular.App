@@ -1,4 +1,4 @@
 import { createFeatureSelector } from "@ngrx/store";
-import { Message } from "../../models/rendering/message";
+import { IMessageDto } from "src/app/api-client/api-client";
 
-export const selectMessages = createFeatureSelector<ReadonlyArray<Message>>('messages');
+export const selectMessages = createFeatureSelector<ReadonlyArray<IMessageDto>>('messages');

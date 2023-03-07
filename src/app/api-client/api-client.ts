@@ -582,8 +582,8 @@ export interface IMarkAsReadRequest {
 export class MessageDto implements IMessageDto {
     id?: number;
     text?: string | undefined;
-    senderId?: number;
-    recipientId?: number;
+    accountId?: number;
+    isMine?: boolean;
     created?: Date;
 
     constructor(data?: IMessageDto) {
@@ -599,8 +599,8 @@ export class MessageDto implements IMessageDto {
         if (_data) {
             this.id = _data["id"];
             this.text = _data["text"];
-            this.senderId = _data["senderId"];
-            this.recipientId = _data["recipientId"];
+            this.accountId = _data["accountId"];
+            this.isMine = _data["isMine"];
             this.created = _data["created"] ? new Date(_data["created"].toString()) : <any>undefined;
         }
     }
@@ -616,8 +616,8 @@ export class MessageDto implements IMessageDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["text"] = this.text;
-        data["senderId"] = this.senderId;
-        data["recipientId"] = this.recipientId;
+        data["accountId"] = this.accountId;
+        data["isMine"] = this.isMine;
         data["created"] = this.created ? this.created.toISOString() : <any>undefined;
         return data;
     }
@@ -626,8 +626,8 @@ export class MessageDto implements IMessageDto {
 export interface IMessageDto {
     id?: number;
     text?: string | undefined;
-    senderId?: number;
-    recipientId?: number;
+    accountId?: number;
+    isMine?: boolean;
     created?: Date;
 }
 

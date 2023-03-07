@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Message } from 'src/app/models/rendering/message';
+import { IMessageDto } from 'src/app/api-client/api-client';
 
 @Component({
     selector: 'app-message',
@@ -7,5 +7,5 @@ import { Message } from 'src/app/models/rendering/message';
     styleUrls: ['./message.component.scss']
 })
 export class MessageComponent {
-    @Input() message: Message;
+    @Input() message: IMessageDto;
 }
