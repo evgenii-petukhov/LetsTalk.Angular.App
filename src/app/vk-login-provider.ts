@@ -3,29 +3,29 @@ import { SocialUser } from './entities/social-user';
 
 declare let VK: any;
 
-const permissionTypes = [
-  'notify', 
-  'friends', 
-  'photos', 
-  'audio',
-  'video', 
-  'offers', 
-  'questions', 
-  'pages', 
-  'links', 
-  'status', 
-  'notes',
-  'messages',
-  'wall',
-  'ads',
-  'offline',
-  'docs',
-  'groups',
-  'notifications',
-  'stats',
-  'email',
-  'market'
-];
+const permissionTypes = {
+  notify: 1,
+  friends: 2,
+  photos: 4,
+  audio: 8,
+  video: 16,
+  offers: 32,
+  questions: 64,
+  pages: 128,
+  links: 256,
+  status: 1024,
+  notes: 2048,
+  messages: 4096,
+  wall: 8192,
+  ads: 32768,
+  offline: 65536, 
+  docs: 131072,
+  groups: 262144,
+  notifications: 524288,
+  stats: 1048576,
+  email: 4194304,
+  market: 134217728
+};
 
 export class VKLoginProvider extends BaseLoginProvider {
   constructor(
@@ -83,8 +83,8 @@ export class VKLoginProvider extends BaseLoginProvider {
     }
 
     const scope = permissions.reduce((accumulator, current) => {
-        const index = permissionTypes.findIndex(pt => pt === current);
-        return index > -1 ? accumulator + Math.pow(2, index) : 0;
+        const index = Object.keys(permissionTypes).findIndex(pt => pt === current);
+        return index > -1 ? accumulator + permissionTypes[current] : 0;
       }, 0);
 
     return new Promise<SocialUser>((resolve: (value: SocialUser | PromiseLike<SocialUser>) => void) =>
