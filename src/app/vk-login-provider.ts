@@ -64,30 +64,30 @@ export class VKLoginProvider extends BaseLoginProvider {
   }
 
   getLoginStatus(): Promise<SocialUser> {
-    return new Promise<SocialUser>((resolve: (value: SocialUser | PromiseLike<SocialUser>) => void) =>
+    return new Promise<SocialUser>((resolve: (value: SocialUser) => void) =>
       this.getLoginStatusInternal(resolve)
     );
   }
 
   signIn(permissions: string[]): Promise<SocialUser> {
-    if (permissions.includes('offers')) {
+    if (permissions?.includes('offers')) {
       console.warn('The "offers" permission is outdated.');
     }
 
-    if (permissions.includes('questions')) {
+    if (permissions?.includes('questions')) {
       console.warn('The "questions" permission is outdated.');
     }
 
-    if (permissions.includes('messages')) {
+    if (permissions?.includes('messages')) {
       console.warn('The "messages" permission is unavailable for non-standalone applications.');
     }
 
-    const scope = permissions.reduce((accumulator, current) => {
+    const scope = permissions?.reduce((accumulator, current) => {
         const index = Object.keys(permissionTypes).findIndex(pt => pt === current);
         return index > -1 ? accumulator + permissionTypes[current] : 0;
       }, 0);
 
-    return new Promise<SocialUser>((resolve: (value: SocialUser | PromiseLike<SocialUser>) => void) =>
+    return new Promise<SocialUser>((resolve: (value: SocialUser) => void) =>
       this.signInInternal(resolve, scope)
     );
   }
@@ -101,7 +101,7 @@ export class VKLoginProvider extends BaseLoginProvider {
   }
 
   private signInInternal(
-    resolve: (value: SocialUser | PromiseLike<SocialUser>) => void, 
+    resolve: (value: SocialUser) => void, 
     scope:any
   ) {
     VK.Auth.login((loginResponse: any) => {
@@ -118,7 +118,7 @@ export class VKLoginProvider extends BaseLoginProvider {
   private getUser(
     userId: number, 
     token: string, 
-    resolve: (value: SocialUser | PromiseLike<SocialUser>) => void
+    resolve: (value: SocialUser) => void
   ) {
     VK.Api.call(
       this.VK_API_GET_USER,
@@ -137,7 +137,7 @@ export class VKLoginProvider extends BaseLoginProvider {
     );
   }
 
-  private getLoginStatusInternal(resolve: (value: SocialUser | PromiseLike<SocialUser>) => void) {
+  private getLoginStatusInternal(resolve: (value: SocialUser) => void) {
     VK.Auth.getLoginStatus((loginResponse: any) => {
       if (loginResponse.status === 'connected') {
         this.getUser(
