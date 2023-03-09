@@ -37,7 +37,7 @@ export class AuthComponent implements OnInit {
     }
 
     signInWithVK(): void {
-        this.socialAuthService.signIn(VKLoginProvider.PROVIDER_ID, ['offline, email'])
+        this.socialAuthService.signIn(VKLoginProvider.PROVIDER_ID, ['offline', 'email'])
             .then(async response => {
                 this.apiService.login(response).subscribe(data => {
                     this.tokenStorage.saveToken(data.token);
