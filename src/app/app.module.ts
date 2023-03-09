@@ -19,7 +19,6 @@ import { AccountListItemComponent } from './components/account-list-item/account
 import {
     SocialLoginModule, 
     FacebookLoginProvider, 
-    VKLoginProvider, 
     SocialAuthServiceConfig 
 } from '@abacritt/angularx-social-login';
 import { BrowserModule } from '@angular/platform-browser';
@@ -32,6 +31,7 @@ import { ChatHeaderComponent } from './components/chat-header/chat-header.compon
 import { StoreModule } from '@ngrx/store';
 import { StoreConfig } from './state/store-config';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { VKLoginProvider } from './vk-login-provider';
 
 @NgModule({
     declarations: [
