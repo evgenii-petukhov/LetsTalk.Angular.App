@@ -69,6 +69,20 @@
                             "extractLicenses": true,
                             "vendorChunk": true,
                             "buildOptimizer": false
+                        },
+                        "development-hosting": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.hosting.dev.ts"
+                                }
+                            ],
+                            "optimization": false,
+                            "sourceMap": true,
+                            "namedChunks": true,
+                            "extractLicenses": true,
+                            "vendorChunk": true,
+                            "buildOptimizer": false
                         }
                     }
                 },

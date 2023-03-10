@@ -9,7 +9,7 @@ import { AuthComponent } from './components/auth/auth.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { AuthGuardService } from './services/auth-guard.service';
-import config from './config';
+import { environment } from '../environments/environment';
 import { authInterceptorProvider } from './providers/auth-interceptor-provider';
 import { API_BASE_URL } from './api-client/api-client';
 import { ApiClientProvider } from './providers/api-client-provider';
@@ -71,18 +71,18 @@ import { VKLoginProvider } from './vk-login-provider';
                 providers: [
                     {
                         id: FacebookLoginProvider.PROVIDER_ID,
-                        provider: new FacebookLoginProvider(config.facebookAppId),
+                        provider: new FacebookLoginProvider(environment.facebookAppId),
                     },
                     {
                         id: VKLoginProvider.PROVIDER_ID,
-                        provider: new VKLoginProvider(config.vkAppId),
+                        provider: new VKLoginProvider(environment.vkAppId),
                     }],
             } as SocialAuthServiceConfig,
         },
         {
             provide: API_BASE_URL,
             useFactory: () => {
-                return config.apiBaseUrl;
+                return environment.apiBaseUrl;
             }
         }
     ],
