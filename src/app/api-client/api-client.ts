@@ -370,6 +370,7 @@ export class AccountDto implements IAccountDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     unreadCount?: number;
+    lastMessageDate?: Date | undefined;
 
     constructor(data?: IAccountDto) {
         if (data) {
@@ -388,6 +389,7 @@ export class AccountDto implements IAccountDto {
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
             this.unreadCount = _data["unreadCount"];
+            this.lastMessageDate = _data["lastMessageDate"] ? new Date(_data["lastMessageDate"].toString()) : <any>undefined;
         }
     }
 
@@ -406,6 +408,7 @@ export class AccountDto implements IAccountDto {
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["unreadCount"] = this.unreadCount;
+        data["lastMessageDate"] = this.lastMessageDate ? this.lastMessageDate.toISOString() : <any>undefined;
         return data;
     }
 }
@@ -417,6 +420,7 @@ export interface IAccountDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     unreadCount?: number;
+    lastMessageDate?: Date | undefined;
 }
 
 export class CreateMessageRequest implements ICreateMessageRequest {
