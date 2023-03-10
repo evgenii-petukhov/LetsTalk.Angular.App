@@ -12,9 +12,14 @@ export const AccountsReducer = createReducer(
             ? {...state, unreadCount: 0} as IAccountDto
             : state);
     }),
-    on(AccountsActions.increment, (_state, {accountId}) => {
+    on(AccountsActions.incrementunread, (_state, {accountId}) => {
         return _state.map(state => state.id === accountId
             ? {...state, unreadCount: state.unreadCount + 1} as IAccountDto
+            : state);
+    }),
+    on(AccountsActions.setlastmessagedate, (_state, {accountId, date}) => {
+        return _state.map(state => state.id === accountId
+            ? {...state, lastMessageDate: date} as IAccountDto
             : state);
     })
 );

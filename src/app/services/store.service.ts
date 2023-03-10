@@ -36,7 +36,11 @@ export class StoreService {
     }
 
     incrementUnreadMessages(accountId: number): void {
-        this.store.dispatch(AccountsActions.increment({ accountId }));
+        this.store.dispatch(AccountsActions.incrementunread({ accountId }));
+    }
+
+    setLastMessageDate(accountId: number, date: Date): void {
+        this.store.dispatch(AccountsActions.setlastmessagedate({ accountId, date }));
     }
 
     setLayoutSettings(settings: ILayoutSettngs): void {

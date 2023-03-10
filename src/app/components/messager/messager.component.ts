@@ -42,11 +42,13 @@ export class MessagerComponent implements OnInit {
         this.signalService.init(data => {
             if (this.isWindowActive && (data.accountId === this.selectedAccountId)) {
                 const message = {
+                    id: data.id,
                     text: data.text,
                     created: data.created,
                     isMine: false
                 };
                 this.storeService.addMessage(message);
+                this.storeService.setLastMessageDate(data.accountId, data.created);
                 this.apiService.markAsRead(data.id).subscribe();
             } else {
                 const sender = this.accounts.find(account => account.id === data.accountId);
