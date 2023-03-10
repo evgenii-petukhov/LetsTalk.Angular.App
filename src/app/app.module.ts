@@ -16,11 +16,7 @@ import { ApiClientProvider } from './providers/api-client-provider';
 import { AccountListComponent } from './components/account-list/account-list.component';
 import { MessagerComponent } from './components/messager/messager.component';
 import { AccountListItemComponent } from './components/account-list-item/account-list-item.component';
-import {
-    SocialLoginModule, 
-    FacebookLoginProvider, 
-    SocialAuthServiceConfig 
-} from '@abacritt/angularx-social-login';
+import { SocialLoginModule } from '@abacritt/angularx-social-login';
 import { BrowserModule } from '@angular/platform-browser';
 import { MessageComponent } from './components/message/message.component';
 import { ToastrModule } from 'ngx-toastr';
@@ -31,8 +27,8 @@ import { ChatHeaderComponent } from './components/chat-header/chat-header.compon
 import { StoreModule } from '@ngrx/store';
 import { StoreConfig } from './state/store-config';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { VKLoginProvider } from './vk-login-provider';
 import { OrderByPipe } from './pipes/orderby';
+import { SocialAuthProvider } from './providers/social-auth-provider';
 
 @NgModule({
     declarations: [
@@ -66,21 +62,7 @@ import { OrderByPipe } from './pipes/orderby';
         authInterceptorProvider,
         AuthGuardService,
         ApiClientProvider,
-        {
-            provide: 'SocialAuthServiceConfig',
-            useValue: {
-                autoLogin: false,
-                providers: [
-                    {
-                        id: FacebookLoginProvider.PROVIDER_ID,
-                        provider: new FacebookLoginProvider(environment.facebookAppId),
-                    },
-                    {
-                        id: VKLoginProvider.PROVIDER_ID,
-                        provider: new VKLoginProvider(environment.vkAppId),
-                    }],
-            } as SocialAuthServiceConfig,
-        },
+        SocialAuthProvider,
         {
             provide: API_BASE_URL,
             useFactory: () => {

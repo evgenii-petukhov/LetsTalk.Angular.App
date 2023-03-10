@@ -7,7 +7,7 @@
                     <app-social-media-icon [iconTypeId]="1"></app-social-media-icon>Facebook
                 </button>
             </li>
-            <li>
+            <li *ngIf="isVkProviderAvailable">
                 <button class="btn btn-outline-primary" (click)="signInWithVK()">
                     <app-social-media-icon [iconTypeId]="2"></app-social-media-icon>VK
                 </button>

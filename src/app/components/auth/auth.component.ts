@@ -3,6 +3,7 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
 import { SocialUser, SocialAuthService, FacebookLoginProvider, VKLoginProvider } from '@abacritt/angularx-social-login';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-auth',
@@ -12,6 +13,7 @@ import { SocialUser, SocialAuthService, FacebookLoginProvider, VKLoginProvider }
 export class AuthComponent implements OnInit {
 
     socialUser: SocialUser;
+    isVkProviderAvailable = !!(environment as any).vkAppId;
 
     constructor(
         private socialAuthService: SocialAuthService,
