@@ -5,11 +5,6 @@
 
     &.mine {
         justify-content: end;
-    }      
-
-    .border {
-        border: 1px solid #666 !important;
-        border-radius: 7px;
     }
 
     .talk-bubble {
@@ -17,63 +12,15 @@
         position: relative;
         max-width: 80%;
         background-color: lightyellow;
+        box-shadow: 0 0 1px 1px rgba(0,0,0,.75);
+        border-radius: 7px;
 
         &.btm-left{
             margin: 0 0 0 15px;
-
-            &:before {
-                content: ' ';
-                position: absolute;
-                width: 0;
-                height: 0;
-                left: -6.5px;
-                right: auto;
-                top: auto;
-                bottom: -1px;
-                border: 6px solid;
-                border-color: transparent transparent #666 transparent;
-            }
-
-            &:after {
-                content: ' ';
-                position: absolute;
-                width: 0;
-                height: 0;
-                left: -5px;
-                right: auto;
-                top: auto;
-                bottom: 0;
-                border: 6px solid;
-                border-color: transparent transparent lightyellow transparent;
-            }
         }
         
         &.btm-right{
             margin: 0 15px 0 0;
-
-            &:before {
-                content: ' ';
-                position: absolute;
-                width: 0;
-                height: 0;
-                left: auto;
-                right: -7px;
-                bottom: -1px;
-                border: 7px solid;
-                border-color: transparent transparent #666 transparent;
-            }
-
-            &:after {
-                content: ' ';
-                position: absolute;
-                width: 0;
-                height: 0;
-                left: auto;
-                right: -5px;
-                bottom: 0;
-                border: 6px solid;
-                border-color: transparent transparent lightyellow transparent;
-            }
         }
     }
     
