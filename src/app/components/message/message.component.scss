@@ -7,7 +7,7 @@
         justify-content: end;
     }
 
-    .talk-bubble {
+    .bubble {
         display: inline-block;
         position: relative;
         max-width: 80%;
@@ -24,11 +24,21 @@
         }
     }
     
-    .talktext {
+    .bubble-inner-container {
         padding: 5px 8px;
         margin: 0;
-        word-wrap: break-word;
-        font-size: 14px;
-        line-height: 20px;
+
+        .text {
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 20px;
+            margin: 0 0 4px 0;
+        }
+
+        .time {
+            font-size: 10px;
+            line-height: 10px;
+            text-align: right;
+        }
     }
 }
