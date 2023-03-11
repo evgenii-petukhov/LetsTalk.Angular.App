@@ -39,24 +39,18 @@ export class MessagerComponent implements OnInit {
             this.selectedAccountId = accountId;
         });
 
-        this.signalService.init(data => {
-            if (this.isWindowActive && (data.accountId === this.selectedAccountId)) {
-                const message = {
-                    id: data.id,
-                    text: data.text,
-                    created: data.created,
-                    isMine: false
-                };
+        this.signalService.init(message => {
+            if (this.isWindowActive && (message.accountId === this.selectedAccountId)) {
                 this.storeService.addMessage(message);
-                this.storeService.setLastMessageDate(data.accountId, data.created);
-                this.apiService.markAsRead(data.id).subscribe();
+                this.storeService.setLastMessageDate(message.accountId, message.created);
+                this.apiService.markAsRead(message.id).subscribe();
             } else {
-                const sender = this.accounts.find(account => account.id === data.accountId);
+                const sender = this.accounts.find(account => account.id === message.accountId);
                 if (sender) {
-                    this.storeService.incrementUnreadMessages(data.accountId);
+                    this.storeService.incrementUnreadMessages(message.accountId);
                     this.notificationService.showNotification(
                         `${sender.firstName} ${sender.lastName}`, 
-                        data.text, 
+                        message.text, 
                         this.isWindowActive);
                 }
             }

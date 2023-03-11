@@ -51,15 +51,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
     send(): boolean {
         if (!this.message.trim()) return;
-        this.apiService.sendMessage(this.accountId, this.message).subscribe(response => {
-            const message = {
-                id: response.id,
-                created: response.created,
-                text: response.text,
-                isMine: true
-            };
+        this.apiService.sendMessage(this.accountId, this.message).subscribe(message => {
             this.storeService.addMessage(message);
-            this.storeService.setLastMessageDate(this.accountId, response.created);
+            this.storeService.setLastMessageDate(this.accountId, message.created);
         });
         this.message = '';
         return false;
