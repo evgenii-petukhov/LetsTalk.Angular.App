@@ -4,7 +4,7 @@
         <div class="text">{{message.text}}</div>
         <div class="time"
             title="{{message.created | date:'HH:mm, d MMMM YYYY'}}">
-            {{message.created | date:"HH:mm"}}
+            {{message.created | date:"HH:mm":"offset"}}
         </div>  
     </div>
 </div>

@@ -8,4 +8,6 @@ import { IMessageDto } from 'src/app/api-client/api-client';
 })
 export class MessageComponent {
     @Input() message: IMessageDto;
+
+    offset = new Date().getTimezoneOffset();
 }
