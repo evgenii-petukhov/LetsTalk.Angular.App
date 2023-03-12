@@ -7,26 +7,38 @@ import { TokenStorageService } from './token-storage.service';
 @Injectable({
     providedIn: 'root'
 })
-export class SignalService {
+export class SignalrService {
+    private hubConnectionBuilder = new HubConnectionBuilder()
+        .withUrl(`${environment.notificationUrl}`, {
+            skipNegotiation: true,
+            transport: HttpTransportType.WebSockets
+        })
+        .withAutomaticReconnect(Array.from({ length: 100 }, () => 5))
+        .configureLogging(LogLevel.Information)
+        .build();
 
     constructor(private tokenService: TokenStorageService) { }
 
     init(messageHandler: (message: IMessageDto) => void) {
-        const hubConnectionBuilder = new HubConnectionBuilder()
-            .withUrl(`${environment.apiBaseUrl}/messagehub`, {
-                skipNegotiation: true,
-                transport: HttpTransportType.WebSockets
+        this.hubConnectionBuilder.start()
+            .then(async () => {
+                await this.authorize();
+                console.log('Notification service: connected');
             })
-            .withAutomaticReconnect(Array.from({length: 100}, x => 5))
-            .configureLogging(LogLevel.Information)
-            .build();
+            .catch(() => console.log('Notification service: unable to establish connection'));
 
-        hubConnectionBuilder.start().then(async () => {
-            await hubConnectionBuilder.invoke("Authorize", this.tokenService.getToken());
-        }).catch(() => console.log('Error while connect with server'));
-
-        hubConnectionBuilder.on('SendMessageNotification', (message: any) => {
+        this.hubConnectionBuilder.on('SendMessageNotification', (message: IMessageDto) => {
             messageHandler?.(message);
         });
+
+        this.hubConnectionBuilder.onreconnected(async () => {
+            await this.authorize();
+            console.log('Notification service: reconnected');
+        });
+    }
+
+    private async authorize(): Promise<void> {
+        await this.hubConnectionBuilder.invoke('Authorize', this.tokenService.getToken());
+        console.log('Notification service: authorized');
     }
 }

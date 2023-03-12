@@ -1,6 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
-import { SignalService } from 'src/app/services/signalr.service';
+import { SignalrService } from 'src/app/services/signalr.service';
 import { IAccountDto } from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
 import { selectSelectedAccountId } from 'src/app/state/selected-account-id/select-selected-account-id.selectors';
@@ -23,7 +23,7 @@ export class MessagerComponent implements OnInit {
 
     constructor(
         private apiService: ApiService,
-        private signalService: SignalService,
+        private signalrService: SignalrService,
         private notificationService: NotificationService,
         private store: Store,
         private storeService: StoreService
@@ -39,7 +39,7 @@ export class MessagerComponent implements OnInit {
             this.selectedAccountId = accountId;
         });
 
-        this.signalService.init(message => {
+        this.signalrService.init(message => {
             if (this.isWindowActive && (message.accountId === this.selectedAccountId)) {
                 this.storeService.addMessage(message);
                 this.storeService.setLastMessageDate(message.accountId, message.created);
