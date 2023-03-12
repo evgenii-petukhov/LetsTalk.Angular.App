@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpTransportType, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { environment } from '../../environments/environment';
 import { IMessageDto } from '../api-client/api-client';
+import { ConstantRetryPolice } from './constant-retry-police';
 import { TokenStorageService } from './token-storage.service';
 
 @Injectable({
@@ -9,11 +10,11 @@ import { TokenStorageService } from './token-storage.service';
 })
 export class SignalrService {
     private hubConnectionBuilder = new HubConnectionBuilder()
-        .withUrl(`${environment.notificationUrl}`, {
+        .withUrl(`${environment.notificationServiceUrl}`, {
             skipNegotiation: true,
             transport: HttpTransportType.WebSockets
         })
-        .withAutomaticReconnect(Array.from({ length: 100 }, () => 5))
+        .withAutomaticReconnect(new ConstantRetryPolice(environment.notificationServiceReconnectInterval))
         .configureLogging(LogLevel.Information)
         .build();
 
