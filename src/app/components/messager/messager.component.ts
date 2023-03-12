@@ -40,9 +40,11 @@ export class MessagerComponent implements OnInit {
         });
 
         this.signalrService.init(message => {
-            if (this.isWindowActive && (message.accountId === this.selectedAccountId)) {
+            if (message.accountId === this.selectedAccountId) {
                 this.storeService.addMessage(message);
                 this.storeService.setLastMessageDate(message.accountId, message.created);
+            }
+            if (this.isWindowActive && (message.accountId === this.selectedAccountId)) {
                 this.apiService.markAsRead(message.id).subscribe();
             } else {
                 const sender = this.accounts.find(account => account.id === message.accountId);
