@@ -9,7 +9,7 @@ export class MappingService {
     mapMessage(source: IMessageDto): Message {
         const destin = this.map(source, Message);
         destin.created = new Date(0);
-        destin.created.setUTCSeconds(source.createdUnixTime);
+        destin.created.setUTCSeconds(source.created);
         return destin;
     }
 
