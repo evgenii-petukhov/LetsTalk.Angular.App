@@ -1,6 +1,6 @@
 <div>
     <ul>
-        <li *ngFor="let account of (accounts$ | async | orderBy:['unreadCount','lastMessageDate']:['desc','desc'])"
+        <li *ngFor="let account of (accounts$ | async | orderBy:['unreadCount','lastMessageDateUnix']:['desc','desc'])"
             [ngClass]="(selectedAccountId$ | async) === account.id && 'selected'">
             <app-account-list-item [account]="account"
                 (onAccountSelectedCallback)="onAccountSelected($event)">
