@@ -46,7 +46,7 @@ export class MessagerComponent implements OnInit {
                 messageDto.isMine = false;
                 const message = this.mappingService.mapMessage(messageDto);
                 this.storeService.addMessage(message);
-                this.storeService.setLastMessageDate(message.accountId, message.created);
+                this.storeService.setLastMessageDate(message.accountId, messageDto.created);
             }
             if (this.isWindowActive && (messageDto.accountId === this.selectedAccountId)) {
                 this.apiService.markAsRead(messageDto.id).subscribe();

@@ -40,7 +40,7 @@ export class StoreService {
         this.store.dispatch(AccountsActions.incrementunread({ accountId }));
     }
 
-    setLastMessageDate(accountId: number, date: Date): void {
+    setLastMessageDate(accountId: number, date: number): void {
         this.store.dispatch(AccountsActions.setlastmessagedate({ accountId, date }));
     }
 

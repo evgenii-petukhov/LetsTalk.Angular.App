@@ -57,7 +57,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
             messageDto.isMine = true;
             const message = this.mappingService.mapMessage(messageDto);
             this.storeService.addMessage(message);
-            this.storeService.setLastMessageDate(this.accountId, message.created);
+            this.storeService.setLastMessageDate(this.accountId, messageDto.created);
         });
         this.message = '';
         return false;
