@@ -4,13 +4,8 @@ import { Injectable } from '@angular/core';
     providedIn: 'root'
 })
 export class DateTimeService {
-    private localTimeZone = this.getLocalTimezoneInternal();
 
-    getLocalTimezone(): string {
-        return this.localTimeZone;
-    }
-
-    private getLocalTimezoneInternal(): string {
+    getTimezone(): string {
         const offset = this.getTimezoneOffsetInHours();
         return `UTC${offset > 0 ? '+' : ''}${offset}`
     }
