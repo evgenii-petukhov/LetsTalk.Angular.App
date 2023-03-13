@@ -12,6 +12,7 @@ import { mergeMap as _observableMergeMap, catchError as _observableCatch } from 
 import { Observable, throwError as _observableThrow, of as _observableOf } from 'rxjs';
 import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
+import { AutoMap } from '@automapper/classes';
 
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
@@ -584,10 +585,19 @@ export interface IMarkAsReadRequest {
 }
 
 export class MessageDto implements IMessageDto {
+    @AutoMap()
     id?: number;
+
+    @AutoMap()
     text?: string | undefined;
+
+    @AutoMap()
     accountId?: number;
+
+    @AutoMap()
     isMine?: boolean;
+
+    @AutoMap()
     created?: Date;
 
     constructor(data?: IMessageDto) {

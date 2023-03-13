@@ -13,6 +13,9 @@ import { Store } from "@ngrx/store";
 import { selectSelectedAccountId } from "src/app/state/selected-account-id/select-selected-account-id.selectors";
 import { selectMessages } from "src/app/state/messages/messages.selector";
 import { StoreService } from "src/app/services/store.service";
+import { mapper } from "src/app/mapping/mapper";
+import { MessageDto } from "src/app/api-client/api-client";
+import { Message } from "src/app/models/message";
 
 @Component({
     selector: 'app-chat',
@@ -52,6 +55,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     send(): boolean {
         if (!this.message.trim()) return;
         this.apiService.sendMessage(this.accountId, this.message).subscribe(message => {
+            const m = mapper.map(message, MessageDto, Message);
             message.isMine = true;
             this.storeService.addMessage(message);
             this.storeService.setLastMessageDate(this.accountId, message.created);
