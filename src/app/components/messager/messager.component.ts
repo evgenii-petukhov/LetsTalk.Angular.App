@@ -7,6 +7,7 @@ import { selectSelectedAccountId } from 'src/app/state/selected-account-id/selec
 import { selectLayoutSettings } from 'src/app/state/layout-settings/select-layout-settings.selectors';
 import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
+import { MappingService } from 'src/app/services/mapping-service';
 
 @Component({
     selector: 'app-messager',
@@ -26,7 +27,8 @@ export class MessagerComponent implements OnInit {
         private signalrService: SignalrService,
         private notificationService: NotificationService,
         private store: Store,
-        private storeService: StoreService
+        private storeService: StoreService,
+        private mappingService: MappingService
     ) { }
 
     ngOnInit(): void {
@@ -39,21 +41,22 @@ export class MessagerComponent implements OnInit {
             this.selectedAccountId = accountId;
         });
 
-        this.signalrService.init(message => {
-            if (message.accountId === this.selectedAccountId) {
-                message.isMine = false;
+        this.signalrService.init(messageDto => {
+            if (messageDto.accountId === this.selectedAccountId) {
+                messageDto.isMine = false;
+                const message = this.mappingService.mapMessage(messageDto);
                 this.storeService.addMessage(message);
                 this.storeService.setLastMessageDate(message.accountId, message.created);
             }
-            if (this.isWindowActive && (message.accountId === this.selectedAccountId)) {
-                this.apiService.markAsRead(message.id).subscribe();
+            if (this.isWindowActive && (messageDto.accountId === this.selectedAccountId)) {
+                this.apiService.markAsRead(messageDto.id).subscribe();
             } else {
-                const sender = this.accounts.find(account => account.id === message.accountId);
+                const sender = this.accounts.find(account => account.id === messageDto.accountId);
                 if (sender) {
-                    this.storeService.incrementUnreadMessages(message.accountId);
+                    this.storeService.incrementUnreadMessages(messageDto.accountId);
                     this.notificationService.showNotification(
                         `${sender.firstName} ${sender.lastName}`, 
-                        message.text, 
+                        messageDto.text, 
                         this.isWindowActive);
                 }
             }

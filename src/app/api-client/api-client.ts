@@ -587,8 +587,8 @@ export class MessageDto implements IMessageDto {
     id?: number;
     text?: string | undefined;
     accountId?: number;
-    isMine?: boolean;
-    created?: Date;
+    isMine?: boolean | undefined;
+    createdUnixTime?: number;
 
     constructor(data?: IMessageDto) {
         if (data) {
@@ -605,7 +605,7 @@ export class MessageDto implements IMessageDto {
             this.text = _data["text"];
             this.accountId = _data["accountId"];
             this.isMine = _data["isMine"];
-            this.created = _data["created"] ? new Date(_data["created"].toString()) : <any>undefined;
+            this.createdUnixTime = _data["createdUnixTime"];
         }
     }
 
@@ -622,7 +622,7 @@ export class MessageDto implements IMessageDto {
         data["text"] = this.text;
         data["accountId"] = this.accountId;
         data["isMine"] = this.isMine;
-        data["created"] = this.created ? this.created.toISOString() : <any>undefined;
+        data["createdUnixTime"] = this.createdUnixTime;
         return data;
     }
 }
@@ -631,8 +631,8 @@ export interface IMessageDto {
     id?: number;
     text?: string | undefined;
     accountId?: number;
-    isMine?: boolean;
-    created?: Date;
+    isMine?: boolean | undefined;
+    createdUnixTime?: number;
 }
 
 export class ApiException extends Error {

@@ -13,6 +13,7 @@ import { Store } from "@ngrx/store";
 import { selectSelectedAccountId } from "src/app/state/selected-account-id/select-selected-account-id.selectors";
 import { selectMessages } from "src/app/state/messages/messages.selector";
 import { StoreService } from "src/app/services/store.service";
+import { MappingService } from "src/app/services/mapping-service";
 
 @Component({
     selector: 'app-chat',
@@ -34,7 +35,8 @@ export class ChatComponent implements OnInit, AfterViewInit {
     constructor(
         private apiService: ApiService,
         private store: Store,
-        private storeService: StoreService
+        private storeService: StoreService,
+        private mappingService: MappingService
     ) { }
 
     ngOnInit(): void {
@@ -51,8 +53,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
     send(): boolean {
         if (!this.message.trim()) return;
-        this.apiService.sendMessage(this.accountId, this.message).subscribe(message => {
-            message.isMine = true;
+        this.apiService.sendMessage(this.accountId, this.message).subscribe(messageDto => {
+            messageDto.isMine = true;
+            const message = this.mappingService.mapMessage(messageDto);
             this.storeService.addMessage(message);
             this.storeService.setLastMessageDate(this.accountId, message.created);
         });
@@ -71,7 +74,8 @@ export class ChatComponent implements OnInit, AfterViewInit {
     private loadMessages(accountId: number): void {
         if (accountId === null) return;
         this.storeService.initMessages([]);
-        this.apiService.getMessages(accountId).subscribe(messages => {
+        this.apiService.getMessages(accountId).subscribe(messageDtos => {
+            const messages = messageDtos.map(message => this.mappingService.mapMessage(message));
             this.storeService.initMessages(messages);
         });
     }

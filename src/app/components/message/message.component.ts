@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IMessageDto } from 'src/app/api-client/api-client';
+import { Message } from 'src/app/models/message';
 import { DateTimeService } from 'src/app/services/date-time.service';
 
 @Component({
@@ -8,7 +8,7 @@ import { DateTimeService } from 'src/app/services/date-time.service';
     styleUrls: ['./message.component.scss']
 })
 export class MessageComponent {
-    @Input() message: IMessageDto;
+    @Input() message: Message;
 
     timezone = this.dateTimeService.getLocalTimezone();
 

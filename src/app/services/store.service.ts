@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { IAccountDto, IMessageDto } from '../api-client/api-client';
+import { IAccountDto } from '../api-client/api-client';
+import { Message } from '../models/message';
 import { AccountsActions } from '../state/accounts/accounts.actions';
 import { ILayoutSettngs } from '../state/layout-settings/layout-settings';
 import { LayoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
@@ -27,11 +28,11 @@ export class StoreService {
         this.store.dispatch(AccountsActions.init({ accounts }));
     }
 
-    initMessages(messages: IMessageDto[]): void {
+    initMessages(messages: Message[]): void {
         this.store.dispatch(MessagesActions.init({ messages }));
     }
 
-    addMessage(message: IMessageDto): void {
+    addMessage(message: Message): void {
         this.store.dispatch(MessagesActions.add({ message }));
     }
 
