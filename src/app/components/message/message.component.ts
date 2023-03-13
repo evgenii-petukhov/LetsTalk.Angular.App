@@ -10,7 +10,7 @@ import { DateTimeService } from 'src/app/services/date-time.service';
 export class MessageComponent {
     @Input() message: IMessageDto;
 
-    timezone = this.dateTimeService.getTimezone();
+    timezone = this.dateTimeService.getLocalTimezone();
 
     constructor(
         private dateTimeService: DateTimeService
