@@ -6,7 +6,11 @@ export const initialState: ReadonlyArray<IAccountDto> = [];
 
 export const AccountsReducer = createReducer(
     initialState,
-    on(AccountsActions.init, (_state, {accounts}) => accounts),
+    on(AccountsActions.init, (_state, {accounts}) => accounts.map(account => {
+        return account.lastMessageDate
+            ? account
+            : new AccountDto({...account, lastMessageDate: 0});
+    })),
     on(AccountsActions.readall, (_state, {accountId}) => {
         return _state.map(account => account.id === accountId
             ? new AccountDto({...account, unreadCount: 0})
