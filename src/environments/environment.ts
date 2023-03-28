@@ -3,6 +3,6 @@ export const environment = {
     facebookAppId: '1391147151094704',
     vkAppId: '7615545',
     apiBaseUrl: 'https://api.letstalk.local',
-    notificationServiceUrl: 'https://api.letstalk.local/messagehub',
+    notificationServiceUrl: 'https://notifications.letstalk.local/messagehub',
     notificationServiceReconnectInterval: 5000
 };
