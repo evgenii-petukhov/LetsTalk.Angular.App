@@ -26,12 +26,14 @@ export class NotificationService {
                             body: message
                         });
                     });
-                } else {
+                } else if (Notification) {
                     new Notification(title, {
                         body: message
                     });
+                } else {
+                    this.toastr.info(message, title);
                 }
-            } else if (isToastAllowed) {
+            } else {
                 this.toastr.info(message, title);
             }
         });
