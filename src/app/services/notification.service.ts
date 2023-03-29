@@ -21,11 +21,11 @@ export class NotificationService {
         Notification.requestPermission().then(permission => {
             if (permission === 'granted') {
                 if (this.isServiceWorkerRegistered) {
-                    navigator.serviceWorker.ready.then(function (registration) {
+                    navigator.serviceWorker.ready.then(registration => {
                         registration.showNotification(title, {
                             body: message
                         });
-                    })
+                    });
                 } else {
                     new Notification(title, {
                         body: message
