@@ -17,7 +17,7 @@ export class NotificationService {
         });
     }
 
-    showNotification(title: string, message: string, isToastAllowed: boolean): void {
+    showNotification(title: string, message: string, isWindowActive: boolean): void {
         Notification.requestPermission().then(permission => {
             if (permission === 'granted') {
                 if (this.isServiceWorkerRegistered) {
@@ -26,14 +26,16 @@ export class NotificationService {
                             body: message
                         });
                     });
+                    return;
                 } else if (Notification) {
                     new Notification(title, {
                         body: message
                     });
-                } else {
-                    this.toastr.info(message, title);
+                    return;
                 }
-            } else if (isToastAllowed) {
+            }
+
+            if (isWindowActive) {
                 this.toastr.info(message, title);
             }
         });
