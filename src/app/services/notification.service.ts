@@ -9,7 +9,7 @@ export class NotificationService {
     private isServiceWorkerRegistered = false;
 
     constructor(private toastr: ToastrService) {
-        navigator.serviceWorker.register("sw.js").then(() => {
+        navigator.serviceWorker.register("notification_sw.js").then(() => {
             this.isServiceWorkerRegistered = true;
             console.log('serviceWorker success');
         }).catch(() => {
@@ -33,7 +33,7 @@ export class NotificationService {
                 } else {
                     this.toastr.info(message, title);
                 }
-            } else {
+            } else if (isToastAllowed) {
                 this.toastr.info(message, title);
             }
         });

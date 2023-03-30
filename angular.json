@@ -27,7 +27,7 @@
                             "src/favicon.ico",
                             "src/assets",
                             "src/web.config",
-                            "src/sw.js"
+                            "src/notification_sw.js"
                         ],
                         "styles": [
                             "src/styles.scss"
