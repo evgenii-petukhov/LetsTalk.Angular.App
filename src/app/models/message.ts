@@ -7,4 +7,8 @@ export class Message {
     isMine?: boolean | undefined;
     created?: Date;
     linkPreview?: LinkPreview;
+
+    public constructor(init?:Partial<Message>) {
+        Object.assign(this, init);
+    }
 }
