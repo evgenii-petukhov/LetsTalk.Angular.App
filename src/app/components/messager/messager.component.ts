@@ -62,6 +62,9 @@ export class MessagerComponent implements OnInit {
                 }
             }
         }, (linkPreview) => {
+            if (linkPreview.accountId !== this.selectedAccountId) {
+                return;
+            }
             const message = new Message();
             message.id = linkPreview.messageId;
             message.linkPreview = linkPreview;
