@@ -1,10 +1,11 @@
 <div class="bubble"
     [ngClass]="message.isMine ? 'btm-right' : 'btm-left'">
     <div class="bubble-inner-container">
+        <div>{{message.linkPreview?.title}}</div>
         <div class="text" [innerHTML]="message.text"></div>
         <div class="time"
             title="{{message.created | date:'HH:mm, d MMMM YYYY'}}">
             {{message.created | date:"HH:mm"}}
-        </div>  
+        </div>
     </div>
 </div>

@@ -29,6 +29,7 @@ import { StoreConfig } from './state/store-config';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { OrderByPipe } from './pipes/orderby';
 import { SocialAuthProvider } from './providers/social-auth-provider';
+import { VisibleOnlyPipe } from './pipes/visibleOnly';
 
 @NgModule({
     declarations: [
@@ -44,7 +45,8 @@ import { SocialAuthProvider } from './providers/social-auth-provider';
         SocialMediaIconComponent,
         ChatHeaderComponent,
         SidebarComponent,
-        OrderByPipe
+        OrderByPipe,
+        VisibleOnlyPipe
     ],
     imports: [
         BrowserModule,

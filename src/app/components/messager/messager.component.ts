@@ -8,6 +8,7 @@ import { selectLayoutSettings } from 'src/app/state/layout-settings/select-layou
 import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
 import { MappingService } from 'src/app/services/mapping-service';
+import { Message } from 'src/app/models/message';
 
 @Component({
     selector: 'app-messager',
@@ -60,6 +61,11 @@ export class MessagerComponent implements OnInit {
                         this.isWindowActive);
                 }
             }
+        }, (linkPreview) => {
+            const message = new Message();
+            message.id = linkPreview.messageId;
+            message.linkPreview = linkPreview;
+            this.storeService.addMessage(message);
         });
     }
 

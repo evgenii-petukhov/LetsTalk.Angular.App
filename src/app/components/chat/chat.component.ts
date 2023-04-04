@@ -14,6 +14,7 @@ import { selectSelectedAccountId } from "src/app/state/selected-account-id/selec
 import { selectMessages } from "src/app/state/messages/messages.selector";
 import { StoreService } from "src/app/services/store.service";
 import { MappingService } from "src/app/services/mapping-service";
+import { Message } from "src/app/models/message";
 
 @Component({
     selector: 'app-chat',
@@ -61,6 +62,10 @@ export class ChatComponent implements OnInit, AfterViewInit {
         });
         this.message = '';
         return false;
+    }
+
+    isMessageVisible(message: Message) {
+        return message.text;
     }
 
     private scrollToBottom(): void {
