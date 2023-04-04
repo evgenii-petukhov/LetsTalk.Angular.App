@@ -32,6 +32,10 @@ export class SignalrService {
             messageHandler?.(message);
         });
 
+        this.hubConnectionBuilder.on('SendLinkPreviewNotification', (e) => {
+            console.log(e);
+        });
+
         this.hubConnectionBuilder.onreconnected(async () => {
             await this.authorize();
             console.log('Notification service: reconnected');
