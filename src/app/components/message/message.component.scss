@@ -40,5 +40,32 @@
             line-height: 10px;
             text-align: right;
         }
+
+        .link-preview {
+            display: flex;
+            text-decoration: none;
+            color: inherit;
+
+            .link-preview-image {
+                flex: 0 1 auto;
+                margin: 0 10px 0 0;
+                img {
+                    max-height: 40px;
+                }
+            }
+
+            .link-preview-text-container {
+                flex: 1 1 auto;
+                display: flex;
+                align-items: center;
+
+                .link-preview-text {
+                    word-wrap: break-word;
+                    font-size: 14px;
+                    line-height: 20px;
+                    font-weight: 600;
+                }
+            }
+        }
     }
 }

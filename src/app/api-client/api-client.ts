@@ -370,7 +370,7 @@ export class AccountDto implements IAccountDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     unreadCount?: number;
-    lastMessageDate?: number | undefined;
+    lastMessageDate?: number;
 
     constructor(data?: IAccountDto) {
         if (data) {
@@ -420,7 +420,7 @@ export interface IAccountDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     unreadCount?: number;
-    lastMessageDate?: number | undefined;
+    lastMessageDate?: number;
 }
 
 export class CreateMessageRequest implements ICreateMessageRequest {
@@ -461,6 +461,58 @@ export class CreateMessageRequest implements ICreateMessageRequest {
 export interface ICreateMessageRequest {
     text?: string | undefined;
     recipientId?: number;
+}
+
+export class LinkPreviewDto implements ILinkPreviewDto {
+    messageId?: number;
+    accountId?: number;
+    title?: string | undefined;
+    imageUrl?: string | undefined;
+    url?: string | undefined;
+
+    constructor(data?: ILinkPreviewDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.messageId = _data["messageId"];
+            this.accountId = _data["accountId"];
+            this.title = _data["title"];
+            this.imageUrl = _data["imageUrl"];
+            this.url = _data["url"];
+        }
+    }
+
+    static fromJS(data: any): LinkPreviewDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkPreviewDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["messageId"] = this.messageId;
+        data["accountId"] = this.accountId;
+        data["title"] = this.title;
+        data["imageUrl"] = this.imageUrl;
+        data["url"] = this.url;
+        return data;
+    }
+}
+
+export interface ILinkPreviewDto {
+    messageId?: number;
+    accountId?: number;
+    title?: string | undefined;
+    imageUrl?: string | undefined;
+    url?: string | undefined;
 }
 
 export class LoginRequest implements ILoginRequest {
@@ -586,9 +638,11 @@ export interface IMarkAsReadRequest {
 export class MessageDto implements IMessageDto {
     id?: number;
     text?: string | undefined;
+    textHtml?: string | undefined;
     accountId?: number;
     isMine?: boolean | undefined;
     created?: number;
+    linkPreview?: LinkPreviewDto;
 
     constructor(data?: IMessageDto) {
         if (data) {
@@ -603,9 +657,11 @@ export class MessageDto implements IMessageDto {
         if (_data) {
             this.id = _data["id"];
             this.text = _data["text"];
+            this.textHtml = _data["textHtml"];
             this.accountId = _data["accountId"];
             this.isMine = _data["isMine"];
             this.created = _data["created"];
+            this.linkPreview = _data["linkPreview"] ? LinkPreviewDto.fromJS(_data["linkPreview"]) : <any>undefined;
         }
     }
 
@@ -620,9 +676,11 @@ export class MessageDto implements IMessageDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["text"] = this.text;
+        data["textHtml"] = this.textHtml;
         data["accountId"] = this.accountId;
         data["isMine"] = this.isMine;
         data["created"] = this.created;
+        data["linkPreview"] = this.linkPreview ? this.linkPreview.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -630,9 +688,11 @@ export class MessageDto implements IMessageDto {
 export interface IMessageDto {
     id?: number;
     text?: string | undefined;
+    textHtml?: string | undefined;
     accountId?: number;
     isMine?: boolean | undefined;
     created?: number;
+    linkPreview?: LinkPreviewDto;
 }
 
 export class ApiException extends Error {
