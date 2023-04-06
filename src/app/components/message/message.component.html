@@ -1,7 +1,10 @@
 <div class="bubble"
     [ngClass]="message.isMine ? 'btm-right' : 'btm-left'">
     <div class="bubble-inner-container">
-        <a [href]="message.linkPreview.url" *ngIf="message.linkPreview" class="link-preview">
+        <a [href]="message.linkPreview.url"
+            target="_blank"
+            class="link-preview"
+            *ngIf="message.linkPreview">
             <div class="link-preview-image" *ngIf="message.linkPreview.imageUrl && !isImageError">
                 <img [src]="message.linkPreview.imageUrl" (error)="onImageError()" />
             </div>
