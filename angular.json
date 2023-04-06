@@ -69,7 +69,8 @@
                             "namedChunks": true,
                             "extractLicenses": true,
                             "vendorChunk": true,
-                            "buildOptimizer": false
+                            "buildOptimizer": false,
+                            "outputHashing": "all"
                         },
                         "development-hosting": {
                             "fileReplacements": [
@@ -83,7 +84,8 @@
                             "namedChunks": true,
                             "extractLicenses": true,
                             "vendorChunk": true,
-                            "buildOptimizer": false
+                            "buildOptimizer": false,
+                            "outputHashing": "all"
                         }
                     }
                 },
