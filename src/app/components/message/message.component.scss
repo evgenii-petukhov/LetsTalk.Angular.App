@@ -29,7 +29,7 @@
         margin: 0;
 
         .text {
-            word-wrap: break-word;
+            overflow-wrap: break-word;
             font-size: 14px;
             line-height: 20px;
             margin: 0 0 4px 0;
@@ -63,7 +63,7 @@
                 align-items: center;
 
                 .link-preview-text {
-                    word-wrap: break-word;
+                    overflow-wrap: break-word;
                     font-size: 14px;
                     line-height: 20px;
                     font-weight: 600;
