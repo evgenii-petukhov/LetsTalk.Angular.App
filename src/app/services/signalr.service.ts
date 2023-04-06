@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpTransportType, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { environment } from '../../environments/environment';
-import { IMessageDto } from '../api-client/api-client';
+import { ILinkPreviewDto, IMessageDto } from '../api-client/api-client';
 import { ConstantRetryPolice } from './constant-retry-police';
 import { TokenStorageService } from './token-storage.service';
-import { LinkPreview } from '../models/link-preview';
 
 @Injectable({
     providedIn: 'root'
@@ -23,7 +22,7 @@ export class SignalrService {
 
     init(
         messageHandler: (messageDto: IMessageDto) => void,
-        linkPreviewHandler: (response: LinkPreview) => void) {
+        linkPreviewHandler: (response: ILinkPreviewDto) => void) {
         this.hubConnectionBuilder.start()
             .then(async () => {
                 await this.authorize();
@@ -35,7 +34,7 @@ export class SignalrService {
             messageHandler?.(messageDto);
         });
 
-        this.hubConnectionBuilder.on('SendLinkPreviewNotification', (response: LinkPreview) => {
+        this.hubConnectionBuilder.on('SendLinkPreviewNotification', (response: ILinkPreviewDto) => {
             linkPreviewHandler?.(response);
         });
 

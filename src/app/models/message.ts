@@ -1,4 +1,4 @@
-import { LinkPreview } from "./link-preview";
+import { ILinkPreviewDto } from "../api-client/api-client";
 
 export class Message {
     id?: number;
@@ -7,7 +7,7 @@ export class Message {
     accountId?: number;
     isMine?: boolean | undefined;
     created?: Date;
-    linkPreview?: LinkPreview;
+    linkPreview?: ILinkPreviewDto;
 
     public constructor(init?:Partial<Message>) {
         Object.assign(this, init);
