@@ -12,4 +12,9 @@ import { Message } from 'src/app/models/message';
 export class MessageComponent {
     @Input() message: Message;
 
+    isImageError = false;
+
+    onImageError(event){
+        this.isImageError = true;
+    }
 }
