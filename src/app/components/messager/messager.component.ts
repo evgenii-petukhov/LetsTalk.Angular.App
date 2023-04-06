@@ -7,7 +7,6 @@ import { selectSelectedAccountId } from 'src/app/state/selected-account-id/selec
 import { selectLayoutSettings } from 'src/app/state/layout-settings/select-layout-settings.selectors';
 import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
-import { MappingService } from 'src/app/services/mapping-service';
 import { Message } from 'src/app/models/message';
 
 @Component({
@@ -28,8 +27,7 @@ export class MessagerComponent implements OnInit {
         private signalrService: SignalrService,
         private notificationService: NotificationService,
         private store: Store,
-        private storeService: StoreService,
-        private mappingService: MappingService
+        private storeService: StoreService
     ) { }
 
     ngOnInit(): void {
@@ -45,7 +43,7 @@ export class MessagerComponent implements OnInit {
         this.signalrService.init(messageDto => {
             if (messageDto.accountId === this.selectedAccountId) {
                 messageDto.isMine = false;
-                const message = this.mappingService.mapMessage(messageDto);
+                const message = new Message(messageDto);
                 this.storeService.addMessage(message);
                 this.storeService.setLastMessageDate(message.accountId, messageDto.created);
             }
@@ -65,9 +63,10 @@ export class MessagerComponent implements OnInit {
             if (linkPreview.accountId !== this.selectedAccountId) {
                 return;
             }
-            const message = new Message();
-            message.id = linkPreview.messageId;
-            message.linkPreview = linkPreview;
+            const message = new Message({
+                id: linkPreview.messageId,
+                linkPreview: linkPreview
+            });
             this.storeService.addMessage(message);
         });
     }

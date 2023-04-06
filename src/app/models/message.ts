@@ -1,4 +1,5 @@
-import { ILinkPreviewDto } from "../api-client/api-client";
+import { IMessageDto } from "../api-client/api-client";
+import { LinkPreview } from "./linkPreview";
 
 export class Message {
     id?: number;
@@ -7,9 +8,15 @@ export class Message {
     accountId?: number;
     isMine?: boolean | undefined;
     created?: Date;
-    linkPreview?: ILinkPreviewDto;
+    linkPreview?: LinkPreview;
 
-    public constructor(init?:Partial<Message>) {
+    constructor(init?:Partial<Message | IMessageDto>) {
         Object.assign(this, init);
+        this.linkPreview = init.linkPreview ? new LinkPreview(init.linkPreview) : null;
+        const created = (init as IMessageDto).created as any;
+        if (!(created instanceof Date)) {
+            this.created = new Date(0);
+            this.created.setUTCSeconds(created);
+        }
     }
 }
