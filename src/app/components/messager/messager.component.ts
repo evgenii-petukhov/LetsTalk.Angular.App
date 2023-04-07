@@ -41,8 +41,7 @@ export class MessagerComponent implements OnInit {
         });
 
         this.signalrService.init(messageDto => {
-            if (messageDto.accountId === this.selectedAccountId) {
-                messageDto.isMine = false;
+            if (messageDto.isMine || messageDto.accountId === this.selectedAccountId) {
                 const message = new Message(messageDto);
                 this.storeService.addMessage(message);
                 this.storeService.setLastMessageDate(message.accountId, messageDto.created);
