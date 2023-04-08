@@ -2,13 +2,13 @@ import { SocialUser } from '@abacritt/angularx-social-login';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable  } from 'rxjs';
-import { 
-    LoginRequest, 
-    LoginResponseDto, 
-    ApiClient, 
-    IAccountDto, 
-    CreateMessageRequest, 
-    IMessageDto, 
+import {
+    LoginRequest,
+    LoginResponseDto,
+    ApiClient,
+    IAccountDto,
+    CreateMessageRequest,
+    IMessageDto,
     MarkAsReadRequest
 } from '../api-client/api-client';
 

@@ -19,7 +19,7 @@ export class StoreService {
     readAllMessages(accountId: number): void {
         setTimeout(() => {
             this.store.dispatch(AccountsActions.readall({
-                accountId: accountId
+                accountId
             }));
         }, 1000);
     }
@@ -48,12 +48,12 @@ export class StoreService {
         this.store.dispatch(LayoutSettingsActions.init({ settings }));
     }
 
-    setLoggedInUser(account: IAccountDto):void {
+    setLoggedInUser(account: IAccountDto): void {
         this.store.dispatch(LoggedInUserActions.init({ account }));
     }
-    
+
     setSelectedAccountId(accountId: number): void {
         this.store.dispatch(SelectedAccountIdActions.init({ accountId }));
     }
-    
+
 }

@@ -4,7 +4,7 @@ export class LinkPreview {
     imageUrl?: string | undefined;
     url?: string | undefined;
 
-    constructor(init?:Partial<LinkPreview>) {
+    constructor(init?: Partial<LinkPreview>) {
         Object.assign(this, init);
     }
 }

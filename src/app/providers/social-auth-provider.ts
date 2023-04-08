@@ -3,8 +3,8 @@ import {
     LoginProvider,
     SocialAuthServiceConfig,
     VKLoginProvider
-} from "@abacritt/angularx-social-login";
-import { environment } from "src/environments/environment";
+} from '@abacritt/angularx-social-login';
+import { environment } from 'src/environments/environment';
 
 export const SocialAuthProvider =
 {

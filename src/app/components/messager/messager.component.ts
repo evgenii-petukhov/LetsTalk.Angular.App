@@ -53,8 +53,8 @@ export class MessagerComponent implements OnInit {
                 if (sender) {
                     this.storeService.incrementUnreadMessages(messageDto.accountId);
                     this.notificationService.showNotification(
-                        `${sender.firstName} ${sender.lastName}`, 
-                        messageDto.text, 
+                        `${sender.firstName} ${sender.lastName}`,
+                        messageDto.text,
                         this.isWindowActive);
                 }
             }
@@ -64,7 +64,7 @@ export class MessagerComponent implements OnInit {
             }
             const message = new Message({
                 id: linkPreview.messageId,
-                linkPreview: linkPreview
+                linkPreview
             });
             this.storeService.addMessage(message);
         });

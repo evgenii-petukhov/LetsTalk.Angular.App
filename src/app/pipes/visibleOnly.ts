@@ -1,7 +1,7 @@
-import { Pipe, PipeTransform } from "@angular/core";
+import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-    name: "visibleOnly"
+    name: 'visibleOnly'
 })
 export class VisibleOnlyPipe<T> implements PipeTransform {
     transform(items: T[], callback: (item: T) => boolean): any[] {

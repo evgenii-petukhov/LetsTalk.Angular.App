@@ -9,7 +9,7 @@ export class NotificationService {
     private isServiceWorkerRegistered = false;
 
     constructor(private toastr: ToastrService) {
-        navigator.serviceWorker.register("notification_sw.js").then(() => {
+        navigator.serviceWorker.register('notification_sw.js').then(() => {
             this.isServiceWorkerRegistered = true;
             console.log('serviceWorker success');
         }).catch(() => {

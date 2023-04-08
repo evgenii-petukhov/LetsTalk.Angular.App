@@ -67,9 +67,7 @@ import { VisibleOnlyPipe } from './pipes/visibleOnly';
         SocialAuthProvider,
         {
             provide: API_BASE_URL,
-            useFactory: () => {
-                return environment.apiBaseUrl;
-            }
+            useFactory: () => environment.apiBaseUrl
         }
     ],
     bootstrap: [AppComponent]

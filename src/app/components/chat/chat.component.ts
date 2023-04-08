@@ -6,14 +6,14 @@ import {
     QueryList,
     ViewChild,
     ViewChildren
-} from "@angular/core";
+} from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
-import { Store } from "@ngrx/store";
-import { selectSelectedAccountId } from "src/app/state/selected-account-id/select-selected-account-id.selectors";
-import { selectMessages } from "src/app/state/messages/messages.selector";
-import { StoreService } from "src/app/services/store.service";
-import { Message } from "src/app/models/message";
+import { Store } from '@ngrx/store';
+import { selectSelectedAccountId } from 'src/app/state/selected-account-id/select-selected-account-id.selectors';
+import { selectMessages } from 'src/app/state/messages/messages.selector';
+import { StoreService } from 'src/app/services/store.service';
+import { Message } from 'src/app/models/message';
 
 @Component({
     selector: 'app-chat',
@@ -51,7 +51,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     }
 
     send(): boolean {
-        if (!this.message.trim()) return;
+        if (!this.message.trim()) {return;}
         this.apiService.sendMessage(this.accountId, this.message).subscribe(messageDto => {
             messageDto.isMine = true;
             const message = new Message(messageDto);
@@ -75,7 +75,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     }
 
     private loadMessages(accountId: number): void {
-        if (accountId === null) return;
+        if (accountId === null) {return;}
         this.storeService.initMessages([]);
         this.apiService.getMessages(accountId).subscribe(messageDtos => {
             const messages = messageDtos.map(messageDto => new Message(messageDto));

@@ -17,7 +17,7 @@ export class ChatHeaderComponent {
         private store: Store,
         private storeService: StoreService) {}
 
-    onBackClicked():void {
+    onBackClicked(): void {
         this.storeService.setLayoutSettings({ activeArea: 'contacts' });
         this.storeService.setSelectedAccountId(null);
     }
