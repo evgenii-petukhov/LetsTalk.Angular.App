@@ -5,13 +5,13 @@
     flex: 0 1 300px;
     min-width: 300px;
     flex-direction: column;
-    border-right: 1px solid rgb(0 0 0 / 50%);
+    box-shadow: 0 0 5px 3px rgb(0 0 0 / 20%);
 
     @include media-breakpoint-down(md) {
         flex: 1 1 auto;
         min-width: auto;
         display: none;
-        border-right: none;
+        box-shadow: none;
 
         &.active {
             display: flex;
