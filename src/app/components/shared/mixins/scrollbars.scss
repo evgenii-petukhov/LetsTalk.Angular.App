@@ -1,0 +1,26 @@
+@mixin scrollbars($size: 8px,
+    $radius: 4px,
+    $border-thickness: 1px,
+    $background-color: transparent,
+    $foreground-color: rgb(0 0 0 / 10%),
+    $border-color: rgb(0 0 0 / 20%)) {
+    // For Chrome & Safari
+    &::-webkit-scrollbar {
+        width: $size;
+        height: $size;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $foreground-color;
+        border: $border-thickness solid $border-color;
+        border-radius: $radius;
+    }
+
+    &::-webkit-scrollbar-track {
+        border-radius: $radius;
+        background: $background-color;
+    }
+
+    // Standard version (Firefox only for now)
+    scrollbar-color: $foreground-color $background-color;
+}

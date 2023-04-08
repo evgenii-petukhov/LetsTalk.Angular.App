@@ -1,5 +1,9 @@
+@import "../shared/mixins/scrollbars";
+
 :host {
     overflow-y: auto;
+
+    @include scrollbars;
 
     ul {
         display: block;

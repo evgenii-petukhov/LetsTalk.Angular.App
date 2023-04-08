@@ -1,4 +1,5 @@
 @import "bootstrap/scss/bootstrap";
+@import "../shared/mixins/scrollbars";
 
 :host {
     display: flex;
@@ -22,11 +23,13 @@
         .messages-container {
             flex: 1 1 auto;
             overflow-y: auto;
-    
+
+            @include scrollbars;
+
             ul {
                 margin: 0;
                 padding: 10px 0;
-    
+
                 li {
                     display: flex;
                     margin: 0 0 10px;
@@ -37,13 +40,13 @@
                 }
             }
         }
-    
+
         .send-message-container {
             display: flex;
             padding: 10px 6px 6px;
             min-height: 66px;
             max-height: 66px;
-    
+
             .textarea-container {
                 flex: 1 1 auto;
                 display: flex;
@@ -57,9 +60,11 @@
                     font-size: 14px;
                     line-height: 20px;
                     padding: 3px 8px;
+
+                    @include scrollbars;
                 }
             }
-    
+
             .submit-container {
                 flex: 0 1 auto;
                 display: flex;
