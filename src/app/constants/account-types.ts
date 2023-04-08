@@ -1,5 +1,5 @@
 export class AccountTypes {
-    static FACEBOOK = 1;
+    static facebook = 1;
 
-    static VK = 2;
+    static vk = 2;
 }

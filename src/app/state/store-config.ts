@@ -1,13 +1,13 @@
-import { AccountsReducer } from './accounts/accounts.reducer';
-import { LayoutSettingsReducer } from './layout-settings/layout-settings.reducer';
-import { LoggedInUserReducer } from './logged-in-user/logged-in-user.reducer';
-import { MessagesReducer } from './messages/messages.reducer';
-import { SelectedAccountIdReducer } from './selected-account-id/selected-account-id.reducer';
+import { accountsReducer } from './accounts/accounts.reducer';
+import { layoutSettingsReducer } from './layout-settings/layout-settings.reducer';
+import { loggedInUserReducer } from './logged-in-user/logged-in-user.reducer';
+import { messagesReducer } from './messages/messages.reducer';
+import { selectedAccountIdReducer } from './selected-account-id/selected-account-id.reducer';
 
-export const StoreConfig = {
-    messages: MessagesReducer,
-    selectedAccountId: SelectedAccountIdReducer,
-    accounts: AccountsReducer,
-    loggedInUser: LoggedInUserReducer,
-    layoutSettings: LayoutSettingsReducer
+export const storeConfig = {
+    messages: messagesReducer,
+    selectedAccountId: selectedAccountIdReducer,
+    accounts: accountsReducer,
+    loggedInUser: loggedInUserReducer,
+    layoutSettings: layoutSettingsReducer
 };

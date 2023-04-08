@@ -6,19 +6,10 @@ import {
 } from '@abacritt/angularx-social-login';
 import { environment } from 'src/environments/environment';
 
-export const SocialAuthProvider =
-{
-    provide: 'SocialAuthServiceConfig',
-    useValue: {
-        autoLogin: false,
-        providers: getProviders()
-    } as SocialAuthServiceConfig,
-};
-
-function getProviders(): Array<{
+const getProviders = (): Array<{
     id: string;
     provider: LoginProvider;
-}> {
+}> => {
     const providers = [];
     const env = (environment as any);
     if (env.facebookAppId) {
@@ -34,4 +25,13 @@ function getProviders(): Array<{
         });
     }
     return providers;
-}
+};
+
+export const socialAuthProvider =
+{
+    provide: 'SocialAuthServiceConfig',
+    useValue: {
+        autoLogin: false,
+        providers: getProviders()
+    } as SocialAuthServiceConfig,
+};

@@ -30,6 +30,12 @@ export class MessagerComponent implements OnInit {
         private storeService: StoreService
     ) { }
 
+    @HostListener('document:visibilitychange', ['$event'])
+    onVisibilityChange(event: Event) {
+        this.isWindowActive = !(event.target as any).hidden;
+        this.storeService.readAllMessages(this.selectedAccountId);
+    }
+
     ngOnInit(): void {
         this.apiService.getAccounts().subscribe(accounts => {
             this.accounts = accounts;
@@ -68,11 +74,5 @@ export class MessagerComponent implements OnInit {
             });
             this.storeService.addMessage(message);
         });
-    }
-
-    @HostListener('document:visibilitychange', ['$event'])
-    onVisibilityChange(event: Event) {
-        this.isWindowActive = !(event.target as any).hidden;
-        this.storeService.readAllMessages(this.selectedAccountId);
     }
 }

@@ -12,7 +12,7 @@ import { AuthGuardService } from './services/auth-guard.service';
 import { environment } from '../environments/environment';
 import { authInterceptorProvider } from './providers/auth-interceptor-provider';
 import { API_BASE_URL } from './api-client/api-client';
-import { ApiClientProvider } from './providers/api-client-provider';
+import { apiClientProvider } from './providers/api-client-provider';
 import { AccountListComponent } from './components/account-list/account-list.component';
 import { MessagerComponent } from './components/messager/messager.component';
 import { AccountListItemComponent } from './components/account-list-item/account-list-item.component';
@@ -25,10 +25,10 @@ import { LoggedInUserComponent } from './components/logged-in-user/logged-in-use
 import { SocialMediaIconComponent } from './components/social-media-icon/social-media-icon.component';
 import { ChatHeaderComponent } from './components/chat-header/chat-header.component';
 import { StoreModule } from '@ngrx/store';
-import { StoreConfig } from './state/store-config';
+import { storeConfig } from './state/store-config';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { OrderByPipe } from './pipes/orderby';
-import { SocialAuthProvider } from './providers/social-auth-provider';
+import { socialAuthProvider } from './providers/social-auth-provider';
 import { VisibleOnlyPipe } from './pipes/visibleOnly';
 
 @NgModule({
@@ -58,13 +58,13 @@ import { VisibleOnlyPipe } from './pipes/visibleOnly';
         FormsModule,
         BrowserAnimationsModule,
         ToastrModule.forRoot(),
-        StoreModule.forRoot(StoreConfig)
+        StoreModule.forRoot(storeConfig)
     ],
     providers: [
         authInterceptorProvider,
         AuthGuardService,
-        ApiClientProvider,
-        SocialAuthProvider,
+        apiClientProvider,
+        socialAuthProvider,
         {
             provide: API_BASE_URL,
             useFactory: () => environment.apiBaseUrl

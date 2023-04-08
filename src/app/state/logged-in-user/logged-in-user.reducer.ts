@@ -1,10 +1,10 @@
 import { createReducer, on } from '@ngrx/store';
 import { IAccountDto } from 'src/app/api-client/api-client';
-import { LoggedInUserActions } from './logged-in-user.actions';
+import { loggedInUserActions } from './logged-in-user.actions';
 
 export const initialState: IAccountDto = null;
 
-export const LoggedInUserReducer = createReducer(
+export const loggedInUserReducer = createReducer(
     initialState,
-    on(LoggedInUserActions.init, (_state, { account }) => account),
+    on(loggedInUserActions.init, (_state, { account }) => account),
 );

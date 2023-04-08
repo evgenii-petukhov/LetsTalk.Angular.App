@@ -8,21 +8,21 @@ import { AccountTypes } from 'src/app/constants/account-types';
     styleUrls: ['./social-media-icon.component.scss']
 })
 export class SocialMediaIconComponent implements OnChanges {
+    @Input() iconTypeId: number;
+    icon: IconDefinition;
+    title: string;
+
     ngOnChanges(): void {
         switch (+this.iconTypeId) {
-            case AccountTypes.FACEBOOK:
+            case AccountTypes.facebook:
                 this.icon = faFacebook;
                 this.title = 'Facebook';
                 break;
 
-            case AccountTypes.VK:
+            case AccountTypes.vk:
                 this.icon = faVk;
                 this.title = 'VK';
                 break;
         }
     }
-
-    icon: IconDefinition;
-    title: string;
-    @Input() iconTypeId: number;
 }

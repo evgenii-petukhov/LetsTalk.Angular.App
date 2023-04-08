@@ -1,7 +1,7 @@
 import { createActionGroup, props } from '@ngrx/store';
 import { IAccountDto } from 'src/app/api-client/api-client';
 
-export const LoggedInUserActions = createActionGroup({
+export const loggedInUserActions = createActionGroup({
     source: 'LoggedInUser',
     events: {
         init: props<{account: IAccountDto}>(),

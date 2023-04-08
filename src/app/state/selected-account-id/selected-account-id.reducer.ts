@@ -1,9 +1,9 @@
 import { createReducer, on } from '@ngrx/store';
-import { SelectedAccountIdActions } from './selected-account-id.actions';
+import { selectedAccountIdActions } from './selected-account-id.actions';
 
 export const initialState: number = null;
 
-export const SelectedAccountIdReducer = createReducer(
+export const selectedAccountIdReducer = createReducer(
     initialState,
-    on(SelectedAccountIdActions.init, (_state, { accountId }) => accountId),
+    on(selectedAccountIdActions.init, (_state, { accountId }) => accountId),
 );

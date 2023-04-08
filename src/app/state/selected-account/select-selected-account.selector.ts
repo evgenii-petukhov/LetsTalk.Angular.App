@@ -5,4 +5,4 @@ import { selectSelectedAccountId } from '../selected-account-id/select-selected-
 export const selectSelectedAccount = createSelector(
     selectAccounts,
     selectSelectedAccountId,
-    (accounts, accountId) => accounts.find(account => account.id === accountId)!);
+    (accounts, accountId) => accounts.find(account => account.id === accountId));
