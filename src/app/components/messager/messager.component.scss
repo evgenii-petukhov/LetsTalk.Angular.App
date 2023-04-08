@@ -15,6 +15,8 @@
     @include media-breakpoint-down(lg) {
         margin: 0;
         width: auto;
+        max-height: 100vh;
+        height: 0;
         border-radius: 0;
         box-shadow: none;
     }
