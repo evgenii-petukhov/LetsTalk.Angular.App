@@ -29,7 +29,7 @@
     
                 li {
                     display: flex;
-                    margin: 0 0 10px 0;
+                    margin: 0 0 10px;
 
                     &:last-child {
                         margin: 0;
@@ -40,16 +40,17 @@
     
         .send-message-container {
             display: flex;
-            padding: 10px 6px 6px 6px;
+            padding: 10px 6px 6px;
     
             .textarea-container {
                 flex: 1 1 auto;
                 display: flex;
+
                 textarea {
                     flex: 1 1 auto;
                     resize: none;
                     border-radius: 8px;
-                    border: 2px solid rgba(0,0,0,.4);
+                    border: 2px solid rgb(0 0 0 / 40%);
                     outline: none;
                     font-size: 14px;
                     line-height: 20px;
@@ -60,6 +61,7 @@
             .submit-container {
                 flex: 0 1 auto;
                 display: flex;
+
                 button {
                     flex: 0 1 auto;
                     background: none;
@@ -67,6 +69,7 @@
                     font-size: 21px;
                     padding: 0 8px;
                     color: #5a5a5a;
+
                     &[disabled] {
                         color: #aaa9a9;
                     }

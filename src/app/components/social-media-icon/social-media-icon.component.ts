@@ -4,8 +4,7 @@ import { AccountTypes } from 'src/app/constants/account-types';
 
 @Component({
     selector: 'app-social-media-icon',
-    templateUrl: './social-media-icon.component.html',
-    styleUrls: ['./social-media-icon.component.scss']
+    templateUrl: './social-media-icon.component.html'
 })
 export class SocialMediaIconComponent implements OnChanges {
     @Input() iconTypeId: number;

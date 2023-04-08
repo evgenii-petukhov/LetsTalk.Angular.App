@@ -8,7 +8,7 @@
     "build:dev": "ng build --configuration development --watch",
     "build:dev:hosting": "ng build --configuration development-hosting",
     "test": "ng test",
-    "lint": "ng lint",
+    "lint": "ng lint --fix && npx stylelint \"**/*.scss\" --fix",
     "e2e": "ng e2e"
   },
   "private": true,
@@ -61,6 +61,8 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "^2.0.0",
     "protractor": "~7.0.0",
+    "stylelint": "^15.4.0",
+    "stylelint-config-standard-scss": "^7.0.1",
     "ts-node": "~10.9.1",
     "tslib": "^2.5.0",
     "typescript": "~4.9.5"

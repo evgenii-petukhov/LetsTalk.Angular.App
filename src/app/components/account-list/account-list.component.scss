@@ -10,12 +10,12 @@
             display: block;
 
             &:hover {
-                background:rgba(0, 0, 0, .05);
+                background:rgb(0 0 0 / 5%);
                 transition: background-color .2s ease;
             }
 
             &.selected {
-                background:rgba(0, 0, 0, .1);
+                background:rgb(0 0 0 / 10%);
                 transition: background-color .2s ease;
             }
         }
