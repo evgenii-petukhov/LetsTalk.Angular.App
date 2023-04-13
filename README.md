@@ -9,4 +9,4 @@
 
 [Live demo](https://chat.epetukhov.cyou/)
 
-![scheme](scheme/scheme.svg)
+![scheme](scheme-compressed.svg)
