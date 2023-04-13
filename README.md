@@ -9,6 +9,8 @@
 
 [Live demo](https://chat.epetukhov.cyou/)
 ## Description
+This is an instant messaging service with authentication via social media, such as Facebook. The service allows users to send text messages and share links. 
+
 The idea behind this project is to demonstrate that 
 * I'm be able to create a single-page web application with Angular
 * I can implement reactive state management with NgRx store in Angular applications
