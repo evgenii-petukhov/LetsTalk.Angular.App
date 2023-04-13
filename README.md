@@ -25,3 +25,11 @@ The back-end implements microservice architecture. There are a few microservices
 The API and the Notification microservice communicate with the Authentication microservice via GRPC.
 
 The API, the LinkPreview, and the Notification microservice communicate with each other via Apache Kafka.
+
+## Get started
+1. Clone the repository
+2. Install dependencies `npm install`
+3. Build the project. Use one of the following commands
+   - `npm run build` for the production environment
+   - `npm run build:dev` for development purposes
+4. Copy the output files to the website's directory
