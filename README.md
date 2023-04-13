@@ -10,3 +10,9 @@
 [Live demo](https://chat.epetukhov.cyou/)
 
 ![scheme](scheme-compressed.svg)
+## Description
+The idea behind this project is to demonstrate that 
+* I'm be able to create a single-page web application with Angular
+* I can implement reactive state management with NgRx store in Angular applications
+* I understand basic principles of OpenAPI
+* I can use tools such as Swagger and NSwagStudio to generate OpenApi client
