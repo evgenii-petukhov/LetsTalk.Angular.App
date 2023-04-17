@@ -9,6 +9,6 @@ export const messagesReducer = createReducer(
     on(messagesActions.init, (_state, {messages}) => messages),
     on(messagesActions.add, (_state, {message}) => {
         const existing = _state.find(m => m.id === message.id);
-        return [..._state.filter(m => m.id !== message.id), new Message({...existing, ...message})];
+        return [..._state.filter(m => m.id !== message.id), new Message(existing, message)];
     })
 );
