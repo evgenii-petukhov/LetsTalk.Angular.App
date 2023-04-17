@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { IAccountDto, ILinkPreviewDto, IMessageDto, LinkPreviewDto } from '../api-client/api-client';
+import { IAccountDto, ILinkPreviewDto, IMessageDto } from '../api-client/api-client';
 import { accountsActions } from '../state/accounts/accounts.actions';
 import { ILayoutSettngs } from '../state/layout-settings/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
@@ -36,11 +36,7 @@ export class StoreService {
     }
 
     setLinkPreview(linkPreviewDto: ILinkPreviewDto): void {
-        const messageDto = {
-            id: linkPreviewDto.messageId,
-            linkPreview: new LinkPreviewDto(linkPreviewDto)
-        };
-        this.store.dispatch(messagesActions.setlinkpreview({messageDto}));
+        this.store.dispatch(messagesActions.setlinkpreview({linkPreviewDto}));
     }
 
     incrementUnreadMessages(accountId: number): void {

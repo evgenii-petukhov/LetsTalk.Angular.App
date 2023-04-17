@@ -7,7 +7,6 @@ import { selectSelectedAccountId } from 'src/app/state/selected-account-id/selec
 import { selectLayoutSettings } from 'src/app/state/layout-settings/select-layout-settings.selectors';
 import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
-import { Message } from 'src/app/models/message';
 
 @Component({
     selector: 'app-messager',

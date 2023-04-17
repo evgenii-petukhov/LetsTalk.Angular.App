@@ -11,8 +11,10 @@ export const messagesReducer = createReducer(
         const existing = _state.find(m => m.id === messageDto.id);
         return existing?.text ? _state : [..._state.filter(m => m.id !== messageDto.id), new Message(existing, messageDto)];
     }),
-    on(messagesActions.setlinkpreview, (_state, {messageDto}) => {
-        const existing = _state.find(m => m.id === messageDto.id);
-        return existing?.linkPreview ? _state : [..._state.filter(m => m.id !== messageDto.id), new Message(existing, messageDto)];
+    on(messagesActions.setlinkpreview, (_state, {linkPreviewDto}) => {
+        const existing = _state.find(m => m.id === linkPreviewDto.messageId);
+        return existing?.linkPreview
+            ? _state
+            : [..._state.filter(m => m.id !== linkPreviewDto.messageId), new Message(existing, {linkPreview: linkPreviewDto})];
     }),
 );
