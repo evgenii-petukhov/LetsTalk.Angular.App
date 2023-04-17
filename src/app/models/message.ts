@@ -11,14 +11,26 @@ export class Message {
     linkPreview?: LinkPreview;
 
     constructor(...inits: Partial<Message | IMessageDto>[]) {
-        inits.forEach(init => {
-            const linkPreview = init?.linkPreview ?? this?.linkPreview;
+        inits.filter(x => x).forEach(init => {
+            const linkPreview = this.linkPreview ?? init?.linkPreview;
+            const created = this.created ?? init?.created;
+
             Object.assign(this, {...this, ...init});
-            this.linkPreview = linkPreview ? new LinkPreview(linkPreview) : null;
-            const created = (init as IMessageDto)?.created as any;
-            if (created && !(created instanceof Date)) {
-                this.created = new Date(0);
-                this.created.setUTCSeconds(created);
+
+            if (linkPreview) {
+                if (linkPreview instanceof LinkPreview) {
+                    this.linkPreview = linkPreview;
+                } else {
+                    this.linkPreview = new LinkPreview(linkPreview);
+                }
+            }
+            if (created) {
+                if ((created instanceof Date)) {
+                    this.created = created;
+                } else {
+                    this.created = new Date(0);
+                    this.created.setUTCSeconds(created);
+                }
             }
         });
     }

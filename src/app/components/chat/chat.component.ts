@@ -54,8 +54,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
         if (!this.message.trim()) {return;}
         this.apiService.sendMessage(this.accountId, this.message).subscribe(messageDto => {
             messageDto.isMine = true;
-            const message = new Message(messageDto);
-            this.storeService.addMessage(message);
+            this.storeService.addMessage(messageDto);
             this.storeService.setLastMessageDate(this.accountId, messageDto.created);
         });
         this.message = '';
@@ -78,8 +77,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
         if (accountId === null) {return;}
         this.storeService.initMessages([]);
         this.apiService.getMessages(accountId).subscribe(messageDtos => {
-            const messages = messageDtos.map(messageDto => new Message(messageDto));
-            this.storeService.initMessages(messages);
+            this.storeService.initMessages(messageDtos);
         });
     }
 }

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { IAccountDto } from '../api-client/api-client';
-import { Message } from '../models/message';
+import { IAccountDto, ILinkPreviewDto, IMessageDto, LinkPreviewDto } from '../api-client/api-client';
 import { accountsActions } from '../state/accounts/accounts.actions';
 import { ILayoutSettngs } from '../state/layout-settings/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
@@ -28,12 +27,20 @@ export class StoreService {
         this.store.dispatch(accountsActions.init({ accounts }));
     }
 
-    initMessages(messages: Message[]): void {
-        this.store.dispatch(messagesActions.init({ messages }));
+    initMessages(messageDtos: IMessageDto[]): void {
+        this.store.dispatch(messagesActions.init({ messageDtos }));
     }
 
-    addMessage(message: Message): void {
-        this.store.dispatch(messagesActions.add({ message }));
+    addMessage(messageDto: IMessageDto): void {
+        this.store.dispatch(messagesActions.add({ messageDto }));
+    }
+
+    setLinkPreview(linkPreviewDto: ILinkPreviewDto): void {
+        const messageDto = {
+            id: linkPreviewDto.messageId,
+            linkPreview: new LinkPreviewDto(linkPreviewDto)
+        };
+        this.store.dispatch(messagesActions.setlinkpreview({messageDto}));
     }
 
     incrementUnreadMessages(accountId: number): void {

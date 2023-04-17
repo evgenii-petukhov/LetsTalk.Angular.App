@@ -49,8 +49,7 @@ export class MessagerComponent implements OnInit {
         this.signalrService.init(messageDto => {
             this.storeService.setLastMessageDate(messageDto.accountId, messageDto.created);
             if (messageDto.isMine || messageDto.accountId === this.selectedAccountId) {
-                const message = new Message(messageDto);
-                this.storeService.addMessage(message);
+                this.storeService.addMessage(messageDto);
             }
             if (this.isWindowActive && (messageDto.accountId === this.selectedAccountId)) {
                 this.apiService.markAsRead(messageDto.id).subscribe();
@@ -64,15 +63,11 @@ export class MessagerComponent implements OnInit {
                         this.isWindowActive);
                 }
             }
-        }, (linkPreview) => {
-            if (linkPreview.accountId !== this.selectedAccountId) {
+        }, (linkPreviewDto) => {
+            if (linkPreviewDto.accountId !== this.selectedAccountId) {
                 return;
             }
-            const message = new Message({
-                id: linkPreview.messageId,
-                linkPreview
-            });
-            this.storeService.addMessage(message);
+            this.storeService.setLinkPreview(linkPreviewDto);
         });
     }
 }

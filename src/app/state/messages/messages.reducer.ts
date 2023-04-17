@@ -6,9 +6,13 @@ export const initialState: ReadonlyArray<Message> = [];
 
 export const messagesReducer = createReducer(
     initialState,
-    on(messagesActions.init, (_state, {messages}) => messages),
-    on(messagesActions.add, (_state, {message}) => {
-        const existing = _state.find(m => m.id === message.id);
-        return [..._state.filter(m => m.id !== message.id), new Message(existing, message)];
-    })
+    on(messagesActions.init, (_state, {messageDtos}) => messageDtos.map(messageDto => new Message(messageDto))),
+    on(messagesActions.add, (_state, {messageDto}) => {
+        const existing = _state.find(m => m.id === messageDto.id);
+        return [..._state.filter(m => m.id !== messageDto.id), new Message(existing, messageDto)];
+    }),
+    on(messagesActions.setlinkpreview, (_state, {messageDto}) => {
+        const existing = _state.find(m => m.id === messageDto.id);
+        return existing?.linkPreview ? _state : [..._state.filter(m => m.id !== messageDto.id), new Message(existing, messageDto)];
+    }),
 );

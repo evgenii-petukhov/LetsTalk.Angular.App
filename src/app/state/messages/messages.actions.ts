@@ -1,10 +1,11 @@
 import { createActionGroup, props } from '@ngrx/store';
-import { Message } from 'src/app/models/message';
+import { IMessageDto } from 'src/app/api-client/api-client';
 
 export const messagesActions = createActionGroup({
     source: 'Messages',
     events: {
-        init: props<{messages: ReadonlyArray<Message>}>(),
-        add: props<{message: Message}>(),
+        init: props<{messageDtos: ReadonlyArray<IMessageDto>}>(),
+        add: props<{messageDto: IMessageDto}>(),
+        setLinkPreview: props<{messageDto: IMessageDto}>()
     }
 });
