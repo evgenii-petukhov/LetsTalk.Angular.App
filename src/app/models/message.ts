@@ -5,7 +5,8 @@ export class Message {
     id?: number;
     text?: string | undefined;
     textHtml?: string | undefined;
-    accountId?: number;
+    senderId?: number;
+    recipientId?: number;
     isMine?: boolean | undefined;
     created?: Date;
     linkPreview?: LinkPreview;

@@ -639,7 +639,8 @@ export class MessageDto implements IMessageDto {
     id?: number;
     text?: string | undefined;
     textHtml?: string | undefined;
-    accountId?: number;
+    senderId?: number;
+    recipientId?: number;
     isMine?: boolean | undefined;
     created?: number;
     linkPreview?: LinkPreviewDto;
@@ -658,7 +659,8 @@ export class MessageDto implements IMessageDto {
             this.id = _data["id"];
             this.text = _data["text"];
             this.textHtml = _data["textHtml"];
-            this.accountId = _data["accountId"];
+            this.senderId = _data["senderId"];
+            this.recipientId = _data["recipientId"];
             this.isMine = _data["isMine"];
             this.created = _data["created"];
             this.linkPreview = _data["linkPreview"] ? LinkPreviewDto.fromJS(_data["linkPreview"]) : <any>undefined;
@@ -677,7 +679,8 @@ export class MessageDto implements IMessageDto {
         data["id"] = this.id;
         data["text"] = this.text;
         data["textHtml"] = this.textHtml;
-        data["accountId"] = this.accountId;
+        data["senderId"] = this.senderId;
+        data["recipientId"] = this.recipientId;
         data["isMine"] = this.isMine;
         data["created"] = this.created;
         data["linkPreview"] = this.linkPreview ? this.linkPreview.toJSON() : <any>undefined;
@@ -689,7 +692,8 @@ export interface IMessageDto {
     id?: number;
     text?: string | undefined;
     textHtml?: string | undefined;
-    accountId?: number;
+    senderId?: number;
+    recipientId?: number;
     isMine?: boolean | undefined;
     created?: number;
     linkPreview?: LinkPreviewDto;
