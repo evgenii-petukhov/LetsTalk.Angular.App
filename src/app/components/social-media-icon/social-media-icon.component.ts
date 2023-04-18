@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { faVk, faFacebook, IconDefinition } from '@fortawesome/free-brands-svg-icons';
-import { AccountTypes } from 'src/app/constants/account-types';
+import { AccountTypes } from 'src/app/enums/account-types';
 
 @Component({
     selector: 'app-social-media-icon',
