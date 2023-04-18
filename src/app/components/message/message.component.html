@@ -6,7 +6,9 @@
             class="link-preview"
             *ngIf="message.linkPreview">
             <div class="link-preview-image" *ngIf="message.linkPreview.imageUrl && !isImageError">
-                <img [src]="message.linkPreview.imageUrl" (error)="onImageError()" />
+                <img [src]="message.linkPreview.imageUrl"
+                    (error)="onImageError()"
+                    referrerpolicy="no-referrer" />
             </div>
             <div class="link-preview-text-container">
                 <div class="link-preview-text">{{message.linkPreview.title}}</div>
