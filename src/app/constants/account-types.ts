@@ -1,5 +1,4 @@
-export class AccountTypes {
-    static facebook = 1;
-
-    static vk = 2;
+export enum AccountTypes {
+    facebook = 1,
+    vk = 2
 }
