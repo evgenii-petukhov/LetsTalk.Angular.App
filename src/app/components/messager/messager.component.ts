@@ -52,11 +52,10 @@ export class MessagerComponent implements OnInit {
             }
             if (this.isWindowActive && (messageDto.senderId === this.selectedAccountId)) {
                 this.apiService.markAsRead(messageDto.id).subscribe();
-            }
-            const sender = this.accounts.find(account => account.id === messageDto.senderId);
-            if (sender) {
-                this.storeService.incrementUnreadMessages(messageDto.senderId);
-                if (messageDto.senderId !== this.selectedAccountId) {
+            } else {
+                const sender = this.accounts.find(account => account.id === messageDto.senderId);
+                if (sender) {
+                    this.storeService.incrementUnreadMessages(messageDto.senderId);
                     this.notificationService.showNotification(
                         `${sender.firstName} ${sender.lastName}`,
                         messageDto.text,
