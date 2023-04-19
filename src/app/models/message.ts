@@ -1,5 +1,7 @@
 import { IMessageDto } from '../api-client/api-client';
 import { LinkPreview } from './linkPreview';
+import { isOfType } from '../helpers/type-utils';
+import { getLocalDate } from '../helpers/date-utils';
 
 export class Message {
     id?: number;
@@ -17,10 +19,10 @@ export class Message {
             const created = this.created ?? init?.created;
             Object.assign(this, init);
             if (linkPreview) {
-                this.linkPreview = linkPreview instanceof LinkPreview ? linkPreview : new LinkPreview(linkPreview);
+                this.linkPreview = isOfType(linkPreview, LinkPreview) ? linkPreview : new LinkPreview(linkPreview);
             }
             if (created) {
-                this.created = (created instanceof Date ? created : new Date(0).setUTCSeconds(created)) as Date;
+                this.created = isOfType(created, Date) ? created as Date : getLocalDate(created as number);
             }
         });
     }
