@@ -8,7 +8,7 @@
 
 ![scheme](demo.gif)
 
-[Live demo](https://chat.epetukhov.cyou/)
+🔴[Live demo](https://chat.epetukhov.cyou/)
 ## Description
 This is an instant messaging service with authentication via social media, such as Facebook. The service allows users to send text messages and share links. 
 
