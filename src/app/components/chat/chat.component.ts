@@ -14,6 +14,7 @@ import { selectSelectedAccountId } from 'src/app/state/selected-account-id/selec
 import { selectMessages } from 'src/app/state/messages/messages.selector';
 import { StoreService } from 'src/app/services/store.service';
 import { Message } from 'src/app/models/message';
+import { allowEmptyMessage } from 'src/app/decorators/allow-empty-message.decorator';
 
 @Component({
     selector: 'app-chat',
@@ -38,6 +39,17 @@ export class ChatComponent implements OnInit, AfterViewInit {
         private storeService: StoreService
     ) { }
 
+    @allowEmptyMessage(false)
+    send(message: string): boolean {
+        this.apiService.sendMessage(this.accountId, message).subscribe(messageDto => {
+            messageDto.isMine = true;
+            this.storeService.addMessage(messageDto);
+            this.storeService.setLastMessageDate(this.accountId, messageDto.created);
+        });
+        this.message = '';
+        return false;
+    }
+
     ngOnInit(): void {
         this.accountId$.subscribe(accountId => {
             this.accountId = accountId;
@@ -48,17 +60,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
     ngAfterViewInit() {
         this.scrollContainer = this.scrollFrame.nativeElement;
         this.itemElements.changes.subscribe(() => this.scrollToBottom());
-    }
-
-    send(): boolean {
-        if (!this.message.trim()) {return;}
-        this.apiService.sendMessage(this.accountId, this.message).subscribe(messageDto => {
-            messageDto.isMine = true;
-            this.storeService.addMessage(messageDto);
-            this.storeService.setLastMessageDate(this.accountId, messageDto.created);
-        });
-        this.message = '';
-        return false;
     }
 
     isMessageVisible(message: Message) {

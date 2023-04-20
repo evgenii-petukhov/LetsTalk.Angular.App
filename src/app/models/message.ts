@@ -1,7 +1,7 @@
 import { IMessageDto } from '../api-client/api-client';
 import { LinkPreview } from './linkPreview';
-import { isOfType } from '../helpers/type-utils';
-import { getLocalDate } from '../helpers/date-utils';
+import { isOfType } from '../helpers/type-utils.helper';
+import { getLocalDate } from '../helpers/date-utils.helper';
 
 export class Message {
     id?: number;
