@@ -1,5 +1,4 @@
 import { SocialUser } from '@abacritt/angularx-social-login';
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable  } from 'rxjs';
 import {
@@ -12,16 +11,12 @@ import {
     MarkAsReadRequest
 } from '../api-client/api-client';
 
-const USER_URL = 'api/user';
-
 @Injectable({
     providedIn: 'root'
 })
 export class ApiService {
 
-    constructor(
-        private http: HttpClient,
-        private client: ApiClient) { }
+    constructor(private client: ApiClient) { }
 
     login(data: SocialUser): Observable<LoginResponseDto> {
         const request = new LoginRequest();
