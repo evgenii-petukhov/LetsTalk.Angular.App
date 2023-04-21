@@ -8,7 +8,6 @@ import { AppComponent } from './app.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { AuthGuardService } from './services/auth-guard.service';
 import { environment } from '../environments/environment';
 import { authInterceptorProvider } from './providers/auth-interceptor-provider';
 import { API_BASE_URL } from './api-client/api-client';
@@ -62,7 +61,6 @@ import { VisibleOnlyPipe } from './pipes/visibleOnly';
     ],
     providers: [
         authInterceptorProvider,
-        AuthGuardService,
         apiClientProvider,
         socialAuthProvider,
         {
