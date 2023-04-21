@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { List, ListIteratee, Many, orderBy } from 'lodash';
+import { List, ListIteratee, Many, orderBy } from 'lodash-es';
 
 @Pipe({
     name: 'orderBy'
