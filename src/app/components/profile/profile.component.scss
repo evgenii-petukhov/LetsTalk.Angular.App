@@ -5,6 +5,8 @@
 
     .centered {
         @extend centered;
+        padding: 30px;
+        width: 400px;
 
         .profile-text {
             margin: 0 0 15px;

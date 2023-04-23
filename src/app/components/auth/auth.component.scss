@@ -5,6 +5,7 @@
 
     .centered {
         @extend centered;
+        padding: 45px;
 
         .login-text {
             margin: 0 0 15px;
