@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from '../../models/rendering/user';
+import { Location } from '@angular/common'
 
 @Component({
     selector: 'app-profile',
@@ -8,7 +8,7 @@ import { User } from '../../models/rendering/user';
 })
 export class ProfileComponent implements OnInit {
 
-    model = new User();
+    constructor(private location: Location) {}
 
     ngOnInit(): void {
 
@@ -16,5 +16,9 @@ export class ProfileComponent implements OnInit {
 
     onSubmit(): void {
 
+    }
+
+    onBack(): void {
+        this.location.back();
     }
 }
