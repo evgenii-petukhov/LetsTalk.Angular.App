@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common'
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-profile',
@@ -19,6 +19,7 @@ export class ProfileComponent implements OnInit {
     }
 
     onBack(): void {
+        // https://nils-mehlhorn.de/posts/angular-navigate-back-previous-page/
         this.location.back();
     }
 }
