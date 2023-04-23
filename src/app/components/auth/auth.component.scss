@@ -1,15 +1,10 @@
-:host {
-    flex: 1 1 auto;
-    justify-content: center;
-    align-items: center;
-    display: flex;
+@import "../shared/extend/center-container.scss";
 
-    .login-container {
-        flex: 0 1 auto;
-        background: #fff;
-        box-shadow: 0 0 0 6px rgb(255 255 255 / 40%);
-        border-radius: 10px;
-        padding: 45px;
+:host {
+    @extend fullscreen;
+
+    .centered {
+        @extend centered;
 
         .login-text {
             margin: 0 0 15px;
