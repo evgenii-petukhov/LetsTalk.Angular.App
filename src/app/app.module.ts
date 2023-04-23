@@ -29,6 +29,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { OrderByPipe } from './pipes/orderby';
 import { socialAuthProvider } from './providers/social-auth-provider';
 import { VisibleOnlyPipe } from './pipes/visibleOnly';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
     declarations: [
@@ -57,7 +58,8 @@ import { VisibleOnlyPipe } from './pipes/visibleOnly';
         FormsModule,
         BrowserAnimationsModule,
         ToastrModule.forRoot(),
-        StoreModule.forRoot(storeConfig)
+        StoreModule.forRoot(storeConfig),
+        ReactiveFormsModule
     ],
     providers: [
         authInterceptorProvider,

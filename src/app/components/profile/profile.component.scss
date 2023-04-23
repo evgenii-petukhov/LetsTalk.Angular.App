@@ -1,10 +1,11 @@
-@import "../shared/extend/center-container.scss";
+@import "../shared/extend/center-container";
 
 :host {
-    @extend fullscreen;
+    @extend %fullscreen;
 
     .centered {
-        @extend centered;
+        @extend %centered;
+
         padding: 30px;
         width: 400px;
 
@@ -13,17 +14,21 @@
             text-align: center;
         }
 
-        .profile-buttons {
-            display: flex;
-
-            button {
-                flex: 1 1;
-                margin: 0 10px 0 0;
-
-                &:last-child {
-                    margin: 0;
+        form {
+            .profile-buttons {
+                display: flex;
+    
+                button {
+                    flex: 1 1;
+                    margin: 0 10px 0 0;
+    
+                    &:last-child {
+                        margin: 0;
+                    }
                 }
             }
         }
+
+
     }
 }

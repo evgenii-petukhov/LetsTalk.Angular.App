@@ -1,10 +1,11 @@
-@import "../shared/extend/center-container.scss";
+@import "../shared/extend/center-container";
 
 :host {
-    @extend fullscreen;
+    @extend %fullscreen;
 
     .centered {
-        @extend centered;
+        @extend %centered;
+
         padding: 45px;
 
         .login-text {
