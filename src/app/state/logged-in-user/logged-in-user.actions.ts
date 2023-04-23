@@ -5,5 +5,6 @@ export const loggedInUserActions = createActionGroup({
     source: 'LoggedInUser',
     events: {
         init: props<{account: IAccountDto}>(),
+        set: props<{account: IAccountDto}>(),
     }
 });

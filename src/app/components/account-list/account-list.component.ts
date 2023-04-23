@@ -11,7 +11,7 @@ import { StoreService } from 'src/app/services/store.service';
     styleUrls: ['./account-list.component.scss'],
 })
 export class AccountListComponent implements OnInit {
-    accounts: ReadonlyArray<IAccountDto> = [];
+    accounts: readonly IAccountDto[] = [];
     accounts$ = this.store.select(selectAccounts);
     selectedAccountId$ = this.store.select(selectSelectedAccountId);
 

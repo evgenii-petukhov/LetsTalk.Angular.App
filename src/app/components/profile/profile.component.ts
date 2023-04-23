@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ApiService } from 'src/app/services/api.service';
+import { StoreService } from 'src/app/services/store.service';
 
-// validation: https://www.pluralsight.com/guides/how-to-display-validation-messages-using-angular
-// navigate back: https://nils-mehlhorn.de/posts/angular-navigate-back-previous-page/
+// https://angular.io/guide/reactive-forms
+// https://angular.io/guide/form-validation
+// https://www.pluralsight.com/guides/how-to-display-validation-messages-using-angular
+// https://nils-mehlhorn.de/posts/angular-navigate-back-previous-page/
 @Component({
     selector: 'app-profile',
     templateUrl: './profile.component.html',
@@ -19,11 +21,11 @@ export class ProfileComponent implements OnInit {
 
     constructor(
         private location: Location,
-        private apiService: ApiService,
-        private fb: FormBuilder) { }
+        private fb: FormBuilder,
+        private storeService: StoreService) { }
 
     ngOnInit(): void {
-        this.apiService.getMe().subscribe(account => {
+        this.storeService.loadLoggedInUser().then(account => {
             this.form.setValue({
                 firstName: account.firstName,
                 lastName: account.lastName,
@@ -33,7 +35,10 @@ export class ProfileComponent implements OnInit {
     }
 
     onSubmit(): void {
-
+        this.storeService.setLoggedInUser({
+            firstName: this.form.value.firstName,
+            lastName: this.form.value.lastName
+        });
     }
 
     onBack(): void {

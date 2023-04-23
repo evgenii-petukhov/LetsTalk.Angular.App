@@ -2,7 +2,7 @@ import { createReducer, on } from '@ngrx/store';
 import { AccountDto, IAccountDto } from 'src/app/api-client/api-client';
 import { accountsActions } from './accounts.actions';
 
-export const initialState: ReadonlyArray<IAccountDto> = [];
+export const initialState: readonly IAccountDto[] = null;
 
 export const accountsReducer = createReducer(
     initialState,

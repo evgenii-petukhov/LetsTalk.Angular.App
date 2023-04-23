@@ -17,7 +17,7 @@ export class MessagerComponent implements OnInit {
     selectedAccountId$ = this.store.select(selectSelectedAccountId);
     layout$ = this.store.select(selectLayoutSettings);
 
-    private accounts: ReadonlyArray<IAccountDto> = [];
+    private accounts: readonly IAccountDto[] = [];
     private selectedAccountId: number;
     private isWindowActive = true;
 
@@ -36,9 +36,8 @@ export class MessagerComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.apiService.getAccounts().subscribe(accounts => {
+        this.storeService.loadAccounts().then(accounts => {
             this.accounts = accounts;
-            this.storeService.initAccounts(accounts);
         });
 
         this.selectedAccountId$.subscribe(accountId => {
