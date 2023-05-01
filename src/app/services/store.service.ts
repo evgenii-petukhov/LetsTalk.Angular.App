@@ -73,7 +73,7 @@ export class StoreService {
                 if (account) {
                     resolve(account);
                 } else {
-                    this.apiService.getMe().subscribe(response => {
+                    this.apiService.getProfile().subscribe(response => {
                         this.store.dispatch(loggedInUserActions.init({ account: response }));
                         resolve(response);
                     });

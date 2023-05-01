@@ -8,7 +8,8 @@ import {
     IAccountDto,
     CreateMessageRequest,
     IMessageDto,
-    MarkAsReadRequest
+    MarkAsReadRequest,
+    UpdateProfileRequest
 } from '../api-client/api-client';
 
 @Injectable({
@@ -19,10 +20,12 @@ export class ApiService {
     constructor(private client: ApiClient) { }
 
     login(data: SocialUser): Observable<LoginResponseDto> {
-        const request = new LoginRequest();
-        request.id = data.id.toString();
-        request.provider = data.provider;
-        request.authToken = data.authToken;
+        const request = new LoginRequest({
+            id: data.id.toString(),
+            provider: data.provider,
+            authToken: data.authToken
+        });
+
         return this.client.login(request);
     }
 
@@ -34,8 +37,16 @@ export class ApiService {
         return this.client.messageAll(accountId);
     }
 
-    getMe(): Observable<IAccountDto> {
-        return this.client.me();
+    getProfile(): Observable<IAccountDto> {
+        return this.client.profileGET();
+    }
+
+    saveProfile(firstName: string, lastName: string, email: string): Observable<IAccountDto> {
+        const request = new UpdateProfileRequest({
+            email,
+            firstName,
+            lastName});
+        return this.client.profilePUT(request);
     }
 
     sendMessage(recipientId: number, text: string): Observable<IMessageDto> {
