@@ -4,6 +4,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { StoreService } from 'src/app/services/store.service';
 import { ApiService } from 'src/app/services/api.service';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
+import { downloadAndEncodeToBase64 } from 'src/app/helpers/base64.helper';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -19,9 +20,8 @@ export class ProfileComponent implements OnInit {
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
         email: ['', Validators.email],
-        photoUrl: ['']
+        photoBase64: ['']
     });
-    avatarPreview: string = null;
     faUpload = faUpload;
 
     constructor(
@@ -32,13 +32,14 @@ export class ProfileComponent implements OnInit {
 
     ngOnInit(): void {
         this.storeService.loadLoggedInUser().then(account => {
-            this.form.setValue({
-                firstName: account.firstName,
-                lastName: account.lastName,
-                email: account.email,
-                photoUrl: account.photoUrl
+            downloadAndEncodeToBase64(account.photoUrl).then((blob: string) => {
+                this.form.setValue({
+                    firstName: account.firstName,
+                    lastName: account.lastName,
+                    email: account.email,
+                    photoBase64: blob
+                });
             });
-            this.avatarPreview = account.photoUrl;
         });
     }
 
@@ -57,8 +58,7 @@ export class ProfileComponent implements OnInit {
             const reader = new FileReader();
 
             reader.onload = (e: any) => {
-                this.avatarPreview = e.target.result;
-                this.form.value.photoUrl = e.target.result;
+                this.form.value.photoBase64 = e.target.result;
             };
 
             reader.readAsDataURL(files[0]);

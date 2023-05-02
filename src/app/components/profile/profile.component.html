@@ -4,13 +4,12 @@
         <div class="form-floating mb-3">
             <div class="avatar-container">
                 <div class="avatar-border">
-                    <div class="avatar" [ngStyle]="avatarPreview && {'background-image': 'url(' + avatarPreview + ')'}">
+                    <div class="avatar" [ngStyle]="form.value.photoBase64 && {'background-image': 'url(' + form.value.photoBase64 + ')'}">
                         <div class="avatar-upload">
                             <div class="avatar-upload-text">
                                 <fa-icon [icon]="faUpload"></fa-icon>
                             </div>
                             <input type="file" (change)="onAvatarSelected($event)" title="Upload new photo"/>
-                            <input type="hidden" formControlName="photoUrl"/>
                         </div>
                     </div>
                 </div>
