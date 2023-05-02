@@ -9,7 +9,8 @@ import {
     CreateMessageRequest,
     IMessageDto,
     MarkAsReadRequest,
-    UpdateProfileRequest
+    UpdateProfileRequest,
+    IUpdateProfileRequest
 } from '../api-client/api-client';
 
 @Injectable({
@@ -41,11 +42,8 @@ export class ApiService {
         return this.client.profileGET();
     }
 
-    saveProfile(firstName: string, lastName: string, email: string): Observable<IAccountDto> {
-        const request = new UpdateProfileRequest({
-            email,
-            firstName,
-            lastName});
+    saveProfile(profile: IUpdateProfileRequest): Observable<IAccountDto> {
+        const request = new UpdateProfileRequest(profile);
         return this.client.profilePUT(request);
     }
 

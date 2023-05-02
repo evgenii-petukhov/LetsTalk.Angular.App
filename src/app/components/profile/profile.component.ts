@@ -37,14 +37,13 @@ export class ProfileComponent implements OnInit {
     }
 
     onSubmit(): void {
-        this.storeService.setLoggedInUser({
+        const profile = {
             firstName: this.form.value.firstName,
             lastName: this.form.value.lastName,
             email: this.form.value.email
-        });
-
-        this.apiService.saveProfile(this.form.value.firstName, this.form.value.lastName, this.form.value.email).subscribe();
-        this.location.back();
+        };
+        this.storeService.setLoggedInUser(profile);
+        this.apiService.saveProfile(profile).subscribe(() => this.location.back());
     }
 
     onBack(): void {
