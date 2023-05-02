@@ -15,6 +15,55 @@
         }
 
         form {
+            .avatar-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                .avatar-border {
+                    border-radius: 50%;
+                    border: 2px solid rgb(0 0 0 / 40%);
+                    overflow: hidden;
+
+                    .avatar {
+                        width: 100px;
+                        height: 100px;
+                        background-repeat: no-repeat;
+                        background-size: cover;
+                        background-position: center center;
+                        position: relative;
+
+                        .avatar-upload {
+                            display: none;
+                            position: absolute;
+                            inset: 0;
+                            background: rgb(0 0 0 / 40%);
+                            align-items: center;
+                            justify-content: center;
+
+                            .avatar-upload-text {
+                                font-size: 40px;
+                                color: rgb(255 255 255 / 80%);
+                            }
+
+                            input[type="file"] {
+                                width: 100%;
+                                height: 100%;
+                                opacity: 0;
+                                position: absolute;
+                                cursor: pointer;
+                            }
+                        }
+
+                        &:hover {
+                            .avatar-upload {
+                                display: flex;
+                            }
+                        }
+                    }
+                }
+            }
+
             .profile-buttons {
                 display: flex;
     
@@ -28,7 +77,5 @@
                 }
             }
         }
-
-
     }
 }

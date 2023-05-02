@@ -1,6 +1,6 @@
 <div *ngIf="(account$ | async)" class="logged-in-user-container">
     <div class="user-photo"
-        [ngStyle]="(account$ | async).photoUrl && { 'background-image': 'url(' + (account$ | async).photoUrl + '), url(images/empty-avatar.svg)'}">
+        [ngStyle]="(account$ | async).photoUrl && {'background-image': 'url(' + (account$ | async).photoUrl + '), url(images/empty-avatar.svg)'}">
     </div>
     <div class="user-details">
         <div class="user-name">You</div>

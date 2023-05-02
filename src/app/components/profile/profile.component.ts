@@ -3,6 +3,7 @@ import { Location } from '@angular/common';
 import { FormBuilder, Validators } from '@angular/forms';
 import { StoreService } from 'src/app/services/store.service';
 import { ApiService } from 'src/app/services/api.service';
+import { faUpload } from '@fortawesome/free-solid-svg-icons';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -17,8 +18,11 @@ export class ProfileComponent implements OnInit {
     form = this.fb.group({
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
-        email: ['', Validators.email]
+        email: ['', Validators.email],
+        photoUrl: ['']
     });
+    avatarPreview: string = null;
+    faUpload = faUpload;
 
     constructor(
         private location: Location,
@@ -31,22 +35,33 @@ export class ProfileComponent implements OnInit {
             this.form.setValue({
                 firstName: account.firstName,
                 lastName: account.lastName,
-                email: account.email
+                email: account.email,
+                photoUrl: account.photoUrl
             });
+            this.avatarPreview = account.photoUrl;
         });
     }
 
     onSubmit(): void {
-        const profile = {
-            firstName: this.form.value.firstName,
-            lastName: this.form.value.lastName,
-            email: this.form.value.email
-        };
-        this.storeService.setLoggedInUser(profile);
-        this.apiService.saveProfile(profile).subscribe(() => this.location.back());
+        this.storeService.setLoggedInUser(this.form.value);
+        this.apiService.saveProfile(this.form.value).subscribe(() => this.location.back());
     }
 
     onBack(): void {
         this.location.back();
+    }
+
+    onAvatarSelected(event: any) {
+        const files = event.target.files;
+        if (files && files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = (e: any) => {
+                this.avatarPreview = e.target.result;
+                this.form.value.photoUrl = e.target.result;
+            };
+
+            reader.readAsDataURL(files[0]);
+        }
     }
 }

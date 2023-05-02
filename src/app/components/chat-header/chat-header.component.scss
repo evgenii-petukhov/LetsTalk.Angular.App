@@ -30,7 +30,8 @@
         height: 40px;
         border-radius: 50%;
         background-repeat: no-repeat;
-        background-size: contain;
+        background-size: cover;
+        background-position: center center;
     }
 
     .user-details {
