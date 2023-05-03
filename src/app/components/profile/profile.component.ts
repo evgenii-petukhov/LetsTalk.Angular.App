@@ -4,7 +4,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { StoreService } from 'src/app/services/store.service';
 import { ApiService } from 'src/app/services/api.service';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
-import { downloadAndEncodeToBase64 } from 'src/app/helpers/base64.helper';
+import { encodeToBase64 } from 'src/app/helpers/base64.helper';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -20,7 +20,7 @@ export class ProfileComponent implements OnInit {
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
         email: ['', Validators.email],
-        photoBase64: ['']
+        photoUrl: ['']
     });
     faUpload = faUpload;
 
@@ -32,13 +32,11 @@ export class ProfileComponent implements OnInit {
 
     ngOnInit(): void {
         this.storeService.loadLoggedInUser().then(account => {
-            downloadAndEncodeToBase64(account.photoUrl).then((blob: string) => {
-                this.form.setValue({
-                    firstName: account.firstName,
-                    lastName: account.lastName,
-                    email: account.email,
-                    photoBase64: blob
-                });
+            this.form.setValue({
+                firstName: account.firstName,
+                lastName: account.lastName,
+                email: account.email,
+                photoUrl: account.photoUrl
             });
         });
     }
@@ -54,14 +52,8 @@ export class ProfileComponent implements OnInit {
 
     onAvatarSelected(event: any) {
         const files = event.target.files;
-        if (files && files[0]) {
-            const reader = new FileReader();
-
-            reader.onload = (e: any) => {
-                this.form.value.photoBase64 = e.target.result;
-            };
-
-            reader.readAsDataURL(files[0]);
+        if (files && files.length) {
+            encodeToBase64(files[0]).then(base64 => this.form.value.photoUrl = base64);
         }
     }
 }
