@@ -5,6 +5,8 @@ import { StoreService } from 'src/app/services/store.service';
 import { ApiService } from 'src/app/services/api.service';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import { encodeToBase64 } from 'src/app/helpers/base64.helper';
+import { selectLoggedInUser } from 'src/app/state/logged-in-user/logged-in-user.selectors';
+import { Store } from '@ngrx/store';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -16,11 +18,13 @@ import { encodeToBase64 } from 'src/app/helpers/base64.helper';
     styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
+    account$ = this.store.select(selectLoggedInUser);
+
     form = this.fb.group({
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
         email: ['', Validators.email],
-        photoUrl: ['']
+        photoUrl: [null]
     });
     faUpload = faUpload;
 
@@ -28,7 +32,8 @@ export class ProfileComponent implements OnInit {
         private location: Location,
         private fb: FormBuilder,
         private storeService: StoreService,
-        private apiService: ApiService) { }
+        private apiService: ApiService,
+        private store: Store) { }
 
     ngOnInit(): void {
         this.storeService.loadLoggedInUser().then(account => {
@@ -36,7 +41,7 @@ export class ProfileComponent implements OnInit {
                 firstName: account.firstName,
                 lastName: account.lastName,
                 email: account.email,
-                photoUrl: account.photoUrl
+                photoUrl: null
             });
         });
     }
