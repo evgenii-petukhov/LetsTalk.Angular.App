@@ -23,17 +23,7 @@
             display: block;
         }
     }
-
-    .user-photo {
-        flex: 0 1 40px;
-        min-width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-position: center center;
-    }
-
+    
     .user-details {
         flex: 1 1 auto;
         display: flex;

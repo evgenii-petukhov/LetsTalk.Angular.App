@@ -30,6 +30,7 @@ import { OrderByPipe } from './pipes/orderby';
 import { socialAuthProvider } from './providers/social-auth-provider';
 import { VisibleOnlyPipe } from './pipes/visibleOnly';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AvatarComponent } from './components/avatar/avatar.component';
 
 @NgModule({
     declarations: [
@@ -46,7 +47,8 @@ import { ReactiveFormsModule } from '@angular/forms';
         ChatHeaderComponent,
         SidebarComponent,
         OrderByPipe,
-        VisibleOnlyPipe
+        VisibleOnlyPipe,
+        AvatarComponent
     ],
     imports: [
         BrowserModule,

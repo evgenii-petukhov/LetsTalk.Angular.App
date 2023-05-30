@@ -4,7 +4,8 @@
         <div class="form-floating mb-3">
             <div class="avatar-container">
                 <div class="avatar-border">
-                    <div class="avatar" [ngStyle]="{'background-image': 'url(' + form.value.photoUrl + '), url(' + (account$ | async).photoUrl + ')'}">
+                    <div class="avatar"
+                        [ngStyle]="{'background-image': 'url(' + form.value.photoUrl + '), url(' + (account$ | async).photoUrl + '), url(images/empty-avatar.svg)'}">
                         <div class="avatar-upload">
                             <div class="avatar-upload-text">
                                 <fa-icon [icon]="faUpload"></fa-icon>

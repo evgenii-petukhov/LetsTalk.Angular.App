@@ -1,7 +1,5 @@
 <a href="#" *ngIf="account" (click)="onAccountSelected()">
-    <div class="user-photo"
-        [ngStyle]="account.photoUrl && {'background-image': 'url(' + account.photoUrl + '), url(images/empty-avatar.svg)'}">
-    </div>
+    <app-avatar [account]="account"></app-avatar>
     <div class="user-details">
         <div class="user-name">
             {{ account.firstName }} {{ account.lastName }}
