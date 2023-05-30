@@ -1,7 +1,8 @@
 <button class="back" (click)="onBackClicked()">
     <fa-icon [icon]="faArrowLeft" [title]="'Back'"></fa-icon>
 </button>
-<app-avatar [account]="(account$ | async)"></app-avatar>
+<app-avatar class="user-photo"
+    [urlOptions]="[(account$ | async).photoUrl]"></app-avatar>
 <div class="user-details">
     <div class="user-name">
         {{ (account$ | async).firstName }} {{ (account$ | async).lastName }}

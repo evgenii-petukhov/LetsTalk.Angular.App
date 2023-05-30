@@ -1,5 +1,6 @@
 <div *ngIf="(account$ | async)" class="logged-in-user-container">
-    <app-avatar [account]="(account$ | async)" class="user-photo"></app-avatar>
+    <app-avatar class="user-photo"
+        [urlOptions]="[(account$ | async).photoUrl]" class="user-photo"></app-avatar>
     <div class="user-details">
         <div class="user-name">You</div>
         <a [routerLink]="['/profile']" class="icon" title="Profile">

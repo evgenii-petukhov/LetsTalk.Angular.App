@@ -2,9 +2,7 @@
     display: flex;
 
     .user-avatar {
-        flex: 0 1 40px;
-        min-width: 40px;
-        height: 40px;
+        flex: 1 1 auto;
         border-radius: 50%;
         background-repeat: no-repeat;
         background-size: cover;
