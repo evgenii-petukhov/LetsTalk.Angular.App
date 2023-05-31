@@ -8,15 +8,11 @@ import { Component, Input, OnChanges } from '@angular/core';
 export class AvatarComponent implements OnChanges {
     @Input() urlOptions: string[];
     photoUrl: string;
+    private defaultPhotoUrl = 'images/empty-avatar.svg';
 
     ngOnChanges(): void {
-        if (this.urlOptions) {
-            const photoUrl = this.urlOptions.find(url => url);
-            if (photoUrl) {
-                this.photoUrl = photoUrl;
-                return;
-            }
-        }
-        this.photoUrl = 'images/empty-avatar.svg';
+        this.urlOptions = this.urlOptions ?? [];
+        this.urlOptions.push(this.defaultPhotoUrl);
+        this.photoUrl = this.urlOptions.find(url => url);
     }
 }
