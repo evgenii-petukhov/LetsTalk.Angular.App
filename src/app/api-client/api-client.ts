@@ -480,7 +480,6 @@ export class AccountDto implements IAccountDto {
     email?: string | undefined;
     unreadCount?: number;
     lastMessageDate?: number;
-    imageId?: number | undefined;
 
     constructor(data?: IAccountDto) {
         if (data) {
@@ -501,7 +500,6 @@ export class AccountDto implements IAccountDto {
             this.email = _data["email"];
             this.unreadCount = _data["unreadCount"];
             this.lastMessageDate = _data["lastMessageDate"];
-            this.imageId = _data["imageId"];
         }
     }
 
@@ -522,7 +520,6 @@ export class AccountDto implements IAccountDto {
         data["email"] = this.email;
         data["unreadCount"] = this.unreadCount;
         data["lastMessageDate"] = this.lastMessageDate;
-        data["imageId"] = this.imageId;
         return data;
     }
 }
@@ -536,7 +533,6 @@ export interface IAccountDto {
     email?: string | undefined;
     unreadCount?: number;
     lastMessageDate?: number;
-    imageId?: number | undefined;
 }
 
 export class CreateMessageRequest implements ICreateMessageRequest {
