@@ -141,15 +141,67 @@ export class ApiClient {
     }
 
     /**
-     * @param recipientId (optional) 
      * @return Success
      */
-    messageAll(recipientId: number | undefined): Observable<MessageDto[]> {
-        let url_ = this.baseUrl + "/api/Message?";
-        if (recipientId === null)
-            throw new Error("The parameter 'recipientId' cannot be null.");
-        else if (recipientId !== undefined)
-            url_ += "recipientId=" + encodeURIComponent("" + recipientId) + "&";
+    image(id: number): Observable<AccountDto> {
+        let url_ = this.baseUrl + "/api/Image/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processImage(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processImage(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<AccountDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<AccountDto>;
+        }));
+    }
+
+    protected processImage(response: HttpResponseBase): Observable<AccountDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = AccountDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    messageAll(recipientId: number): Observable<MessageDto[]> {
+        let url_ = this.baseUrl + "/api/Message/{recipientId}";
+        if (recipientId === undefined || recipientId === null)
+            throw new Error("The parameter 'recipientId' must be defined.");
+        url_ = url_.replace("{recipientId}", encodeURIComponent("" + recipientId));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -428,6 +480,7 @@ export class AccountDto implements IAccountDto {
     email?: string | undefined;
     unreadCount?: number;
     lastMessageDate?: number;
+    imageId?: number | undefined;
 
     constructor(data?: IAccountDto) {
         if (data) {
@@ -448,6 +501,7 @@ export class AccountDto implements IAccountDto {
             this.email = _data["email"];
             this.unreadCount = _data["unreadCount"];
             this.lastMessageDate = _data["lastMessageDate"];
+            this.imageId = _data["imageId"];
         }
     }
 
@@ -468,6 +522,7 @@ export class AccountDto implements IAccountDto {
         data["email"] = this.email;
         data["unreadCount"] = this.unreadCount;
         data["lastMessageDate"] = this.lastMessageDate;
+        data["imageId"] = this.imageId;
         return data;
     }
 }
@@ -481,6 +536,7 @@ export interface IAccountDto {
     email?: string | undefined;
     unreadCount?: number;
     lastMessageDate?: number;
+    imageId?: number | undefined;
 }
 
 export class CreateMessageRequest implements ICreateMessageRequest {
