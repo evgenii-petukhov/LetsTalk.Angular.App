@@ -7,27 +7,27 @@ import { ApiService } from 'src/app/services/api.service';
     styleUrls: ['./avatar.component.scss'],
 })
 export class AvatarComponent implements OnChanges {
-    @Input() urlOptions: string[];
-    @Input() imageId: number;
+    @Input() urlOptions: (string | number)[];
     photoUrl: string;
     private defaultPhotoUrl = 'images/empty-avatar.svg';
 
     constructor(
         private apiservice: ApiService
-    ) {
-
-    }
+    ) { }
 
     ngOnChanges(): void {
         this.urlOptions = this.urlOptions ?? [];
         this.urlOptions.push(this.defaultPhotoUrl);
-        if (this.imageId) {
-            this.apiservice.getImage(this.imageId).subscribe(imageDto => {
-                this.urlOptions = [imageDto.content, ...this.urlOptions];
-                this.photoUrl = this.urlOptions.find(url => url);
-            });
-        } else {
-            this.photoUrl = this.urlOptions.find(url => url);
-        }
+        const promises = this.urlOptions.map(url => Number(url)
+            ? new Promise<string>((resolve) => {
+                this.apiservice.getImage(url as number).subscribe(imageDto => {
+                    resolve(imageDto.content);
+                });
+            })
+            : Promise.resolve<string>(url as string));
+
+        Promise.all(promises).then((urls: string[]) => {
+            this.photoUrl = urls.find(url => url);
+        });
     }
 }

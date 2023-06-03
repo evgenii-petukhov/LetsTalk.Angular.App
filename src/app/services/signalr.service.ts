@@ -19,8 +19,8 @@ export class SignalrService {
         .build();
 
     private isInitialized = false;
-    private messageNotificationEventName = 'SendMessageNotification';
-    private linkPreviewNotificationEventName = 'SendLinkPreviewNotification';
+    private messageNotificationEventName = 'SendMessageNotificationAsync';
+    private linkPreviewNotificationEventName = 'SendLinkPreviewNotificationAsync';
 
     constructor(private tokenService: TokenStorageService) { }
 
@@ -54,7 +54,7 @@ export class SignalrService {
     }
 
     private async authorize(): Promise<void> {
-        await this.hubConnectionBuilder.invoke('Authorize', this.tokenService.getToken());
+        await this.hubConnectionBuilder.invoke('AuthorizeAsync', this.tokenService.getToken());
         console.log('Notification service: authorized');
     }
 }
