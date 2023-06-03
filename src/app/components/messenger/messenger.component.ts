@@ -9,11 +9,11 @@ import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
 
 @Component({
-    selector: 'app-messager',
-    templateUrl: './messager.component.html',
-    styleUrls: ['./messager.component.scss']
+    selector: 'app-messenger',
+    templateUrl: './messenger.component.html',
+    styleUrls: ['./messenger.component.scss']
 })
-export class MessagerComponent implements OnInit {
+export class MessengerComponent implements OnInit {
     selectedAccountId$ = this.store.select(selectSelectedAccountId);
     layout$ = this.store.select(selectLayoutSettings);
 

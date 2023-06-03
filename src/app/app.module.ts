@@ -13,7 +13,7 @@ import { authInterceptorProvider } from './providers/auth-interceptor-provider';
 import { API_BASE_URL } from './api-client/api-client';
 import { apiClientProvider } from './providers/api-client-provider';
 import { AccountListComponent } from './components/account-list/account-list.component';
-import { MessagerComponent } from './components/messager/messager.component';
+import { MessengerComponent } from './components/messenger/messenger.component';
 import { AccountListItemComponent } from './components/account-list-item/account-list-item.component';
 import { SocialLoginModule } from '@abacritt/angularx-social-login';
 import { BrowserModule } from '@angular/platform-browser';
@@ -39,7 +39,7 @@ import { AvatarComponent } from './components/avatar/avatar.component';
         ChatComponent,
         ProfileComponent,
         AccountListComponent,
-        MessagerComponent,
+        MessengerComponent,
         AccountListItemComponent,
         MessageComponent,
         LoggedInUserComponent,
