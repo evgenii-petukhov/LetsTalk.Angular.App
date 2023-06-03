@@ -18,16 +18,24 @@ export class AvatarComponent implements OnChanges {
     ngOnChanges(): void {
         this.urlOptions = this.urlOptions ?? [];
         this.urlOptions.push(this.defaultPhotoUrl);
-        const promises = this.urlOptions.map(url => Number(url)
+        const promises = this.urlOptions.filter(url => url).map(url => Number(url)
             ? new Promise<string>((resolve) => {
-                this.apiservice.getImage(url as number).subscribe(imageDto => {
-                    resolve(imageDto.content);
+                this.apiservice.getImage(url as number).subscribe({
+                    next: imageDto => {
+                        resolve(imageDto.content);
+                    },
+                    error: () => {
+                        resolve(null);
+                    }
                 });
             })
             : Promise.resolve<string>(url as string));
 
-        Promise.all(promises).then((urls: string[]) => {
-            this.photoUrl = urls.find(url => url);
+        Promise.allSettled(promises).then((results) => {
+            this.photoUrl = results
+                .filter((result: PromiseFulfilledResult<string>) => result.status === 'fulfilled' && result.value)
+                .map((result: PromiseFulfilledResult<string>) => result.value)
+                .find(url => url);
         });
     }
 }
