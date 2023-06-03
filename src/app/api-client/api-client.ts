@@ -143,7 +143,7 @@ export class ApiClient {
     /**
      * @return Success
      */
-    image(id: number): Observable<AccountDto> {
+    image(id: number): Observable<ImageDto> {
         let url_ = this.baseUrl + "/api/Image/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -165,14 +165,14 @@ export class ApiClient {
                 try {
                     return this.processImage(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<AccountDto>;
+                    return _observableThrow(e) as any as Observable<ImageDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<AccountDto>;
+                return _observableThrow(response_) as any as Observable<ImageDto>;
         }));
     }
 
-    protected processImage(response: HttpResponseBase): Observable<AccountDto> {
+    protected processImage(response: HttpResponseBase): Observable<ImageDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -183,7 +183,7 @@ export class ApiClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AccountDto.fromJS(resultData200);
+            result200 = ImageDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -480,6 +480,7 @@ export class AccountDto implements IAccountDto {
     email?: string | undefined;
     unreadCount?: number;
     lastMessageDate?: number;
+    imageId?: number | undefined;
 
     constructor(data?: IAccountDto) {
         if (data) {
@@ -500,6 +501,7 @@ export class AccountDto implements IAccountDto {
             this.email = _data["email"];
             this.unreadCount = _data["unreadCount"];
             this.lastMessageDate = _data["lastMessageDate"];
+            this.imageId = _data["imageId"];
         }
     }
 
@@ -520,6 +522,7 @@ export class AccountDto implements IAccountDto {
         data["email"] = this.email;
         data["unreadCount"] = this.unreadCount;
         data["lastMessageDate"] = this.lastMessageDate;
+        data["imageId"] = this.imageId;
         return data;
     }
 }
@@ -533,6 +536,7 @@ export interface IAccountDto {
     email?: string | undefined;
     unreadCount?: number;
     lastMessageDate?: number;
+    imageId?: number | undefined;
 }
 
 export class CreateMessageRequest implements ICreateMessageRequest {
@@ -573,6 +577,42 @@ export class CreateMessageRequest implements ICreateMessageRequest {
 export interface ICreateMessageRequest {
     text?: string | undefined;
     recipientId?: number;
+}
+
+export class ImageDto implements IImageDto {
+    content?: string | undefined;
+
+    constructor(data?: IImageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.content = _data["content"];
+        }
+    }
+
+    static fromJS(data: any): ImageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["content"] = this.content;
+        return data;
+    }
+}
+
+export interface IImageDto {
+    content?: string | undefined;
 }
 
 export class LinkPreviewDto implements ILinkPreviewDto {

@@ -5,6 +5,7 @@
             <div class="avatar-container">
                 <div class="avatar-border">
                     <app-avatar class="avatar"
+                        [imageId]="(account$ | async).imageId"
                         [urlOptions]="[form.value.photoUrl, (account$ | async).photoUrl]">
                         <div class="avatar-upload">
                             <div class="avatar-upload-text">

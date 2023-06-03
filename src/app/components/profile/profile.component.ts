@@ -48,7 +48,10 @@ export class ProfileComponent implements OnInit {
 
     onSubmit(): void {
         this.storeService.setLoggedInUser(this.form.value);
-        this.apiService.saveProfile(this.form.value).subscribe(() => this.location.back());
+        this.apiService.saveProfile(this.form.value).subscribe(account => {
+            this.storeService.setLoggedInUser(account);
+            this.location.back();
+        });
     }
 
     onBack(): void {

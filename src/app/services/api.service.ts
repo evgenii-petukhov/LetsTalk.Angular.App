@@ -10,7 +10,8 @@ import {
     IMessageDto,
     MarkAsReadRequest,
     UpdateProfileRequest,
-    IUpdateProfileRequest
+    IUpdateProfileRequest,
+    ImageDto
 } from '../api-client/api-client';
 
 @Injectable({
@@ -40,6 +41,10 @@ export class ApiService {
 
     getProfile(): Observable<IAccountDto> {
         return this.client.profileGET();
+    }
+
+    getImage(id: number): Observable<ImageDto> {
+        return this.client.image(id);
     }
 
     saveProfile(profile: IUpdateProfileRequest): Observable<IAccountDto> {

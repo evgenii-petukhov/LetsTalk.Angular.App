@@ -2,6 +2,7 @@
     <fa-icon [icon]="faArrowLeft" [title]="'Back'"></fa-icon>
 </button>
 <app-avatar class="user-photo"
+    [imageId]="(account$ | async).imageId"
     [urlOptions]="[(account$ | async).photoUrl]"></app-avatar>
 <div class="user-details">
     <div class="user-name">
