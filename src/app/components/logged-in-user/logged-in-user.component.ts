@@ -25,7 +25,7 @@ export class LoggedInUserComponent implements OnInit {
         this.storeService.loadLoggedInUser();
     }
 
-    logout() {
+    logout(): boolean {
         this.tokenStorageService.signOut();
         window.location.reload();
         return false;

@@ -28,7 +28,7 @@ export class AuthService {
             });
     }
 
-    signOut() {
+    signOut(): void {
         this.signalrService.removeHandlers();
         this.socialAuthService.signOut();
     }

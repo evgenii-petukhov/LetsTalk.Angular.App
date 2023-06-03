@@ -61,7 +61,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
         this.itemElements.changes.subscribe(() => this.scrollToBottom());
     }
 
-    isMessageVisible(message: Message) {
+    isMessageVisible(message: Message): string {
         return message.text;
     }
 

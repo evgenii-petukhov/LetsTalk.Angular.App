@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { SignalrService } from 'src/app/services/signalr.service';
-import { IAccountDto } from 'src/app/api-client/api-client';
+import { IAccountDto, ILinkPreviewDto, IMessageDto } from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
 import { selectSelectedAccountId } from 'src/app/state/selected-account-id/select-selected-account-id.selectors';
 import { selectLayoutSettings } from 'src/app/state/layout-settings/select-layout-settings.selectors';
@@ -30,7 +30,7 @@ export class MessagerComponent implements OnInit {
     ) { }
 
     @HostListener('document:visibilitychange', ['$event'])
-    onVisibilityChange(event: Event) {
+    onVisibilityChange(event: Event): void {
         this.isWindowActive = !(event.target as any).hidden;
         this.storeService.readAllMessages(this.selectedAccountId);
     }
@@ -44,32 +44,32 @@ export class MessagerComponent implements OnInit {
             this.selectedAccountId = accountId;
         });
 
-        this.signalrService.init();
+        this.signalrService.init(this.handleMessageNotification.bind(this), this.handleLinkPreviewNotification.bind(this));
+    }
 
-        this.signalrService.setMessageNotificationHandler(messageDto => {
-            this.storeService.setLastMessageDate(messageDto.senderId, messageDto.created);
-            if ([messageDto.senderId, messageDto.recipientId].indexOf(this.selectedAccountId) > -1) {
-                this.storeService.addMessage(messageDto);
+    handleMessageNotification(messageDto: IMessageDto): void {
+        this.storeService.setLastMessageDate(messageDto.senderId, messageDto.created);
+        if ([messageDto.senderId, messageDto.recipientId].indexOf(this.selectedAccountId) > -1) {
+            this.storeService.addMessage(messageDto);
+        }
+        if (this.isWindowActive && (messageDto.senderId === this.selectedAccountId)) {
+            this.apiService.markAsRead(messageDto.id).subscribe();
+        } else {
+            const sender = this.accounts.find(account => account.id === messageDto.senderId);
+            if (sender) {
+                this.storeService.incrementUnreadMessages(messageDto.senderId);
+                this.notificationService.showNotification(
+                    `${sender.firstName} ${sender.lastName}`,
+                    messageDto.text,
+                    this.isWindowActive);
             }
-            if (this.isWindowActive && (messageDto.senderId === this.selectedAccountId)) {
-                this.apiService.markAsRead(messageDto.id).subscribe();
-            } else {
-                const sender = this.accounts.find(account => account.id === messageDto.senderId);
-                if (sender) {
-                    this.storeService.incrementUnreadMessages(messageDto.senderId);
-                    this.notificationService.showNotification(
-                        `${sender.firstName} ${sender.lastName}`,
-                        messageDto.text,
-                        this.isWindowActive);
-                }
-            }
-        });
+        }
+    }
 
-        this.signalrService.setLinkPreviewNotificationHandler((linkPreviewDto) => {
-            if (linkPreviewDto.accountId !== this.selectedAccountId) {
-                return;
-            }
-            this.storeService.setLinkPreview(linkPreviewDto);
-        });
+    handleLinkPreviewNotification(linkPreviewDto: ILinkPreviewDto): void {
+        if (linkPreviewDto.accountId !== this.selectedAccountId) {
+            return;
+        }
+        this.storeService.setLinkPreview(linkPreviewDto);
     }
 }

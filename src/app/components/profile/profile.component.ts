@@ -55,7 +55,7 @@ export class ProfileComponent implements OnInit {
         this.location.back();
     }
 
-    onAvatarSelected(event: any) {
+    onAvatarSelected(event: any): void {
         const files = event.target.files;
         if (files && files.length) {
             encodeToBase64(files[0]).then(base64 => this.form.value.photoUrl = base64);

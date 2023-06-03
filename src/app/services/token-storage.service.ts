@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ReplaySubject, Observable } from 'rxjs';
+import { LoginResponseDto } from '../api-client/api-client';
 
 const TOKEN_KEY = 'auth-token';
 const USER_KEY = 'auth-user';
@@ -14,7 +15,7 @@ export class TokenStorageService {
         return this.isLoggedInInternal.asObservable();
     }
 
-    signOut() {
+    signOut(): void {
         window.localStorage.clear();
         this.isLoggedInInternal.next(false);
     }
@@ -25,7 +26,7 @@ export class TokenStorageService {
         this.isLoggedInInternal.next(true);
     }
 
-    saveUser(user: any) {
+    saveUser(user: LoginResponseDto): void {
         window.localStorage.removeItem(USER_KEY);
         window.localStorage.setItem(USER_KEY, JSON.stringify(user));
     }
@@ -38,7 +39,7 @@ export class TokenStorageService {
         return !!this.getToken();
     }
 
-    getUser() {
-        return JSON.parse(localStorage.getItem(USER_KEY));
+    getUser(): LoginResponseDto {
+        return JSON.parse(localStorage.getItem(USER_KEY)) as LoginResponseDto;
     }
 }

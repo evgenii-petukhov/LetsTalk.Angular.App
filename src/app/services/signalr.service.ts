@@ -19,15 +19,24 @@ export class SignalrService {
         .build();
 
     private isInitialized = false;
+    private messageNotificationEventName = 'SendMessageNotification';
+    private linkPreviewNotificationEventName = 'SendLinkPreviewNotification';
 
     constructor(private tokenService: TokenStorageService) { }
 
-    init(): void {
+    init(messageHandler: (messageDto: IMessageDto) => void,
+        linkPreviewHandler: (response: ILinkPreviewDto) => void): void {
         if (this.isInitialized) { return; }
 
         this.hubConnectionBuilder.start()
             .then(async () => {
                 this.isInitialized = true;
+                this.hubConnectionBuilder.on(this.messageNotificationEventName, (messageDto: IMessageDto) => {
+                    messageHandler?.(messageDto);
+                });
+                this.hubConnectionBuilder.on(this.linkPreviewNotificationEventName, (response: ILinkPreviewDto) => {
+                    linkPreviewHandler?.(response);
+                });
                 await this.authorize();
                 console.log('Notification service: connected');
             })
@@ -40,22 +49,8 @@ export class SignalrService {
     }
 
     removeHandlers(): void {
-        this.hubConnectionBuilder.off('SendMessageNotification');
-        this.hubConnectionBuilder.off('SendLinkPreviewNotification');
-    }
-
-    setMessageNotificationHandler(messageHandler: (messageDto: IMessageDto) => void): void {
-        this.hubConnectionBuilder.off('SendMessageNotification');
-        this.hubConnectionBuilder.on('SendMessageNotification', (messageDto: IMessageDto) => {
-            messageHandler?.(messageDto);
-        });
-    }
-
-    setLinkPreviewNotificationHandler(linkPreviewHandler: (response: ILinkPreviewDto) => void): void {
-        this.hubConnectionBuilder.off('SendLinkPreviewNotification');
-        this.hubConnectionBuilder.on('SendLinkPreviewNotification', (response: ILinkPreviewDto) => {
-            linkPreviewHandler?.(response);
-        });
+        this.hubConnectionBuilder.off(this.messageNotificationEventName);
+        this.hubConnectionBuilder.off(this.linkPreviewNotificationEventName);
     }
 
     private async authorize(): Promise<void> {
