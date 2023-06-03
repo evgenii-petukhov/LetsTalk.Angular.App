@@ -44,7 +44,9 @@ export class MessagerComponent implements OnInit {
             this.selectedAccountId = accountId;
         });
 
-        this.signalrService.init(messageDto => {
+        this.signalrService.init();
+
+        this.signalrService.setMessageNotificationHandler(messageDto => {
             this.storeService.setLastMessageDate(messageDto.senderId, messageDto.created);
             if ([messageDto.senderId, messageDto.recipientId].indexOf(this.selectedAccountId) > -1) {
                 this.storeService.addMessage(messageDto);
@@ -61,7 +63,9 @@ export class MessagerComponent implements OnInit {
                         this.isWindowActive);
                 }
             }
-        }, (linkPreviewDto) => {
+        });
+
+        this.signalrService.setLinkPreviewNotificationHandler((linkPreviewDto) => {
             if (linkPreviewDto.accountId !== this.selectedAccountId) {
                 return;
             }

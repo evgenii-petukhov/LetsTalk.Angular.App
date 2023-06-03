@@ -18,29 +18,43 @@ export class SignalrService {
         .configureLogging(LogLevel.Information)
         .build();
 
+    private isInitialized = false;
+
     constructor(private tokenService: TokenStorageService) { }
 
-    init(
-        messageHandler: (messageDto: IMessageDto) => void,
-        linkPreviewHandler: (response: ILinkPreviewDto) => void) {
+    init(): void {
+        if (this.isInitialized) { return; }
+
         this.hubConnectionBuilder.start()
             .then(async () => {
+                this.isInitialized = true;
                 await this.authorize();
                 console.log('Notification service: connected');
             })
             .catch(() => console.log('Notification service: unable to establish connection'));
 
-        this.hubConnectionBuilder.on('SendMessageNotification', (messageDto: IMessageDto) => {
-            messageHandler?.(messageDto);
-        });
-
-        this.hubConnectionBuilder.on('SendLinkPreviewNotification', (response: ILinkPreviewDto) => {
-            linkPreviewHandler?.(response);
-        });
-
         this.hubConnectionBuilder.onreconnected(async () => {
             await this.authorize();
             console.log('Notification service: reconnected');
+        });
+    }
+
+    removeHandlers(): void {
+        this.hubConnectionBuilder.off('SendMessageNotification');
+        this.hubConnectionBuilder.off('SendLinkPreviewNotification');
+    }
+
+    setMessageNotificationHandler(messageHandler: (messageDto: IMessageDto) => void): void {
+        this.hubConnectionBuilder.off('SendMessageNotification');
+        this.hubConnectionBuilder.on('SendMessageNotification', (messageDto: IMessageDto) => {
+            messageHandler?.(messageDto);
+        });
+    }
+
+    setLinkPreviewNotificationHandler(linkPreviewHandler: (response: ILinkPreviewDto) => void): void {
+        this.hubConnectionBuilder.off('SendLinkPreviewNotification');
+        this.hubConnectionBuilder.on('SendLinkPreviewNotification', (response: ILinkPreviewDto) => {
+            linkPreviewHandler?.(response);
         });
     }
 
