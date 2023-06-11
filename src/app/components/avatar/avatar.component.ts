@@ -34,41 +34,18 @@ export class AvatarComponent implements OnChanges {
             return;
         }
 
-        if (urlInfos.every(url => url.typeInfo.isUrl)) {
+        if (urlInfos[0].typeInfo.isUrl) {
             this.setBackgroundImage(urlInfos[0].content as string, this.defaultPhotoUrl);
             return;
         }
 
-        const promises = urlInfos.map(url => url.typeInfo.isNumber
-            ? new Promise<string>((resolve) => {
-                this.apiservice.getImage(url.content as number).subscribe({
-                    next: imageDto => {
-                        resolve(imageDto.content);
-                    },
-                    error: () => {
-                        resolve(null);
-                    }
-                });
-            })
-            : Promise.resolve<string>(url.content as string));
-
-        Promise.allSettled(promises).then((results) => {
-            const outputUrl = results
-                .filter((result: PromiseFulfilledResult<string>) => result.status === 'fulfilled' && result.value)
-                .map((result: PromiseFulfilledResult<string>) => result.value)
-                .find(url => url);
-
-            if (!outputUrl) {
+        this.apiservice.getImage(urlInfos[0].content as number).subscribe({
+            next: imageDto => {
+                this.setBackgroundImage(imageDto.content);
+            },
+            error: () => {
                 this.setBackgroundImage(this.defaultPhotoUrl);
-                return;
             }
-
-            if (outputUrl.startsWith('http')) {
-                this.setBackgroundImage(outputUrl, this.defaultPhotoUrl);
-                return;
-            }
-
-            this.setBackgroundImage(outputUrl);
         });
     }
 
