@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
+import { AvatarTypes } from 'src/app/enums/avatar-types';
 import { ApiService } from 'src/app/services/api.service';
 
 @Component({
@@ -24,42 +25,45 @@ export class AvatarComponent implements OnChanges {
             return;
         }
 
-        const urlInfos = this.urlOptions.map(url => ({
-            content: url,
-            typeInfo: this.getTypeInfo(url)
-        }));
-
-        if (urlInfos[0].typeInfo.isBase64) {
-            this.setBackgroundImage(urlInfos[0].content as string);
-            return;
-        }
-
-        if (urlInfos[0].typeInfo.isUrl) {
-            this.setBackgroundImage(urlInfos[0].content as string, this.defaultPhotoUrl);
-            return;
-        }
-
-        this.apiservice.getImage(urlInfos[0].content as number).subscribe({
-            next: imageDto => {
-                this.setBackgroundImage(imageDto.content);
-            },
-            error: () => {
+        switch(this.getTypeInfo(this.urlOptions[0])) {
+            case AvatarTypes.base64:
+                this.setBackgroundImage(this.urlOptions[0] as string);
+                return;
+            case AvatarTypes.url:
+                this.setBackgroundImage(this.urlOptions[0] as string, this.defaultPhotoUrl);
+                return;
+            case AvatarTypes.imageId:
+                this.apiservice.getImage(this.urlOptions[0] as number).subscribe({
+                    next: imageDto => {
+                        this.setBackgroundImage(imageDto.content);
+                    },
+                    error: () => {
+                        this.setBackgroundImage(this.defaultPhotoUrl);
+                    }
+                });
+                return;
+            default:
                 this.setBackgroundImage(this.defaultPhotoUrl);
-            }
-        });
+                return;
+        }
     }
 
-    private getTypeInfo(value: (string | number)): {
-        isNumber: boolean;
-        isBase64: boolean;
-        isUrl: boolean;
-    } {
+    private getTypeInfo(value: (string | number)): AvatarTypes {
         const isNumber = !!Number(value);
-        return {
-            isNumber,
-            isBase64: !isNumber && !!(value as string).match(this.base64Regex),
-            isUrl: !isNumber && (value as string).startsWith('http')
-        };
+
+        if (isNumber) {
+            return AvatarTypes.imageId;
+        }
+
+        if (!isNumber && !!(value as string).match(this.base64Regex)) {
+            return AvatarTypes.base64;
+        }
+
+        if (!isNumber && (value as string).startsWith('http')) {
+            return AvatarTypes.url;
+        }
+
+        return AvatarTypes.unknown;
     }
 
     private setBackgroundImage(...urls: string[]) {
