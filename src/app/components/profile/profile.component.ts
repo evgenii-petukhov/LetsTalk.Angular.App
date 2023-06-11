@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { FormBuilder, Validators } from '@angular/forms';
 import { StoreService } from 'src/app/services/store.service';
 import { ApiService } from 'src/app/services/api.service';
@@ -7,6 +6,7 @@ import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import { encodeToBase64 } from 'src/app/helpers/base64.helper';
 import { selectLoggedInUser } from 'src/app/state/logged-in-user/logged-in-user.selectors';
 import { Store } from '@ngrx/store';
+import { Router } from '@angular/router';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -29,7 +29,7 @@ export class ProfileComponent implements OnInit {
     faUpload = faUpload;
 
     constructor(
-        private location: Location,
+        private router: Router,
         private fb: FormBuilder,
         private storeService: StoreService,
         private apiService: ApiService,
@@ -50,12 +50,12 @@ export class ProfileComponent implements OnInit {
         this.storeService.setLoggedInUser(this.form.value);
         this.apiService.saveProfile(this.form.value).subscribe(account => {
             this.storeService.setLoggedInUser(account);
-            this.location.back();
+            this.router.navigate(['chats']);
         });
     }
 
     onBack(): void {
-        this.location.back();
+        this.router.navigate(['chats']);
     }
 
     onAvatarSelected(event: any): void {
