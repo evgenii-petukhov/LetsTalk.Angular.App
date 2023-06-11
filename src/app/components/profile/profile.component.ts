@@ -7,6 +7,7 @@ import { encodeToBase64 } from 'src/app/helpers/base64.helper';
 import { selectLoggedInUser } from 'src/app/state/logged-in-user/logged-in-user.selectors';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -33,7 +34,8 @@ export class ProfileComponent implements OnInit {
         private fb: FormBuilder,
         private storeService: StoreService,
         private apiService: ApiService,
-        private store: Store) { }
+        private store: Store,
+        private toastr: ToastrService) { }
 
     ngOnInit(): void {
         this.storeService.getLoggedInUser().then(account => {
@@ -48,10 +50,17 @@ export class ProfileComponent implements OnInit {
 
     onSubmit(): void {
         this.storeService.setLoggedInUser(this.form.value);
-        this.apiService.saveProfile(this.form.value).subscribe(account => {
-            this.storeService.setLoggedInUser(account);
-            this.router.navigate(['chats']);
-        });
+        this.apiService.saveProfile(this.form.value).subscribe(
+            {
+                next: account => {
+                    this.storeService.setLoggedInUser(account);
+                    this.router.navigate(['chats']);
+                },
+                error: e => {
+                    const details = JSON.parse(e.response);
+                    this.toastr.error(details.title, 'Error');
+                }
+            });
     }
 
     onBack(): void {
