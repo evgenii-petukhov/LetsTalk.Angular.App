@@ -24,16 +24,24 @@ export class AvatarComponent implements OnChanges {
             return;
         }
 
-        this.removeElementsAfterBase64(this.urlOptions);
+        const urlInfos = this.urlOptions.map(url => ({
+            content: url,
+            typeInfo: this.getTypeInfo(url)
+        }));
 
-        if (this.isBase64(this.urlOptions[0])) {
-            this.setBackgroundImage(this.urlOptions[0] as string);
+        if (urlInfos[0].typeInfo.isBase64) {
+            this.setBackgroundImage(urlInfos[0].content as string);
             return;
         }
 
-        const promises = this.urlOptions.map(url => Number(url)
+        if (urlInfos.every(url => url.typeInfo.isUrl)) {
+            this.setBackgroundImage(urlInfos[0].content as string, this.defaultPhotoUrl);
+            return;
+        }
+
+        const promises = urlInfos.map(url => url.typeInfo.isNumber
             ? new Promise<string>((resolve) => {
-                this.apiservice.getImage(url as number).subscribe({
+                this.apiservice.getImage(url.content as number).subscribe({
                     next: imageDto => {
                         resolve(imageDto.content);
                     },
@@ -42,31 +50,39 @@ export class AvatarComponent implements OnChanges {
                     }
                 });
             })
-            : Promise.resolve<string>(url as string));
+            : Promise.resolve<string>(url.content as string));
 
         Promise.allSettled(promises).then((results) => {
-            const urls = results
+            const outputUrl = results
                 .filter((result: PromiseFulfilledResult<string>) => result.status === 'fulfilled' && result.value)
                 .map((result: PromiseFulfilledResult<string>) => result.value)
-                .filter(url => url);
+                .find(url => url);
 
-            urls.push(this.defaultPhotoUrl);
+            if (!outputUrl) {
+                this.setBackgroundImage(this.defaultPhotoUrl);
+                return;
+            }
 
-            this.removeElementsAfterBase64(urls);
+            if (outputUrl.startsWith('http')) {
+                this.setBackgroundImage(outputUrl, this.defaultPhotoUrl);
+                return;
+            }
 
-            this.setBackgroundImage(...urls);
+            this.setBackgroundImage(outputUrl);
         });
     }
 
-    private isBase64(value: (string | number)): boolean {
-        return !Number(value) && !!(value as string).match(this.base64Regex);
-    }
-
-    private removeElementsAfterBase64(array: (string | number)[]): void {
-        const base64Index = array.findIndex(x => this.isBase64(x));
-        if (base64Index > -1) {
-            array.length = base64Index + 1;
-        }
+    private getTypeInfo(value: (string | number)): {
+        isNumber: boolean;
+        isBase64: boolean;
+        isUrl: boolean;
+    } {
+        const isNumber = !!Number(value);
+        return {
+            isNumber,
+            isBase64: !isNumber && !!(value as string).match(this.base64Regex),
+            isUrl: !isNumber && (value as string).startsWith('http')
+        };
     }
 
     private setBackgroundImage(...urls: string[]) {
