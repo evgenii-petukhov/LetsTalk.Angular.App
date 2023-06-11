@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { AvatarTypes } from 'src/app/enums/avatar-types';
+import { ImageUrlType } from 'src/app/enums/image-url-type';
 import { StoreService } from 'src/app/services/store.service';
 
 @Component({
@@ -26,13 +26,13 @@ export class AvatarComponent implements OnChanges {
         }
 
         switch (this.getTypeInfo(this.urlOptions[0])) {
-            case AvatarTypes.base64:
+            case ImageUrlType.base64:
                 this.setBackgroundImage(this.urlOptions[0] as string);
                 return;
-            case AvatarTypes.url:
+            case ImageUrlType.url:
                 this.setBackgroundImage(this.urlOptions[0] as string, this.defaultPhotoUrl);
                 return;
-            case AvatarTypes.imageId:
+            case ImageUrlType.imageId:
                 this.storeService.getImage(this.urlOptions[0] as number).then(content => {
                     this.setBackgroundImage(content);
                 }).catch(() => {
@@ -45,22 +45,22 @@ export class AvatarComponent implements OnChanges {
         }
     }
 
-    private getTypeInfo(value: (string | number)): AvatarTypes {
-        const isNumber = !!Number(value);
-
-        if (isNumber) {
-            return AvatarTypes.imageId;
+    private getTypeInfo(value: (string | number)): ImageUrlType {
+        if (Number(value)) {
+            return ImageUrlType.imageId;
         }
 
-        if (!isNumber && !!(value as string).match(this.base64Regex)) {
-            return AvatarTypes.base64;
+        const stringValue = (value as string);
+
+        if (stringValue.match(this.base64Regex)) {
+            return ImageUrlType.base64;
         }
 
-        if (!isNumber && (value as string).startsWith('http')) {
-            return AvatarTypes.url;
+        if (stringValue.startsWith('http')) {
+            return ImageUrlType.url;
         }
 
-        return AvatarTypes.unknown;
+        return ImageUrlType.unknown;
     }
 
     private setBackgroundImage(...urls: string[]) {

@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { faVk, faFacebook, IconDefinition } from '@fortawesome/free-brands-svg-icons';
-import { AccountTypes } from 'src/app/enums/account-types';
+import { AccountType } from 'src/app/enums/account-type';
 
 @Component({
     selector: 'app-social-media-icon',
@@ -13,12 +13,12 @@ export class SocialMediaIconComponent implements OnChanges {
 
     ngOnChanges(): void {
         switch (+this.iconTypeId) {
-            case AccountTypes.facebook:
+            case AccountType.facebook:
                 this.icon = faFacebook;
                 this.title = 'Facebook';
                 break;
 
-            case AccountTypes.vk:
+            case AccountType.vk:
                 this.icon = faVk;
                 this.title = 'VK';
                 break;
