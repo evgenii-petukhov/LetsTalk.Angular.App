@@ -61,7 +61,9 @@ export class ProfileComponent implements OnInit {
     onAvatarSelected(event: any): void {
         const files = event.target.files;
         if (files && files.length) {
-            encodeToBase64(files[0]).then(base64 => this.form.value.photoUrl = base64);
+            encodeToBase64(files[0]).then(base64 => this.form.patchValue({
+                photoUrl: base64
+            }));
         }
     }
 }
