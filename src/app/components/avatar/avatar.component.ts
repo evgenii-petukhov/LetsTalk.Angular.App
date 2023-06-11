@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { AvatarTypes } from 'src/app/enums/avatar-types';
-import { ApiService } from 'src/app/services/api.service';
+import { StoreService } from 'src/app/services/store.service';
 
 @Component({
     selector: 'app-avatar',
@@ -14,7 +14,7 @@ export class AvatarComponent implements OnChanges {
     private base64Regex = /data:image\/(jpeg|png|gif){1};base64,([^\\"]*)/g;
 
     constructor(
-        private apiservice: ApiService
+        private storeService: StoreService
     ) { }
 
     ngOnChanges(): void {
@@ -25,7 +25,7 @@ export class AvatarComponent implements OnChanges {
             return;
         }
 
-        switch(this.getTypeInfo(this.urlOptions[0])) {
+        switch (this.getTypeInfo(this.urlOptions[0])) {
             case AvatarTypes.base64:
                 this.setBackgroundImage(this.urlOptions[0] as string);
                 return;
@@ -33,13 +33,10 @@ export class AvatarComponent implements OnChanges {
                 this.setBackgroundImage(this.urlOptions[0] as string, this.defaultPhotoUrl);
                 return;
             case AvatarTypes.imageId:
-                this.apiservice.getImage(this.urlOptions[0] as number).subscribe({
-                    next: imageDto => {
-                        this.setBackgroundImage(imageDto.content);
-                    },
-                    error: () => {
-                        this.setBackgroundImage(this.defaultPhotoUrl);
-                    }
+                this.storeService.getImage(this.urlOptions[0] as number).then(content => {
+                    this.setBackgroundImage(content);
+                }).catch(() => {
+                    this.setBackgroundImage(this.defaultPhotoUrl);
                 });
                 return;
             default:

@@ -36,7 +36,7 @@ export class ProfileComponent implements OnInit {
         private store: Store) { }
 
     ngOnInit(): void {
-        this.storeService.loadLoggedInUser().then(account => {
+        this.storeService.getLoggedInUser().then(account => {
             this.form.setValue({
                 firstName: account.firstName,
                 lastName: account.lastName,

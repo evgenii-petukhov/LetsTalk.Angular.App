@@ -10,6 +10,8 @@ import { selectedAccountIdActions } from '../state/selected-account-id/selected-
 import { selectLoggedInUser } from '../state/logged-in-user/logged-in-user.selectors';
 import { ApiService } from './api.service';
 import { selectAccounts } from '../state/accounts/accounts.selector';
+import { imagesActions } from '../state/images/images.actions';
+import { selectImages } from '../state/images/images.selector';
 
 @Injectable({
     providedIn: 'root'
@@ -28,17 +30,17 @@ export class StoreService {
         }, 1000);
     }
 
-    loadAccounts(): Promise<readonly IAccountDto[]> {
+    getAccounts(): Promise<readonly IAccountDto[]> {
         return new Promise<readonly IAccountDto[]>(resolve => {
             this.store.select(selectAccounts).subscribe(accounts => {
                 if (accounts) {
                     resolve(accounts);
-                } else {
-                    this.apiService.getAccounts().subscribe(response => {
-                        this.store.dispatch(accountsActions.init({ accounts: response }));
-                        resolve(response);
-                    });
+                    return;
                 }
+                this.apiService.getAccounts().subscribe(response => {
+                    this.store.dispatch(accountsActions.init({ accounts: response }));
+                    resolve(response);
+                });
             });
         });
     }
@@ -67,17 +69,18 @@ export class StoreService {
         this.store.dispatch(layoutSettingsActions.init({ settings }));
     }
 
-    loadLoggedInUser(): Promise<IAccountDto> {
+    getLoggedInUser(): Promise<IAccountDto> {
         return new Promise<IAccountDto>(resolve => {
             this.store.select(selectLoggedInUser).subscribe(account => {
                 if (account) {
                     resolve(account);
-                } else {
-                    this.apiService.getProfile().subscribe(response => {
-                        this.store.dispatch(loggedInUserActions.init({ account: response }));
-                        resolve(response);
-                    });
+                    return;
                 }
+
+                this.apiService.getProfile().subscribe(response => {
+                    this.store.dispatch(loggedInUserActions.init({ account: response }));
+                    resolve(response);
+                });
             });
         });
     }
@@ -90,4 +93,28 @@ export class StoreService {
         this.store.dispatch(selectedAccountIdActions.init({ accountId }));
     }
 
+    getImage(imageId: number): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            this.store.select(selectImages).subscribe(images => {
+                const image = images?.find(x => x.imageId === imageId);
+                if (image) {
+                    resolve(image.content);
+                    return;
+                }
+
+                this.apiService.getImage(imageId).subscribe({
+                    next: imageDto => {
+                        this.store.dispatch(imagesActions.add({ image: {
+                            imageId,
+                            content: imageDto.content
+                        } }));
+                        resolve(imageDto.content);
+                    },
+                    error: () => {
+                        reject();
+                    }
+                });
+            });
+        });
+    }
 }

@@ -22,7 +22,7 @@ export class LoggedInUserComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.storeService.loadLoggedInUser();
+        this.storeService.getLoggedInUser();
     }
 
     logout(): boolean {

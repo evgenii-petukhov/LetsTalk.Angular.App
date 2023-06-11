@@ -36,7 +36,7 @@ export class MessengerComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.storeService.loadAccounts().then(accounts => {
+        this.storeService.getAccounts().then(accounts => {
             this.accounts = accounts;
         });
 
