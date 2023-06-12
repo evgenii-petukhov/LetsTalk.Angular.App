@@ -12,7 +12,8 @@
 
         @include media-breakpoint-down(md) {
             flex: 1 1 auto;
-            height: 100vh;
+            max-height: 100vh;
+            height: 0;
             border-radius: 0;
         }
 
