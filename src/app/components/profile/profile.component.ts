@@ -85,7 +85,6 @@ export class ProfileComponent implements OnInit {
     }
 
     private submitForm(): void {
-        this.storeService.setLoggedInUser(this.form.value);
         this.apiService.saveProfile(this.form.value).subscribe({
             next: account => {
                 this.storeService.setLoggedInUser(account);

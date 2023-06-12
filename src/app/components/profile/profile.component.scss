@@ -3,8 +3,10 @@
 
 :host {
     @extend %fullscreen;
-    max-height: 100vh;
-    align-items: stretch;
+    @include media-breakpoint-down(md) {
+        max-height: 100vh;
+        align-items: stretch;
+    }
 
     .centered {
         @extend %centered;
