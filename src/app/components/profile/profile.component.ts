@@ -8,6 +8,8 @@ import { selectLoggedInUser } from 'src/app/state/logged-in-user/logged-in-user.
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { ImageService } from 'src/app/services/image.service';
+import { environment } from 'src/environments/environment';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -35,7 +37,8 @@ export class ProfileComponent implements OnInit {
         private storeService: StoreService,
         private apiService: ApiService,
         private store: Store,
-        private toastr: ToastrService) { }
+        private toastr: ToastrService,
+        private imageService: ImageService) { }
 
     ngOnInit(): void {
         this.storeService.getLoggedInUser().then(account => {
@@ -49,18 +52,7 @@ export class ProfileComponent implements OnInit {
     }
 
     onSubmit(): void {
-        this.storeService.setLoggedInUser(this.form.value);
-        this.apiService.saveProfile(this.form.value).subscribe(
-            {
-                next: account => {
-                    this.storeService.setLoggedInUser(account);
-                    this.router.navigate(['chats']);
-                },
-                error: e => {
-                    const details = JSON.parse(e.response);
-                    this.toastr.error(details.title, 'Error');
-                }
-            });
+        this.resizeAvatar().then(() => this.submitForm());
     }
 
     onBack(): void {
@@ -74,5 +66,35 @@ export class ProfileComponent implements OnInit {
                 photoUrl: base64
             }));
         }
+    }
+
+    private resizeAvatar(): Promise<void> {
+        return new Promise<void>(resolve => {
+            if (this.form.value.photoUrl) {
+                const env = (environment as any);
+                this.imageService.resizeBase64Image(this.form.value.photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then(base64 => {
+                    this.form.patchValue({
+                        photoUrl: base64
+                    });
+                    resolve();
+                });
+            } else {
+                resolve();
+            }
+        });
+    }
+
+    private submitForm(): void {
+        this.storeService.setLoggedInUser(this.form.value);
+        this.apiService.saveProfile(this.form.value).subscribe({
+            next: account => {
+                this.storeService.setLoggedInUser(account);
+                this.router.navigate(['chats']);
+            },
+            error: e => {
+                const details = JSON.parse(e.response);
+                this.toastr.error(details.title, 'Error');
+            }
+        });
     }
 }

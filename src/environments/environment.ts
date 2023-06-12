@@ -4,5 +4,7 @@ export const environment = {
     vkAppId: '7615545',
     apiBaseUrl: 'https://api.letstalk.local',
     notificationServiceUrl: 'https://notifications.letstalk.local/messagehub',
-    notificationServiceReconnectInterval: 5000
+    notificationServiceReconnectInterval: 5000,
+    avatarMaxWidth: 512,
+    avatarMaxHeight: 512
 };

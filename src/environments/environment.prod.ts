@@ -3,5 +3,7 @@ export const environment = {
     facebookAppId: '1167512300629881',
     apiBaseUrl: 'https://chatapi.epetukhov.cyou',
     notificationServiceUrl: 'https://chatnotifications.epetukhov.cyou/messagehub',
-    notificationServiceReconnectInterval: 5000
+    notificationServiceReconnectInterval: 5000,
+    avatarMaxWidth: 512,
+    avatarMaxHeight: 512
 };
