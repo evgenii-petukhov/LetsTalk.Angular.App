@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { selectLoggedInUser } from 'src/app/state/logged-in-user/logged-in-user.selectors';
@@ -12,7 +12,6 @@ import { StoreService } from 'src/app/services/store.service';
 })
 export class LoggedInUserComponent implements OnInit {
     faRightFromBracket = faRightFromBracket;
-    faUser = faUser;
     account$ = this.store.select(selectLoggedInUser);
 
     constructor(

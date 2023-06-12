@@ -1,11 +1,11 @@
 <div *ngIf="(account$ | async)" class="logged-in-user-container">
-    <app-avatar class="user-photo"
-        [urlOptions]="[(account$ | async).imageId, (account$ | async).photoUrl]" class="user-photo"></app-avatar>
+    <a [routerLink]="['/profile']" title="Edit profile">
+        <app-avatar class="user-photo"
+            [urlOptions]="[(account$ | async).imageId, (account$ | async).photoUrl]" class="user-photo">
+        </app-avatar>
+    </a>
     <div class="user-details">
         <div class="user-name">You</div>
-        <a [routerLink]="['/profile']" class="icon" title="Profile">
-            <fa-icon [icon]="faUser"></fa-icon>
-        </a>
         <a href="#" class="icon" (click)="logout()" title="Log out">
             <fa-icon [icon]="faRightFromBracket"></fa-icon>
         </a>
