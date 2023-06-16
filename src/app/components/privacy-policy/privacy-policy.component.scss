@@ -1,0 +1,26 @@
+@import "bootstrap/scss/bootstrap";
+@import "../shared/mixins/scrollbars";
+
+:host {
+    flex: 1 1 auto;
+    box-shadow: 0 0 0 6px rgb(255 255 255 / 40%);
+    width: 1000px;
+    margin: 28px auto;
+    max-height: calc(100vh - 56px);
+    border-radius: 10px;
+    background: #fff;
+    overflow-y: scroll;
+    padding: 20px;
+
+    @include scrollbars;
+
+
+    @include media-breakpoint-down(lg) {
+        margin: 0;
+        width: auto;
+        max-height: 100vh;
+        height: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+}
