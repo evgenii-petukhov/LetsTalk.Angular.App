@@ -31,6 +31,7 @@ import { socialAuthProvider } from './providers/social-auth-provider';
 import { VisibleOnlyPipe } from './pipes/visibleOnly';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AvatarComponent } from './components/avatar/avatar.component';
+import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 
 @NgModule({
     declarations: [
@@ -48,7 +49,8 @@ import { AvatarComponent } from './components/avatar/avatar.component';
         SidebarComponent,
         OrderByPipe,
         VisibleOnlyPipe,
-        AvatarComponent
+        AvatarComponent,
+        PrivacyPolicyComponent
     ],
     imports: [
         BrowserModule,
