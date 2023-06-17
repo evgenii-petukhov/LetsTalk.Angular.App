@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ImageService } from 'src/app/services/image.service';
 import { environment } from 'src/environments/environment';
+import { FileStorageService } from 'src/app/services/file-storage.service';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -38,7 +39,8 @@ export class ProfileComponent implements OnInit {
         private apiService: ApiService,
         private store: Store,
         private toastr: ToastrService,
-        private imageService: ImageService) { }
+        private imageService: ImageService,
+        private fileStorageService: FileStorageService) { }
 
     ngOnInit(): void {
         this.storeService.getLoggedInUser().then(account => {
@@ -85,15 +87,17 @@ export class ProfileComponent implements OnInit {
     }
 
     private submitForm(): void {
-        this.apiService.saveProfile(this.form.value).subscribe({
-            next: account => {
-                this.storeService.setLoggedInUser(account);
-                this.router.navigate(['chats']);
-            },
-            error: e => {
-                const details = JSON.parse(e.response);
-                this.toastr.error(details.title, 'Error');
-            }
+        this.fileStorageService.upload().then(response => {
+            this.apiService.saveProfile(this.form.value).subscribe({
+                next: account => {
+                    this.storeService.setLoggedInUser(account);
+                    this.router.navigate(['chats']);
+                },
+                error: e => {
+                    const details = JSON.parse(e.response);
+                    this.toastr.error(details.title, 'Error');
+                }
+            });
         });
     }
 }
