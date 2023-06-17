@@ -1,5 +1,5 @@
 /**
- * @fileoverview gRPC-Web generated client stub for 
+ * @fileoverview gRPC-Web generated client stub for file_upload
  * @enhanceable
  * @public
  */
@@ -31,7 +31,7 @@ export class FileUploadGrpcServiceClient {
                options?: null | { [index: string]: any; }) {
     if (!options) options = {};
     if (!credentials) credentials = {};
-    options['format'] = 'binary';
+    options['format'] = 'text';
 
     this.client_ = new grpcWeb.GrpcWebClientBase(options);
     this.hostname_ = hostname.replace(/\/+$/, '');
@@ -40,7 +40,7 @@ export class FileUploadGrpcServiceClient {
   }
 
   methodDescriptorUploadAsync = new grpcWeb.MethodDescriptor(
-    '/FileUploadGrpcService/UploadAsync',
+    '/file_upload.FileUploadGrpcService/UploadAsync',
     grpcWeb.MethodType.UNARY,
     file_upload_pb.FileUploadRequest,
     file_upload_pb.FileUploadResponse,
@@ -68,7 +68,7 @@ export class FileUploadGrpcServiceClient {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/FileUploadGrpcService/UploadAsync',
+          '/file_upload.FileUploadGrpcService/UploadAsync',
         request,
         metadata || {},
         this.methodDescriptorUploadAsync,
@@ -76,7 +76,7 @@ export class FileUploadGrpcServiceClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/FileUploadGrpcService/UploadAsync',
+      '/file_upload.FileUploadGrpcService/UploadAsync',
     request,
     metadata || {},
     this.methodDescriptorUploadAsync);

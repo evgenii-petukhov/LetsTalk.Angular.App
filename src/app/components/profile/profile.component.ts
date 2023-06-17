@@ -11,6 +11,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ImageService } from 'src/app/services/image.service';
 import { environment } from 'src/environments/environment';
 import { FileStorageService } from 'src/app/services/file-storage.service';
+import { Buffer } from 'buffer';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -54,7 +55,7 @@ export class ProfileComponent implements OnInit {
     }
 
     onSubmit(): void {
-        this.resizeAvatar().then(() => this.submitForm());
+        this.resizeAvatar().then((blob) => this.submitForm(blob));
     }
 
     onBack(): void {
@@ -70,24 +71,24 @@ export class ProfileComponent implements OnInit {
         }
     }
 
-    private resizeAvatar(): Promise<void> {
-        return new Promise<void>(resolve => {
+    private resizeAvatar(): Promise<Uint8Array> {
+        return new Promise<Uint8Array>(resolve => {
             if (this.form.value.photoUrl) {
                 const env = (environment as any);
                 this.imageService.resizeBase64Image(this.form.value.photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then(base64 => {
                     this.form.patchValue({
                         photoUrl: base64
                     });
-                    resolve();
+                    resolve(Buffer.from(base64, 'base64'));
                 });
             } else {
-                resolve();
+                resolve(null);
             }
         });
     }
 
-    private submitForm(): void {
-        this.fileStorageService.upload().then(response => {
+    private submitForm(blob: Uint8Array): void {
+        this.fileStorageService.upload(blob).then(response => {
             this.apiService.saveProfile(this.form.value).subscribe({
                 next: account => {
                     this.storeService.setLoggedInUser(account);

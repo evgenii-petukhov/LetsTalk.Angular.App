@@ -3,8 +3,10 @@ import * as jspb from 'google-protobuf'
 
 
 export class FileUploadRequest extends jspb.Message {
-  getContent(): string;
-  setContent(value: string): FileUploadRequest;
+  getContent(): Uint8Array | string;
+  getContent_asU8(): Uint8Array;
+  getContent_asB64(): string;
+  setContent(value: Uint8Array | string): FileUploadRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): FileUploadRequest.AsObject;
@@ -16,7 +18,7 @@ export class FileUploadRequest extends jspb.Message {
 
 export namespace FileUploadRequest {
   export type AsObject = {
-    content: string,
+    content: Uint8Array | string,
   }
 }
 

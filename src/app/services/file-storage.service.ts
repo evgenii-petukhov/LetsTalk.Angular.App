@@ -11,10 +11,10 @@ export class FileStorageService {
 
     constructor(private tokenService: TokenStorageService) { }
 
-    upload(): Promise<FileUploadResponse> {
+    upload(content: Uint8Array): Promise<FileUploadResponse> {
         const fileUploadService = new FileUploadGrpcServiceClient(environment.fileStorageServiceUrl);
         const request = new FileUploadRequest();
-        request.setContent('abc');
-        return fileUploadService.uploadAsync(request, {  });
+        request.setContent(content);
+        return fileUploadService.uploadAsync(request, { token: this.tokenService.getToken() });
     }
 }
