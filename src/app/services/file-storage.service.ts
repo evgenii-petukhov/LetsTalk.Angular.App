@@ -15,6 +15,6 @@ export class FileStorageService {
         const fileUploadService = new FileUploadGrpcServiceClient(environment.fileStorageServiceUrl);
         const request = new FileUploadRequest();
         request.setContent(content);
-        return fileUploadService.uploadAsync(request, { /*token: this.tokenService.getToken()*/ });
+        return fileUploadService.uploadAsync(request, { token: this.tokenService.getToken() });
     }
 }
