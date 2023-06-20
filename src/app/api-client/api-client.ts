@@ -418,7 +418,7 @@ export class ApiClient {
      * @param body (optional) 
      * @return Success
      */
-    profilePUT(body: UpdateProfileRequest | undefined): Observable<AccountDto> {
+    profilePUT(body: UpdateProfileRequest | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/Profile";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -430,7 +430,6 @@ export class ApiClient {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json",
-                "Accept": "text/plain"
             })
         };
 
@@ -441,14 +440,14 @@ export class ApiClient {
                 try {
                     return this.processProfilePUT(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<AccountDto>;
+                    return _observableThrow(e) as any as Observable<void>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<AccountDto>;
+                return _observableThrow(response_) as any as Observable<void>;
         }));
     }
 
-    protected processProfilePUT(response: HttpResponseBase): Observable<AccountDto> {
+    protected processProfilePUT(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -457,10 +456,7 @@ export class ApiClient {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AccountDto.fromJS(resultData200);
-            return _observableOf(result200);
+            return _observableOf(null as any);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {

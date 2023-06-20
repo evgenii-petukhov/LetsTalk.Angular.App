@@ -3,7 +3,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { StoreService } from 'src/app/services/store.service';
 import { ApiService } from 'src/app/services/api.service';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
-import { encodeToBase64 } from 'src/app/helpers/base64.helper';
 import { selectLoggedInUser } from 'src/app/state/logged-in-user/logged-in-user.selectors';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
@@ -12,6 +11,7 @@ import { ImageService } from 'src/app/services/image.service';
 import { environment } from 'src/environments/environment';
 import { FileStorageService } from 'src/app/services/file-storage.service';
 import { Buffer } from 'buffer';
+import { Base64Service } from 'src/app/services/base64.service';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -41,7 +41,8 @@ export class ProfileComponent implements OnInit {
         private store: Store,
         private toastr: ToastrService,
         private imageService: ImageService,
-        private fileStorageService: FileStorageService) { }
+        private fileStorageService: FileStorageService,
+        private base64Service: Base64Service) { }
 
     ngOnInit(): void {
         this.storeService.getLoggedInUser().then(account => {
@@ -65,7 +66,7 @@ export class ProfileComponent implements OnInit {
     onAvatarSelected(event: any): void {
         const files = event.target.files;
         if (files && files.length) {
-            encodeToBase64(files[0]).then(base64 => this.form.patchValue({
+            this.base64Service.encodeToBase64(files[0]).then(base64 => this.form.patchValue({
                 photoUrl: base64
             }));
         }
@@ -90,8 +91,8 @@ export class ProfileComponent implements OnInit {
     private submitForm(blob: Uint8Array): void {
         this.fileStorageService.upload(blob).then(response => {
             this.apiService.saveProfile(this.form.value).subscribe({
-                next: account => {
-                    this.storeService.setLoggedInUser(account);
+                next: () => {
+                    this.storeService.setLoggedInUser(this.form.value);
                     this.router.navigate(['chats']);
                 },
                 error: e => {

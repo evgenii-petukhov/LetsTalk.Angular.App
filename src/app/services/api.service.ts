@@ -47,7 +47,7 @@ export class ApiService {
         return this.client.image(id);
     }
 
-    saveProfile(profile: IUpdateProfileRequest): Observable<IAccountDto> {
+    saveProfile(profile: IUpdateProfileRequest): Observable<void> {
         const request = new UpdateProfileRequest(profile);
         return this.client.profilePUT(request);
     }

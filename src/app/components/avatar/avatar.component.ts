@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { ImageUrlType } from 'src/app/enums/image-url-type';
+import { Base64Service } from 'src/app/services/base64.service';
 import { StoreService } from 'src/app/services/store.service';
 
 @Component({
@@ -11,10 +12,10 @@ export class AvatarComponent implements OnChanges {
     @Input() urlOptions: (string | number)[];
     backgroundImage: string;
     private defaultPhotoUrl = 'images/empty-avatar.svg';
-    private base64Regex = /data:image\/(jpeg|png|gif){1};base64,([^\\"]*)/g;
 
     constructor(
-        private storeService: StoreService
+        private storeService: StoreService,
+        private base64Service: Base64Service
     ) { }
 
     ngOnChanges(): void {
@@ -52,7 +53,7 @@ export class AvatarComponent implements OnChanges {
 
         const stringValue = (value as string);
 
-        if (stringValue.match(this.base64Regex)) {
+        if (this.base64Service.isBase64Image(stringValue)) {
             return ImageUrlType.base64;
         }
 
