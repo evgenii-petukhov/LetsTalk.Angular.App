@@ -8,6 +8,9 @@ export class FileUploadRequest extends jspb.Message {
   getContent_asB64(): string;
   setContent(value: Uint8Array | string): FileUploadRequest;
 
+  getImageType(): FileUploadRequest.ImageType;
+  setImageType(value: FileUploadRequest.ImageType): FileUploadRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): FileUploadRequest.AsObject;
   static toObject(includeInstance: boolean, msg: FileUploadRequest): FileUploadRequest.AsObject;
@@ -19,12 +22,19 @@ export class FileUploadRequest extends jspb.Message {
 export namespace FileUploadRequest {
   export type AsObject = {
     content: Uint8Array | string,
+    imageType: FileUploadRequest.ImageType,
+  }
+
+  export enum ImageType { 
+    UNKNOWN = 0,
+    AVATAR = 1,
+    MESSAGE = 2,
   }
 }
 
 export class FileUploadResponse extends jspb.Message {
-  getStatus(): boolean;
-  setStatus(value: boolean): FileUploadResponse;
+  getFileId(): number;
+  setFileId(value: number): FileUploadResponse;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): FileUploadResponse.AsObject;
@@ -36,7 +46,7 @@ export class FileUploadResponse extends jspb.Message {
 
 export namespace FileUploadResponse {
   export type AsObject = {
-    status: boolean,
+    fileId: number,
   }
 }
 

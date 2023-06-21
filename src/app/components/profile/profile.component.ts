@@ -56,7 +56,7 @@ export class ProfileComponent implements OnInit {
     }
 
     onSubmit(): void {
-        this.resizeAvatar().then((blob) => this.submitForm(blob));
+        this.resizeAvatar().then((base64: string) => this.submitForm(base64));
     }
 
     onBack(): void {
@@ -72,15 +72,15 @@ export class ProfileComponent implements OnInit {
         }
     }
 
-    private resizeAvatar(): Promise<Uint8Array> {
-        return new Promise<Uint8Array>(resolve => {
+    private resizeAvatar(): Promise<string> {
+        return new Promise<string>(resolve => {
             if (this.form.value.photoUrl) {
                 const env = (environment as any);
                 this.imageService.resizeBase64Image(this.form.value.photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then(base64 => {
                     this.form.patchValue({
                         photoUrl: base64
                     });
-                    resolve(Buffer.from(base64, 'base64'));
+                    resolve(base64);
                 });
             } else {
                 resolve(null);
@@ -88,7 +88,9 @@ export class ProfileComponent implements OnInit {
         });
     }
 
-    private submitForm(blob: Uint8Array): void {
+    private submitForm(base64: string): void {
+        const content = this.base64Service.getContent(base64);
+        const blob = Buffer.from(content, 'base64');
         this.fileStorageService.upload(blob).then(response => {
             this.apiService.saveProfile(this.form.value).subscribe({
                 next: () => {
