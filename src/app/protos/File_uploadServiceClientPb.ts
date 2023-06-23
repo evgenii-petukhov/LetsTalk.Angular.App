@@ -20,7 +20,7 @@ import * as grpcWeb from 'grpc-web';
 import * as file_upload_pb from './file_upload_pb';
 
 
-export class FileUploadGrpcServiceClient {
+export class FileUploadGrpcEndpointClient {
   client_: grpcWeb.AbstractClientBase;
   hostname_: string;
   credentials_: null | { [index: string]: string; };
@@ -39,47 +39,47 @@ export class FileUploadGrpcServiceClient {
     this.options_ = options;
   }
 
-  methodDescriptorUploadAsync = new grpcWeb.MethodDescriptor(
-    '/file_upload.FileUploadGrpcService/UploadAsync',
+  methodDescriptorUploadImageAsync = new grpcWeb.MethodDescriptor(
+    '/file_upload.FileUploadGrpcEndpoint/UploadImageAsync',
     grpcWeb.MethodType.UNARY,
-    file_upload_pb.FileUploadRequest,
-    file_upload_pb.FileUploadResponse,
-    (request: file_upload_pb.FileUploadRequest) => {
+    file_upload_pb.UploadImageRequest,
+    file_upload_pb.UploadImageResponse,
+    (request: file_upload_pb.UploadImageRequest) => {
       return request.serializeBinary();
     },
-    file_upload_pb.FileUploadResponse.deserializeBinary
+    file_upload_pb.UploadImageResponse.deserializeBinary
   );
 
-  uploadAsync(
-    request: file_upload_pb.FileUploadRequest,
-    metadata: grpcWeb.Metadata | null): Promise<file_upload_pb.FileUploadResponse>;
+  uploadImageAsync(
+    request: file_upload_pb.UploadImageRequest,
+    metadata: grpcWeb.Metadata | null): Promise<file_upload_pb.UploadImageResponse>;
 
-  uploadAsync(
-    request: file_upload_pb.FileUploadRequest,
+  uploadImageAsync(
+    request: file_upload_pb.UploadImageRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: file_upload_pb.FileUploadResponse) => void): grpcWeb.ClientReadableStream<file_upload_pb.FileUploadResponse>;
+               response: file_upload_pb.UploadImageResponse) => void): grpcWeb.ClientReadableStream<file_upload_pb.UploadImageResponse>;
 
-  uploadAsync(
-    request: file_upload_pb.FileUploadRequest,
+  uploadImageAsync(
+    request: file_upload_pb.UploadImageRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: file_upload_pb.FileUploadResponse) => void) {
+               response: file_upload_pb.UploadImageResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/file_upload.FileUploadGrpcService/UploadAsync',
+          '/file_upload.FileUploadGrpcEndpoint/UploadImageAsync',
         request,
         metadata || {},
-        this.methodDescriptorUploadAsync,
+        this.methodDescriptorUploadImageAsync,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/file_upload.FileUploadGrpcService/UploadAsync',
+      '/file_upload.FileUploadGrpcEndpoint/UploadImageAsync',
     request,
     metadata || {},
-    this.methodDescriptorUploadAsync);
+    this.methodDescriptorUploadImageAsync);
   }
 
 }

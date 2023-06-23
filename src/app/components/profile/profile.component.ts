@@ -12,6 +12,7 @@ import { environment } from 'src/environments/environment';
 import { FileStorageService } from 'src/app/services/file-storage.service';
 import { Buffer } from 'buffer';
 import { Base64Service } from 'src/app/services/base64.service';
+import { UploadImageResponse } from 'src/app/protos/file_upload_pb';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -56,7 +57,9 @@ export class ProfileComponent implements OnInit {
     }
 
     onSubmit(): void {
-        this.resizeAvatar().then((base64: string) => this.submitForm(base64));
+        this.resizeAvatar(this.form.value.photoUrl).then(
+            (base64: string) => this.uploadAvatar(base64)).then(
+                (response: UploadImageResponse) => this.submitForm(response));
     }
 
     onBack(): void {
@@ -72,36 +75,48 @@ export class ProfileComponent implements OnInit {
         }
     }
 
-    private resizeAvatar(): Promise<string> {
+    private resizeAvatar(photoUrl: string): Promise<string> {
         return new Promise<string>(resolve => {
-            if (this.form.value.photoUrl) {
-                const env = (environment as any);
-                this.imageService.resizeBase64Image(this.form.value.photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then(base64 => {
-                    this.form.patchValue({
-                        photoUrl: base64
-                    });
-                    resolve(base64);
-                });
-            } else {
+            if (!photoUrl) {
                 resolve(null);
+                return;
             }
+
+            const env = (environment as any);
+            this.imageService.resizeBase64Image(photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then(base64 => {
+                this.form.patchValue({
+                    photoUrl
+                });
+                resolve(base64);
+            });
         });
     }
 
-    private submitForm(base64: string): void {
+    private uploadAvatar(base64: string): Promise<UploadImageResponse> {
+        if (!base64) {
+            return Promise.resolve(null);
+        }
         const content = this.base64Service.getContent(base64);
         const blob = Buffer.from(content, 'base64');
-        this.fileStorageService.upload(blob).then(response => {
-            this.apiService.saveProfile(this.form.value).subscribe({
-                next: () => {
-                    this.storeService.setLoggedInUser(this.form.value);
-                    this.router.navigate(['chats']);
-                },
-                error: e => {
-                    const details = JSON.parse(e.response);
-                    this.toastr.error(details.title, 'Error');
-                }
-            });
+        return this.fileStorageService.upload(blob);
+    }
+
+    private submitForm(uploadImageResponse: UploadImageResponse): void {
+        const request = {
+            email: this.form.value.email,
+            imageId: uploadImageResponse?.getImageId(),
+            firstName: this.form.value.firstName,
+            lastName: this.form.value.lastName
+        };
+        this.apiService.saveProfile(request).subscribe({
+            next: () => {
+                this.storeService.setLoggedInUser(this.form.value);
+                this.router.navigate(['chats']);
+            },
+            error: e => {
+                const details = JSON.parse(e.response);
+                this.toastr.error(details.title, 'Error');
+            }
         });
     }
 }

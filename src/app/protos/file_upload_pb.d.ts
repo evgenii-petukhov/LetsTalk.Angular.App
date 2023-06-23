@@ -2,27 +2,27 @@ import * as jspb from 'google-protobuf'
 
 
 
-export class FileUploadRequest extends jspb.Message {
+export class UploadImageRequest extends jspb.Message {
   getContent(): Uint8Array | string;
   getContent_asU8(): Uint8Array;
   getContent_asB64(): string;
-  setContent(value: Uint8Array | string): FileUploadRequest;
+  setContent(value: Uint8Array | string): UploadImageRequest;
 
-  getImageType(): FileUploadRequest.ImageType;
-  setImageType(value: FileUploadRequest.ImageType): FileUploadRequest;
+  getImageType(): UploadImageRequest.ImageType;
+  setImageType(value: UploadImageRequest.ImageType): UploadImageRequest;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): FileUploadRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: FileUploadRequest): FileUploadRequest.AsObject;
-  static serializeBinaryToWriter(message: FileUploadRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): FileUploadRequest;
-  static deserializeBinaryFromReader(message: FileUploadRequest, reader: jspb.BinaryReader): FileUploadRequest;
+  toObject(includeInstance?: boolean): UploadImageRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: UploadImageRequest): UploadImageRequest.AsObject;
+  static serializeBinaryToWriter(message: UploadImageRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UploadImageRequest;
+  static deserializeBinaryFromReader(message: UploadImageRequest, reader: jspb.BinaryReader): UploadImageRequest;
 }
 
-export namespace FileUploadRequest {
+export namespace UploadImageRequest {
   export type AsObject = {
     content: Uint8Array | string,
-    imageType: FileUploadRequest.ImageType,
+    imageType: UploadImageRequest.ImageType,
   }
 
   export enum ImageType { 
@@ -32,21 +32,21 @@ export namespace FileUploadRequest {
   }
 }
 
-export class FileUploadResponse extends jspb.Message {
-  getFileId(): number;
-  setFileId(value: number): FileUploadResponse;
+export class UploadImageResponse extends jspb.Message {
+  getImageId(): number;
+  setImageId(value: number): UploadImageResponse;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): FileUploadResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: FileUploadResponse): FileUploadResponse.AsObject;
-  static serializeBinaryToWriter(message: FileUploadResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): FileUploadResponse;
-  static deserializeBinaryFromReader(message: FileUploadResponse, reader: jspb.BinaryReader): FileUploadResponse;
+  toObject(includeInstance?: boolean): UploadImageResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UploadImageResponse): UploadImageResponse.AsObject;
+  static serializeBinaryToWriter(message: UploadImageResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UploadImageResponse;
+  static deserializeBinaryFromReader(message: UploadImageResponse, reader: jspb.BinaryReader): UploadImageResponse;
 }
 
-export namespace FileUploadResponse {
+export namespace UploadImageResponse {
   export type AsObject = {
-    fileId: number,
+    imageId: number,
   }
 }
 

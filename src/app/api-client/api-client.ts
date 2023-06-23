@@ -849,7 +849,7 @@ export interface IMessageDto {
 
 export class UpdateProfileRequest implements IUpdateProfileRequest {
     email?: string | undefined;
-    photoUrl?: string | undefined;
+    imageId?: number | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
 
@@ -865,7 +865,7 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
     init(_data?: any) {
         if (_data) {
             this.email = _data["email"];
-            this.photoUrl = _data["photoUrl"];
+            this.imageId = _data["imageId"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
         }
@@ -881,7 +881,7 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["email"] = this.email;
-        data["photoUrl"] = this.photoUrl;
+        data["imageId"] = this.imageId;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         return data;
@@ -890,7 +890,7 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
 
 export interface IUpdateProfileRequest {
     email?: string | undefined;
-    photoUrl?: string | undefined;
+    imageId?: number | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
 }
