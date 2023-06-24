@@ -16,6 +16,6 @@ export class FileStorageService {
         const request = new UploadImageRequest();
         request.setContent(content);
         request.setImageType(UploadImageRequest.ImageType.AVATAR);
-        return fileUploadService.uploadImageAsync(request, { token: this.tokenService.getToken() });
+        return fileUploadService.uploadImageAsync(request, { authorization: this.tokenService.getToken() });
     }
 }
