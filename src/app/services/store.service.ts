@@ -97,6 +97,7 @@ export class StoreService {
         this.store.dispatch(selectedAccountIdActions.init({ accountId }));
     }
 
+    // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
     getImage(imageId: number): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             this.store.select(selectImages).subscribe(images => {
