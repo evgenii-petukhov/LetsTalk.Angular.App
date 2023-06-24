@@ -96,13 +96,13 @@ export class ProfileComponent implements OnInit {
         });
     }
 
-    private uploadAvatar(base64: string): Promise<void> {
+    private uploadAvatar(base64: string): Promise<UploadImageResponse> {
         if (!base64) {
-            return;
+            return Promise.resolve(null);
         }
         const content = this.base64Service.getContent(base64);
         const blob = Buffer.from(content, 'base64');
-        this.fileStorageService.upload(blob);
+        return this.fileStorageService.upload(blob);
     }
 
     private submitForm(): void {
