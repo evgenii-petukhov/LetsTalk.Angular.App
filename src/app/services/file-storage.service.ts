@@ -8,21 +8,20 @@ import { TokenStorageService } from './token-storage.service';
     providedIn: 'root'
 })
 export class FileStorageService {
+    private fileUploadService = new FileUploadGrpcEndpointClient(environment.fileStorageServiceUrl);
 
     constructor(private tokenService: TokenStorageService) { }
 
     upload(content: Uint8Array): Promise<UploadImageResponse> {
-        const fileUploadService = new FileUploadGrpcEndpointClient(environment.fileStorageServiceUrl);
         const request = new UploadImageRequest();
         request.setContent(content);
         request.setImageType(UploadImageRequest.ImageType.AVATAR);
-        return fileUploadService.uploadImageAsync(request, { authorization: this.tokenService.getToken() });
+        return this.fileUploadService.uploadImageAsync(request, { authorization: this.tokenService.getToken() });
     }
 
     download(imageId: number): Promise<DownloadImageResponse> {
-        const fileUploadService = new FileUploadGrpcEndpointClient(environment.fileStorageServiceUrl);
         const request = new DownloadImageRequest();
         request.setImageId(imageId);
-        return fileUploadService.downloadImageAsync(request, { authorization: this.tokenService.getToken() });
+        return this.fileUploadService.downloadImageAsync(request, { authorization: this.tokenService.getToken() });
     }
 }

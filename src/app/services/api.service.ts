@@ -1,6 +1,6 @@
 import { SocialUser } from '@abacritt/angularx-social-login';
 import { Injectable } from '@angular/core';
-import { Observable  } from 'rxjs';
+import { Observable } from 'rxjs';
 import {
     LoginRequest,
     LoginResponseDto,
@@ -10,7 +10,6 @@ import {
     IMessageDto,
     MarkAsReadRequest,
     UpdateProfileRequest,
-    IUpdateProfileRequest,
     AccountDto
 } from '../api-client/api-client';
 
@@ -43,8 +42,12 @@ export class ApiService {
         return this.client.profileGET();
     }
 
-    saveProfile(profile: IUpdateProfileRequest): Observable<AccountDto> {
-        const request = new UpdateProfileRequest(profile);
+    saveProfile(email: string, firstName: string, lastName: string): Observable<AccountDto> {
+        const request = new UpdateProfileRequest({
+            email,
+            firstName,
+            lastName
+        });
         return this.client.profilePUT(request);
     }
 

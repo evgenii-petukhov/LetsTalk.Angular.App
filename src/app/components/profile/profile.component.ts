@@ -106,12 +106,7 @@ export class ProfileComponent implements OnInit {
     }
 
     private submitForm(): void {
-        const request = {
-            email: this.form.value.email,
-            firstName: this.form.value.firstName,
-            lastName: this.form.value.lastName
-        };
-        this.apiService.saveProfile(request).subscribe({
+        this.apiService.saveProfile(this.form.value.email, this.form.value.firstName, this.form.value.lastName).subscribe({
             next: (accountDto: AccountDto) => {
                 this.storeService.setLoggedInUser(accountDto);
                 this.router.navigate(['chats']);
