@@ -77,12 +77,11 @@ export class ProfileComponent implements OnInit {
     }
 
     private resizeAvatar(photoUrl: string): Promise<string> {
-        return new Promise<string>(resolve => {
-            if (!photoUrl) {
-                resolve(null);
-                return;
-            }
+        if (!photoUrl) {
+            return Promise.resolve(null);
+        }
 
+        return new Promise<string>(resolve => {
             const env = (environment as any);
             this.imageService.resizeBase64Image(photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then(base64 => {
                 this.form.patchValue({
