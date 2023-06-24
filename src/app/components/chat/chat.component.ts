@@ -74,7 +74,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     }
 
     private loadMessages(accountId: number): void {
-        if (accountId === null) {return;}
+        if (accountId === null) { return; }
         this.storeService.initMessages([]);
         this.apiService.getMessages(accountId).subscribe(messageDtos => {
             this.storeService.initMessages(messageDtos);

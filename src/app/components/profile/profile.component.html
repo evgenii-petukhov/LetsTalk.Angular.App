@@ -10,46 +10,30 @@
                             <div class="avatar-upload-text">
                                 <fa-icon [icon]="faUpload"></fa-icon>
                             </div>
-                            <input type="file" (change)="onAvatarSelected($event)" title="Upload new photo"/>
+                            <input type="file" (change)="onAvatarSelected($event)" title="Upload new photo" />
                         </div>
                     </app-avatar>
                 </div>
             </div>
         </div>
         <div class="form-floating mb-3">
-            <input type="firstname"
-                id="firstname"
-                class="form-control"
-                placeholder="First name"
-                formControlName="firstName"
-                [ngClass]="form.controls['firstName'].invalid && 'is-invalid'"/>
+            <input type="firstname" id="firstname" class="form-control" placeholder="First name"
+                formControlName="firstName" [ngClass]="form.controls['firstName'].invalid && 'is-invalid'" />
             <label for="firstname">First name</label>
         </div>
         <div class="form-floating mb-3">
-            <input type="lastname"
-                id="lastname"
-                class="form-control"
-                placeholder="Last name"
-                formControlName="lastName"
-                [ngClass]="form.controls['lastName'].invalid && 'is-invalid'"/>
+            <input type="lastname" id="lastname" class="form-control" placeholder="Last name" formControlName="lastName"
+                [ngClass]="form.controls['lastName'].invalid && 'is-invalid'" />
             <label for="lastname">Last name</label>
         </div>
         <div class="form-floating mb-3">
-            <input type="email"
-                id="email"
-                class="form-control"
-                placeholder="E-mail"
-                formControlName="email"
-                [ngClass]="form.controls['email'].invalid && 'is-invalid'"/>
+            <input type="email" id="email" class="form-control" placeholder="E-mail" formControlName="email"
+                [ngClass]="form.controls['email'].invalid && 'is-invalid'" />
             <label for="email">E-mail</label>
         </div>
         <div class="profile-buttons">
-            <button type="submit"
-                class="btn btn-primary"
-                [disabled]="!form.valid || isSending">OK</button>
-            <button type="button"
-                class="btn btn-outline-primary"
-                (click)="onBack()">Cancel</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!form.valid || isSending">OK</button>
+            <button type="button" class="btn btn-outline-primary" (click)="onBack()">Cancel</button>
         </div>
     </form>
 </div>
