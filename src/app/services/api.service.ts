@@ -11,7 +11,7 @@ import {
     MarkAsReadRequest,
     UpdateProfileRequest,
     IUpdateProfileRequest,
-    ImageDto
+    AccountDto
 } from '../api-client/api-client';
 
 @Injectable({
@@ -43,11 +43,7 @@ export class ApiService {
         return this.client.profileGET();
     }
 
-    getImage(id: number): Observable<ImageDto> {
-        return this.client.image(id);
-    }
-
-    saveProfile(profile: IUpdateProfileRequest): Observable<void> {
+    saveProfile(profile: IUpdateProfileRequest): Observable<AccountDto> {
         const request = new UpdateProfileRequest(profile);
         return this.client.profilePUT(request);
     }

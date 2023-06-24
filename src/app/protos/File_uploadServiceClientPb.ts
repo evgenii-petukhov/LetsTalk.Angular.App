@@ -82,5 +82,48 @@ export class FileUploadGrpcEndpointClient {
     this.methodDescriptorUploadImageAsync);
   }
 
+  methodDescriptorDownloadImageAsync = new grpcWeb.MethodDescriptor(
+    '/file_upload.FileUploadGrpcEndpoint/DownloadImageAsync',
+    grpcWeb.MethodType.UNARY,
+    file_upload_pb.DownloadImageRequest,
+    file_upload_pb.DownloadImageResponse,
+    (request: file_upload_pb.DownloadImageRequest) => {
+      return request.serializeBinary();
+    },
+    file_upload_pb.DownloadImageResponse.deserializeBinary
+  );
+
+  downloadImageAsync(
+    request: file_upload_pb.DownloadImageRequest,
+    metadata: grpcWeb.Metadata | null): Promise<file_upload_pb.DownloadImageResponse>;
+
+  downloadImageAsync(
+    request: file_upload_pb.DownloadImageRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: file_upload_pb.DownloadImageResponse) => void): grpcWeb.ClientReadableStream<file_upload_pb.DownloadImageResponse>;
+
+  downloadImageAsync(
+    request: file_upload_pb.DownloadImageRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: file_upload_pb.DownloadImageResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/file_upload.FileUploadGrpcEndpoint/DownloadImageAsync',
+        request,
+        metadata || {},
+        this.methodDescriptorDownloadImageAsync,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/file_upload.FileUploadGrpcEndpoint/DownloadImageAsync',
+    request,
+    metadata || {},
+    this.methodDescriptorDownloadImageAsync);
+  }
+
 }
 

@@ -13,6 +13,7 @@ import { FileStorageService } from 'src/app/services/file-storage.service';
 import { Buffer } from 'buffer';
 import { Base64Service } from 'src/app/services/base64.service';
 import { UploadImageResponse } from 'src/app/protos/file_upload_pb';
+import { AccountDto } from 'src/app/api-client/api-client';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -59,7 +60,7 @@ export class ProfileComponent implements OnInit {
     onSubmit(): void {
         this.resizeAvatar(this.form.value.photoUrl).then(
             (base64: string) => this.uploadAvatar(base64)).then(
-                (response: UploadImageResponse) => this.submitForm());
+                () => this.submitForm());
     }
 
     onBack(): void {
@@ -108,8 +109,8 @@ export class ProfileComponent implements OnInit {
             lastName: this.form.value.lastName
         };
         this.apiService.saveProfile(request).subscribe({
-            next: () => {
-                this.storeService.setLoggedInUser(this.form.value);
+            next: (accountDto: AccountDto) => {
+                this.storeService.setLoggedInUser(accountDto);
                 this.router.navigate(['chats']);
             },
             error: e => {

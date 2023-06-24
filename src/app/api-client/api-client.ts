@@ -143,60 +143,6 @@ export class ApiClient {
     /**
      * @return Success
      */
-    image(id: number): Observable<ImageDto> {
-        let url_ = this.baseUrl + "/api/Image/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processImage(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processImage(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<ImageDto>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<ImageDto>;
-        }));
-    }
-
-    protected processImage(response: HttpResponseBase): Observable<ImageDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = ImageDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-
-    /**
-     * @return Success
-     */
     messageAll(recipientId: number): Observable<MessageDto[]> {
         let url_ = this.baseUrl + "/api/Message/{recipientId}";
         if (recipientId === undefined || recipientId === null)
@@ -418,7 +364,7 @@ export class ApiClient {
      * @param body (optional) 
      * @return Success
      */
-    profilePUT(body: UpdateProfileRequest | undefined): Observable<void> {
+    profilePUT(body: UpdateProfileRequest | undefined): Observable<AccountDto> {
         let url_ = this.baseUrl + "/api/Profile";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -430,6 +376,7 @@ export class ApiClient {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json",
+                "Accept": "text/plain"
             })
         };
 
@@ -440,14 +387,14 @@ export class ApiClient {
                 try {
                     return this.processProfilePUT(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
+                    return _observableThrow(e) as any as Observable<AccountDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<void>;
+                return _observableThrow(response_) as any as Observable<AccountDto>;
         }));
     }
 
-    protected processProfilePUT(response: HttpResponseBase): Observable<void> {
+    protected processProfilePUT(response: HttpResponseBase): Observable<AccountDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -456,7 +403,10 @@ export class ApiClient {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return _observableOf(null as any);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = AccountDto.fromJS(resultData200);
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -573,42 +523,6 @@ export class CreateMessageRequest implements ICreateMessageRequest {
 export interface ICreateMessageRequest {
     text?: string | undefined;
     recipientId?: number;
-}
-
-export class ImageDto implements IImageDto {
-    content?: string | undefined;
-
-    constructor(data?: IImageDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.content = _data["content"];
-        }
-    }
-
-    static fromJS(data: any): ImageDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ImageDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["content"] = this.content;
-        return data;
-    }
-}
-
-export interface IImageDto {
-    content?: string | undefined;
 }
 
 export class LinkPreviewDto implements ILinkPreviewDto {

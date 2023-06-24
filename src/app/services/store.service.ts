@@ -12,6 +12,8 @@ import { ApiService } from './api.service';
 import { selectAccounts } from '../state/accounts/accounts.selector';
 import { imagesActions } from '../state/images/images.actions';
 import { selectImages } from '../state/images/images.selector';
+import { FileStorageService } from './file-storage.service';
+import { Base64Service } from './base64.service';
 
 @Injectable({
     providedIn: 'root'
@@ -20,7 +22,9 @@ export class StoreService {
 
     constructor(
         private store: Store,
-        private apiService: ApiService) { }
+        private apiService: ApiService,
+        private fileStorageService: FileStorageService,
+        private base64Service: Base64Service) { }
 
     readAllMessages(accountId: number): void {
         setTimeout(() => {
@@ -102,18 +106,14 @@ export class StoreService {
                     return;
                 }
 
-                this.apiService.getImage(imageId).subscribe({
-                    next: imageDto => {
-                        this.store.dispatch(imagesActions.add({ image: {
-                            imageId,
-                            content: imageDto.content
-                        } }));
-                        resolve(imageDto.content);
-                    },
-                    error: () => {
-                        reject();
-                    }
-                });
+                this.fileStorageService.download(imageId).then(response => {
+                    const content = this.base64Service.getImageUrl(response.getContent_asB64(), response.getImageType());
+                    this.store.dispatch(imagesActions.add({ image: {
+                        imageId,
+                        content
+                    } }));
+                    resolve(content);
+                }).catch(() => reject());
             });
         });
     }
