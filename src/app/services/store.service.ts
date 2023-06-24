@@ -107,7 +107,7 @@ export class StoreService {
                 }
 
                 this.fileStorageService.download(imageId).then(response => {
-                    const content = this.base64Service.getImageUrl(response.getContent_asB64(), response.getImageType());
+                    const content = URL.createObjectURL(new Blob([response.getContent()]));
                     this.store.dispatch(imagesActions.add({ image: {
                         imageId,
                         content
