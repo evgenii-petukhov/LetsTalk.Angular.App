@@ -282,7 +282,7 @@ proto.file_upload.UploadImageResponse.prototype.toObject = function(opt_includeI
  */
 proto.file_upload.UploadImageResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    imageId: jspb.Message.getFieldWithDefault(msg, 1, 0)
+
   };
 
   if (includeInstance) {
@@ -319,10 +319,6 @@ proto.file_upload.UploadImageResponse.deserializeBinaryFromReader = function(msg
     }
     var field = reader.getFieldNumber();
     switch (field) {
-    case 1:
-      var value = /** @type {number} */ (reader.readInt64());
-      msg.setImageId(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -352,31 +348,6 @@ proto.file_upload.UploadImageResponse.prototype.serializeBinary = function() {
  */
 proto.file_upload.UploadImageResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getImageId();
-  if (f !== 0) {
-    writer.writeInt64(
-      1,
-      f
-    );
-  }
-};
-
-
-/**
- * optional int64 image_id = 1;
- * @return {number}
- */
-proto.file_upload.UploadImageResponse.prototype.getImageId = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.file_upload.UploadImageResponse} returns this
- */
-proto.file_upload.UploadImageResponse.prototype.setImageId = function(value) {
-  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 

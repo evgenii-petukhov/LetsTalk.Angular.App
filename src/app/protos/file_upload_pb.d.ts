@@ -33,9 +33,6 @@ export namespace UploadImageRequest {
 }
 
 export class UploadImageResponse extends jspb.Message {
-  getImageId(): number;
-  setImageId(value: number): UploadImageResponse;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UploadImageResponse.AsObject;
   static toObject(includeInstance: boolean, msg: UploadImageResponse): UploadImageResponse.AsObject;
@@ -46,7 +43,6 @@ export class UploadImageResponse extends jspb.Message {
 
 export namespace UploadImageResponse {
   export type AsObject = {
-    imageId: number,
   }
 }
 

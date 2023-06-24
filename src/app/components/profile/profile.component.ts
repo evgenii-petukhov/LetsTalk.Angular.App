@@ -59,7 +59,7 @@ export class ProfileComponent implements OnInit {
     onSubmit(): void {
         this.resizeAvatar(this.form.value.photoUrl).then(
             (base64: string) => this.uploadAvatar(base64)).then(
-                (response: UploadImageResponse) => this.submitForm(response));
+                (response: UploadImageResponse) => this.submitForm());
     }
 
     onBack(): void {
@@ -101,10 +101,9 @@ export class ProfileComponent implements OnInit {
         return this.fileStorageService.upload(blob);
     }
 
-    private submitForm(uploadImageResponse: UploadImageResponse): void {
+    private submitForm(): void {
         const request = {
             email: this.form.value.email,
-            imageId: uploadImageResponse?.getImageId(),
             firstName: this.form.value.firstName,
             lastName: this.form.value.lastName
         };
