@@ -557,8 +557,7 @@ proto.file_upload.DownloadImageResponse.prototype.toObject = function(opt_includ
  */
 proto.file_upload.DownloadImageResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    content: msg.getContent_asB64(),
-    imageType: jspb.Message.getFieldWithDefault(msg, 2, "")
+    content: msg.getContent_asB64()
   };
 
   if (includeInstance) {
@@ -599,10 +598,6 @@ proto.file_upload.DownloadImageResponse.deserializeBinaryFromReader = function(m
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setContent(value);
       break;
-    case 2:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setImageType(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -636,13 +631,6 @@ proto.file_upload.DownloadImageResponse.serializeBinaryToWriter = function(messa
   if (f.length > 0) {
     writer.writeBytes(
       1,
-      f
-    );
-  }
-  f = message.getImageType();
-  if (f.length > 0) {
-    writer.writeString(
-      2,
       f
     );
   }
@@ -688,24 +676,6 @@ proto.file_upload.DownloadImageResponse.prototype.getContent_asU8 = function() {
  */
 proto.file_upload.DownloadImageResponse.prototype.setContent = function(value) {
   return jspb.Message.setProto3BytesField(this, 1, value);
-};
-
-
-/**
- * optional string image_type = 2;
- * @return {string}
- */
-proto.file_upload.DownloadImageResponse.prototype.getImageType = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.file_upload.DownloadImageResponse} returns this
- */
-proto.file_upload.DownloadImageResponse.prototype.setImageType = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 

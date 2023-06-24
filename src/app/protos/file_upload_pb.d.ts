@@ -70,9 +70,6 @@ export class DownloadImageResponse extends jspb.Message {
   getContent_asB64(): string;
   setContent(value: Uint8Array | string): DownloadImageResponse;
 
-  getImageType(): string;
-  setImageType(value: string): DownloadImageResponse;
-
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DownloadImageResponse.AsObject;
   static toObject(includeInstance: boolean, msg: DownloadImageResponse): DownloadImageResponse.AsObject;
@@ -84,7 +81,6 @@ export class DownloadImageResponse extends jspb.Message {
 export namespace DownloadImageResponse {
   export type AsObject = {
     content: Uint8Array | string,
-    imageType: string,
   }
 }
 
