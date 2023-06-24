@@ -26,6 +26,7 @@ import { AccountDto } from 'src/app/api-client/api-client';
 })
 export class ProfileComponent implements OnInit {
     account$ = this.store.select(selectLoggedInUser);
+    isSending = false;
 
     form = this.fb.group({
         firstName: ['', Validators.required],
@@ -58,9 +59,12 @@ export class ProfileComponent implements OnInit {
     }
 
     onSubmit(): void {
+        this.isSending = true;
         this.resizeAvatar(this.form.value.photoUrl).then(
             (base64: string) => this.uploadAvatar(base64)).then(
-                () => this.submitForm());
+                () => this.submitForm()).catch(() => {
+                    this.isSending = false;
+                });
     }
 
     onBack(): void {

@@ -46,7 +46,7 @@
         <div class="profile-buttons">
             <button type="submit"
                 class="btn btn-primary"
-                [disabled]="!form.valid">OK</button>
+                [disabled]="!form.valid || isSending">OK</button>
             <button type="button"
                 class="btn btn-outline-primary"
                 (click)="onBack()">Cancel</button>
