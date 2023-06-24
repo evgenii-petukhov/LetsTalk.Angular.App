@@ -25,10 +25,11 @@ The back-end implements microservice architecture. There are a few microservices
 
 | Microservice name | Protocol | Description |
 | ----------- | ----------- | ----------- |
-| Authentication | GRPC | generates and validates JWT tokens |
-| Notification | Apache Kafka | sends notifications to the Angular application via SignalR |
-| Link preview | Apache Kafka | processes links inside messages and generates a preview |
-| File storage | GRPC Web | saves images the file system, retrieves images from the file system by reques |
+| Chat API | REST | Responsible for sending messages and account management |
+| Authentication | GRPC | Generates and validates JSON Web Tokens |
+| Notification | Apache Kafka, SignalR | Sends out notifications about new messages |
+| Link preview | Apache Kafka | Decorates messages with a website's name and a picture preview, if a message contains links |
+| File storage | GRPC Web | Saves a user's avatar on the file system, serves avatars by request |
 ## Get started
 1. Clone the repository
 2. Install dependencies `npm install`
