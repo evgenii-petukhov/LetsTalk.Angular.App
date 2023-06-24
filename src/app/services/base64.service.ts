@@ -28,4 +28,8 @@ export class Base64Service {
 
         return null;
     }
+
+    getImageUrl(content: string, imageType: string): string {
+        return `data:image/${imageType};base64,${content}`;
+    }
 }
