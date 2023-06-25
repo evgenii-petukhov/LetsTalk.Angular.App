@@ -1,22 +1,16 @@
-<div class="bubble"
-    [ngClass]="message.isMine ? 'btm-right' : 'btm-left'">
+<div class="bubble" [ngClass]="message.isMine ? 'btm-right' : 'btm-left'">
     <div class="bubble-inner-container">
-        <a [href]="message.linkPreview.url"
-            target="_blank"
-            class="link-preview"
-            *ngIf="message.linkPreview">
+        <a [href]="message.linkPreview.url" target="_blank" class="link-preview" *ngIf="message.linkPreview">
             <div class="link-preview-image" *ngIf="message.linkPreview.imageUrl && !isImageError">
-                <img [src]="message.linkPreview.imageUrl"
-                    (error)="onImageError()"
-                    referrerpolicy="no-referrer" />
+                <img [src]="message.linkPreview.imageUrl" (error)="onImageError()" referrerpolicy="no-referrer"
+                    alt="Site preview" />
             </div>
             <div class="link-preview-text-container">
                 <div class="link-preview-text">{{message.linkPreview.title}}</div>
             </div>
         </a>
         <div class="text" [innerHTML]="message.textHtml"></div>
-        <div class="time"
-            title="{{message.created | date:'HH:mm, d MMMM YYYY'}}">
+        <div class="time" title="{{message.created | date:'HH:mm, d MMMM YYYY'}}">
             {{message.created | date:"HH:mm"}}
         </div>
     </div>

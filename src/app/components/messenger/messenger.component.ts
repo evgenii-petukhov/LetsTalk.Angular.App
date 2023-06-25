@@ -31,7 +31,7 @@ export class MessengerComponent implements OnInit {
 
     @HostListener('document:visibilitychange', ['$event'])
     onVisibilityChange(event: Event): void {
-        this.isWindowActive = !(event.target as any).hidden;
+        this.isWindowActive = !(event.target as Document).hidden;
         this.storeService.readAllMessages(this.selectedAccountId);
     }
 

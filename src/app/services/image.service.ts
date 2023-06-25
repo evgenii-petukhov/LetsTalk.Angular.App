@@ -5,8 +5,6 @@ import { Injectable } from '@angular/core';
 })
 export class ImageService {
 
-    constructor() { }
-
     resizeBase64Image(base64: string, maxWidth: number, maxHeight: number): Promise<string> {
         return new Promise<string>(resolve => {
             const img = document.createElement('img');

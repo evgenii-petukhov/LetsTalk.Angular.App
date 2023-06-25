@@ -14,7 +14,7 @@ export class MessageComponent {
 
     isImageError = false;
 
-    onImageError(){
+    onImageError() {
         this.isImageError = true;
     }
 }

@@ -30,7 +30,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     messages$ = this.store.select(selectMessages);
 
     private accountId$ = this.store.select(selectSelectedAccountId);
-    private scrollContainer: any;
+    private scrollContainer: HTMLDivElement;
     private accountId: number;
 
     constructor(

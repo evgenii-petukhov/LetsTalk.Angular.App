@@ -71,8 +71,8 @@ export class ProfileComponent implements OnInit {
         this.router.navigate(['chats']);
     }
 
-    onAvatarSelected(event: any): void {
-        const files = event.target.files;
+    onAvatarSelected(event: Event): void {
+        const files = (event.target as HTMLInputElement).files;
         if (files && files.length) {
             this.base64Service.encodeToBase64(files[0]).then(base64 => this.form.patchValue({
                 photoUrl: base64

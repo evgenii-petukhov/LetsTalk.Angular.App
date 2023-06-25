@@ -124,15 +124,6 @@
             "scripts": []
           }
         },
-        "lint": {
-          "builder": "@angular-eslint/builder:lint",
-          "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
-          }
-        },
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
@@ -144,14 +135,17 @@
               "devServerTarget": "LetsTalk:serve:production"
             }
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
-    }
-  },
-  "defaultProject": "LetsTalk",
-  "schematics": {
-    "@schematics/angular:component": {
-      "style": "scss"
     }
   },
   "cli": {
