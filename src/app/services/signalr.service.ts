@@ -9,18 +9,20 @@ import { TokenStorageService } from './token-storage.service';
     providedIn: 'root'
 })
 export class SignalrService {
+    private retryPolicy = new ConstantRetryPolicy(environment.notificationServiceReconnectInterval);
     private hubConnectionBuilder = new HubConnectionBuilder()
         .withUrl(`${environment.notificationServiceUrl}`, {
             skipNegotiation: true,
             transport: HttpTransportType.WebSockets
         })
-        .withAutomaticReconnect(new ConstantRetryPolicy(environment.notificationServiceReconnectInterval))
+        .withAutomaticReconnect(this.retryPolicy)
         .configureLogging(LogLevel.Information)
         .build();
 
     private isInitialized = false;
     private messageNotificationEventName = 'SendMessageNotificationAsync';
     private linkPreviewNotificationEventName = 'SendLinkPreviewNotificationAsync';
+    private connectionTimerId: number;
 
     constructor(private tokenService: TokenStorageService) { }
 
@@ -28,9 +30,11 @@ export class SignalrService {
         linkPreviewHandler: (response: ILinkPreviewDto) => void): void {
         if (this.isInitialized) { return; }
 
-        this.hubConnectionBuilder.start()
+        this.connectionTimerId = window.setInterval(() => {
+            this.hubConnectionBuilder.start()
             .then(async () => {
                 this.isInitialized = true;
+                window.clearInterval(this.connectionTimerId);
                 this.hubConnectionBuilder.on(this.messageNotificationEventName, (messageDto: IMessageDto) => {
                     messageHandler?.(messageDto);
                 });
@@ -41,6 +45,7 @@ export class SignalrService {
                 console.log('Notification service: connected');
             })
             .catch(() => console.log('Notification service: unable to establish connection'));
+        }, this.retryPolicy.nextRetryDelayInMilliseconds());
 
         this.hubConnectionBuilder.onreconnected(async () => {
             await this.authorize();
