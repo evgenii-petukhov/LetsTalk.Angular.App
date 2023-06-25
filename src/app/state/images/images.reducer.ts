@@ -6,5 +6,8 @@ export const initialState: readonly Image[] = [];
 
 export const imagesReducer = createReducer(
     initialState,
-    on(imagesActions.add, (_state, {image}) => [..._state, image]),
+    on(imagesActions.add, (_state, {image}) => {
+        const existing = _state.find(i => i.imageId === image.imageId);
+        return existing ? _state : [..._state, image];
+    }),
 );
