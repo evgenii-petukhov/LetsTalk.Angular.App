@@ -22,7 +22,7 @@ export class AccountListComponent implements OnInit {
     ngOnInit(): void {
         this.accounts$.subscribe(accounts => {
             this.accounts = accounts;
-        });
+        }).unsubscribe();
     }
 
     onAccountSelected(accountId: number): void {

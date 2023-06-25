@@ -45,7 +45,7 @@ export class StoreService {
                     this.store.dispatch(accountsActions.init({ accounts: response }));
                     resolve(response);
                 });
-            });
+            }).unsubscribe();
         });
     }
 
@@ -85,7 +85,7 @@ export class StoreService {
                     this.store.dispatch(loggedInUserActions.init({ account: response }));
                     resolve(response);
                 });
-            });
+            }).unsubscribe();
         });
     }
 
@@ -98,7 +98,7 @@ export class StoreService {
     }
 
     // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
-    getImage(imageId: number): Promise<string> {
+    getImageContent(imageId: number): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             this.store.select(selectImages).subscribe(images => {
                 const image = images?.find(x => x.imageId === imageId);
@@ -115,7 +115,7 @@ export class StoreService {
                     } }));
                     resolve(content);
                 }).catch(() => reject());
-            });
+            }).unsubscribe();
         });
     }
 }

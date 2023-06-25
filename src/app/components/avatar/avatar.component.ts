@@ -34,7 +34,7 @@ export class AvatarComponent implements OnChanges {
                 this.setBackgroundImage(this.urlOptions[0] as string, this.defaultPhotoUrl);
                 return;
             case ImageUrlType.imageId:
-                this.storeService.getImage(this.urlOptions[0] as number).then(content => {
+                this.storeService.getImageContent(this.urlOptions[0] as number).then(content => {
                     this.setBackgroundImage(content);
                 }).catch(() => {
                     this.setBackgroundImage(this.defaultPhotoUrl);
