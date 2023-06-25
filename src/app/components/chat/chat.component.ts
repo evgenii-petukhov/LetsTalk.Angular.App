@@ -69,7 +69,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
         this.scrollContainer.scroll({
             top: this.scrollContainer.scrollHeight,
             left: 0,
-            behavior: 'smooth'
+            behavior: 'auto'
         });
     }
 
