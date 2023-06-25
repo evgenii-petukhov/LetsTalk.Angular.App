@@ -28,7 +28,7 @@ export class StoreService {
 
     readAllMessages(accountId: number): void {
         setTimeout(() => {
-            this.store.dispatch(accountsActions.readall({
+            this.store.dispatch(accountsActions.readAll({
                 accountId
             }));
         }, 1000);
@@ -58,15 +58,15 @@ export class StoreService {
     }
 
     setLinkPreview(linkPreviewDto: ILinkPreviewDto): void {
-        this.store.dispatch(messagesActions.setlinkpreview({linkPreviewDto}));
+        this.store.dispatch(messagesActions.setLinkPreview({linkPreviewDto}));
     }
 
     incrementUnreadMessages(accountId: number): void {
-        this.store.dispatch(accountsActions.incrementunread({ accountId }));
+        this.store.dispatch(accountsActions.incrementUnread({ accountId }));
     }
 
     setLastMessageDate(accountId: number, date: number): void {
-        this.store.dispatch(accountsActions.setlastmessagedate({ accountId, date }));
+        this.store.dispatch(accountsActions.setLastMessageDate({ accountId, date }));
     }
 
     setLayoutSettings(settings: ILayoutSettngs): void {
