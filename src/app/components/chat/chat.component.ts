@@ -38,6 +38,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     private pageIndex = 0;
     private scrollCounter = 0;
     private isMessageListLoaded = false;
+    private previousScrollHeight = 0;
 
     constructor(
         private apiService: ApiService,
@@ -87,7 +88,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private scrollToBottom(): void {
-        const scrollHeight = (this.scrollCounter === 0 ? 1 : .025) * this.scrollContainer.scrollHeight;
+        const scrollHeight = this.scrollCounter === 0 ? this.scrollContainer.scrollHeight : this.scrollContainer.scrollHeight - this.previousScrollHeight;
 
         this.scrollContainer.scroll({
             top: scrollHeight,
@@ -101,6 +102,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     private loadMessages(accountId: number): void {
         if (accountId === null) { return; }
         this.scrollCounter++;
+        this.previousScrollHeight = this.scrollContainer?.scrollHeight ?? 0;
         this.apiService.getMessages(accountId, this.pageIndex).subscribe(messageDtos => {
             this.storeService.addMessages(messageDtos);
             this.isMessageListLoaded = true;
