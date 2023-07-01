@@ -34,8 +34,8 @@ export class ApiService {
         return this.client.account();
     }
 
-    getMessages(accountId: number): Observable<IMessageDto[]> {
-        return this.client.messageAll(accountId);
+    getMessages(accountId: number, pageIndex: number): Observable<IMessageDto[]> {
+        return this.client.messageAll(accountId, pageIndex);
     }
 
     getProfile(): Observable<IAccountDto> {

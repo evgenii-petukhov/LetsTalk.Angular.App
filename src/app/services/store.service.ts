@@ -53,8 +53,12 @@ export class StoreService {
         this.store.dispatch(messagesActions.init({ messageDtos }));
     }
 
+    addMessages(messageDtos: IMessageDto[]): void {
+        this.store.dispatch(messagesActions.addMessages({ messageDtos }));
+    }
+
     addMessage(messageDto: IMessageDto): void {
-        this.store.dispatch(messagesActions.add({ messageDto }));
+        this.store.dispatch(messagesActions.addMessage({ messageDto }));
     }
 
     setLinkPreview(linkPreviewDto: ILinkPreviewDto): void {

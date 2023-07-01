@@ -5,7 +5,8 @@ export const messagesActions = createActionGroup({
     source: 'Messages',
     events: {
         init: props<{messageDtos: readonly IMessageDto[]}>(),
-        add: props<{messageDto: IMessageDto}>(),
+        addMessages: props<{messageDtos: readonly IMessageDto[]}>(),
+        addMessage: props<{messageDto: IMessageDto}>(),
         setLinkPreview: props<{linkPreviewDto: ILinkPreviewDto}>()
     }
 });

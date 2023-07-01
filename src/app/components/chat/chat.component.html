@@ -1,6 +1,6 @@
 <div class="chat-container">
     <app-chat-header></app-chat-header>
-    <div class="messages-container" #scrollFrame>
+    <div class="messages-container" #scrollFrame (scroll)="onScroll()">
         <ul>
             <li *ngFor="let message of (messages$ | async | visibleOnly: isMessageVisible)">
                 <app-message #scrollItem [message]="message" [ngClass]="message.isMine && 'mine'">

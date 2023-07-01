@@ -141,13 +141,18 @@ export class ApiClient {
     }
 
     /**
+     * @param pageIndex (optional) 
      * @return Success
      */
-    messageAll(recipientId: number): Observable<MessageDto[]> {
-        let url_ = this.baseUrl + "/api/Message/{recipientId}";
+    messageAll(recipientId: number, pageIndex: number | undefined): Observable<MessageDto[]> {
+        let url_ = this.baseUrl + "/api/Message/{recipientId}?";
         if (recipientId === undefined || recipientId === null)
             throw new Error("The parameter 'recipientId' must be defined.");
         url_ = url_.replace("{recipientId}", encodeURIComponent("" + recipientId));
+        if (pageIndex === null)
+            throw new Error("The parameter 'pageIndex' cannot be null.");
+        else if (pageIndex !== undefined)
+            url_ += "pageIndex=" + encodeURIComponent("" + pageIndex) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
