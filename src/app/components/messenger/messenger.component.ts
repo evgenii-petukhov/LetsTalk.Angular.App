@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { SignalrService } from 'src/app/services/signalr.service';
 import { IAccountDto, ILinkPreviewDto, IMessageDto } from 'src/app/api-client/api-client';
@@ -7,19 +7,21 @@ import { selectSelectedAccountId } from 'src/app/state/selected-account-id/selec
 import { selectLayoutSettings } from 'src/app/state/layout-settings/select-layout-settings.selectors';
 import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
     selector: 'app-messenger',
     templateUrl: './messenger.component.html',
     styleUrls: ['./messenger.component.scss']
 })
-export class MessengerComponent implements OnInit {
+export class MessengerComponent implements OnInit, OnDestroy {
     selectedAccountId$ = this.store.select(selectSelectedAccountId);
     layout$ = this.store.select(selectLayoutSettings);
 
     private accounts: readonly IAccountDto[] = [];
     private selectedAccountId: number;
     private isWindowActive = true;
+    private unsubscribe$: Subject<void> = new Subject<void>();
 
     constructor(
         private apiService: ApiService,
@@ -40,11 +42,16 @@ export class MessengerComponent implements OnInit {
             this.accounts = accounts;
         });
 
-        this.selectedAccountId$.subscribe(accountId => {
+        this.selectedAccountId$.pipe(takeUntil(this.unsubscribe$)).subscribe(accountId => {
             this.selectedAccountId = accountId;
         });
 
         this.signalrService.init(this.handleMessageNotification.bind(this), this.handleLinkPreviewNotification.bind(this));
+    }
+
+    ngOnDestroy(): void {
+        this.unsubscribe$.next();
+        this.unsubscribe$.complete();
     }
 
     handleMessageNotification(messageDto: IMessageDto): void {
@@ -53,7 +60,7 @@ export class MessengerComponent implements OnInit {
             this.storeService.addMessage(messageDto);
         }
         if (this.isWindowActive && (messageDto.senderId === this.selectedAccountId)) {
-            this.apiService.markAsRead(messageDto.id).subscribe();
+            this.apiService.markAsRead(messageDto.id).pipe(takeUntil(this.unsubscribe$)).subscribe();
         } else {
             const sender = this.accounts.find(account => account.id === messageDto.senderId);
             if (sender) {

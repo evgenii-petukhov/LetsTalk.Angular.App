@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { StoreService } from 'src/app/services/store.service';
 import { ApiService } from 'src/app/services/api.service';
@@ -14,6 +14,7 @@ import { Buffer } from 'buffer';
 import { Base64Service } from 'src/app/services/base64.service';
 import { UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { AccountDto } from 'src/app/api-client/api-client';
+import { Subject, takeUntil } from 'rxjs';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -24,9 +25,10 @@ import { AccountDto } from 'src/app/api-client/api-client';
     templateUrl: './profile.component.html',
     styleUrls: ['./profile.component.scss']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
     account$ = this.store.select(selectLoggedInUser);
     isSending = false;
+    private unsubscribe$: Subject<void> = new Subject<void>();
 
     form = this.fb.group({
         firstName: ['', Validators.required],
@@ -56,6 +58,11 @@ export class ProfileComponent implements OnInit {
                 photoUrl: null
             });
         });
+    }
+
+    ngOnDestroy(): void {
+        this.unsubscribe$.next();
+        this.unsubscribe$.complete();
     }
 
     onSubmit(): void {
@@ -106,15 +113,18 @@ export class ProfileComponent implements OnInit {
     }
 
     private submitForm(): void {
-        this.apiService.saveProfile(this.form.value.email, this.form.value.firstName, this.form.value.lastName).subscribe({
-            next: (accountDto: AccountDto) => {
-                this.storeService.setLoggedInUser(accountDto);
-                this.router.navigate(['chats']);
-            },
-            error: e => {
-                const details = JSON.parse(e.response);
-                this.toastr.error(details.title, 'Error');
-            }
-        });
+        this.apiService.saveProfile(
+            this.form.value.email,
+            this.form.value.firstName,
+            this.form.value.lastName).pipe(takeUntil(this.unsubscribe$)).subscribe({
+                next: (accountDto: AccountDto) => {
+                    this.storeService.setLoggedInUser(accountDto);
+                    this.router.navigate(['chats']);
+                },
+                error: e => {
+                    const details = JSON.parse(e.response);
+                    this.toastr.error(details.title, 'Error');
+                }
+            });
     }
 }

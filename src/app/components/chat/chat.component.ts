@@ -48,7 +48,10 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @validate
     send(@required message: string): void {
-        this.apiService.sendMessage(this.accountId, message).subscribe(messageDto => {
+        this.apiService.sendMessage(
+            this.accountId,
+            message
+        ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
             messageDto.isMine = true;
             this.storeService.addMessage(messageDto);
             this.storeService.setLastMessageDate(this.accountId, messageDto.created);
@@ -69,9 +72,9 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         this.scrollContainer = this.scrollFrame.nativeElement;
-        this.itemElements.changes.subscribe(() => this.scrollToBottom());
+        this.itemElements.changes.pipe(takeUntil(this.unsubscribe$)).subscribe(() => this.scrollToBottom());
     }
-    
+
     ngOnDestroy(): void {
         this.unsubscribe$.next();
         this.unsubscribe$.complete();
@@ -103,7 +106,10 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         if (accountId === null) { return; }
         this.scrollCounter++;
         this.previousScrollHeight = this.scrollContainer?.scrollHeight ?? 0;
-        this.apiService.getMessages(accountId, this.pageIndex).subscribe(messageDtos => {
+        this.apiService.getMessages(
+            accountId,
+            this.pageIndex
+        ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDtos => {
             this.storeService.addMessages(messageDtos);
             this.isMessageListLoaded = true;
             if (messageDtos.length === 0) {
