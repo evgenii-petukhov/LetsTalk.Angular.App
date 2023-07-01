@@ -35,7 +35,7 @@ export class ApiService {
     }
 
     getMessages(accountId: number, pageIndex: number): Observable<IMessageDto[]> {
-        return this.client.messageAll(accountId, pageIndex === 0 ? undefined : pageIndex);
+        return this.client.messageAll(accountId, !pageIndex ? undefined : pageIndex);
     }
 
     getProfile(): Observable<IAccountDto> {
