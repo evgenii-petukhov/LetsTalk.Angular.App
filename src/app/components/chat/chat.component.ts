@@ -100,7 +100,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private loadMessages(accountId: number): void {
         if (accountId === null) { return; }
-        this.pageIndex++;
         this.scrollCounter++;
         this.apiService.getMessages(accountId, this.pageIndex).subscribe(messageDtos => {
             this.storeService.addMessages(messageDtos);
@@ -108,6 +107,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
             if (messageDtos.length === 0) {
                 this.decreaseScrollCounter();
             }
+            this.pageIndex++;
         });
     }
 
