@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { IAccountDto, ILinkPreviewDto, IMessageDto } from '../api-client/api-client';
 import { accountsActions } from '../state/accounts/accounts.actions';
@@ -13,24 +13,16 @@ import { selectAccounts } from '../state/accounts/accounts.selector';
 import { imagesActions } from '../state/images/images.actions';
 import { selectImages } from '../state/images/images.selector';
 import { FileStorageService } from './file-storage.service';
-import { Subject, takeUntil } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
-export class StoreService implements OnDestroy {
-
-    private unsubscribe$: Subject<void> = new Subject<void>();
+export class StoreService {
 
     constructor(
         private store: Store,
         private apiService: ApiService,
         private fileStorageService: FileStorageService) { }
-
-    ngOnDestroy(): void {
-        this.unsubscribe$.next();
-        this.unsubscribe$.complete();
-    }
 
     readAllMessages(accountId: number): void {
         setTimeout(() => {
@@ -42,12 +34,12 @@ export class StoreService implements OnDestroy {
 
     getAccounts(): Promise<readonly IAccountDto[]> {
         return new Promise<readonly IAccountDto[]>(resolve => {
-            this.store.select(selectAccounts).pipe(takeUntil(this.unsubscribe$)).subscribe(accounts => {
+            this.store.select(selectAccounts).subscribe(accounts => {
                 if (accounts) {
                     resolve(accounts);
                     return;
                 }
-                this.apiService.getAccounts().pipe(takeUntil(this.unsubscribe$)).subscribe(response => {
+                this.apiService.getAccounts().subscribe(response => {
                     this.store.dispatch(accountsActions.init({ accounts: response }));
                     resolve(response);
                 });
@@ -85,13 +77,13 @@ export class StoreService implements OnDestroy {
 
     getLoggedInUser(): Promise<IAccountDto> {
         return new Promise<IAccountDto>(resolve => {
-            this.store.select(selectLoggedInUser).pipe(takeUntil(this.unsubscribe$)).subscribe(account => {
+            this.store.select(selectLoggedInUser).subscribe(account => {
                 if (account) {
                     resolve(account);
                     return;
                 }
 
-                this.apiService.getProfile().pipe(takeUntil(this.unsubscribe$)).subscribe(response => {
+                this.apiService.getProfile().subscribe(response => {
                     this.store.dispatch(loggedInUserActions.init({ account: response }));
                     resolve(response);
                 });
@@ -110,7 +102,7 @@ export class StoreService implements OnDestroy {
     // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
     getImageContent(imageId: number): Promise<string> {
         return new Promise<string>((resolve, reject) => {
-            this.store.select(selectImages).pipe(takeUntil(this.unsubscribe$)).subscribe(images => {
+            this.store.select(selectImages).subscribe(images => {
                 const image = images?.find(x => x.imageId === imageId);
                 if (image) {
                     resolve(image.content);
