@@ -108,8 +108,9 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
             this.isMessageListLoaded = true;
             if (messageDtos.length === 0) {
                 this.decreaseScrollCounter();
+            } else {
+                this.pageIndex++;
             }
-            this.pageIndex++;
         });
     }
 
