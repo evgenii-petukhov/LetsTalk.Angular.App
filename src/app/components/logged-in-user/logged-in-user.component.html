@@ -1,14 +1,16 @@
 <div class="logged-in-user-container">
-    <a [routerLink]="['/profile']" title="Edit profile">
-        <app-avatar class="user-photo"
-            [urlOptions]="(account$ | async) && [(account$ | async).imageId, (account$ | async).photoUrl]"
-            class="user-photo">
-        </app-avatar>
-    </a>
-    <div class="user-details">
-        <div class="user-name">You</div>
-        <a href="#" class="icon" (click)="logout()" title="Log out">
-            <fa-icon [icon]="faRightFromBracket"></fa-icon>
+    <div class="logged-in-user-inner-container">
+        <a [routerLink]="['/profile']" title="Edit profile">
+            <app-avatar class="user-photo"
+                [urlOptions]="(account$ | async) && [(account$ | async).imageId, (account$ | async).photoUrl]"
+                class="user-photo">
+            </app-avatar>
         </a>
+        <div class="user-details">
+            <div class="user-name">You</div>
+            <a href="#" class="icon" (click)="logout()" title="Log out">
+                <fa-icon [icon]="faRightFromBracket"></fa-icon>
+            </a>
+        </div>
     </div>
 </div>

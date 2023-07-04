@@ -6,36 +6,38 @@
     /* gradient colors: #ffc523, #ffd356 */
 
     .logged-in-user-container {
-        display: flex;
-
-        .user-photo {
-            flex: 0 1 40px;
-            min-width: 40px;
-            height: 40px;
-            margin: 10px;
-        }
-    
-        .user-details {
-            flex: 1 1 auto;
+        .logged-in-user-inner-container {
             display: flex;
-            padding: 0 0 0 10px;
-    
-            .user-name {
+            padding: 10px;
+
+            .user-photo {
+                flex: 0 1 40px;
+                min-width: 40px;
+                height: 40px;
+            }
+        
+            .user-details {
                 flex: 1 1 auto;
                 display: flex;
-                flex-direction: column;
-                justify-content: center;
-            }
-    
-            .icon {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                color: #000;
-                padding: 0 10px;
-    
-                &:visited {
+                padding: 0 0 0 10px;
+        
+                .user-name {
+                    flex: 1 1 auto;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                }
+        
+                .icon {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
                     color: #000;
+                    padding: 0 0 0 10px;
+        
+                    &:visited {
+                        color: #000;
+                    }
                 }
             }
         }
