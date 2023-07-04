@@ -67,7 +67,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     onSubmit(): void {
         this.isSending = true;
-        this.resizeAvatar(this.form.value.photoUrl).then(
+        const env = (environment as any);
+        this.resizeAvatar(this.form.value.photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then(
             (base64: string) => this.uploadAvatar(base64)).then(
                 () => this.submitForm()).catch(() => {
                     this.isSending = false;
@@ -87,20 +88,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
     }
 
-    private resizeAvatar(photoUrl: string): Promise<string> {
-        if (!photoUrl) {
-            return Promise.resolve(null);
-        }
-
-        return new Promise<string>(resolve => {
-            const env = (environment as any);
-            this.imageService.resizeBase64Image(photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then(base64 => {
+    private resizeAvatar(photoUrl: string, maxWidth: number, maxHeight: number): Promise<string> {
+        return photoUrl ? new Promise<string>(resolve => {
+            this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight).then(base64 => {
                 this.form.patchValue({
                     photoUrl
                 });
                 resolve(base64);
             });
-        });
+        }) : Promise.resolve(null);
     }
 
     private uploadAvatar(base64: string): Promise<UploadImageResponse> {
