@@ -68,11 +68,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
     onSubmit(): void {
         this.isSending = true;
         const env = (environment as any);
-        this.resizeAvatar(this.form.value.photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then(
-            (base64: string) => this.uploadAvatar(base64)).then(
-                () => this.submitForm()).catch(() => {
-                    this.isSending = false;
-                });
+        this.resizeAvatar(this.form.value.photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then((base64: string) => {
+            this.uploadAvatar(base64);
+        }).then(() => {
+            this.submitForm();
+        }).catch(() => {
+            this.isSending = false;
+        });
     }
 
     onBack(): void {
