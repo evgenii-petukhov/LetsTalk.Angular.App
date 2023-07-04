@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
+import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { selectSelectedAccountId } from 'src/app/state/selected-account-id/select-selected-account-id.selectors';
 import { selectMessages } from 'src/app/state/messages/messages.selector';
@@ -29,6 +30,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChildren('scrollItem') itemElements: QueryList<any>;
     message = '';
     faPaperPlane = faPaperPlane;
+    faCamera = faCamera;
     messages$ = this.store.select(selectMessages);
 
     private accountId$ = this.store.select(selectSelectedAccountId);
