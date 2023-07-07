@@ -10,9 +10,8 @@ import { ToastrService } from 'ngx-toastr';
 import { ImageService } from 'src/app/services/image.service';
 import { environment } from 'src/environments/environment';
 import { FileStorageService } from 'src/app/services/file-storage.service';
-import { Buffer } from 'buffer';
 import { Base64Service } from 'src/app/services/base64.service';
-import { UploadImageResponse } from 'src/app/protos/file_upload_pb';
+import { UploadImageRequest } from 'src/app/protos/file_upload_pb';
 import { AccountDto } from 'src/app/api-client/api-client';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -69,10 +68,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.isSending = true;
         const env = (environment as any);
         this.resizeAvatar(this.form.value.photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then((base64: string) => {
-            this.uploadAvatar(base64);
+            this.fileStorageService.uploadBase64Image(base64, UploadImageRequest.ImageType.AVATAR);
         }).then(() => {
             this.submitForm();
-        }).catch(() => {
+        }).catch(e => {
+            console.error(e);
             this.isSending = false;
         });
     }
@@ -99,15 +99,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
                 resolve(base64);
             });
         }) : Promise.resolve(null);
-    }
-
-    private uploadAvatar(base64: string): Promise<UploadImageResponse> {
-        if (!base64) {
-            return Promise.resolve(null);
-        }
-        const content = this.base64Service.getContent(base64);
-        const blob = Buffer.from(content, 'base64');
-        return this.fileStorageService.upload(blob);
     }
 
     private submitForm(): void {

@@ -18,6 +18,11 @@ import { StoreService } from 'src/app/services/store.service';
 import { Message } from 'src/app/models/message';
 import { required, validate } from 'src/app/decorators/required.decorator';
 import { Subject, takeUntil } from 'rxjs';
+import { environment } from 'src/environments/environment';
+import { Base64Service } from 'src/app/services/base64.service';
+import { ImageService } from 'src/app/services/image.service';
+import { UploadImageRequest } from 'src/app/protos/file_upload_pb';
+import { FileStorageService } from 'src/app/services/file-storage.service';
 
 @Component({
     selector: 'app-chat',
@@ -45,7 +50,10 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     constructor(
         private apiService: ApiService,
         private store: Store,
-        private storeService: StoreService
+        private storeService: StoreService,
+        private base64Service: Base64Service,
+        private imageService: ImageService,
+        private fileStorageService: FileStorageService
     ) { }
 
     @validate
@@ -92,6 +100,22 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    onPictureSelected(event: Event): void {
+        const files = (event.target as HTMLInputElement).files;
+        if (files && files.length) {
+            this.base64Service.encodeToBase64(files[0]).then(base64 => {
+                const env = (environment as any)
+                this.resizeImage(base64 as string, env.pictureMaxWidth, env.pictureMaxHeight).then((base64: string) => {
+                    this.fileStorageService.uploadBase64Image(base64, UploadImageRequest.ImageType.MESSAGE);
+                }).then(response => {
+                    console.log(response);
+                }).catch(e => {
+                    console.error(e);
+                });
+            });
+        }
+    }
+
     private scrollToBottom(): void {
         const scrollHeight = this.scrollCounter === 0 ? this.scrollContainer.scrollHeight : this.scrollContainer.scrollHeight - this.previousScrollHeight;
 
@@ -124,5 +148,9 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private decreaseScrollCounter(): void {
         this.scrollCounter = (this.scrollCounter > 0 ? -1 : 0) + this.scrollCounter;
+    }
+
+    private resizeImage(photoUrl: string, maxWidth: number, maxHeight: number): Promise<string> {
+        return photoUrl ? this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight) : Promise.resolve(null);
     }
 }
