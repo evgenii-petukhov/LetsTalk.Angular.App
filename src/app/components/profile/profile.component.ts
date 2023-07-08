@@ -68,9 +68,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.isSending = true;
         const env = (environment as any);
         this.resizeAvatar(this.form.value.photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then((base64: string) => {
-            this.fileStorageService.uploadBase64Image(base64, UploadImageRequest.ImageType.AVATAR);
-        }).then(() => {
-            this.submitForm();
+            return this.fileStorageService.uploadBase64Image(base64, UploadImageRequest.ImageType.AVATAR);
+        }).then(response => {
+            this.submitForm(response.getImageId());
         }).catch(e => {
             console.error(e);
             this.isSending = false;
@@ -101,11 +101,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }) : Promise.resolve(null);
     }
 
-    private submitForm(): void {
+    private submitForm(imageId: number): void {
         this.apiService.saveProfile(
             this.form.value.email,
             this.form.value.firstName,
-            this.form.value.lastName).pipe(takeUntil(this.unsubscribe$)).subscribe({
+            this.form.value.lastName,
+            imageId).pipe(takeUntil(this.unsubscribe$)).subscribe({
                 next: (accountDto: AccountDto) => {
                     this.storeService.setLoggedInUser(accountDto);
                     this.router.navigate(['chats']);

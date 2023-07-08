@@ -106,7 +106,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
             this.base64Service.encodeToBase64(files[0]).then(base64 => {
                 const env = (environment as any)
                 this.resizeImage(base64 as string, env.pictureMaxWidth, env.pictureMaxHeight).then((base64: string) => {
-                    this.fileStorageService.uploadBase64Image(base64, UploadImageRequest.ImageType.MESSAGE);
+                    return this.fileStorageService.uploadBase64Image(base64, UploadImageRequest.ImageType.MESSAGE);
                 }).then(response => {
                     console.log(response);
                 }).catch(e => {

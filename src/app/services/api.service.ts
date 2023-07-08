@@ -42,11 +42,12 @@ export class ApiService {
         return this.client.profileGET();
     }
 
-    saveProfile(email: string, firstName: string, lastName: string): Observable<AccountDto> {
+    saveProfile(email: string, firstName: string, lastName: string, imageId: number): Observable<AccountDto> {
         const request = new UpdateProfileRequest({
             email,
             firstName,
-            lastName
+            lastName,
+            imageId
         });
         return this.client.profilePUT(request);
     }

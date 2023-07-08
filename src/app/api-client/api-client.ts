@@ -770,6 +770,7 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
     email?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    imageId?: number;
 
     constructor(data?: IUpdateProfileRequest) {
         if (data) {
@@ -785,6 +786,7 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
             this.email = _data["email"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
+            this.imageId = _data["imageId"];
         }
     }
 
@@ -800,6 +802,7 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
         data["email"] = this.email;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
+        data["imageId"] = this.imageId;
         return data;
     }
 }
@@ -808,6 +811,7 @@ export interface IUpdateProfileRequest {
     email?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    imageId?: number;
 }
 
 export class ApiException extends Error {
