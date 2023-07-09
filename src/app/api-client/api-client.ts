@@ -493,6 +493,7 @@ export interface IAccountDto {
 export class CreateMessageRequest implements ICreateMessageRequest {
     text?: string | undefined;
     recipientId?: number;
+    imageId?: number;
 
     constructor(data?: ICreateMessageRequest) {
         if (data) {
@@ -507,6 +508,7 @@ export class CreateMessageRequest implements ICreateMessageRequest {
         if (_data) {
             this.text = _data["text"];
             this.recipientId = _data["recipientId"];
+            this.imageId = _data["imageId"];
         }
     }
 
@@ -521,6 +523,7 @@ export class CreateMessageRequest implements ICreateMessageRequest {
         data = typeof data === 'object' ? data : {};
         data["text"] = this.text;
         data["recipientId"] = this.recipientId;
+        data["imageId"] = this.imageId;
         return data;
     }
 }
@@ -528,6 +531,7 @@ export class CreateMessageRequest implements ICreateMessageRequest {
 export interface ICreateMessageRequest {
     text?: string | undefined;
     recipientId?: number;
+    imageId?: number;
 }
 
 export class LinkPreviewDto implements ILinkPreviewDto {
@@ -711,6 +715,7 @@ export class MessageDto implements IMessageDto {
     isMine?: boolean | undefined;
     created?: number;
     linkPreview?: LinkPreviewDto;
+    imageId?: number | undefined;
 
     constructor(data?: IMessageDto) {
         if (data) {
@@ -731,6 +736,7 @@ export class MessageDto implements IMessageDto {
             this.isMine = _data["isMine"];
             this.created = _data["created"];
             this.linkPreview = _data["linkPreview"] ? LinkPreviewDto.fromJS(_data["linkPreview"]) : <any>undefined;
+            this.imageId = _data["imageId"];
         }
     }
 
@@ -751,6 +757,7 @@ export class MessageDto implements IMessageDto {
         data["isMine"] = this.isMine;
         data["created"] = this.created;
         data["linkPreview"] = this.linkPreview ? this.linkPreview.toJSON() : <any>undefined;
+        data["imageId"] = this.imageId;
         return data;
     }
 }
@@ -764,6 +771,7 @@ export interface IMessageDto {
     isMine?: boolean | undefined;
     created?: number;
     linkPreview?: LinkPreviewDto;
+    imageId?: number | undefined;
 }
 
 export class UpdateProfileRequest implements IUpdateProfileRequest {

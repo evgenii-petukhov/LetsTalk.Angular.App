@@ -90,8 +90,8 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         this.unsubscribe$.complete();
     }
 
-    isMessageVisible(message: Message): string {
-        return message.text;
+    isMessageVisible(message: Message): boolean {
+        return !!message.text || !!message.imageId;
     }
 
     onScroll(): void {
@@ -101,14 +101,23 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onPictureSelected(event: Event): void {
-        const files = (event.target as HTMLInputElement).files;
-        if (files && files.length) {
-            this.base64Service.encodeToBase64(files[0]).then(base64 => {
+        const eventTarget = (event.target as HTMLInputElement);
+        if (eventTarget.files && eventTarget.files.length) {
+            this.base64Service.encodeToBase64(eventTarget.files[0]).then(base64 => {
                 const env = (environment as any)
                 this.resizeImage(base64 as string, env.pictureMaxWidth, env.pictureMaxHeight).then((base64: string) => {
                     return this.fileStorageService.uploadBase64Image(base64, UploadImageRequest.ImageType.MESSAGE);
                 }).then(response => {
-                    console.log(response);
+                    this.apiService.sendMessage(
+                        this.accountId,
+                        undefined,
+                        response.getImageId()
+                    ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
+                        messageDto.isMine = true;
+                        this.storeService.addMessage(messageDto);
+                        this.storeService.setLastMessageDate(this.accountId, messageDto.created);
+                        eventTarget.value = null;
+                    });
                 }).catch(e => {
                     console.error(e);
                 });

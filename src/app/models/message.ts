@@ -12,6 +12,7 @@ export class Message {
     isMine?: boolean | undefined;
     created?: Date;
     linkPreview?: LinkPreview;
+    imageId?: number | undefined;
 
     constructor(...inits: Partial<Message | IMessageDto>[]) {
         inits.filter(init => init).forEach(init => {
