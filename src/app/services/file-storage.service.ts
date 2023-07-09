@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FileUploadGrpcEndpointClient } from '../protos/File_uploadServiceClientPb';
-import { DownloadImageRequest, DownloadImageResponse, UploadImageRequest, UploadImageResponse } from '../protos/file_upload_pb';
+import { DownloadImageRequest, DownloadImageResponse, ImageType, UploadImageRequest, UploadImageResponse } from '../protos/file_upload_pb';
 import { environment } from '../../environments/environment';
 import { TokenStorageService } from './token-storage.service';
 import { Base64Service } from './base64.service';
@@ -16,7 +16,7 @@ export class FileStorageService {
         private tokenService: TokenStorageService,
         private base64Service: Base64Service) { }
 
-    uploadBase64Image(base64: string, imageType: UploadImageRequest.ImageType): Promise<UploadImageResponse> {
+    uploadBase64Image(base64: string, imageType: ImageType): Promise<UploadImageResponse> {
         if (!base64) {
             return Promise.resolve(null);
         }
@@ -25,7 +25,7 @@ export class FileStorageService {
         return this.upload(blob, imageType);
     }
 
-    upload(content: Uint8Array, imageType: UploadImageRequest.ImageType): Promise<UploadImageResponse> {
+    upload(content: Uint8Array, imageType: ImageType): Promise<UploadImageResponse> {
         const request = new UploadImageRequest();
         request.setContent(content);
         request.setImageType(imageType);

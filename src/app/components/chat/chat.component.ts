@@ -21,7 +21,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Base64Service } from 'src/app/services/base64.service';
 import { ImageService } from 'src/app/services/image.service';
-import { UploadImageRequest } from 'src/app/protos/file_upload_pb';
+import { ImageType } from 'src/app/protos/file_upload_pb';
 import { FileStorageService } from 'src/app/services/file-storage.service';
 
 @Component({
@@ -100,13 +100,13 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    onPictureSelected(event: Event): void {
+    onImageSelected(event: Event): void {
         const eventTarget = (event.target as HTMLInputElement);
         if (eventTarget.files && eventTarget.files.length) {
             this.base64Service.encodeToBase64(eventTarget.files[0]).then(base64 => {
                 const env = (environment as any)
                 this.resizeImage(base64 as string, env.pictureMaxWidth, env.pictureMaxHeight).then((base64: string) => {
-                    return this.fileStorageService.uploadBase64Image(base64, UploadImageRequest.ImageType.MESSAGE);
+                    return this.fileStorageService.uploadBase64Image(base64, ImageType.MESSAGE);
                 }).then(response => {
                     this.apiService.sendMessage(
                         this.accountId,
@@ -119,6 +119,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
                         eventTarget.value = null;
                     });
                 }).catch(e => {
+                    eventTarget.value = null;
                     console.error(e);
                 });
             });

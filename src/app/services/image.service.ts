@@ -13,18 +13,13 @@ export class ImageService {
                 const scaleY = img.height > maxHeight ? maxHeight / img.height : 1;
                 const scale = Math.min(scaleX, scaleY);
 
-                if (scale === 1) {
-                    resolve(base64);
-                    return;
-                }
-
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
 
                 canvas.width = img.width * scale;
                 canvas.height = img.height * scale;
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                resolve(canvas.toDataURL());
+                resolve(canvas.toDataURL('image/webp'));
             });
             img.src = base64;
         });

@@ -32,6 +32,7 @@ import { VisibleOnlyPipe } from './pipes/visibleOnly';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AvatarComponent } from './components/avatar/avatar.component';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
+import { ImageComponent } from './components/image/image.component';
 
 @NgModule({
     declarations: [
@@ -50,7 +51,8 @@ import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-poli
         OrderByPipe,
         VisibleOnlyPipe,
         AvatarComponent,
-        PrivacyPolicyComponent
+        PrivacyPolicyComponent,
+        ImageComponent
     ],
     imports: [
         BrowserModule,

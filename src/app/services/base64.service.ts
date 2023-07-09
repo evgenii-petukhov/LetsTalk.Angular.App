@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class Base64Service {
 
-    private base64Regex = /data:image\/(?<type>(jpeg|png|gif){1});base64,(?<content>[^\\"]*)/g;
+    private base64Regex = /data:image\/(?<type>(jpeg|png|gif|webp){1});base64,(?<content>[^\\"]*)/g;
 
     encodeToBase64(blob: File): Promise<string | ArrayBuffer | null> {
         return new Promise<string | ArrayBuffer | null>(resolve => {

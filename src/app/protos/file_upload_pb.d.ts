@@ -8,8 +8,8 @@ export class UploadImageRequest extends jspb.Message {
   getContent_asB64(): string;
   setContent(value: Uint8Array | string): UploadImageRequest;
 
-  getImageType(): UploadImageRequest.ImageType;
-  setImageType(value: UploadImageRequest.ImageType): UploadImageRequest;
+  getImageType(): ImageType;
+  setImageType(value: ImageType): UploadImageRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UploadImageRequest.AsObject;
@@ -22,13 +22,7 @@ export class UploadImageRequest extends jspb.Message {
 export namespace UploadImageRequest {
   export type AsObject = {
     content: Uint8Array | string,
-    imageType: UploadImageRequest.ImageType,
-  }
-
-  export enum ImageType { 
-    UNKNOWN = 0,
-    AVATAR = 1,
-    MESSAGE = 2,
+    imageType: ImageType,
   }
 }
 
@@ -88,3 +82,8 @@ export namespace DownloadImageResponse {
   }
 }
 
+export enum ImageType { 
+  UNKNOWN = 0,
+  AVATAR = 1,
+  MESSAGE = 2,
+}
