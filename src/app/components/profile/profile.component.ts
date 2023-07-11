@@ -11,7 +11,7 @@ import { ImageService } from 'src/app/services/image.service';
 import { environment } from 'src/environments/environment';
 import { FileStorageService } from 'src/app/services/file-storage.service';
 import { Base64Service } from 'src/app/services/base64.service';
-import { ImageType } from 'src/app/protos/file_upload_pb';
+import { ImageRoles } from 'src/app/protos/file_upload_pb';
 import { AccountDto } from 'src/app/api-client/api-client';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -68,7 +68,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.isSending = true;
         const env = (environment as any);
         this.resizeAvatar(this.form.value.photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then((base64: string) => {
-            return this.fileStorageService.uploadBase64Image(base64, ImageType.AVATAR);
+            return this.fileStorageService.uploadBase64Image(base64, ImageRoles.AVATAR);
         }).then(response => {
             this.submitForm(response.getImageId());
         }).catch(e => {

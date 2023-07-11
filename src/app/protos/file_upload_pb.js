@@ -14,7 +14,7 @@ var global = Function('return this')();
 
 goog.exportSymbol('proto.file_upload.DownloadImageRequest', null, global);
 goog.exportSymbol('proto.file_upload.DownloadImageResponse', null, global);
-goog.exportSymbol('proto.file_upload.ImageType', null, global);
+goog.exportSymbol('proto.file_upload.ImageRoles', null, global);
 goog.exportSymbol('proto.file_upload.UploadImageRequest', null, global);
 goog.exportSymbol('proto.file_upload.UploadImageResponse', null, global);
 /**
@@ -134,7 +134,7 @@ proto.file_upload.UploadImageRequest.prototype.toObject = function(opt_includeIn
 proto.file_upload.UploadImageRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     content: msg.getContent_asB64(),
-    imageType: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    imageRole: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -176,8 +176,8 @@ proto.file_upload.UploadImageRequest.deserializeBinaryFromReader = function(msg,
       msg.setContent(value);
       break;
     case 2:
-      var value = /** @type {!proto.file_upload.ImageType} */ (reader.readEnum());
-      msg.setImageType(value);
+      var value = /** @type {!proto.file_upload.ImageRoles} */ (reader.readEnum());
+      msg.setImageRole(value);
       break;
     default:
       reader.skipField();
@@ -215,7 +215,7 @@ proto.file_upload.UploadImageRequest.serializeBinaryToWriter = function(message,
       f
     );
   }
-  f = message.getImageType();
+  f = message.getImageRole();
   if (f !== 0.0) {
     writer.writeEnum(
       2,
@@ -268,19 +268,19 @@ proto.file_upload.UploadImageRequest.prototype.setContent = function(value) {
 
 
 /**
- * optional ImageType image_type = 2;
- * @return {!proto.file_upload.ImageType}
+ * optional ImageRoles image_role = 2;
+ * @return {!proto.file_upload.ImageRoles}
  */
-proto.file_upload.UploadImageRequest.prototype.getImageType = function() {
-  return /** @type {!proto.file_upload.ImageType} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+proto.file_upload.UploadImageRequest.prototype.getImageRole = function() {
+  return /** @type {!proto.file_upload.ImageRoles} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
 /**
- * @param {!proto.file_upload.ImageType} value
+ * @param {!proto.file_upload.ImageRoles} value
  * @return {!proto.file_upload.UploadImageRequest} returns this
  */
-proto.file_upload.UploadImageRequest.prototype.setImageType = function(value) {
+proto.file_upload.UploadImageRequest.prototype.setImageRole = function(value) {
   return jspb.Message.setProto3EnumField(this, 2, value);
 };
 
@@ -702,7 +702,7 @@ proto.file_upload.DownloadImageResponse.prototype.setContent = function(value) {
 /**
  * @enum {number}
  */
-proto.file_upload.ImageType = {
+proto.file_upload.ImageRoles = {
   UNKNOWN: 0,
   AVATAR: 1,
   MESSAGE: 2
