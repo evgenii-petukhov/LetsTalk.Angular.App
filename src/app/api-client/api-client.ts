@@ -782,7 +782,7 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
     email?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    imageId?: number;
+    imageId?: number | undefined;
 
     constructor(data?: IUpdateProfileRequest) {
         if (data) {
@@ -823,7 +823,7 @@ export interface IUpdateProfileRequest {
     email?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    imageId?: number;
+    imageId?: number | undefined;
 }
 
 export class ApiException extends Error {

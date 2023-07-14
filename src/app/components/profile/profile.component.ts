@@ -10,7 +10,6 @@ import { ToastrService } from 'ngx-toastr';
 import { ImageService } from 'src/app/services/image.service';
 import { environment } from 'src/environments/environment';
 import { FileStorageService } from 'src/app/services/file-storage.service';
-import { Base64Service } from 'src/app/services/base64.service';
 import { ImageRoles } from 'src/app/protos/file_upload_pb';
 import { AccountDto } from 'src/app/api-client/api-client';
 import { Subject, takeUntil } from 'rxjs';
@@ -45,8 +44,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         private store: Store,
         private toastr: ToastrService,
         private imageService: ImageService,
-        private fileStorageService: FileStorageService,
-        private base64Service: Base64Service) { }
+        private fileStorageService: FileStorageService) { }
 
     ngOnInit(): void {
         this.storeService.getLoggedInUser().then(account => {
@@ -62,15 +60,16 @@ export class ProfileComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.unsubscribe$.next();
         this.unsubscribe$.complete();
+        URL.revokeObjectURL(this.form.value.photoUrl);
     }
 
     onSubmit(): void {
         this.isSending = true;
         const env = (environment as any);
-        this.resizeAvatar(this.form.value.photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then((base64: string) => {
-            return this.fileStorageService.uploadBase64Image(base64, ImageRoles.AVATAR);
+        this.resizeAvatar(this.form.value.photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then((blob: Blob) => {
+            return blob ? this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.AVATAR) : Promise.resolve(null);
         }).then(response => {
-            this.submitForm(response.getImageId());
+            this.submitForm(response?.getImageId());
         }).catch(e => {
             console.error(e);
             this.isSending = false;
@@ -84,21 +83,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
     onAvatarSelected(event: Event): void {
         const files = (event.target as HTMLInputElement).files;
         if (files && files.length) {
-            this.base64Service.encodeToBase64(files[0]).then(base64 => this.form.patchValue({
-                photoUrl: base64
-            }));
+            files[0].arrayBuffer().then((buffer: ArrayBuffer) => {
+                const base64 = URL.createObjectURL(new Blob([buffer]));
+                this.form.patchValue({
+                    photoUrl: base64
+                });
+            });
         }
     }
 
-    private resizeAvatar(photoUrl: string, maxWidth: number, maxHeight: number): Promise<string> {
-        return photoUrl ? new Promise<string>(resolve => {
-            this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight).then(base64 => {
-                this.form.patchValue({
-                    photoUrl
-                });
-                resolve(base64);
-            });
-        }) : Promise.resolve(null);
+    private resizeAvatar(photoUrl: string, maxWidth: number, maxHeight: number): Promise<Blob> {
+        return photoUrl ? this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight) : Promise.resolve(null);
     }
 
     private submitForm(imageId: number): void {

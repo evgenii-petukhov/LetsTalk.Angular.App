@@ -19,7 +19,6 @@ import { Message } from 'src/app/models/message';
 import { required, validate } from 'src/app/decorators/required.decorator';
 import { Subject, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Base64Service } from 'src/app/services/base64.service';
 import { ImageService } from 'src/app/services/image.service';
 import { ImageRoles } from 'src/app/protos/file_upload_pb';
 import { FileStorageService } from 'src/app/services/file-storage.service';
@@ -51,7 +50,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         private apiService: ApiService,
         private store: Store,
         private storeService: StoreService,
-        private base64Service: Base64Service,
         private imageService: ImageService,
         private fileStorageService: FileStorageService
     ) { }
@@ -103,10 +101,11 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     onImageSelected(event: Event): void {
         const eventTarget = (event.target as HTMLInputElement);
         if (eventTarget.files && eventTarget.files.length) {
-            this.base64Service.encodeToBase64(eventTarget.files[0]).then(base64 => {
-                const env = (environment as any)
-                this.resizeImage(base64 as string, env.pictureMaxWidth, env.pictureMaxHeight).then((base64: string) => {
-                    return this.fileStorageService.uploadBase64Image(base64, ImageRoles.MESSAGE);
+            eventTarget.files[0].arrayBuffer().then((buffer: ArrayBuffer) => {
+                const base64 = URL.createObjectURL(new Blob([buffer]));
+                const env = (environment as any);
+                this.resizeImage(base64 as string, env.pictureMaxWidth, env.pictureMaxHeight).then((blob: Blob) => {
+                    return this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.MESSAGE);
                 }).then(response => {
                     this.apiService.sendMessage(
                         this.accountId,
@@ -121,6 +120,8 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
                 }).catch(e => {
                     eventTarget.value = null;
                     console.error(e);
+                }).finally(() => {
+                    URL.revokeObjectURL(base64);
                 });
             });
         }
@@ -160,7 +161,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         this.scrollCounter = (this.scrollCounter > 0 ? -1 : 0) + this.scrollCounter;
     }
 
-    private resizeImage(photoUrl: string, maxWidth: number, maxHeight: number): Promise<string> {
+    private resizeImage(photoUrl: string, maxWidth: number, maxHeight: number): Promise<Blob> {
         return photoUrl ? this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight) : Promise.resolve(null);
     }
 }

@@ -1,6 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { ImageUrlType } from 'src/app/enums/image-url-type';
-import { Base64Service } from 'src/app/services/base64.service';
 import { StoreService } from 'src/app/services/store.service';
 
 @Component({
@@ -15,7 +14,6 @@ export class AvatarComponent implements OnChanges {
 
     constructor(
         private storeService: StoreService,
-        private base64Service: Base64Service
     ) { }
 
     ngOnChanges(): void {
@@ -27,9 +25,6 @@ export class AvatarComponent implements OnChanges {
         }
 
         switch (this.getTypeInfo(this.urlOptions[0])) {
-            case ImageUrlType.base64:
-                this.setBackgroundImage(this.urlOptions[0] as string);
-                return;
             case ImageUrlType.url:
                 this.setBackgroundImage(this.urlOptions[0] as string, this.defaultPhotoUrl);
                 return;
@@ -53,11 +48,7 @@ export class AvatarComponent implements OnChanges {
 
         const stringValue = (value as string);
 
-        if (this.base64Service.isBase64Image(stringValue)) {
-            return ImageUrlType.base64;
-        }
-
-        if (stringValue.startsWith('http')) {
+        if (stringValue.startsWith('http') || stringValue.startsWith('blob:https')) {
             return ImageUrlType.url;
         }
 

@@ -3,8 +3,6 @@ import { FileUploadGrpcEndpointClient } from '../protos/File_uploadServiceClient
 import { DownloadImageRequest, DownloadImageResponse, ImageRoles, UploadImageRequest, UploadImageResponse } from '../protos/file_upload_pb';
 import { environment } from '../../environments/environment';
 import { TokenStorageService } from './token-storage.service';
-import { Base64Service } from './base64.service';
-import { Buffer } from 'buffer';
 
 @Injectable({
     providedIn: 'root'
@@ -13,16 +11,11 @@ export class FileStorageService {
     private fileUploadService = new FileUploadGrpcEndpointClient(environment.fileStorageServiceUrl);
 
     constructor(
-        private tokenService: TokenStorageService,
-        private base64Service: Base64Service) { }
+        private tokenService: TokenStorageService) { }
 
-    uploadBase64Image(base64: string, imageRole: ImageRoles): Promise<UploadImageResponse> {
-        if (!base64) {
-            return Promise.resolve(null);
-        }
-        const content = this.base64Service.getContent(base64);
-        const blob = Buffer.from(content, 'base64');
-        return this.upload(blob, imageRole);
+    async uploadImageAsBlob(blob: Blob, imageRole: ImageRoles): Promise<UploadImageResponse> {
+        const buffer = await blob.arrayBuffer();
+        return await this.upload(new Uint8Array(buffer), imageRole);
     }
 
     upload(content: Uint8Array, imageRole: ImageRoles): Promise<UploadImageResponse> {

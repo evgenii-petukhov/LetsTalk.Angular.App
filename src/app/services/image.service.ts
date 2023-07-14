@@ -5,8 +5,8 @@ import { Injectable } from '@angular/core';
 })
 export class ImageService {
 
-    resizeBase64Image(base64: string, maxWidth: number, maxHeight: number): Promise<string> {
-        return new Promise<string>(resolve => {
+    resizeBase64Image(base64: string, maxWidth: number, maxHeight: number): Promise<Blob> {
+        return new Promise<Blob>(resolve => {
             const img = document.createElement('img');
             img.addEventListener('load', () => {
                 const scaleX = img.width > maxWidth ? maxWidth / img.width : 1;
@@ -19,7 +19,9 @@ export class ImageService {
                 canvas.width = img.width * scale;
                 canvas.height = img.height * scale;
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                resolve(canvas.toDataURL('image/webp'));
+                canvas.toBlob((blob: Blob) => {
+                    resolve(blob);
+                }, 'image/webp');
             });
             img.src = base64;
         });
