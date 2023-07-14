@@ -71,7 +71,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
                 this.storeService.incrementUnreadMessages(messageDto.senderId);
                 this.notificationService.showNotification(
                     `${sender.firstName} ${sender.lastName}`,
-                    messageDto.text,
+                    messageDto.imageId ? 'Image' : messageDto.text,
                     this.isWindowActive);
             }
         }
