@@ -10,7 +10,7 @@
             </div>
         </a>
         <div class="text" [innerHTML]="message.textHtml" *ngIf="message.textHtml"></div>
-        <app-image [imageId]="[message.imageId]" *ngIf="message.imageId"></app-image>
+        <app-image [imageId]="message.imagePreviewId" *ngIf="message.imageId"></app-image>
         <div class="time" title="{{message.created | date:'HH:mm, d MMMM YYYY'}}">
             {{message.created | date:"HH:mm"}}
         </div>

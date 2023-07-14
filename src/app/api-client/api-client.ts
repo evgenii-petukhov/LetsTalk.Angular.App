@@ -716,6 +716,7 @@ export class MessageDto implements IMessageDto {
     created?: number;
     linkPreview?: LinkPreviewDto;
     imageId?: number | undefined;
+    imagePreviewId?: number | undefined;
 
     constructor(data?: IMessageDto) {
         if (data) {
@@ -737,6 +738,7 @@ export class MessageDto implements IMessageDto {
             this.created = _data["created"];
             this.linkPreview = _data["linkPreview"] ? LinkPreviewDto.fromJS(_data["linkPreview"]) : <any>undefined;
             this.imageId = _data["imageId"];
+            this.imagePreviewId = _data["imagePreviewId"];
         }
     }
 
@@ -758,6 +760,7 @@ export class MessageDto implements IMessageDto {
         data["created"] = this.created;
         data["linkPreview"] = this.linkPreview ? this.linkPreview.toJSON() : <any>undefined;
         data["imageId"] = this.imageId;
+        data["imagePreviewId"] = this.imagePreviewId;
         return data;
     }
 }
@@ -772,6 +775,7 @@ export interface IMessageDto {
     created?: number;
     linkPreview?: LinkPreviewDto;
     imageId?: number | undefined;
+    imagePreviewId?: number | undefined;
 }
 
 export class UpdateProfileRequest implements IUpdateProfileRequest {

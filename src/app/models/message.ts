@@ -13,6 +13,7 @@ export class Message {
     created?: Date;
     linkPreview?: LinkPreview;
     imageId?: number | undefined;
+    imagePreviewId?: number | undefined;
 
     constructor(...inits: Partial<Message | IMessageDto>[]) {
         inits.filter(init => init).forEach(init => {

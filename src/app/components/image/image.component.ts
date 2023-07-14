@@ -16,6 +16,10 @@ export class ImageComponent implements OnChanges {
     ) { }
 
     ngOnChanges(): void {
+        if (!this.imageId) {
+            return;
+        }
+
         this.isLoading = true;
         this.storeService.getImageContent(this.imageId).then(content => {
             this.url = content;
