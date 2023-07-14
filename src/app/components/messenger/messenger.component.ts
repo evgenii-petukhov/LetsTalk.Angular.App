@@ -8,6 +8,7 @@ import { selectLayoutSettings } from 'src/app/state/layout-settings/select-layou
 import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
 import { Subject, takeUntil } from 'rxjs';
+import { IImagePreviewDto } from 'src/app/models/imagePreviewDto';
 
 @Component({
     selector: 'app-messenger',
@@ -46,7 +47,10 @@ export class MessengerComponent implements OnInit, OnDestroy {
             this.selectedAccountId = accountId;
         });
 
-        this.signalrService.init(this.handleMessageNotification.bind(this), this.handleLinkPreviewNotification.bind(this));
+        this.signalrService.init(
+            this.handleMessageNotification.bind(this),
+            this.handleLinkPreviewNotification.bind(this),
+            this.handleImagePreviewNotification.bind(this));
     }
 
     ngOnDestroy(): void {
@@ -78,5 +82,12 @@ export class MessengerComponent implements OnInit, OnDestroy {
             return;
         }
         this.storeService.setLinkPreview(linkPreviewDto);
+    }
+
+    handleImagePreviewNotification(imagePreviewDto: IImagePreviewDto): void {
+        if (imagePreviewDto.accountId !== this.selectedAccountId) {
+            return;
+        }
+        this.storeService.setImagePreview(imagePreviewDto);
     }
 }

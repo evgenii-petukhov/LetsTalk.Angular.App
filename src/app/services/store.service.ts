@@ -13,6 +13,7 @@ import { selectAccounts } from '../state/accounts/accounts.selector';
 import { imagesActions } from '../state/images/images.actions';
 import { selectImages } from '../state/images/images.selector';
 import { FileStorageService } from './file-storage.service';
+import { IImagePreviewDto } from '../models/imagePreviewDto';
 
 @Injectable({
     providedIn: 'root'
@@ -61,6 +62,10 @@ export class StoreService {
 
     setLinkPreview(linkPreviewDto: ILinkPreviewDto): void {
         this.store.dispatch(messagesActions.setLinkPreview({ linkPreviewDto }));
+    }
+
+    setImagePreview(imagePreviewDto: IImagePreviewDto): void {
+        this.store.dispatch(messagesActions.setImagePreview({ imagePreviewDto }));
     }
 
     incrementUnreadMessages(accountId: number): void {

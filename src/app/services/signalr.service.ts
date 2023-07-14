@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { ILinkPreviewDto, IMessageDto } from '../api-client/api-client';
 import { ConstantRetryPolicy } from './constant-retry-policy';
 import { TokenStorageService } from './token-storage.service';
+import { IImagePreviewDto } from '../models/imagePreviewDto';
 
 @Injectable({
     providedIn: 'root'
@@ -22,29 +23,34 @@ export class SignalrService {
     private isInitialized = false;
     private messageNotificationEventName = 'SendMessageNotificationAsync';
     private linkPreviewNotificationEventName = 'SendLinkPreviewNotificationAsync';
+    private imagePreviewNotificationEventName = 'SendImagePreviewNotificationAsync';
     private connectionTimerId: number;
 
     constructor(private tokenService: TokenStorageService) { }
 
     init(messageHandler: (messageDto: IMessageDto) => void,
-        linkPreviewHandler: (response: ILinkPreviewDto) => void): void {
+        linkPreviewHandler: (response: ILinkPreviewDto) => void,
+        imagePreviewHandler: (response: IImagePreviewDto) => void): void {
         if (this.isInitialized) { return; }
 
         this.connectionTimerId = window.setInterval(() => {
             this.hubConnectionBuilder.start()
-            .then(async () => {
-                this.isInitialized = true;
-                window.clearInterval(this.connectionTimerId);
-                this.hubConnectionBuilder.on(this.messageNotificationEventName, (messageDto: IMessageDto) => {
-                    messageHandler?.(messageDto);
-                });
-                this.hubConnectionBuilder.on(this.linkPreviewNotificationEventName, (response: ILinkPreviewDto) => {
-                    linkPreviewHandler?.(response);
-                });
-                await this.authorize();
-                console.log('Notification service: connected');
-            })
-            .catch(() => console.log('Notification service: unable to establish connection'));
+                .then(async () => {
+                    this.isInitialized = true;
+                    window.clearInterval(this.connectionTimerId);
+                    this.hubConnectionBuilder.on(this.messageNotificationEventName, (messageDto: IMessageDto) => {
+                        messageHandler?.(messageDto);
+                    });
+                    this.hubConnectionBuilder.on(this.linkPreviewNotificationEventName, (response: ILinkPreviewDto) => {
+                        linkPreviewHandler?.(response);
+                    });
+                    this.hubConnectionBuilder.on(this.imagePreviewNotificationEventName, (response: IImagePreviewDto) => {
+                        imagePreviewHandler?.(response);
+                    });
+                    await this.authorize();
+                    console.log('Notification service: connected');
+                })
+                .catch(() => console.log('Notification service: unable to establish connection'));
         }, this.retryPolicy.nextRetryDelayInMilliseconds());
 
         this.hubConnectionBuilder.onreconnected(async () => {
