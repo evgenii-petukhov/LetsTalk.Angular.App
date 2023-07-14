@@ -493,7 +493,7 @@ export interface IAccountDto {
 export class CreateMessageRequest implements ICreateMessageRequest {
     text?: string | undefined;
     recipientId?: number;
-    imageId?: number;
+    imageId?: number | undefined;
 
     constructor(data?: ICreateMessageRequest) {
         if (data) {
@@ -531,7 +531,7 @@ export class CreateMessageRequest implements ICreateMessageRequest {
 export interface ICreateMessageRequest {
     text?: string | undefined;
     recipientId?: number;
-    imageId?: number;
+    imageId?: number | undefined;
 }
 
 export class LinkPreviewDto implements ILinkPreviewDto {
