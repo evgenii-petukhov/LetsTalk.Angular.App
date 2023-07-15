@@ -78,6 +78,14 @@
                     color: #5a5a5a;
                     position: relative;
 
+                    &:first-child {
+                        padding-left: 12px;
+                    }
+
+                    &:last-child {
+                        padding-right: 10px;
+                    }
+
                     &[disabled] {
                         color: #aaa9a9;
                     }

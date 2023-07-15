@@ -17,8 +17,6 @@
                 <input type="file" (change)="onImageSelected($event)"/>
                 <fa-icon [icon]="faCamera"></fa-icon>
             </button>
-        </div>
-        <div class="button-container">
             <button (click)="send(message)" [disabled]="!message.trim()" title="Send (Ctrl+Enter)">
                 <fa-icon [icon]="faPaperPlane"></fa-icon>
             </button>
