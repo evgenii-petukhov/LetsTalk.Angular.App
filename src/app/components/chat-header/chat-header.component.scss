@@ -10,14 +10,13 @@
 
     @include media-breakpoint-down(md) {
         padding: 10px 10px 10px 0;
-        font-size: 20px;
     }
 
     .back {
         flex: 0 1 auto;
         background: none;
         border: none;
-        font-size: 26px;
+        font-size: 24px;
         padding: 0 12px;
         display: none;
 
