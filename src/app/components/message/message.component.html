@@ -9,9 +9,10 @@
                 <div class="link-preview-text">{{message.linkPreview.title}}</div>
             </div>
         </a>
-        <div class="text" [innerHTML]="message.textHtml" *ngIf="message.textHtml"></div>
-        <app-image [imagePreviewId]="message.imagePreviewId" [imageId]="message.imageId"
-            *ngIf="message.imageId"></app-image>
+        <div class="content" [innerHTML]="message.textHtml" *ngIf="message.textHtml"></div>
+        <div class="content" *ngIf="message.imageId">
+            <app-image [imagePreviewId]="message.imagePreviewId" [imageId]="message.imageId"></app-image>
+        </div>
         <div class="time" title="{{message.created | date:'HH:mm, d MMMM YYYY'}}">
             {{message.created | date:"HH:mm"}}
         </div>

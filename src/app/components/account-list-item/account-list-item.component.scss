@@ -1,5 +1,6 @@
 @import "bootstrap/scss/bootstrap";
 @import "../shared/extend/user-details";
+@import "../shared/mixins/user-photo";
 
 a {
     display: flex;
@@ -8,7 +9,7 @@ a {
     padding: 10px;
 
     .user-photo {
-        @extend %user-photo;
+        @include user-photo;
     }
 
     .user-details {
