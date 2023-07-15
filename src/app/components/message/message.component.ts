@@ -6,7 +6,7 @@ import { Message } from 'src/app/models/message';
     templateUrl: './message.component.html',
     styleUrls: ['./message.component.scss'],
     styles: [
-        ':host ::ng-deep .text p { margin: 0; }'
+        ':host ::ng-deep .content p { margin: 0; }'
     ],
 })
 export class MessageComponent {
