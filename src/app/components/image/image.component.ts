@@ -8,6 +8,7 @@ import { StoreService } from 'src/app/services/store.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ImageComponent implements OnInit {
+    @Input() imagePreviewId: number;
     @Input() imageId: number;
     url: string;
     isLoading = true;
@@ -18,15 +19,20 @@ export class ImageComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        if (!this.imageId) {
+        if (!this.imagePreviewId) {
             return;
         }
-        this.storeService.getImageContent(this.imageId).then(content => {
+        this.storeService.getImageContent(this.imagePreviewId).then(content => {
             this.url = content;
             this.isLoading = false;
             this.cdr.detectChanges();
         }).catch(e => {
             console.error(e);
         });
+    }
+
+    openImageViewer(e: PointerEvent): void {
+        e.preventDefault();
+        this.storeService.setViewedImageId(this.imageId);
     }
 }

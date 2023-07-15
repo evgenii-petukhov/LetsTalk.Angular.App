@@ -33,6 +33,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AvatarComponent } from './components/avatar/avatar.component';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { ImageComponent } from './components/image/image.component';
+import { ImageViewerComponent } from './components/image-viewer/image-viewer.component';
 
 @NgModule({
     declarations: [
@@ -52,7 +53,8 @@ import { ImageComponent } from './components/image/image.component';
         VisibleOnlyPipe,
         AvatarComponent,
         PrivacyPolicyComponent,
-        ImageComponent
+        ImageComponent,
+        ImageViewerComponent
     ],
     imports: [
         BrowserModule,

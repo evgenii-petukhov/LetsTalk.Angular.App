@@ -9,6 +9,7 @@ import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
 import { Subject, takeUntil } from 'rxjs';
 import { IImagePreviewDto } from 'src/app/models/imagePreviewDto';
+import { selectViededImageId } from 'src/app/state/viewed-image-id/viewed-image-id.selectors';
 
 @Component({
     selector: 'app-messenger',
@@ -17,6 +18,7 @@ import { IImagePreviewDto } from 'src/app/models/imagePreviewDto';
 })
 export class MessengerComponent implements OnInit, OnDestroy {
     selectedAccountId$ = this.store.select(selectSelectedAccountId);
+    selectedViewedImageId$ = this.store.select(selectViededImageId);
     layout$ = this.store.select(selectLayoutSettings);
 
     private accounts: readonly IAccountDto[] = [];

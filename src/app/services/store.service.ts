@@ -14,6 +14,7 @@ import { imagesActions } from '../state/images/images.actions';
 import { selectImages } from '../state/images/images.selector';
 import { FileStorageService } from './file-storage.service';
 import { IImagePreviewDto } from '../models/imagePreviewDto';
+import { viewedImageIdActions } from '../state/viewed-image-id/viewed-image-id.actions';
 
 @Injectable({
     providedIn: 'root'
@@ -102,6 +103,10 @@ export class StoreService {
 
     setSelectedAccountId(accountId: number): void {
         this.store.dispatch(selectedAccountIdActions.init({ accountId }));
+    }
+
+    setViewedImageId(imageId: number): void {
+        this.store.dispatch(viewedImageIdActions.init({ imageId }));
     }
 
     // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/

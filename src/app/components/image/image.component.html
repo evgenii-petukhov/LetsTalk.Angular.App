@@ -2,5 +2,7 @@
     <span class="sr-only">Loading...</span>
 </div>
 <ng-template #image>
-    <img [src]="url" alt="Image" />
+    <a href="#" (click)="openImageViewer($event)">
+        <img [src]="url" alt="Image" />
+    </a>
 </ng-template>
