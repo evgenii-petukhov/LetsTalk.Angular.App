@@ -25,8 +25,8 @@ a {
             align-items: center;
 
             @include media-breakpoint-down(md) {
-                width: 16px;
-                height: 16px;
+                width: 36px;
+                height: 36px;
             }
 
             .unread-count-text {
@@ -35,8 +35,8 @@ a {
                 line-height: 13px;
 
                 @include media-breakpoint-down(md) {
-                    font-size: 18px;
-                    line-height: 36px;
+                    font-size: 16px;
+                    line-height: 16px;
                 }
             }
         }
