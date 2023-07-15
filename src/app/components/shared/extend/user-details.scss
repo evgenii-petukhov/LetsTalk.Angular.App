@@ -1,0 +1,35 @@
+@import "bootstrap/scss/bootstrap";
+
+%user-photo {
+    flex: 0 1 40px;
+    min-width: 40px;
+    height: 40px;
+
+    @include media-breakpoint-down(md) {
+        flex: 0 1 56px;
+        min-width: 56px;
+        height: 56px;
+    }
+}
+
+%user-details {
+    flex: 1 1 auto;
+    display: flex;
+    padding: 0 0 0 10px;
+    align-items: center;
+    overflow: hidden;
+
+    @include media-breakpoint-down(md) {
+        padding: 0 0 0 16px;
+        font-size: 20px;
+    }
+
+    .user-name {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+}

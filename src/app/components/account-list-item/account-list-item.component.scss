@@ -1,3 +1,6 @@
+@import "bootstrap/scss/bootstrap";
+@import "../shared/extend/user-details";
+
 a {
     display: flex;
     text-decoration: none;
@@ -5,26 +8,11 @@ a {
     padding: 10px;
 
     .user-photo {
-        flex: 0 1 40px;
-        min-width: 40px;
-        height: 40px;
+        @extend %user-photo;
     }
 
     .user-details {
-        flex: 1 1 auto;
-        display: flex;
-        padding: 0 0 0 10px;
-        align-items: center;
-        overflow: hidden;
-
-        .user-name {
-            flex: 1 1 auto;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            white-space: nowrap;
-            overflow: hidden;
-        }
+        @extend %user-details;
 
         .unread-count {
             margin: 0 10px 0 0;
@@ -36,18 +24,34 @@ a {
             justify-content: center;
             align-items: center;
 
+            @include media-breakpoint-down(md) {
+                width: 36px;
+                height: 36px;
+            }
+
             .unread-count-text {
                 flex: 0 1 auto;
                 font-size: 13px;
                 line-height: 13px;
+
+                @include media-breakpoint-down(md) {
+                    font-size: 18px;
+                    line-height: 36px;
+                }
             }
         }
 
         .social-icon {
             display: flex;
-            justify-content: flex-end;
-            width: 20px;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
             margin: 0 0 0 10px;
+
+            @include media-breakpoint-down(md) {
+                font-size: 24px;
+                width: 40px;
+            }
         }
     }
 }
