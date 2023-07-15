@@ -7,6 +7,11 @@
     align-items: center;
     overflow: hidden;
 
+    @include media-breakpoint-down(md) {
+        font-size: 20px;
+        font-weight: 300;
+    }
+
     .user-name {
         flex: 1 1 auto;
         display: flex;
