@@ -32,6 +32,11 @@
     .user-details {
         @extend %user-details;
 
+        @include media-breakpoint-down(md) {
+            font-size: 28px;
+            font-weight: 200;
+        }
+
         .social-icon {
             width: 30px;
             display: flex;
