@@ -4,10 +4,7 @@ import { Message } from 'src/app/models/message';
 @Component({
     selector: 'app-message',
     templateUrl: './message.component.html',
-    styleUrls: ['./message.component.scss'],
-    styles: [
-        ':host ::ng-deep .content p { margin: 0; }'
-    ],
+    styleUrls: ['./message.component.scss']
 })
 export class MessageComponent {
     @Input() message: Message;
