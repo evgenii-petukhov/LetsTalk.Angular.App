@@ -7,5 +7,7 @@ export const environment = {
     fileStorageServiceUrl: 'https://127.0.0.1:5003',
     notificationServiceReconnectInterval: 5000,
     avatarMaxWidth: 512,
-    avatarMaxHeight: 512
+    avatarMaxHeight: 512,
+    pictureMaxWidth: 3840,
+    pictureMaxHeight: 2400
 };

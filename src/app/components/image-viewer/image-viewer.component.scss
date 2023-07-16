@@ -1,0 +1,22 @@
+@import "bootstrap/scss/bootstrap";
+
+:host {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    inset: 0;
+    background: rgb(0 0 0 / 40%);
+    z-index: 2;
+    padding: 40px;
+
+    @include media-breakpoint-down(md) {
+        padding: 20px;
+    }
+
+    .image-view {
+        flex: 1 1 auto;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center center;
+    }
+}

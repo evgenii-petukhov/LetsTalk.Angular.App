@@ -493,6 +493,7 @@ export interface IAccountDto {
 export class CreateMessageRequest implements ICreateMessageRequest {
     text?: string | undefined;
     recipientId?: number;
+    imageId?: number | undefined;
 
     constructor(data?: ICreateMessageRequest) {
         if (data) {
@@ -507,6 +508,7 @@ export class CreateMessageRequest implements ICreateMessageRequest {
         if (_data) {
             this.text = _data["text"];
             this.recipientId = _data["recipientId"];
+            this.imageId = _data["imageId"];
         }
     }
 
@@ -521,6 +523,7 @@ export class CreateMessageRequest implements ICreateMessageRequest {
         data = typeof data === 'object' ? data : {};
         data["text"] = this.text;
         data["recipientId"] = this.recipientId;
+        data["imageId"] = this.imageId;
         return data;
     }
 }
@@ -528,6 +531,7 @@ export class CreateMessageRequest implements ICreateMessageRequest {
 export interface ICreateMessageRequest {
     text?: string | undefined;
     recipientId?: number;
+    imageId?: number | undefined;
 }
 
 export class LinkPreviewDto implements ILinkPreviewDto {
@@ -711,6 +715,8 @@ export class MessageDto implements IMessageDto {
     isMine?: boolean | undefined;
     created?: number;
     linkPreview?: LinkPreviewDto;
+    imageId?: number | undefined;
+    imagePreviewId?: number | undefined;
 
     constructor(data?: IMessageDto) {
         if (data) {
@@ -731,6 +737,8 @@ export class MessageDto implements IMessageDto {
             this.isMine = _data["isMine"];
             this.created = _data["created"];
             this.linkPreview = _data["linkPreview"] ? LinkPreviewDto.fromJS(_data["linkPreview"]) : <any>undefined;
+            this.imageId = _data["imageId"];
+            this.imagePreviewId = _data["imagePreviewId"];
         }
     }
 
@@ -751,6 +759,8 @@ export class MessageDto implements IMessageDto {
         data["isMine"] = this.isMine;
         data["created"] = this.created;
         data["linkPreview"] = this.linkPreview ? this.linkPreview.toJSON() : <any>undefined;
+        data["imageId"] = this.imageId;
+        data["imagePreviewId"] = this.imagePreviewId;
         return data;
     }
 }
@@ -764,12 +774,15 @@ export interface IMessageDto {
     isMine?: boolean | undefined;
     created?: number;
     linkPreview?: LinkPreviewDto;
+    imageId?: number | undefined;
+    imagePreviewId?: number | undefined;
 }
 
 export class UpdateProfileRequest implements IUpdateProfileRequest {
     email?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    imageId?: number | undefined;
 
     constructor(data?: IUpdateProfileRequest) {
         if (data) {
@@ -785,6 +798,7 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
             this.email = _data["email"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
+            this.imageId = _data["imageId"];
         }
     }
 
@@ -800,6 +814,7 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
         data["email"] = this.email;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
+        data["imageId"] = this.imageId;
         return data;
     }
 }
@@ -808,6 +823,7 @@ export interface IUpdateProfileRequest {
     email?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    imageId?: number | undefined;
 }
 
 export class ApiException extends Error {

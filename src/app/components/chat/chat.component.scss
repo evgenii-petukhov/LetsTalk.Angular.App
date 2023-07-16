@@ -65,7 +65,7 @@
                 }
             }
 
-            .submit-container {
+            .button-container {
                 flex: 0 1 auto;
                 display: flex;
 
@@ -76,9 +76,29 @@
                     font-size: 21px;
                     padding: 0 8px;
                     color: #5a5a5a;
+                    position: relative;
+
+                    &:first-child {
+                        padding-left: 12px;
+                    }
+
+                    &:last-child {
+                        padding-right: 10px;
+                    }
 
                     &[disabled] {
                         color: #aaa9a9;
+                    }
+
+                    input[type="file"] {
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        opacity: 0;
+                        position: absolute;
+                        cursor: pointer;
+                        font-size: 0;
                     }
                 }
             }

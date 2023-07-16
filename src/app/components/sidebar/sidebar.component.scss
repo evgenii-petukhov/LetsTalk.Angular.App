@@ -12,6 +12,7 @@
         min-width: auto;
         display: none;
         box-shadow: none;
+        overflow-x: hidden;
 
         &.active {
             display: flex;

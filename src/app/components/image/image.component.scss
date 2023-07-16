@@ -1,0 +1,17 @@
+:host {
+    display: flex;
+    overflow: hidden;
+    min-width: 100px;
+    height: 100px;
+    justify-content: center;
+    align-items: center;
+
+    img {
+        height: 100px;
+    }
+
+    .spinner-border {
+        width: 36px;
+        height: 36px;
+    }
+}

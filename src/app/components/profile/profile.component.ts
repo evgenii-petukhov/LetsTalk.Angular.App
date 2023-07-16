@@ -10,9 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ImageService } from 'src/app/services/image.service';
 import { environment } from 'src/environments/environment';
 import { FileStorageService } from 'src/app/services/file-storage.service';
-import { Buffer } from 'buffer';
-import { Base64Service } from 'src/app/services/base64.service';
-import { UploadImageResponse } from 'src/app/protos/file_upload_pb';
+import { ImageRoles } from 'src/app/protos/file_upload_pb';
 import { AccountDto } from 'src/app/api-client/api-client';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -46,8 +44,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         private store: Store,
         private toastr: ToastrService,
         private imageService: ImageService,
-        private fileStorageService: FileStorageService,
-        private base64Service: Base64Service) { }
+        private fileStorageService: FileStorageService) { }
 
     ngOnInit(): void {
         this.storeService.getLoggedInUser().then(account => {
@@ -63,15 +60,20 @@ export class ProfileComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.unsubscribe$.next();
         this.unsubscribe$.complete();
+        URL.revokeObjectURL(this.form.value.photoUrl);
     }
 
     onSubmit(): void {
         this.isSending = true;
-        this.resizeAvatar(this.form.value.photoUrl).then(
-            (base64: string) => this.uploadAvatar(base64)).then(
-                () => this.submitForm()).catch(() => {
-                    this.isSending = false;
-                });
+        const env = (environment as any);
+        this.resizeAvatar(this.form.value.photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then((blob: Blob) => {
+            return blob ? this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.AVATAR) : Promise.resolve(null);
+        }).then(response => {
+            this.submitForm(response?.getImageId());
+        }).catch(e => {
+            console.error(e);
+            this.isSending = false;
+        });
     }
 
     onBack(): void {
@@ -81,42 +83,25 @@ export class ProfileComponent implements OnInit, OnDestroy {
     onAvatarSelected(event: Event): void {
         const files = (event.target as HTMLInputElement).files;
         if (files && files.length) {
-            this.base64Service.encodeToBase64(files[0]).then(base64 => this.form.patchValue({
-                photoUrl: base64
-            }));
-        }
-    }
-
-    private resizeAvatar(photoUrl: string): Promise<string> {
-        if (!photoUrl) {
-            return Promise.resolve(null);
-        }
-
-        return new Promise<string>(resolve => {
-            const env = (environment as any);
-            this.imageService.resizeBase64Image(photoUrl, env.avatarMaxWidth, env.avatarMaxHeight).then(base64 => {
+            files[0].arrayBuffer().then((buffer: ArrayBuffer) => {
+                const base64 = URL.createObjectURL(new Blob([buffer]));
                 this.form.patchValue({
-                    photoUrl
+                    photoUrl: base64
                 });
-                resolve(base64);
             });
-        });
-    }
-
-    private uploadAvatar(base64: string): Promise<UploadImageResponse> {
-        if (!base64) {
-            return Promise.resolve(null);
         }
-        const content = this.base64Service.getContent(base64);
-        const blob = Buffer.from(content, 'base64');
-        return this.fileStorageService.upload(blob);
     }
 
-    private submitForm(): void {
+    private resizeAvatar(photoUrl: string, maxWidth: number, maxHeight: number): Promise<Blob> {
+        return photoUrl ? this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight) : Promise.resolve(null);
+    }
+
+    private submitForm(imageId: number): void {
         this.apiService.saveProfile(
             this.form.value.email,
             this.form.value.firstName,
-            this.form.value.lastName).pipe(takeUntil(this.unsubscribe$)).subscribe({
+            this.form.value.lastName,
+            imageId).pipe(takeUntil(this.unsubscribe$)).subscribe({
                 next: (accountDto: AccountDto) => {
                     this.storeService.setLoggedInUser(accountDto);
                     this.router.navigate(['chats']);

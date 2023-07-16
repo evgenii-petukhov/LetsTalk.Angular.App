@@ -8,6 +8,8 @@ import { selectLayoutSettings } from 'src/app/state/layout-settings/select-layou
 import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
 import { Subject, takeUntil } from 'rxjs';
+import { IImagePreviewDto } from 'src/app/models/imagePreviewDto';
+import { selectViededImageId } from 'src/app/state/viewed-image-id/viewed-image-id.selectors';
 
 @Component({
     selector: 'app-messenger',
@@ -16,6 +18,7 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class MessengerComponent implements OnInit, OnDestroy {
     selectedAccountId$ = this.store.select(selectSelectedAccountId);
+    selectedViewedImageId$ = this.store.select(selectViededImageId);
     layout$ = this.store.select(selectLayoutSettings);
 
     private accounts: readonly IAccountDto[] = [];
@@ -46,7 +49,10 @@ export class MessengerComponent implements OnInit, OnDestroy {
             this.selectedAccountId = accountId;
         });
 
-        this.signalrService.init(this.handleMessageNotification.bind(this), this.handleLinkPreviewNotification.bind(this));
+        this.signalrService.init(
+            this.handleMessageNotification.bind(this),
+            this.handleLinkPreviewNotification.bind(this),
+            this.handleImagePreviewNotification.bind(this));
     }
 
     ngOnDestroy(): void {
@@ -67,7 +73,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
                 this.storeService.incrementUnreadMessages(messageDto.senderId);
                 this.notificationService.showNotification(
                     `${sender.firstName} ${sender.lastName}`,
-                    messageDto.text,
+                    messageDto.imageId ? 'Image' : messageDto.text,
                     this.isWindowActive);
             }
         }
@@ -78,5 +84,12 @@ export class MessengerComponent implements OnInit, OnDestroy {
             return;
         }
         this.storeService.setLinkPreview(linkPreviewDto);
+    }
+
+    handleImagePreviewNotification(imagePreviewDto: IImagePreviewDto): void {
+        if (imagePreviewDto.accountId !== this.selectedAccountId) {
+            return;
+        }
+        this.storeService.setImagePreview(imagePreviewDto);
     }
 }

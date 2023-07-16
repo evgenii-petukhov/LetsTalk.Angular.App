@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FileUploadGrpcEndpointClient } from '../protos/File_uploadServiceClientPb';
-import { DownloadImageRequest, DownloadImageResponse, UploadImageRequest, UploadImageResponse } from '../protos/file_upload_pb';
+import { DownloadImageRequest, DownloadImageResponse, ImageRoles, UploadImageRequest, UploadImageResponse } from '../protos/file_upload_pb';
 import { environment } from '../../environments/environment';
 import { TokenStorageService } from './token-storage.service';
 
@@ -10,12 +10,18 @@ import { TokenStorageService } from './token-storage.service';
 export class FileStorageService {
     private fileUploadService = new FileUploadGrpcEndpointClient(environment.fileStorageServiceUrl);
 
-    constructor(private tokenService: TokenStorageService) { }
+    constructor(
+        private tokenService: TokenStorageService) { }
 
-    upload(content: Uint8Array): Promise<UploadImageResponse> {
+    async uploadImageAsBlob(blob: Blob, imageRole: ImageRoles): Promise<UploadImageResponse> {
+        const buffer = await blob.arrayBuffer();
+        return await this.upload(new Uint8Array(buffer), imageRole);
+    }
+
+    upload(content: Uint8Array, imageRole: ImageRoles): Promise<UploadImageResponse> {
         const request = new UploadImageRequest();
         request.setContent(content);
-        request.setImageType(UploadImageRequest.ImageType.AVATAR);
+        request.setImageRole(imageRole);
         return this.fileUploadService.uploadImageAsync(request, { authorization: this.tokenService.getToken() });
     }
 

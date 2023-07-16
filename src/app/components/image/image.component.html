@@ -1,0 +1,8 @@
+<div class="spinner-border" role="status" *ngIf="isLoading; else image">
+    <span class="sr-only">Loading...</span>
+</div>
+<ng-template #image>
+    <a href="#" (click)="openImageViewer($event)">
+        <img [src]="url" alt="Image" />
+    </a>
+</ng-template>
