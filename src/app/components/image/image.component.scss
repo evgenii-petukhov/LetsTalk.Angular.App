@@ -1,17 +1,26 @@
 :host {
-    display: flex;
-    overflow: hidden;
-    min-width: 100px;
-    height: 100px;
-    justify-content: center;
-    align-items: center;
+    a {
+        display: block;
+        border-radius: 5px;
+        overflow: hidden;
 
-    img {
-        height: 100px;
+        img {
+            max-width: 150px;
+            max-height: 150px;
+        }
     }
 
-    .spinner-border {
-        width: 36px;
-        height: 36px;
+    .spinner-container {
+        display: flex;
+        overflow: hidden;
+        justify-content: center;
+        align-items: center;
+        min-width: 100px;
+        min-height: 100px;
+
+        .spinner-border {
+            width: 36px;
+            height: 36px;
+        }
     }
 }

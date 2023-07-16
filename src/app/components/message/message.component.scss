@@ -3,74 +3,105 @@
     display: flex;
     flex: 1 1 auto;
 
-    &.mine {
-        justify-content: flex-end;
-    }
-
     .bubble {
         display: inline-block;
         position: relative;
         max-width: 80%;
-        background-color: lightyellow;
-        box-shadow: 0 0 1px 1px rgb(0 0 0 / 45%);
+        background-color: #FFFFEB;
+        box-shadow: 0 0 2px 0 rgb(0 0 0 / 70%);
         border-radius: 7px;
 
-        &.btm-left{
+        &.btm-left {
             margin: 0 0 0 12px;
         }
-        
-        &.btm-right{
+
+        &.btm-right {
             margin: 0 8px 0 0;
         }
-    }
-    
-    .bubble-inner-container {
-        padding: 5px 8px;
-        margin: 0;
 
-        .content {
-            overflow-wrap: anywhere;
-            font-size: 14px;
-            line-height: 20px;
-            margin: 0 0 4px;
-
-            ::ng-deep p {
-                margin: 0;
-            }
-        }
-
-        .time {
-            font-size: 10px;
-            line-height: 10px;
-            text-align: right;
-        }
-
-        .link-preview {
+        .bubble-inner-container {
+            padding: 4px;
+            margin: 0;
             display: flex;
-            text-decoration: none;
-            color: inherit;
+            flex-direction: column;
 
-            .link-preview-image {
-                flex: 0 1 auto;
-                margin: 0 10px 0 0;
+            .content {
+                overflow-wrap: anywhere;
+                font-size: 14px;
+                line-height: 20px;
                 display: flex;
-                align-items: center;
-                
-                img {
-                    max-height: 40px;
+                flex: 0 1 auto;
+                flex-direction: column;
+
+                .text {
+                    padding: 0 4px 0 0;
+                }
+
+                ::ng-deep p {
+                    margin: 0;
                 }
             }
 
-            .link-preview-text-container {
-                flex: 1 1 auto;
-                display: flex;
-                align-items: center;
+            .time {
+                font-size: 10px;
+                line-height: 10px;
+                text-align: right;
+                margin: 4px 0 0;
+            }
 
-                .link-preview-text {
-                    overflow-wrap: anywhere;
-                    font-size: 14px;
-                    line-height: 20px;
-                    font-weight: 600;
+            .link-preview {
+                display: flex;
+                text-decoration: none;
+                color: inherit;
+                align-self: flex-start;
+
+                .link-preview-image {
+                    flex: 0 1 auto;
+                    margin: 0 10px 0 0;
+                    display: flex;
+                    align-items: center;
+
+                    img {
+                        max-height: 40px;
+                        border-radius: 5px;
+                    }
+                }
+
+                .link-preview-text-container {
+                    flex: 1 1 auto;
+                    display: flex;
+                    align-items: center;
+
+                    .link-preview-text {
+                        overflow-wrap: anywhere;
+                        font-size: 14px;
+                        line-height: 20px;
+                        font-weight: 600;
+                    }
+                }
+
+                + .content {
+                    align-self: flex-start;
+
+                    .text {
+                        padding: 0;
+                    }
+                }
+            }
+        }
+    }
+
+    &.mine {
+        justify-content: flex-end;
+
+        .bubble {
+            .bubble-inner-container {
+                align-items: flex-end;
+
+                .content {    
+                    .text {
+                        padding: 0 0 0 4px;
+                    }
                 }
             }
         }
