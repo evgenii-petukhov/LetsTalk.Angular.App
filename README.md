@@ -1,4 +1,4 @@
-# 💬LetsTalk Chat App💬 @ front-end
+# LetsTalk Chat App @ front-end
 ![Angular](https://img.shields.io/badge/angular-%23DD0031.svg?style=for-the-badge&logo=angular&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
@@ -34,6 +34,7 @@ The back-end implements microservice architecture. The table below describes eac
 | Notification | Apache Kafka, SignalR | Sends out notifications about new messages |
 | Link preview | Apache Kafka | Decorates messages with a website's name and a picture preview, if a message contains links |
 | File storage | GRPC Web | Saves a user's avatar on the file system, serves avatars by request |
+| Image processing | Apache Kafka | Generates image previews, uses [SkiaSharp](https://github.com/mono/SkiaSharp) |
 ## Get started
 1. Clone the repository
 2. Install dependencies `npm install`
