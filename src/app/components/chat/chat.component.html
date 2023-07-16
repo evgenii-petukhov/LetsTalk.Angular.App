@@ -10,7 +10,7 @@
     </div>
     <div class="send-message-container">
         <div class="textarea-container">
-            <textarea [(ngModel)]="message" (keydown.control.enter)="send(message)"></textarea>
+            <textarea [(ngModel)]="message" (keydown.control.enter)="send(message)" name="message"></textarea>
         </div>
         <div class="button-container">
             <button title="Select a picture">
