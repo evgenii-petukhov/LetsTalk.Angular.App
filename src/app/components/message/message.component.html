@@ -1,4 +1,5 @@
-<div class="bubble" [ngClass]="message.isMine ? 'btm-right' : 'btm-left'">
+<div class="bubble"
+    [ngClass]="{'btm-right': message.isMine, 'btm-left': !message.isMine, 'extra-padding': message.textHtml && (!message.isMine || !message.linkPreview)}">
     <div class="bubble-inner-container">
         <a [href]="message.linkPreview.url" target="_blank" class="link-preview" *ngIf="message.linkPreview">
             <div class="link-preview-image" *ngIf="message.linkPreview.imageUrl && !isImageError">
@@ -9,9 +10,7 @@
                 <div class="link-preview-text">{{message.linkPreview.title}}</div>
             </div>
         </a>
-        <div class="content" *ngIf="message.textHtml">
-            <div class="text" [innerHTML]="message.textHtml"></div>
-        </div>
+        <div class="content" [innerHTML]="message.textHtml" *ngIf="message.textHtml"></div>
         <div class="content" *ngIf="message.imageId">
             <app-image [imagePreviewId]="message.imagePreviewId" [imageId]="message.imageId"></app-image>
         </div>

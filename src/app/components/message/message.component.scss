@@ -19,6 +19,12 @@
             margin: 0 8px 0 0;
         }
 
+        &.extra-padding {
+            .bubble-inner-container {
+                padding: 4px 8px 4px 4px;
+            }
+        }
+
         .bubble-inner-container {
             padding: 4px;
             margin: 0;
@@ -32,10 +38,6 @@
                 display: flex;
                 flex: 0 1 auto;
                 flex-direction: column;
-
-                .text {
-                    padding: 0 4px 0 0;
-                }
 
                 ::ng-deep p {
                     margin: 0;
@@ -80,12 +82,8 @@
                     }
                 }
 
-                + .content {
+                +.content {
                     align-self: flex-start;
-
-                    .text {
-                        padding: 0;
-                    }
                 }
             }
         }
@@ -97,11 +95,11 @@
         .bubble {
             .bubble-inner-container {
                 align-items: flex-end;
+            }
 
-                .content {    
-                    .text {
-                        padding: 0 0 0 4px;
-                    }
+            &.extra-padding {
+                .bubble-inner-container {
+                    padding: 4px 4px 4px 8px;
                 }
             }
         }
