@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpTransportType, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { environment } from '../../environments/environment';
-import { ILinkPreviewDto, IMessageDto } from '../api-client/api-client';
+import { IImagePreviewDto, ILinkPreviewDto, IMessageDto } from '../api-client/api-client';
 import { ConstantRetryPolicy } from './constant-retry-policy';
 import { TokenStorageService } from './token-storage.service';
-import { IImagePreviewDto } from '../models/imagePreviewDto';
 
 @Injectable({
     providedIn: 'root'

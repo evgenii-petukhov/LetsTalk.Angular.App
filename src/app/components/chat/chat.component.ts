@@ -130,6 +130,10 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     private scrollToBottom(): void {
         const scrollHeight = this.scrollCounter === 0 ? this.scrollContainer.scrollHeight : this.scrollContainer.scrollHeight - this.previousScrollHeight;
 
+        if (!scrollHeight) {
+            return;
+        }
+
         this.scrollContainer.scroll({
             top: scrollHeight,
             left: 0,

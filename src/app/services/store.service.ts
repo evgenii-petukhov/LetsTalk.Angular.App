@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { IAccountDto, ILinkPreviewDto, IMessageDto } from '../api-client/api-client';
+import { IAccountDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto } from '../api-client/api-client';
 import { accountsActions } from '../state/accounts/accounts.actions';
 import { ILayoutSettngs } from '../state/layout-settings/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
@@ -13,7 +13,6 @@ import { selectAccounts } from '../state/accounts/accounts.selector';
 import { imagesActions } from '../state/images/images.actions';
 import { selectImages } from '../state/images/images.selector';
 import { FileStorageService } from './file-storage.service';
-import { IImagePreviewDto } from '../models/imagePreviewDto';
 import { viewedImageIdActions } from '../state/viewed-image-id/viewed-image-id.actions';
 
 @Injectable({

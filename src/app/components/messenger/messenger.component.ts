@@ -1,14 +1,13 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { SignalrService } from 'src/app/services/signalr.service';
-import { IAccountDto, ILinkPreviewDto, IMessageDto } from 'src/app/api-client/api-client';
+import { IAccountDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto } from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
 import { selectSelectedAccountId } from 'src/app/state/selected-account-id/select-selected-account-id.selectors';
 import { selectLayoutSettings } from 'src/app/state/layout-settings/select-layout-settings.selectors';
 import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
 import { Subject, takeUntil } from 'rxjs';
-import { IImagePreviewDto } from 'src/app/models/imagePreviewDto';
 import { selectViededImageId } from 'src/app/state/viewed-image-id/viewed-image-id.selectors';
 
 @Component({

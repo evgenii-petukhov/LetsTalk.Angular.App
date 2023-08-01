@@ -534,6 +534,58 @@ export interface ICreateMessageRequest {
     imageId?: number | undefined;
 }
 
+export class ImagePreviewDto implements IImagePreviewDto {
+    messageId?: number;
+    id?: number;
+    accountId?: number;
+    width?: number | undefined;
+    height?: number | undefined;
+
+    constructor(data?: IImagePreviewDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.messageId = _data["messageId"];
+            this.id = _data["id"];
+            this.accountId = _data["accountId"];
+            this.width = _data["width"];
+            this.height = _data["height"];
+        }
+    }
+
+    static fromJS(data: any): ImagePreviewDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImagePreviewDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["messageId"] = this.messageId;
+        data["id"] = this.id;
+        data["accountId"] = this.accountId;
+        data["width"] = this.width;
+        data["height"] = this.height;
+        return data;
+    }
+}
+
+export interface IImagePreviewDto {
+    messageId?: number;
+    id?: number;
+    accountId?: number;
+    width?: number | undefined;
+    height?: number | undefined;
+}
+
 export class LinkPreviewDto implements ILinkPreviewDto {
     messageId?: number;
     accountId?: number;
@@ -716,7 +768,7 @@ export class MessageDto implements IMessageDto {
     created?: number;
     linkPreview?: LinkPreviewDto;
     imageId?: number | undefined;
-    imagePreviewId?: number | undefined;
+    imagePreview?: ImagePreviewDto;
 
     constructor(data?: IMessageDto) {
         if (data) {
@@ -738,7 +790,7 @@ export class MessageDto implements IMessageDto {
             this.created = _data["created"];
             this.linkPreview = _data["linkPreview"] ? LinkPreviewDto.fromJS(_data["linkPreview"]) : <any>undefined;
             this.imageId = _data["imageId"];
-            this.imagePreviewId = _data["imagePreviewId"];
+            this.imagePreview = _data["imagePreview"] ? ImagePreviewDto.fromJS(_data["imagePreview"]) : <any>undefined;
         }
     }
 
@@ -760,7 +812,7 @@ export class MessageDto implements IMessageDto {
         data["created"] = this.created;
         data["linkPreview"] = this.linkPreview ? this.linkPreview.toJSON() : <any>undefined;
         data["imageId"] = this.imageId;
-        data["imagePreviewId"] = this.imagePreviewId;
+        data["imagePreview"] = this.imagePreview ? this.imagePreview.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -775,7 +827,7 @@ export interface IMessageDto {
     created?: number;
     linkPreview?: LinkPreviewDto;
     imageId?: number | undefined;
-    imagePreviewId?: number | undefined;
+    imagePreview?: ImagePreviewDto;
 }
 
 export class UpdateProfileRequest implements IUpdateProfileRequest {
