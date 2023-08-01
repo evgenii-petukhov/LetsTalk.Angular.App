@@ -80,7 +80,11 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         this.scrollContainer = this.scrollFrame.nativeElement;
-        this.itemElements.changes.pipe(takeUntil(this.unsubscribe$)).subscribe(() => this.scrollToBottom());
+        this.itemElements.changes.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
+            setTimeout(() => {
+                this.scrollToBottom();
+            }, 0);
+        });
     }
 
     ngOnDestroy(): void {
@@ -104,7 +108,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
             eventTarget.files[0].arrayBuffer().then((buffer: ArrayBuffer) => {
                 const base64 = URL.createObjectURL(new Blob([buffer]));
                 const env = (environment as any);
-                this.resizeImage(base64 as string, env.pictureMaxWidth, env.pictureMaxHeight).then((blob: Blob) => {
+                this.resizeImage(base64 as string, env.pictureUploadMaxWidth, env.pictureUploadMaxHeight).then((blob: Blob) => {
                     return this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.MESSAGE);
                 }).then(response => {
                     this.apiService.sendMessage(

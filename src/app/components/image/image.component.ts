@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { StoreService } from 'src/app/services/store.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-image',
@@ -14,10 +15,10 @@ export class ImageComponent implements OnInit {
     @Input() imageId: number;
     url: string;
     isLoading = true;
-    previewWidth = 150;
-    previewHeight = 150;
-    private previewMaxWidth = 150;
-    private previewMaxHeight = 150;
+    previewWidth = (environment as any).picturePreviewMaxWidth;
+    previewHeight = (environment as any).picturePreviewMaxHeight;
+    private previewMaxWidth = (environment as any).picturePreviewMaxWidth;
+    private previewMaxHeight = (environment as any).picturePreviewMaxHeight;
 
     constructor(
         private storeService: StoreService,

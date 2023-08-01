@@ -5,8 +5,10 @@ export const environment = {
     notificationServiceUrl: 'https://chatnotifications.epetukhov.cyou/messagehub',
     fileStorageServiceUrl: 'https://chatfilestorage.epetukhov.cyou',
     notificationServiceReconnectInterval: 5000,
-    avatarMaxWidth: 512,
-    avatarMaxHeight: 512,
-    pictureMaxWidth: 3840,
-    pictureMaxHeight: 2400
+    avatarUploadMaxWidth: 512,
+    avatarUploadMaxHeight: 512,
+    pictureUploadMaxWidth: 3840,
+    pictureUploadMaxHeight: 2400,
+    picturePreviewMaxWidth: 150,
+    picturePreviewMaxHeight: 150
 };

@@ -5,6 +5,6 @@
 </div>
 <ng-template #image>
     <a href="#" (click)="openImageViewer($event)">
-        <img [src]="url" alt="Image" [ngStyle]="{ maxWidth: previewWidth + 'px', maxHeight: previewHeight + 'px' }" />
+        <img [src]="url" alt="Image" [ngStyle]="{ width: previewWidth + 'px', height: previewHeight + 'px' }" />
     </a>
 </ng-template>
