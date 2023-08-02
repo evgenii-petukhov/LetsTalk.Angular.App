@@ -124,8 +124,8 @@ export class StoreService {
                     const image = {
                         imageId,
                         content,
-                        width: response.getWidth().getValue(),
-                        height: response.getHeight().getValue()
+                        width: response.getWidth(),
+                        height: response.getHeight()
                     };
                     this.store.dispatch(imagesActions.add({
                         image

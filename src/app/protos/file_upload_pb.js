@@ -12,8 +12,6 @@ var jspb = require('google-protobuf');
 var goog = jspb;
 var global = Function('return this')();
 
-var google_protobuf_wrappers_pb = require('google-protobuf/google/protobuf/wrappers_pb.js');
-goog.object.extend(proto, google_protobuf_wrappers_pb);
 goog.exportSymbol('proto.file_upload.DownloadImageRequest', null, global);
 goog.exportSymbol('proto.file_upload.DownloadImageResponse', null, global);
 goog.exportSymbol('proto.file_upload.ImageRoles', null, global);
@@ -580,8 +578,8 @@ proto.file_upload.DownloadImageResponse.prototype.toObject = function(opt_includ
 proto.file_upload.DownloadImageResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     content: msg.getContent_asB64(),
-    width: (f = msg.getWidth()) && google_protobuf_wrappers_pb.Int32Value.toObject(includeInstance, f),
-    height: (f = msg.getHeight()) && google_protobuf_wrappers_pb.Int32Value.toObject(includeInstance, f)
+    width: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    height: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {
@@ -623,13 +621,11 @@ proto.file_upload.DownloadImageResponse.deserializeBinaryFromReader = function(m
       msg.setContent(value);
       break;
     case 2:
-      var value = new google_protobuf_wrappers_pb.Int32Value;
-      reader.readMessage(value,google_protobuf_wrappers_pb.Int32Value.deserializeBinaryFromReader);
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setWidth(value);
       break;
     case 3:
-      var value = new google_protobuf_wrappers_pb.Int32Value;
-      reader.readMessage(value,google_protobuf_wrappers_pb.Int32Value.deserializeBinaryFromReader);
+      var value = /** @type {number} */ (reader.readInt32());
       msg.setHeight(value);
       break;
     default:
@@ -669,19 +665,17 @@ proto.file_upload.DownloadImageResponse.serializeBinaryToWriter = function(messa
     );
   }
   f = message.getWidth();
-  if (f != null) {
-    writer.writeMessage(
+  if (f !== 0) {
+    writer.writeInt32(
       2,
-      f,
-      google_protobuf_wrappers_pb.Int32Value.serializeBinaryToWriter
+      f
     );
   }
   f = message.getHeight();
-  if (f != null) {
-    writer.writeMessage(
+  if (f !== 0) {
+    writer.writeInt32(
       3,
-      f,
-      google_protobuf_wrappers_pb.Int32Value.serializeBinaryToWriter
+      f
     );
   }
 };
@@ -730,76 +724,38 @@ proto.file_upload.DownloadImageResponse.prototype.setContent = function(value) {
 
 
 /**
- * optional google.protobuf.Int32Value width = 2;
- * @return {?proto.google.protobuf.Int32Value}
+ * optional int32 width = 2;
+ * @return {number}
  */
 proto.file_upload.DownloadImageResponse.prototype.getWidth = function() {
-  return /** @type{?proto.google.protobuf.Int32Value} */ (
-    jspb.Message.getWrapperField(this, google_protobuf_wrappers_pb.Int32Value, 2));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
 /**
- * @param {?proto.google.protobuf.Int32Value|undefined} value
+ * @param {number} value
  * @return {!proto.file_upload.DownloadImageResponse} returns this
-*/
+ */
 proto.file_upload.DownloadImageResponse.prototype.setWidth = function(value) {
-  return jspb.Message.setWrapperField(this, 2, value);
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
 /**
- * Clears the message field making it undefined.
- * @return {!proto.file_upload.DownloadImageResponse} returns this
- */
-proto.file_upload.DownloadImageResponse.prototype.clearWidth = function() {
-  return this.setWidth(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.file_upload.DownloadImageResponse.prototype.hasWidth = function() {
-  return jspb.Message.getField(this, 2) != null;
-};
-
-
-/**
- * optional google.protobuf.Int32Value height = 3;
- * @return {?proto.google.protobuf.Int32Value}
+ * optional int32 height = 3;
+ * @return {number}
  */
 proto.file_upload.DownloadImageResponse.prototype.getHeight = function() {
-  return /** @type{?proto.google.protobuf.Int32Value} */ (
-    jspb.Message.getWrapperField(this, google_protobuf_wrappers_pb.Int32Value, 3));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
 
 /**
- * @param {?proto.google.protobuf.Int32Value|undefined} value
+ * @param {number} value
  * @return {!proto.file_upload.DownloadImageResponse} returns this
-*/
+ */
 proto.file_upload.DownloadImageResponse.prototype.setHeight = function(value) {
-  return jspb.Message.setWrapperField(this, 3, value);
-};
-
-
-/**
- * Clears the message field making it undefined.
- * @return {!proto.file_upload.DownloadImageResponse} returns this
- */
-proto.file_upload.DownloadImageResponse.prototype.clearHeight = function() {
-  return this.setHeight(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.file_upload.DownloadImageResponse.prototype.hasHeight = function() {
-  return jspb.Message.getField(this, 3) != null;
+  return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
