@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { ImagePreview } from 'src/app/models/imagePreview';
 import { StoreService } from 'src/app/services/store.service';
 import { environment } from 'src/environments/environment';
@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
     styleUrls: ['./image.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ImageComponent implements OnChanges {
+export class ImageComponent implements OnInit {
     @Input() imagePreview: ImagePreview;
     @Input() imageId: number;
     url: string;
@@ -25,7 +25,7 @@ export class ImageComponent implements OnChanges {
         private cdr: ChangeDetectorRef
     ) { }
 
-    ngOnChanges(): void {
+    ngOnInit(): void {
         if (!this.imagePreview) {
             return;
         }
