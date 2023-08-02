@@ -14,10 +14,11 @@ export class ImageComponent implements OnChanges {
     @Input() imageId: number;
     url: string;
     isLoading = true;
+    showDefaultDimensions = false;
     previewWidth = (environment as any).picturePreviewMaxWidth;
     previewHeight = (environment as any).picturePreviewMaxHeight;
-    private previewMaxWidth = (environment as any).picturePreviewMaxWidth;
-    private previewMaxHeight = (environment as any).picturePreviewMaxHeight;
+    previewMaxWidth = (environment as any).picturePreviewMaxWidth;
+    previewMaxHeight = (environment as any).picturePreviewMaxHeight;
 
     constructor(
         private storeService: StoreService,
@@ -38,9 +39,7 @@ export class ImageComponent implements OnChanges {
             console.error(e);
         });
 
-        if (this.imagePreview.width && this.imagePreview.height) {
-            this.setPreviewDimensions(this.imagePreview.width, this.imagePreview.height);
-        }
+        this.setPreviewDimensions(this.imagePreview.width, this.imagePreview.height);
     }
 
     openImageViewer(e: PointerEvent): void {
@@ -49,6 +48,12 @@ export class ImageComponent implements OnChanges {
     }
 
     private setPreviewDimensions(width: number, height: number): void {
+        this.showDefaultDimensions = !width || !height;
+
+        if (this.showDefaultDimensions) {
+            return;
+        }
+
         const scaleX = width > this.previewMaxWidth ? this.previewMaxWidth / width : 1;
         const scaleY = height > this.previewMaxHeight ? this.previewMaxHeight / height : 1;
         const scale = Math.min(scaleX, scaleY);

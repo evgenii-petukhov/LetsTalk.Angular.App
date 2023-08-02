@@ -1,10 +1,12 @@
-<div class="spinner-container" *ngIf="isLoading; else image" [ngStyle]="{ width: previewWidth + 'px', height: previewHeight + 'px' }">
+<div class="spinner-container" *ngIf="isLoading; else image"
+    [ngStyle]="{ width: previewWidth + 'px', height: previewHeight + 'px' }">
     <div class="spinner-border" role="status">
         <span class="sr-only">Loading...</span>
     </div>
 </div>
 <ng-template #image>
     <a href="#" (click)="openImageViewer($event)">
-        <img [src]="url" alt="Image" [ngStyle]="{ width: previewWidth + 'px', height: previewHeight + 'px' }" />
+        <img [src]="url" alt="Image"
+            [ngStyle]="showDefaultDimensions ? { maxWidth: previewMaxWidth + 'px', maxHeight: previewMaxHeight + 'px' } : { width: previewWidth + 'px', height: previewHeight + 'px' }" />
     </a>
 </ng-template>
