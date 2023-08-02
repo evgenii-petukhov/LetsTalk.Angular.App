@@ -26,8 +26,8 @@ export class ImageViewerComponent implements OnInit, OnDestroy {
                 return;
             }
 
-            this.storeService.getImageContent(imageId).then(content => {
-                this.setBackgroundImage(content);
+            this.storeService.getImageContent(imageId).then(image => {
+                this.setBackgroundImage(image.content);
             }).catch((e) => {
                 console.error(e);
             });

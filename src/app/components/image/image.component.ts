@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges } from '@angular/core';
+import { ImagePreview } from 'src/app/models/imagePreview';
 import { StoreService } from 'src/app/services/store.service';
 import { environment } from 'src/environments/environment';
 
@@ -8,10 +9,8 @@ import { environment } from 'src/environments/environment';
     styleUrls: ['./image.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ImageComponent implements OnInit {
-    @Input() imagePreviewId: number;
-    @Input() sourcePreviewWidth: number;
-    @Input() sourcePreviewHeight: number;
+export class ImageComponent implements OnChanges {
+    @Input() imagePreview: ImagePreview;
     @Input() imageId: number;
     url: string;
     isLoading = true;
@@ -25,30 +24,35 @@ export class ImageComponent implements OnInit {
         private cdr: ChangeDetectorRef
     ) { }
 
-    ngOnInit(): void {
-        if (!this.imagePreviewId) {
+    ngOnChanges(): void {
+        if (!this.imagePreview) {
             return;
         }
 
-        this.storeService.getImageContent(this.imagePreviewId).then(content => {
-            this.url = content;
+        this.storeService.getImageContent(this.imagePreview.id).then(image => {
+            this.url = image.content;
+            this.setPreviewDimensions(image.width, image.height);
             this.isLoading = false;
             this.cdr.detectChanges();
         }).catch(e => {
             console.error(e);
         });
 
-        if (this.sourcePreviewWidth && this.sourcePreviewHeight) {
-            const scaleX = this.sourcePreviewWidth > this.previewMaxWidth ? this.previewMaxWidth / this.sourcePreviewWidth : 1;
-            const scaleY = this.sourcePreviewHeight > this.previewMaxHeight ? this.previewMaxHeight / this.sourcePreviewHeight : 1;
-            const scale = Math.min(scaleX, scaleY);
-            this.previewWidth = scale * this.sourcePreviewWidth;
-            this.previewHeight = scale * this.sourcePreviewHeight;
+        if (this.imagePreview.width && this.imagePreview.height) {
+            this.setPreviewDimensions(this.imagePreview.width, this.imagePreview.height);
         }
     }
 
     openImageViewer(e: PointerEvent): void {
         e.preventDefault();
         this.storeService.setViewedImageId(this.imageId);
+    }
+
+    private setPreviewDimensions(width: number, height: number): void {
+        const scaleX = width > this.previewMaxWidth ? this.previewMaxWidth / width : 1;
+        const scaleY = height > this.previewMaxHeight ? this.previewMaxHeight / height : 1;
+        const scale = Math.min(scaleX, scaleY);
+        this.previewWidth = scale * width;
+        this.previewHeight = scale * height;
     }
 }

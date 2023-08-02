@@ -14,6 +14,7 @@ import { imagesActions } from '../state/images/images.actions';
 import { selectImages } from '../state/images/images.selector';
 import { FileStorageService } from './file-storage.service';
 import { viewedImageIdActions } from '../state/viewed-image-id/viewed-image-id.actions';
+import { Image } from '../models/image';
 
 @Injectable({
     providedIn: 'root'
@@ -109,24 +110,27 @@ export class StoreService {
     }
 
     // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
-    getImageContent(imageId: number): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
+    getImageContent(imageId: number): Promise<Image> {
+        return new Promise<Image>((resolve, reject) => {
             this.store.select(selectImages).subscribe(images => {
                 const image = images?.find(x => x.imageId === imageId);
                 if (image) {
-                    resolve(image.content);
+                    resolve(image);
                     return;
                 }
 
                 this.fileStorageService.download(imageId).then(response => {
                     const content = URL.createObjectURL(new Blob([response.getContent()]));
+                    const image = {
+                        imageId,
+                        content,
+                        width: response.getWidth().getValue(),
+                        height: response.getHeight().getValue()
+                    };
                     this.store.dispatch(imagesActions.add({
-                        image: {
-                            imageId,
-                            content
-                        }
+                        image
                     }));
-                    resolve(content);
+                    resolve(image);
                 }).catch(() => reject());
             }).unsubscribe();
         });

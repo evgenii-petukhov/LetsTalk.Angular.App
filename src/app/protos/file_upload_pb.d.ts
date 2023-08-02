@@ -1,5 +1,6 @@
 import * as jspb from 'google-protobuf'
 
+import * as google_protobuf_wrappers_pb from 'google-protobuf/google/protobuf/wrappers_pb';
 
 
 export class UploadImageRequest extends jspb.Message {
@@ -68,6 +69,16 @@ export class DownloadImageResponse extends jspb.Message {
   getContent_asB64(): string;
   setContent(value: Uint8Array | string): DownloadImageResponse;
 
+  getWidth(): google_protobuf_wrappers_pb.Int32Value | undefined;
+  setWidth(value?: google_protobuf_wrappers_pb.Int32Value): DownloadImageResponse;
+  hasWidth(): boolean;
+  clearWidth(): DownloadImageResponse;
+
+  getHeight(): google_protobuf_wrappers_pb.Int32Value | undefined;
+  setHeight(value?: google_protobuf_wrappers_pb.Int32Value): DownloadImageResponse;
+  hasHeight(): boolean;
+  clearHeight(): DownloadImageResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DownloadImageResponse.AsObject;
   static toObject(includeInstance: boolean, msg: DownloadImageResponse): DownloadImageResponse.AsObject;
@@ -79,6 +90,8 @@ export class DownloadImageResponse extends jspb.Message {
 export namespace DownloadImageResponse {
   export type AsObject = {
     content: Uint8Array | string,
+    width?: google_protobuf_wrappers_pb.Int32Value.AsObject,
+    height?: google_protobuf_wrappers_pb.Int32Value.AsObject,
   }
 }
 
