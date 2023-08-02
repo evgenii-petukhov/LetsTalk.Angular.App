@@ -45,6 +45,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     private scrollCounter = 0;
     private isMessageListLoaded = false;
     private previousScrollHeight = 0;
+    private scrollSequencePromise = Promise.resolve();
 
     constructor(
         private apiService: ApiService,
@@ -81,9 +82,9 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     ngAfterViewInit() {
         this.scrollContainer = this.scrollFrame.nativeElement;
         this.itemElements.changes.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
-            setTimeout(() => {
+            this.scrollSequencePromise = this.scrollSequencePromise.then(() => {
                 this.scrollToBottom();
-            }, 0);
+            });
         });
     }
 
