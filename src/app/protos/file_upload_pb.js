@@ -577,7 +577,9 @@ proto.file_upload.DownloadImageResponse.prototype.toObject = function(opt_includ
  */
 proto.file_upload.DownloadImageResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    content: msg.getContent_asB64()
+    content: msg.getContent_asB64(),
+    width: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    height: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {
@@ -618,6 +620,14 @@ proto.file_upload.DownloadImageResponse.deserializeBinaryFromReader = function(m
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setContent(value);
       break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setWidth(value);
+      break;
+    case 3:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setHeight(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -651,6 +661,20 @@ proto.file_upload.DownloadImageResponse.serializeBinaryToWriter = function(messa
   if (f.length > 0) {
     writer.writeBytes(
       1,
+      f
+    );
+  }
+  f = message.getWidth();
+  if (f !== 0) {
+    writer.writeInt32(
+      2,
+      f
+    );
+  }
+  f = message.getHeight();
+  if (f !== 0) {
+    writer.writeInt32(
+      3,
       f
     );
   }
@@ -696,6 +720,42 @@ proto.file_upload.DownloadImageResponse.prototype.getContent_asU8 = function() {
  */
 proto.file_upload.DownloadImageResponse.prototype.setContent = function(value) {
   return jspb.Message.setProto3BytesField(this, 1, value);
+};
+
+
+/**
+ * optional int32 width = 2;
+ * @return {number}
+ */
+proto.file_upload.DownloadImageResponse.prototype.getWidth = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.file_upload.DownloadImageResponse} returns this
+ */
+proto.file_upload.DownloadImageResponse.prototype.setWidth = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional int32 height = 3;
+ * @return {number}
+ */
+proto.file_upload.DownloadImageResponse.prototype.getHeight = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.file_upload.DownloadImageResponse} returns this
+ */
+proto.file_upload.DownloadImageResponse.prototype.setHeight = function(value) {
+  return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 

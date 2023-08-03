@@ -20,8 +20,8 @@ export const messagesReducer = createReducer(
     }),
     on(messagesActions.setImagePreview, (_state, { imagePreviewDto }) => {
         const existing = _state.find(m => m.id === imagePreviewDto.messageId);
-        return existing?.imagePreviewId
+        return existing?.imagePreview
             ? _state
-            : [..._state.filter(m => m.id !== imagePreviewDto.messageId), new Message(existing, { imagePreviewId: imagePreviewDto.imagePreviewId })];
+            : [..._state.filter(m => m.id !== imagePreviewDto.messageId), new Message(existing, { imagePreview: imagePreviewDto })];
     }),
 );

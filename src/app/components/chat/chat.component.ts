@@ -45,6 +45,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     private scrollCounter = 0;
     private isMessageListLoaded = false;
     private previousScrollHeight = 0;
+    private scrollSequencePromise = Promise.resolve();
 
     constructor(
         private apiService: ApiService,
@@ -80,7 +81,11 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         this.scrollContainer = this.scrollFrame.nativeElement;
-        this.itemElements.changes.pipe(takeUntil(this.unsubscribe$)).subscribe(() => this.scrollToBottom());
+        this.itemElements.changes.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
+            this.scrollSequencePromise = this.scrollSequencePromise.then(() => {
+                this.scrollToBottom();
+            });
+        });
     }
 
     ngOnDestroy(): void {
@@ -104,7 +109,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
             eventTarget.files[0].arrayBuffer().then((buffer: ArrayBuffer) => {
                 const base64 = URL.createObjectURL(new Blob([buffer]));
                 const env = (environment as any);
-                this.resizeImage(base64 as string, env.pictureMaxWidth, env.pictureMaxHeight).then((blob: Blob) => {
+                this.resizeImage(base64 as string, env.pictureUploadMaxWidth, env.pictureUploadMaxHeight).then((blob: Blob) => {
                     return this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.MESSAGE);
                 }).then(response => {
                     this.apiService.sendMessage(
@@ -129,6 +134,10 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private scrollToBottom(): void {
         const scrollHeight = this.scrollCounter === 0 ? this.scrollContainer.scrollHeight : this.scrollContainer.scrollHeight - this.previousScrollHeight;
+
+        if (!scrollHeight) {
+            return;
+        }
 
         this.scrollContainer.scroll({
             top: scrollHeight,

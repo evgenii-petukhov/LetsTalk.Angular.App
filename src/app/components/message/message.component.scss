@@ -11,20 +11,6 @@
         box-shadow: 0 0 2px 0 rgb(0 0 0 / 70%);
         border-radius: 7px;
 
-        &.btm-left {
-            margin: 0 0 0 12px;
-        }
-
-        &.btm-right {
-            margin: 0 8px 0 0;
-        }
-
-        &.extra-padding {
-            .bubble-inner-container {
-                padding: 4px 8px 4px 4px;
-            }
-        }
-
         .bubble-inner-container {
             padding: 4px;
             margin: 0;
@@ -85,6 +71,20 @@
                 +.content {
                     align-self: flex-start;
                 }
+            }
+        }
+
+        &.btm-left {
+            margin: 0 0 0 12px;
+        }
+
+        &.btm-right {
+            margin: 0 8px 0 0;
+        }
+
+        &.extra-padding {
+            .bubble-inner-container {
+                padding: 4px 8px 4px 4px;
             }
         }
     }
