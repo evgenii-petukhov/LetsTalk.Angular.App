@@ -12,16 +12,16 @@ const getProviders = (): Array<{
 }> => {
     const providers = [];
     const env = (environment as any);
-    if (env.facebookAppId) {
+    if (env.login.facebookAppId) {
         providers.push({
             id: FacebookLoginProvider.PROVIDER_ID,
-            provider: new FacebookLoginProvider(env.facebookAppId),
+            provider: new FacebookLoginProvider(env.login.facebookAppId),
         });
     }
-    if (env.vkAppId) {
+    if (env.login.vkAppId) {
         providers.push({
             id: VKLoginProvider.PROVIDER_ID,
-            provider: new VKLoginProvider(env.vkAppId),
+            provider: new VKLoginProvider(env.login.vkAppId),
         });
     }
     return providers;

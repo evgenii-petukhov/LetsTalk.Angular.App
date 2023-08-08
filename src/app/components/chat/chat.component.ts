@@ -108,8 +108,8 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         if (eventTarget.files && eventTarget.files.length) {
             eventTarget.files[0].arrayBuffer().then((buffer: ArrayBuffer) => {
                 const base64 = URL.createObjectURL(new Blob([buffer]));
-                const env = (environment as any);
-                this.resizeImage(base64 as string, env.pictureUploadMaxWidth, env.pictureUploadMaxHeight).then((blob: Blob) => {
+                const sizeLimits = environment.imageSettings.limits;
+                this.resizeImage(base64 as string, sizeLimits.picture.width, sizeLimits.picture.height).then((blob: Blob) => {
                     return this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.MESSAGE);
                 }).then(response => {
                     this.apiService.sendMessage(

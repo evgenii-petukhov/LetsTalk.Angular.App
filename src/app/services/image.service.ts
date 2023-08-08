@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 export class ImageService {
 
     resizeBase64Image(base64: string, maxWidth: number, maxHeight: number): Promise<Blob> {
+        const t0 = performance.now();
         return new Promise<Blob>(resolve => {
             const img = document.createElement('img');
             img.addEventListener('load', () => {
@@ -20,6 +21,7 @@ export class ImageService {
                 canvas.height = img.height * scale;
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 canvas.toBlob((blob: Blob) => {
+                    console.log(`[Image resize] ${(performance.now() - t0).toFixed(0)}ms`);
                     resolve(blob);
                 }, 'image/webp');
             });

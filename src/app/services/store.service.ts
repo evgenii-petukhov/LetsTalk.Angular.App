@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { IAccountDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto } from '../api-client/api-client';
 import { accountsActions } from '../state/accounts/accounts.actions';
-import { ILayoutSettngs } from '../state/layout-settings/layout-settings';
+import { ILayoutSettngs } from '../models/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
 import { loggedInUserActions } from '../state/logged-in-user/logged-in-user.actions';
 import { messagesActions } from '../state/messages/messages.actions';

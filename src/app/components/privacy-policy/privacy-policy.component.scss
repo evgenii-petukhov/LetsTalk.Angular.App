@@ -15,7 +15,7 @@
     @include scrollbars;
 
 
-    @include media-breakpoint-down(lg) {
+    @include media-breakpoint-down(md) {
         margin: 0;
         width: auto;
         max-height: 100vh;

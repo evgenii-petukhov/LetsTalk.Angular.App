@@ -7,7 +7,7 @@
     align-items: center;
     overflow: hidden;
 
-    @include media-breakpoint-down(md) {
+    @include media-breakpoint-down(sm) {
         font-size: 20px;
         font-weight: 300;
     }

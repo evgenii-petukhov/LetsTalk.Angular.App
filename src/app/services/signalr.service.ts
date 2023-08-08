@@ -9,9 +9,9 @@ import { TokenStorageService } from './token-storage.service';
     providedIn: 'root'
 })
 export class SignalrService {
-    private retryPolicy = new ConstantRetryPolicy(environment.notificationServiceReconnectInterval);
+    private retryPolicy = new ConstantRetryPolicy(environment.services.notifications.connectionInterval);
     private hubConnectionBuilder = new HubConnectionBuilder()
-        .withUrl(`${environment.notificationServiceUrl}`, {
+        .withUrl(`${environment.services.notifications.url}`, {
             skipNegotiation: true,
             transport: HttpTransportType.WebSockets
         })

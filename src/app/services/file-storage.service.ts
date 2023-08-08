@@ -1,17 +1,21 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { FileUploadGrpcEndpointClient } from '../protos/File_uploadServiceClientPb';
 import { DownloadImageRequest, DownloadImageResponse, ImageRoles, UploadImageRequest, UploadImageResponse } from '../protos/file_upload_pb';
 import { environment } from '../../environments/environment';
 import { TokenStorageService } from './token-storage.service';
+import { GRPC_INTERCEPTORS } from '@ngx-grpc/core';
 
 @Injectable({
     providedIn: 'root'
 })
 export class FileStorageService {
-    private fileUploadService = new FileUploadGrpcEndpointClient(environment.fileStorageServiceUrl);
+    private fileUploadService: FileUploadGrpcEndpointClient;
 
     constructor(
-        private tokenService: TokenStorageService) { }
+        private tokenService: TokenStorageService,
+        @Inject(GRPC_INTERCEPTORS) interceptors: any[]) {
+        this.fileUploadService = new FileUploadGrpcEndpointClient(environment.services.fileStorage.url, {}, { 'unaryInterceptors': interceptors });
+    }
 
     async uploadImageAsBlob(blob: Blob, imageRole: ImageRoles): Promise<UploadImageResponse> {
         const buffer = await blob.arrayBuffer();

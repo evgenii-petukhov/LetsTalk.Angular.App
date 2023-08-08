@@ -7,7 +7,7 @@
     background: rgb(255 197 35);
     background: linear-gradient(90deg, rgb(255 197 35 / 100%) 0%, rgb(255 211 86 / 100%) 100%);
 
-    @include media-breakpoint-down(md) {
+    @include media-breakpoint-down(lg) {
         box-shadow: 0 0 5px 3px rgb(0 0 0 / 20%);
     }
 
@@ -27,7 +27,7 @@
                 display: flex;
                 padding: 0 0 0 10px;
 
-                @include media-breakpoint-down(md) {
+                @include media-breakpoint-down(sm) {
                     padding: 0 0 0 16px;
                     font-size: 20px;
                     font-weight: 300;
@@ -52,7 +52,7 @@
                         color: #000;
                     }
 
-                    @include media-breakpoint-down(md) {
+                    @include media-breakpoint-down(sm) {
                         font-size: 24px;
                         line-height: 24px;
                         width: 40px;

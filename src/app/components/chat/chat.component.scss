@@ -8,6 +8,7 @@
 
     @include media-breakpoint-down(md) {
         display: none;
+        width: calc(100vw - 56px);
 
         &.active {
             display: flex;

@@ -34,6 +34,8 @@ import { AvatarComponent } from './components/avatar/avatar.component';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { ImageComponent } from './components/image/image.component';
 import { ImageViewerComponent } from './components/image-viewer/image-viewer.component';
+import { httpLogInterceptorProvider } from './providers/http-log-interceptor-provider';
+import { grpcLogInterceptorProvider } from './providers/grpc-log-interceptor-provider';
 
 @NgModule({
     declarations: [
@@ -71,11 +73,13 @@ import { ImageViewerComponent } from './components/image-viewer/image-viewer.com
     ],
     providers: [
         authInterceptorProvider,
+        httpLogInterceptorProvider,
+        grpcLogInterceptorProvider,
         apiClientProvider,
         socialAuthProvider,
         {
             provide: API_BASE_URL,
-            useFactory: () => environment.apiBaseUrl
+            useFactory: () => environment.services.api.url
         }
     ],
     bootstrap: [AppComponent]
