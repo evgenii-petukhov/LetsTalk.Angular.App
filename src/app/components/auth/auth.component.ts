@@ -10,7 +10,7 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class AuthComponent {
 
-    isVkProviderAvailable = !!(environment as any).vkAppId;
+    isVkProviderAvailable = !!(environment as any).login.vkAppId;
 
     constructor(
         private authService: AuthService
