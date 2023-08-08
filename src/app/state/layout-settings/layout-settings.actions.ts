@@ -1,5 +1,5 @@
 import { createActionGroup, props } from '@ngrx/store';
-import { ILayoutSettngs } from './layout-settings';
+import { ILayoutSettngs } from '../../models/layout-settings';
 
 export const layoutSettingsActions = createActionGroup({
     source: 'Layout',
