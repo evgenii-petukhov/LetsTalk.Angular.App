@@ -75,7 +75,7 @@ import { ImageViewerComponent } from './components/image-viewer/image-viewer.com
         socialAuthProvider,
         {
             provide: API_BASE_URL,
-            useFactory: () => environment.apiBaseUrl
+            useFactory: () => environment.services.api.url
         }
     ],
     bootstrap: [AppComponent]

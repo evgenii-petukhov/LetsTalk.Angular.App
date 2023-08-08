@@ -8,7 +8,7 @@ import { TokenStorageService } from './token-storage.service';
     providedIn: 'root'
 })
 export class FileStorageService {
-    private fileUploadService = new FileUploadGrpcEndpointClient(environment.fileStorageServiceUrl);
+    private fileUploadService = new FileUploadGrpcEndpointClient(environment.services.fileStorage.url);
 
     constructor(
         private tokenService: TokenStorageService) { }

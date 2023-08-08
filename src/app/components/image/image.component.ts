@@ -14,11 +14,10 @@ export class ImageComponent implements OnInit {
     @Input() imageId: number;
     url: string;
     isLoading = true;
-    showDefaultDimensions = false;
-    previewWidth = (environment as any).picturePreviewMaxWidth;
-    previewHeight = (environment as any).picturePreviewMaxHeight;
-    previewMaxWidth = (environment as any).picturePreviewMaxWidth;
-    previewMaxHeight = (environment as any).picturePreviewMaxHeight;
+    isSizeUnknown = false;
+    width = environment.imageSettings.limits.picturePreview.width;
+    height = environment.imageSettings.limits.picturePreview.height;
+    sizeLimit = environment.imageSettings.limits.picturePreview;
 
     constructor(
         private storeService: StoreService,
@@ -32,14 +31,14 @@ export class ImageComponent implements OnInit {
 
         this.storeService.getImageContent(this.imagePreview.id).then(image => {
             this.url = image.content;
-            this.setPreviewDimensions(image.width, image.height);
+            this.setSize(image.width, image.height);
             this.isLoading = false;
             this.cdr.detectChanges();
         }).catch(e => {
             console.error(e);
         });
 
-        this.setPreviewDimensions(this.imagePreview.width, this.imagePreview.height);
+        this.setSize(this.imagePreview.width, this.imagePreview.height);
     }
 
     openImageViewer(e: PointerEvent): void {
@@ -47,17 +46,17 @@ export class ImageComponent implements OnInit {
         this.storeService.setViewedImageId(this.imageId);
     }
 
-    private setPreviewDimensions(width: number, height: number): void {
-        this.showDefaultDimensions = !width || !height;
+    private setSize(width: number, height: number): void {
+        this.isSizeUnknown = !width || !height;
 
-        if (this.showDefaultDimensions) {
+        if (this.isSizeUnknown) {
             return;
         }
 
-        const scaleX = width > this.previewMaxWidth ? this.previewMaxWidth / width : 1;
-        const scaleY = height > this.previewMaxHeight ? this.previewMaxHeight / height : 1;
+        const scaleX = width > this.sizeLimit.width ? this.sizeLimit.width / width : 1;
+        const scaleY = height > this.sizeLimit.height ? this.sizeLimit.height / height : 1;
         const scale = Math.min(scaleX, scaleY);
-        this.previewWidth = scale * width;
-        this.previewHeight = scale * height;
+        this.width = scale * width;
+        this.height = scale * height;
     }
 }

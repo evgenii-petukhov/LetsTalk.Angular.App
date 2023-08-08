@@ -1,15 +1,35 @@
 export const environment = {
     production: false,
-    facebookAppId: '1391147151094704',
-    vkAppId: '7615545',
-    apiBaseUrl: 'https://localhost:5000',
-    notificationServiceUrl: 'http://127.0.0.1:5002/messagehub',
-    fileStorageServiceUrl: 'https://127.0.0.1:5003',
-    notificationServiceReconnectInterval: 5000,
-    avatarUploadMaxWidth: 512,
-    avatarUploadMaxHeight: 512,
-    pictureUploadMaxWidth: 3840,
-    pictureUploadMaxHeight: 2400,
-    picturePreviewMaxWidth: 150,
-    picturePreviewMaxHeight: 150
+    login: {
+        facebookAppId: '1391147151094704',
+        vkAppId: '7615545'
+    },
+    services: {
+        api: {
+            url: 'https://localhost:5000'
+        },
+        notifications: {
+            url: 'http://127.0.0.1:5002/messagehub',
+            connectionInterval: 5000
+        },
+        fileStorage: {
+            url: 'https://127.0.0.1:5003'
+        }
+    },
+    imageSettings: {
+        limits: {
+            avatar: {
+                width: 512,
+                height: 512
+            },
+            picture: {
+                width: 4000,
+                height: 4000
+            },
+            picturePreview: {
+                width: 150,
+                height: 150
+            },
+        }
+    }
 };

@@ -65,8 +65,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     onSubmit(): void {
         this.isSending = true;
-        const env = (environment as any);
-        this.resizeAvatar(this.form.value.photoUrl, env.avatarUploadMaxWidth, env.avatarUploadMaxHeight).then((blob: Blob) => {
+        const sizeLimits = environment.imageSettings.limits.avatar;
+        this.resizeAvatar(this.form.value.photoUrl, sizeLimits.width, sizeLimits.height).then((blob: Blob) => {
             return blob ? this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.AVATAR) : Promise.resolve(null);
         }).then(response => {
             this.submitForm(response?.getImageId());
