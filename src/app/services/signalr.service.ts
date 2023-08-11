@@ -20,9 +20,7 @@ export class SignalrService {
         .build();
 
     private isInitialized = false;
-    private messageNotificationEventName = 'SendMessageNotificationAsync';
-    private linkPreviewNotificationEventName = 'SendLinkPreviewNotificationAsync';
-    private imagePreviewNotificationEventName = 'SendImagePreviewNotificationAsync';
+    private notificationEventName = 'SendNotificationAsync';
     private connectionTimerId: number;
 
     constructor(private tokenService: TokenStorageService) { }
@@ -37,14 +35,18 @@ export class SignalrService {
                 .then(async () => {
                     this.isInitialized = true;
                     window.clearInterval(this.connectionTimerId);
-                    this.hubConnectionBuilder.on(this.messageNotificationEventName, (messageDto: IMessageDto) => {
-                        messageHandler?.(messageDto);
-                    });
-                    this.hubConnectionBuilder.on(this.linkPreviewNotificationEventName, (response: ILinkPreviewDto) => {
-                        linkPreviewHandler?.(response);
-                    });
-                    this.hubConnectionBuilder.on(this.imagePreviewNotificationEventName, (response: IImagePreviewDto) => {
-                        imagePreviewHandler?.(response);
+                    this.hubConnectionBuilder.on(this.notificationEventName, (dto: any, typeName: string) => {
+                        switch (typeName) {
+                            case 'MessageDto':
+                                messageHandler?.(dto);
+                                break;
+                            case 'LinkPreviewDto':
+                                linkPreviewHandler?.(dto);
+                                break;
+                            case 'ImagePreviewDto':
+                                imagePreviewHandler?.(dto);
+                                break;
+                        }                      
                     });
                     await this.authorize();
                     console.log('Notification service: connected');
@@ -59,8 +61,7 @@ export class SignalrService {
     }
 
     removeHandlers(): void {
-        this.hubConnectionBuilder.off(this.messageNotificationEventName);
-        this.hubConnectionBuilder.off(this.linkPreviewNotificationEventName);
+        this.hubConnectionBuilder.off(this.notificationEventName);
     }
 
     private async authorize(): Promise<void> {
