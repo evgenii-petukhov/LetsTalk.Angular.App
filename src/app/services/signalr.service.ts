@@ -22,6 +22,9 @@ export class SignalrService {
     private isInitialized = false;
     private notificationEventName = 'SendNotificationAsync';
     private connectionTimerId: number;
+    private handlerMapping: {
+        [key: string]: (dto: any) => void
+    };
 
     constructor(private tokenService: TokenStorageService) { }
 
@@ -30,23 +33,19 @@ export class SignalrService {
         imagePreviewHandler: (response: IImagePreviewDto) => void): void {
         if (this.isInitialized) { return; }
 
+        this.handlerMapping = {
+            'MessageDto': messageHandler,
+            'LinkPreviewDto': linkPreviewHandler,
+            'ImagePreviewDto': imagePreviewHandler
+        };
+
         this.connectionTimerId = window.setInterval(() => {
             this.hubConnectionBuilder.start()
                 .then(async () => {
                     this.isInitialized = true;
                     window.clearInterval(this.connectionTimerId);
                     this.hubConnectionBuilder.on(this.notificationEventName, (dto: any, typeName: string) => {
-                        switch (typeName) {
-                            case 'MessageDto':
-                                messageHandler?.(dto);
-                                break;
-                            case 'LinkPreviewDto':
-                                linkPreviewHandler?.(dto);
-                                break;
-                            case 'ImagePreviewDto':
-                                imagePreviewHandler?.(dto);
-                                break;
-                        }                      
+                        this.handlerMapping[typeName]?.(dto);                     
                     });
                     await this.authorize();
                     console.log('Notification service: connected');

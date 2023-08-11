@@ -12,5 +12,5 @@ export class GrpcLogInterceptor {
         const uploaded = request.f.array && request.f.array.length && request.f.array[0].length ? request.f.array[0].length : 0;
         this.requestLoggingService.log('gRPC', request.c.name, performance.now() - t0, downloaded, uploaded);
         return response;
-    };
+    }
 }
