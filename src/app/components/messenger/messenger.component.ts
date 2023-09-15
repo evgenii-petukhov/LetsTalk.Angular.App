@@ -57,6 +57,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.unsubscribe$.next();
         this.unsubscribe$.complete();
+        this.signalrService.removeHandlers();
     }
 
     handleMessageNotification(messageDto: IMessageDto): void {

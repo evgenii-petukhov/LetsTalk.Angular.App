@@ -61,6 +61,8 @@ export class SignalrService {
 
     removeHandlers(): void {
         this.hubConnectionBuilder.off(this.notificationEventName);
+        this.hubConnectionBuilder.stop();
+        this.isInitialized = false;
     }
 
     private async authorize(): Promise<void> {
