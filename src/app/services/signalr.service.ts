@@ -28,9 +28,9 @@ export class SignalrService {
 
     constructor(private tokenService: TokenStorageService) { }
 
-    init(messageHandler: (messageDto: IMessageDto) => void,
+    async init(messageHandler: (messageDto: IMessageDto) => void,
         linkPreviewHandler: (response: ILinkPreviewDto) => void,
-        imagePreviewHandler: (response: IImagePreviewDto) => void): void {
+        imagePreviewHandler: (response: IImagePreviewDto) => void): Promise<void> {
         if (this.isInitialized) { return; }
 
         this.handlerMapping = {
@@ -39,19 +39,13 @@ export class SignalrService {
             'ImagePreviewDto': imagePreviewHandler
         };
 
-        this.connectionTimerId = window.setInterval(() => {
-            this.hubConnectionBuilder.start()
-                .then(async () => {
-                    this.isInitialized = true;
-                    window.clearInterval(this.connectionTimerId);
-                    this.hubConnectionBuilder.on(this.notificationEventName, (dto: any, typeName: string) => {
-                        this.handlerMapping[typeName]?.(dto);                     
-                    });
-                    await this.authorize();
-                    console.log('Notification service: connected');
-                })
-                .catch(() => console.log('Notification service: unable to establish connection'));
-        }, this.retryPolicy.nextRetryDelayInMilliseconds());
+        await this.setUpConnection();
+
+        if (!this.isInitialized) {
+            this.connectionTimerId = window.setInterval(async () => {
+                await this.setUpConnection();
+            }, this.retryPolicy.nextRetryDelayInMilliseconds());
+        }
 
         this.hubConnectionBuilder.onreconnected(async () => {
             await this.authorize();
@@ -68,5 +62,20 @@ export class SignalrService {
     private async authorize(): Promise<void> {
         await this.hubConnectionBuilder.invoke('AuthorizeAsync', this.tokenService.getToken());
         console.log('Notification service: authorized');
+    }
+
+    private async setUpConnection(): Promise<void> {
+        try {
+            await this.hubConnectionBuilder.start();
+            this.isInitialized = true;
+            window.clearInterval(this.connectionTimerId);
+            this.hubConnectionBuilder.on(this.notificationEventName, (dto: any, typeName: string) => {
+                this.handlerMapping[typeName]?.(dto);
+            });
+            await this.authorize();
+            console.log('Notification service: connected');
+        } catch {
+            console.log('Notification service: unable to establish connection');
+        }
     }
 }
