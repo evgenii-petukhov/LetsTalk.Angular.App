@@ -39,7 +39,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
         this.storeService.readAllMessages(this.selectedAccountId);
     }
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
         this.storeService.getAccounts().then(accounts => {
             this.accounts = accounts;
         });
@@ -48,7 +48,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
             this.selectedAccountId = accountId;
         });
 
-        this.signalrService.init(
+        await this.signalrService.init(
             this.handleMessageNotification.bind(this),
             this.handleLinkPreviewNotification.bind(this),
             this.handleImagePreviewNotification.bind(this));
@@ -57,6 +57,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.unsubscribe$.next();
         this.unsubscribe$.complete();
+        this.signalrService.removeHandlers();
     }
 
     handleMessageNotification(messageDto: IMessageDto): void {
