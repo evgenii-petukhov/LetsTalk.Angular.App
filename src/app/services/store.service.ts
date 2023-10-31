@@ -24,14 +24,22 @@ export class StoreService {
     constructor(
         private store: Store,
         private apiService: ApiService,
-        private fileStorageService: FileStorageService) { }
+        private fileStorageService: FileStorageService) {}
 
-    readAllMessages(accountId: number): void {
-        setTimeout(() => {
-            this.store.dispatch(accountsActions.readAll({
-                accountId
-            }));
-        }, 1000);
+    markAllAsRead(account: IAccountDto): void {
+        if (account.unreadCount == 0) {
+            return;
+        }
+
+        this.apiService.markAllAsRead(account.lastMessageId).subscribe(() => {
+            setTimeout(() => {
+                this.setLastMessageInfo(account.id, account.lastMessageDate, account.lastMessageId);
+                this.store.dispatch(accountsActions.setUnreadCount({
+                    accountId: account.id,
+                    unreadCount: 0
+                }));
+            }, 1000);
+        });
     }
 
     getAccounts(): Promise<readonly IAccountDto[]> {
@@ -73,8 +81,9 @@ export class StoreService {
         this.store.dispatch(accountsActions.incrementUnread({ accountId }));
     }
 
-    setLastMessageDate(accountId: number, date: number): void {
+    setLastMessageInfo(accountId: number, date: number, id: number): void {
         this.store.dispatch(accountsActions.setLastMessageDate({ accountId, date }));
+        this.store.dispatch(accountsActions.setLastMessageId({ accountId, id }));
     }
 
     setLayoutSettings(settings: ILayoutSettngs): void {

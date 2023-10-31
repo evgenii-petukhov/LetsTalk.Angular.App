@@ -263,21 +263,21 @@ export class ApiClient {
     }
 
     /**
-     * @param body (optional) 
+     * @param messageId (optional) 
      * @return Success
      */
-    markAsRead(body: MarkAsReadRequest | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/Message/MarkAsRead";
+    markAsRead(messageId: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Message/MarkAsRead?";
+        if (messageId === null)
+            throw new Error("The parameter 'messageId' cannot be null.");
+        else if (messageId !== undefined)
+            url_ += "messageId=" + encodeURIComponent("" + messageId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_ : any = {
-            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json",
             })
         };
 
@@ -296,6 +296,58 @@ export class ApiClient {
     }
 
     protected processMarkAsRead(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param messageId (optional) 
+     * @return Success
+     */
+    markAllAsRead(messageId: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Message/MarkAllAsRead?";
+        if (messageId === null)
+            throw new Error("The parameter 'messageId' cannot be null.");
+        else if (messageId !== undefined)
+            url_ += "messageId=" + encodeURIComponent("" + messageId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMarkAllAsRead(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMarkAllAsRead(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processMarkAllAsRead(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -431,6 +483,7 @@ export class AccountDto implements IAccountDto {
     email?: string | undefined;
     unreadCount?: number;
     lastMessageDate?: number;
+    lastMessageId?: number;
     imageId?: number | undefined;
 
     constructor(data?: IAccountDto) {
@@ -452,6 +505,7 @@ export class AccountDto implements IAccountDto {
             this.email = _data["email"];
             this.unreadCount = _data["unreadCount"];
             this.lastMessageDate = _data["lastMessageDate"];
+            this.lastMessageId = _data["lastMessageId"];
             this.imageId = _data["imageId"];
         }
     }
@@ -473,6 +527,7 @@ export class AccountDto implements IAccountDto {
         data["email"] = this.email;
         data["unreadCount"] = this.unreadCount;
         data["lastMessageDate"] = this.lastMessageDate;
+        data["lastMessageId"] = this.lastMessageId;
         data["imageId"] = this.imageId;
         return data;
     }
@@ -487,6 +542,7 @@ export interface IAccountDto {
     email?: string | undefined;
     unreadCount?: number;
     lastMessageDate?: number;
+    lastMessageId?: number;
     imageId?: number | undefined;
 }
 
@@ -720,42 +776,6 @@ export class LoginResponseDto implements ILoginResponseDto {
 export interface ILoginResponseDto {
     success?: boolean;
     token?: string | undefined;
-}
-
-export class MarkAsReadRequest implements IMarkAsReadRequest {
-    messageId?: number;
-
-    constructor(data?: IMarkAsReadRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.messageId = _data["messageId"];
-        }
-    }
-
-    static fromJS(data: any): MarkAsReadRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new MarkAsReadRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["messageId"] = this.messageId;
-        return data;
-    }
-}
-
-export interface IMarkAsReadRequest {
-    messageId?: number;
 }
 
 export class MessageDto implements IMessageDto {

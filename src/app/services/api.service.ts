@@ -8,7 +8,6 @@ import {
     IAccountDto,
     CreateMessageRequest,
     IMessageDto,
-    MarkAsReadRequest,
     UpdateProfileRequest,
     AccountDto
 } from '../api-client/api-client';
@@ -61,8 +60,10 @@ export class ApiService {
     }
 
     markAsRead(messageId: number): Observable<void> {
-        const request = new MarkAsReadRequest();
-        request.messageId = messageId;
-        return this.client.markAsRead(request);
+        return this.client.markAsRead(messageId);
+    }
+
+    markAllAsRead(messageId: number): Observable<void> {
+        return this.client.markAllAsRead(messageId);
     }
 }

@@ -31,7 +31,9 @@ export class SignalrService {
     async init(messageHandler: (messageDto: IMessageDto) => void,
         linkPreviewHandler: (response: ILinkPreviewDto) => void,
         imagePreviewHandler: (response: IImagePreviewDto) => void): Promise<void> {
-        if (this.isInitialized) { return; }
+        if (this.isInitialized) {
+            return;
+        }
 
         this.handlerMapping = {
             'MessageDto': messageHandler,
