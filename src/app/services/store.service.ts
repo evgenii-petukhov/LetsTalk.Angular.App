@@ -27,7 +27,7 @@ export class StoreService {
         private fileStorageService: FileStorageService) {}
 
     markAllAsRead(account: IAccountDto): void {
-        if (account.unreadCount == 0) {
+        if (!account || account.unreadCount === 0) {
             return;
         }
 
