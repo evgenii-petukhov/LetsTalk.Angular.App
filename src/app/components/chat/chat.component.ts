@@ -162,8 +162,8 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!this.isMessageListLoaded) {
                 this.storeService.setLastMessageInfo(
                     this.accountId,
-                    Math.max(... messageDtos.map(x => x.created)),
-                    Math.max(... messageDtos.map(x => x.id)));
+                    messageDtos.length ? Math.max(... messageDtos.map(x => x.created)) : 0,
+                    messageDtos.length ? Math.max(... messageDtos.map(x => x.id)) : 0);
                 this.isMessageListLoaded = true;
             }
             if (messageDtos.length === 0) {
