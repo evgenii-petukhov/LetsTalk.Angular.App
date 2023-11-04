@@ -9,6 +9,7 @@ import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
 import { Subject, takeUntil } from 'rxjs';
 import { selectViededImageId } from 'src/app/state/viewed-image-id/viewed-image-id.selectors';
+import { selectSelectedAccount } from 'src/app/state/selected-account/select-selected-account.selector';
 
 @Component({
     selector: 'app-messenger',
@@ -17,11 +18,13 @@ import { selectViededImageId } from 'src/app/state/viewed-image-id/viewed-image-
 })
 export class MessengerComponent implements OnInit, OnDestroy {
     selectedAccountId$ = this.store.select(selectSelectedAccountId);
+    selectedAccount$ = this.store.select(selectSelectedAccount);
     selectedViewedImageId$ = this.store.select(selectViededImageId);
     layout$ = this.store.select(selectLayoutSettings);
 
     private accounts: readonly IAccountDto[] = [];
     private selectedAccountId: number;
+    private selectedAccount: IAccountDto;
     private isWindowActive = true;
     private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -36,7 +39,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
     @HostListener('document:visibilitychange', ['$event'])
     onVisibilityChange(event: Event): void {
         this.isWindowActive = !(event.target as Document).hidden;
-        this.storeService.readAllMessages(this.selectedAccountId);
+        this.storeService.markAllAsRead(this.selectedAccount);
     }
 
     async ngOnInit(): Promise<void> {
@@ -46,6 +49,10 @@ export class MessengerComponent implements OnInit, OnDestroy {
 
         this.selectedAccountId$.pipe(takeUntil(this.unsubscribe$)).subscribe(accountId => {
             this.selectedAccountId = accountId;
+        });
+
+        this.selectedAccount$.pipe(takeUntil(this.unsubscribe$)).subscribe(account => {
+            this.selectedAccount = account;
         });
 
         await this.signalrService.init(
@@ -61,7 +68,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
     }
 
     handleMessageNotification(messageDto: IMessageDto): void {
-        this.storeService.setLastMessageDate(messageDto.senderId, messageDto.created);
+        this.storeService.setLastMessageInfo(messageDto.senderId, messageDto.created, messageDto.id);
         if ([messageDto.senderId, messageDto.recipientId].indexOf(this.selectedAccountId) > -1) {
             this.storeService.addMessage(messageDto);
         }

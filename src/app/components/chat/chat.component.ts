@@ -63,7 +63,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
             messageDto.isMine = true;
             this.storeService.addMessage(messageDto);
-            this.storeService.setLastMessageDate(this.accountId, messageDto.created);
+            this.storeService.setLastMessageInfo(this.accountId, messageDto.created, messageDto.id);
         });
         this.message = '';
     }
@@ -75,7 +75,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
             this.pageIndex = 0;
             this.scrollCounter = 0;
             this.isMessageListLoaded = false;
-            this.loadMessages(accountId);
+            this.loadMessages();
         });
     }
 
@@ -99,7 +99,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onScroll(): void {
         if (this.isMessageListLoaded && this.scrollFrame.nativeElement.scrollTop === 0) {
-            this.loadMessages(this.accountId);
+            this.loadMessages();
         }
     }
 
@@ -119,7 +119,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
                     ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
                         messageDto.isMine = true;
                         this.storeService.addMessage(messageDto);
-                        this.storeService.setLastMessageDate(this.accountId, messageDto.created);
+                        this.storeService.setLastMessageInfo(this.accountId, messageDto.created, messageDto.id);
                         eventTarget.value = null;
                     });
                 }).catch(e => {
@@ -148,16 +148,24 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         this.decreaseScrollCounter();
     }
 
-    private loadMessages(accountId: number): void {
-        if (accountId === null) { return; }
+    private loadMessages(): void {
+        if (this.accountId === null) {
+            return;
+        }
         this.scrollCounter++;
         this.previousScrollHeight = this.scrollContainer?.scrollHeight ?? 0;
         this.apiService.getMessages(
-            accountId,
+            this.accountId,
             this.pageIndex
         ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDtos => {
             this.storeService.addMessages(messageDtos);
-            this.isMessageListLoaded = true;
+            if (!this.isMessageListLoaded) {
+                this.storeService.setLastMessageInfo(
+                    this.accountId,
+                    messageDtos.length ? Math.max(... messageDtos.map(x => x.created)) : 0,
+                    messageDtos.length ? Math.max(... messageDtos.map(x => x.id)) : 0);
+                this.isMessageListLoaded = true;
+            }
             if (messageDtos.length === 0) {
                 this.decreaseScrollCounter();
             } else {

@@ -5,8 +5,9 @@ export const accountsActions = createActionGroup({
     source: 'Accounts',
     events: {
         init: props<{accounts: readonly IAccountDto[]}>(),
-        readAll: props<{accountId: number}>(),
+        setUnreadCount: props<{accountId: number; unreadCount: number}>(),
         incrementUnread: props<{accountId: number}>(),
         setLastMessageDate: props<{accountId: number; date: number}>(),
+        setLastMessageId: props<{accountId: number; id: number}>(),
     }
 });
