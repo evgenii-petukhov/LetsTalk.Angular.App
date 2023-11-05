@@ -30,7 +30,7 @@ export class ApiService {
     }
 
     getAccounts(): Observable<IAccountDto[]> {
-        return this.client.account();
+        return this.client.accountAll();
     }
 
     getMessages(accountId: number, pageIndex: number): Observable<IMessageDto[]> {
@@ -38,7 +38,7 @@ export class ApiService {
     }
 
     getProfile(): Observable<IAccountDto> {
-        return this.client.profileGET();
+        return this.client.profile();
     }
 
     saveProfile(email: string, firstName: string, lastName: string, imageId: number): Observable<AccountDto> {
@@ -48,7 +48,7 @@ export class ApiService {
             lastName,
             imageId
         });
-        return this.client.profilePUT(request);
+        return this.client.account(request);
     }
 
     sendMessage(recipientId: number, text?: string, imageId?: number): Observable<IMessageDto> {
