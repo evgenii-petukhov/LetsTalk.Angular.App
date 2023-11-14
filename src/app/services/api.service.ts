@@ -33,7 +33,7 @@ export class ApiService {
         return this.client.accountAll();
     }
 
-    getMessages(accountId: number, pageIndex: number): Observable<IMessageDto[]> {
+    getMessages(accountId: string, pageIndex: number): Observable<IMessageDto[]> {
         return this.client.messageAll(accountId, !pageIndex ? undefined : pageIndex);
     }
 
@@ -51,7 +51,7 @@ export class ApiService {
         return this.client.account(request);
     }
 
-    sendMessage(recipientId: number, text?: string, imageId?: number): Observable<IMessageDto> {
+    sendMessage(recipientId: string, text?: string, imageId?: number): Observable<IMessageDto> {
         const request = new CreateMessageRequest();
         request.recipientId = recipientId;
         request.text = text;

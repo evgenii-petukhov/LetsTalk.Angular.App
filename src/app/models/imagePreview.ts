@@ -3,7 +3,7 @@ import { ImagePreviewDto } from "../api-client/api-client";
 export class ImagePreview {
     messageId?: number;
     id?: number;
-    accountId?: number;
+    accountId?: string;
     width?: number | undefined;
     height?: number | undefined;
 

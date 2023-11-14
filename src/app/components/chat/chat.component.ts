@@ -39,7 +39,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private accountId$ = this.store.select(selectSelectedAccountId);
     private scrollContainer: HTMLDivElement;
-    private accountId: number;
+    private accountId: string;
     private unsubscribe$: Subject<void> = new Subject<void>();
     private pageIndex = 0;
     private scrollCounter = 0;

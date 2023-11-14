@@ -77,11 +77,11 @@ export class StoreService {
         this.store.dispatch(messagesActions.setImagePreview({ imagePreviewDto }));
     }
 
-    incrementUnreadMessages(accountId: number): void {
+    incrementUnreadMessages(accountId: string): void {
         this.store.dispatch(accountsActions.incrementUnread({ accountId }));
     }
 
-    setLastMessageInfo(accountId: number, date: number, id: number): void {
+    setLastMessageInfo(accountId: string, date: number, id: number): void {
         this.store.dispatch(accountsActions.setLastMessageDate({ accountId, date }));
         this.store.dispatch(accountsActions.setLastMessageId({ accountId, id }));
     }
@@ -110,7 +110,7 @@ export class StoreService {
         this.store.dispatch(loggedInUserActions.set({ account }));
     }
 
-    setSelectedAccountId(accountId: number): void {
+    setSelectedAccountId(accountId: string): void {
         this.store.dispatch(selectedAccountIdActions.init({ accountId }));
     }
 

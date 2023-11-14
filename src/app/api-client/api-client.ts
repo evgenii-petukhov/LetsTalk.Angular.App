@@ -251,7 +251,7 @@ export class ApiClient {
      * @param page (optional) 
      * @return Success
      */
-    messageAll(accountId: number, page: number | undefined): Observable<MessageDto[]> {
+    messageAll(accountId: string, page: number | undefined): Observable<MessageDto[]> {
         let url_ = this.baseUrl + "/api/Message/{accountId}?";
         if (accountId === undefined || accountId === null)
             throw new Error("The parameter 'accountId' must be defined.");
@@ -475,7 +475,7 @@ export class ApiClient {
 }
 
 export class AccountDto implements IAccountDto {
-    id?: number;
+    id?: string | undefined;
     accountTypeId?: number;
     photoUrl?: string | undefined;
     firstName?: string | undefined;
@@ -534,7 +534,7 @@ export class AccountDto implements IAccountDto {
 }
 
 export interface IAccountDto {
-    id?: number;
+    id?: string | undefined;
     accountTypeId?: number;
     photoUrl?: string | undefined;
     firstName?: string | undefined;
@@ -548,7 +548,7 @@ export interface IAccountDto {
 
 export class CreateMessageRequest implements ICreateMessageRequest {
     text?: string | undefined;
-    recipientId?: number;
+    recipientId?: string | undefined;
     imageId?: number | undefined;
 
     constructor(data?: ICreateMessageRequest) {
@@ -586,14 +586,14 @@ export class CreateMessageRequest implements ICreateMessageRequest {
 
 export interface ICreateMessageRequest {
     text?: string | undefined;
-    recipientId?: number;
+    recipientId?: string | undefined;
     imageId?: number | undefined;
 }
 
 export class ImagePreviewDto implements IImagePreviewDto {
     messageId?: number;
     id?: number;
-    accountId?: number;
+    accountId?: string | undefined;
     width?: number | undefined;
     height?: number | undefined;
 
@@ -637,14 +637,14 @@ export class ImagePreviewDto implements IImagePreviewDto {
 export interface IImagePreviewDto {
     messageId?: number;
     id?: number;
-    accountId?: number;
+    accountId?: string | undefined;
     width?: number | undefined;
     height?: number | undefined;
 }
 
 export class LinkPreviewDto implements ILinkPreviewDto {
     messageId?: number;
-    accountId?: number;
+    accountId?: string | undefined;
     title?: string | undefined;
     imageUrl?: string | undefined;
     url?: string | undefined;
@@ -688,7 +688,7 @@ export class LinkPreviewDto implements ILinkPreviewDto {
 
 export interface ILinkPreviewDto {
     messageId?: number;
-    accountId?: number;
+    accountId?: string | undefined;
     title?: string | undefined;
     imageUrl?: string | undefined;
     url?: string | undefined;
@@ -782,8 +782,8 @@ export class MessageDto implements IMessageDto {
     id?: number;
     text?: string | undefined;
     textHtml?: string | undefined;
-    senderId?: number;
-    recipientId?: number;
+    senderId?: string | undefined;
+    recipientId?: string | undefined;
     isMine?: boolean | undefined;
     created?: number;
     linkPreview?: LinkPreviewDto;
@@ -841,8 +841,8 @@ export interface IMessageDto {
     id?: number;
     text?: string | undefined;
     textHtml?: string | undefined;
-    senderId?: number;
-    recipientId?: number;
+    senderId?: string | undefined;
+    recipientId?: string | undefined;
     isMine?: boolean | undefined;
     created?: number;
     linkPreview?: LinkPreviewDto;

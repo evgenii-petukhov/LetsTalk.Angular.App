@@ -1,7 +1,7 @@
 import { LinkPreviewDto } from '../api-client/api-client';
 
 export class LinkPreview {
-    accountId?: number;
+    accountId?: string;
     title?: string | undefined;
     imageUrl?: string | undefined;
     url?: string | undefined;

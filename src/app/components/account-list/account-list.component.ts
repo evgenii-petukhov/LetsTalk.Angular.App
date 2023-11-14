@@ -40,7 +40,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
         this.unsubscribe$.complete();
     }
 
-    onAccountSelected(accountId: number): void {
+    onAccountSelected(accountId: string): void {
         this.storeService.setSelectedAccountId(accountId);
         this.storeService.markAllAsRead(this.selectedAccount);
         this.storeService.setLayoutSettings({ activeArea: 'chat' });
