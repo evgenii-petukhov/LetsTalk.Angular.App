@@ -13,6 +13,7 @@ import { FileStorageService } from 'src/app/services/file-storage.service';
 import { ImageRoles } from 'src/app/protos/file_upload_pb';
 import { AccountDto } from 'src/app/api-client/api-client';
 import { Subject, takeUntil } from 'rxjs';
+import exifr from 'exifr';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -84,6 +85,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         const files = (event.target as HTMLInputElement).files;
         if (files && files.length) {
             files[0].arrayBuffer().then((buffer: ArrayBuffer) => {
+                //exifr.parse(buffer).then(a => console.log(a));
                 const base64 = URL.createObjectURL(new Blob([buffer]));
                 this.form.patchValue({
                     photoUrl: base64
