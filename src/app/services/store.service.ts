@@ -81,7 +81,7 @@ export class StoreService {
         this.store.dispatch(accountsActions.incrementUnread({ accountId }));
     }
 
-    setLastMessageInfo(accountId: string, date: number, id: number): void {
+    setLastMessageInfo(accountId: string, date: number, id: string): void {
         this.store.dispatch(accountsActions.setLastMessageDate({ accountId, date }));
         this.store.dispatch(accountsActions.setLastMessageId({ accountId, id }));
     }

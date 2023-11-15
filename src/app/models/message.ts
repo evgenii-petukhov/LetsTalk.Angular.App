@@ -5,7 +5,7 @@ import { getLocalDate } from '../helpers/date-utils.helper';
 import { ImagePreview } from './imagePreview';
 
 export class Message {
-    id?: number;
+    id?: string;
     text?: string | undefined;
     textHtml?: string | undefined;
     senderId?: string;

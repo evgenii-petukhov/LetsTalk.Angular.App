@@ -8,6 +8,6 @@ export const accountsActions = createActionGroup({
         setUnreadCount: props<{accountId: string; unreadCount: number}>(),
         incrementUnread: props<{accountId: string}>(),
         setLastMessageDate: props<{accountId: string; date: number}>(),
-        setLastMessageId: props<{accountId: string; id: number}>(),
+        setLastMessageId: props<{accountId: string; id: string}>(),
     }
 });

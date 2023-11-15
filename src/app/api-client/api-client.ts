@@ -373,7 +373,7 @@ export class ApiClient {
      * @param messageId (optional) 
      * @return Success
      */
-    markAsRead(messageId: number | undefined): Observable<void> {
+    markAsRead(messageId: string | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/Message/MarkAsRead?";
         if (messageId === null)
             throw new Error("The parameter 'messageId' cannot be null.");
@@ -425,7 +425,7 @@ export class ApiClient {
      * @param messageId (optional) 
      * @return Success
      */
-    markAllAsRead(messageId: number | undefined): Observable<void> {
+    markAllAsRead(messageId: string | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/Message/MarkAllAsRead?";
         if (messageId === null)
             throw new Error("The parameter 'messageId' cannot be null.");
@@ -483,7 +483,7 @@ export class AccountDto implements IAccountDto {
     email?: string | undefined;
     unreadCount?: number;
     lastMessageDate?: number;
-    lastMessageId?: number;
+    lastMessageId?: string | undefined;
     imageId?: number | undefined;
 
     constructor(data?: IAccountDto) {
@@ -542,7 +542,7 @@ export interface IAccountDto {
     email?: string | undefined;
     unreadCount?: number;
     lastMessageDate?: number;
-    lastMessageId?: number;
+    lastMessageId?: string | undefined;
     imageId?: number | undefined;
 }
 
@@ -591,7 +591,7 @@ export interface ICreateMessageRequest {
 }
 
 export class ImagePreviewDto implements IImagePreviewDto {
-    messageId?: number;
+    messageId?: string | undefined;
     id?: number;
     accountId?: string | undefined;
     width?: number | undefined;
@@ -635,7 +635,7 @@ export class ImagePreviewDto implements IImagePreviewDto {
 }
 
 export interface IImagePreviewDto {
-    messageId?: number;
+    messageId?: string | undefined;
     id?: number;
     accountId?: string | undefined;
     width?: number | undefined;
@@ -643,7 +643,7 @@ export interface IImagePreviewDto {
 }
 
 export class LinkPreviewDto implements ILinkPreviewDto {
-    messageId?: number;
+    messageId?: string | undefined;
     accountId?: string | undefined;
     title?: string | undefined;
     imageUrl?: string | undefined;
@@ -687,7 +687,7 @@ export class LinkPreviewDto implements ILinkPreviewDto {
 }
 
 export interface ILinkPreviewDto {
-    messageId?: number;
+    messageId?: string | undefined;
     accountId?: string | undefined;
     title?: string | undefined;
     imageUrl?: string | undefined;
@@ -779,7 +779,7 @@ export interface ILoginResponseDto {
 }
 
 export class MessageDto implements IMessageDto {
-    id?: number;
+    id?: string | undefined;
     text?: string | undefined;
     textHtml?: string | undefined;
     senderId?: string | undefined;
@@ -838,7 +838,7 @@ export class MessageDto implements IMessageDto {
 }
 
 export interface IMessageDto {
-    id?: number;
+    id?: string | undefined;
     text?: string | undefined;
     textHtml?: string | undefined;
     senderId?: string | undefined;
