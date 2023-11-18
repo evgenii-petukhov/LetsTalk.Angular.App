@@ -484,7 +484,7 @@ export class AccountDto implements IAccountDto {
     unreadCount?: number;
     lastMessageDate?: number;
     lastMessageId?: string | undefined;
-    imageId?: number | undefined;
+    imageId?: string | undefined;
 
     constructor(data?: IAccountDto) {
         if (data) {
@@ -543,13 +543,13 @@ export interface IAccountDto {
     unreadCount?: number;
     lastMessageDate?: number;
     lastMessageId?: string | undefined;
-    imageId?: number | undefined;
+    imageId?: string | undefined;
 }
 
 export class CreateMessageRequest implements ICreateMessageRequest {
     text?: string | undefined;
     recipientId?: string | undefined;
-    imageId?: number | undefined;
+    imageId?: string | undefined;
 
     constructor(data?: ICreateMessageRequest) {
         if (data) {
@@ -587,12 +587,12 @@ export class CreateMessageRequest implements ICreateMessageRequest {
 export interface ICreateMessageRequest {
     text?: string | undefined;
     recipientId?: string | undefined;
-    imageId?: number | undefined;
+    imageId?: string | undefined;
 }
 
 export class ImagePreviewDto implements IImagePreviewDto {
     messageId?: string | undefined;
-    id?: number;
+    id?: string | undefined;
     accountId?: string | undefined;
     width?: number | undefined;
     height?: number | undefined;
@@ -636,7 +636,7 @@ export class ImagePreviewDto implements IImagePreviewDto {
 
 export interface IImagePreviewDto {
     messageId?: string | undefined;
-    id?: number;
+    id?: string | undefined;
     accountId?: string | undefined;
     width?: number | undefined;
     height?: number | undefined;
@@ -787,7 +787,7 @@ export class MessageDto implements IMessageDto {
     isMine?: boolean | undefined;
     created?: number;
     linkPreview?: LinkPreviewDto;
-    imageId?: number | undefined;
+    imageId?: string | undefined;
     imagePreview?: ImagePreviewDto;
 
     constructor(data?: IMessageDto) {
@@ -846,7 +846,7 @@ export interface IMessageDto {
     isMine?: boolean | undefined;
     created?: number;
     linkPreview?: LinkPreviewDto;
-    imageId?: number | undefined;
+    imageId?: string | undefined;
     imagePreview?: ImagePreviewDto;
 }
 
@@ -854,7 +854,7 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
     email?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    imageId?: number | undefined;
+    imageId?: string | undefined;
 
     constructor(data?: IUpdateProfileRequest) {
         if (data) {
@@ -895,7 +895,7 @@ export interface IUpdateProfileRequest {
     email?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    imageId?: number | undefined;
+    imageId?: string | undefined;
 }
 
 export class ApiException extends Error {

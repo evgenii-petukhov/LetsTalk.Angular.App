@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ImageComponent implements OnInit {
     @Input() imagePreview: ImagePreview;
-    @Input() imageId: number;
+    @Input() imageId: string;
     url: string;
     isLoading = true;
     isSizeUnknown = false;

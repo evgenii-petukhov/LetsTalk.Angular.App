@@ -41,7 +41,7 @@ export class ApiService {
         return this.client.profile();
     }
 
-    saveProfile(email: string, firstName: string, lastName: string, imageId: number): Observable<AccountDto> {
+    saveProfile(email: string, firstName: string, lastName: string, imageId: string): Observable<AccountDto> {
         const request = new UpdateProfileRequest({
             email,
             firstName,
@@ -51,7 +51,7 @@ export class ApiService {
         return this.client.account(request);
     }
 
-    sendMessage(recipientId: string, text?: string, imageId?: number): Observable<IMessageDto> {
+    sendMessage(recipientId: string, text?: string, imageId?: string): Observable<IMessageDto> {
         const request = new CreateMessageRequest();
         request.recipientId = recipientId;
         request.text = text;

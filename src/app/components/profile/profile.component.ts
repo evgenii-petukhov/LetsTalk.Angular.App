@@ -96,7 +96,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         return photoUrl ? this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight) : Promise.resolve(null);
     }
 
-    private submitForm(imageId: number): void {
+    private submitForm(imageId: string): void {
         this.apiService.saveProfile(
             this.form.value.email,
             this.form.value.firstName,

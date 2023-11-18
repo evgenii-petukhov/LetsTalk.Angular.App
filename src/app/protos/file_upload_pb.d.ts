@@ -27,8 +27,8 @@ export namespace UploadImageRequest {
 }
 
 export class UploadImageResponse extends jspb.Message {
-  getImageId(): number;
-  setImageId(value: number): UploadImageResponse;
+  getImageId(): string;
+  setImageId(value: string): UploadImageResponse;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UploadImageResponse.AsObject;
@@ -40,13 +40,13 @@ export class UploadImageResponse extends jspb.Message {
 
 export namespace UploadImageResponse {
   export type AsObject = {
-    imageId: number,
+    imageId: string,
   }
 }
 
 export class DownloadImageRequest extends jspb.Message {
-  getImageId(): number;
-  setImageId(value: number): DownloadImageRequest;
+  getImageId(): string;
+  setImageId(value: string): DownloadImageRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DownloadImageRequest.AsObject;
@@ -58,7 +58,7 @@ export class DownloadImageRequest extends jspb.Message {
 
 export namespace DownloadImageRequest {
   export type AsObject = {
-    imageId: number,
+    imageId: string,
   }
 }
 
