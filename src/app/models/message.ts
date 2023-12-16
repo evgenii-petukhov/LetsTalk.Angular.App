@@ -5,11 +5,11 @@ import { getLocalDate } from '../helpers/date-utils.helper';
 import { ImagePreview } from './imagePreview';
 
 export class Message {
-    id?: number;
+    id?: string;
     text?: string | undefined;
     textHtml?: string | undefined;
-    senderId?: number;
-    recipientId?: number;
+    senderId?: string;
+    recipientId?: string;
     isMine?: boolean | undefined;
     created?: Date;
     linkPreview?: LinkPreview;

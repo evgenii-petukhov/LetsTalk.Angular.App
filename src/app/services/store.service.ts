@@ -77,11 +77,11 @@ export class StoreService {
         this.store.dispatch(messagesActions.setImagePreview({ imagePreviewDto }));
     }
 
-    incrementUnreadMessages(accountId: number): void {
+    incrementUnreadMessages(accountId: string): void {
         this.store.dispatch(accountsActions.incrementUnread({ accountId }));
     }
 
-    setLastMessageInfo(accountId: number, date: number, id: number): void {
+    setLastMessageInfo(accountId: string, date: number, id: string): void {
         this.store.dispatch(accountsActions.setLastMessageDate({ accountId, date }));
         this.store.dispatch(accountsActions.setLastMessageId({ accountId, id }));
     }
@@ -110,16 +110,16 @@ export class StoreService {
         this.store.dispatch(loggedInUserActions.set({ account }));
     }
 
-    setSelectedAccountId(accountId: number): void {
+    setSelectedAccountId(accountId: string): void {
         this.store.dispatch(selectedAccountIdActions.init({ accountId }));
     }
 
-    setViewedImageId(imageId: number): void {
+    setViewedImageId(imageId: string): void {
         this.store.dispatch(viewedImageIdActions.init({ imageId }));
     }
 
     // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
-    getImageContent(imageId: number): Promise<Image> {
+    getImageContent(imageId: string): Promise<Image> {
         return new Promise<Image>((resolve, reject) => {
             this.store.select(selectImages).subscribe(images => {
                 const image = images?.find(x => x.imageId === imageId);

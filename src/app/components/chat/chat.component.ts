@@ -39,7 +39,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private accountId$ = this.store.select(selectSelectedAccountId);
     private scrollContainer: HTMLDivElement;
-    private accountId: number;
+    private accountId: string;
     private unsubscribe$: Subject<void> = new Subject<void>();
     private pageIndex = 0;
     private scrollCounter = 0;
@@ -160,10 +160,15 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDtos => {
             this.storeService.addMessages(messageDtos);
             if (!this.isMessageListLoaded) {
-                this.storeService.setLastMessageInfo(
-                    this.accountId,
-                    messageDtos.length ? Math.max(... messageDtos.map(x => x.created)) : 0,
-                    messageDtos.length ? Math.max(... messageDtos.map(x => x.id)) : 0);
+                const lastMessageDate = messageDtos.length
+                    ? Math.max(... messageDtos.map(x => x.created))
+                    : 0;
+
+                const lastMessageId = messageDtos.length
+                    ? messageDtos.find(message => message.created === lastMessageDate)?.id
+                    : '';
+
+                this.storeService.setLastMessageInfo(this.accountId, lastMessageDate, lastMessageId);
                 this.isMessageListLoaded = true;
             }
             if (messageDtos.length === 0) {

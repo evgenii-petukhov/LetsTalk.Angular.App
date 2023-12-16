@@ -33,7 +33,7 @@ export class ApiService {
         return this.client.accountAll();
     }
 
-    getMessages(accountId: number, pageIndex: number): Observable<IMessageDto[]> {
+    getMessages(accountId: string, pageIndex: number): Observable<IMessageDto[]> {
         return this.client.messageAll(accountId, !pageIndex ? undefined : pageIndex);
     }
 
@@ -41,7 +41,7 @@ export class ApiService {
         return this.client.profile();
     }
 
-    saveProfile(email: string, firstName: string, lastName: string, imageId: number): Observable<AccountDto> {
+    saveProfile(email: string, firstName: string, lastName: string, imageId: string): Observable<AccountDto> {
         const request = new UpdateProfileRequest({
             email,
             firstName,
@@ -51,7 +51,7 @@ export class ApiService {
         return this.client.account(request);
     }
 
-    sendMessage(recipientId: number, text?: string, imageId?: number): Observable<IMessageDto> {
+    sendMessage(recipientId: string, text?: string, imageId?: string): Observable<IMessageDto> {
         const request = new CreateMessageRequest();
         request.recipientId = recipientId;
         request.text = text;
@@ -59,11 +59,11 @@ export class ApiService {
         return this.client.message(request);
     }
 
-    markAsRead(messageId: number): Observable<void> {
+    markAsRead(messageId: string): Observable<void> {
         return this.client.markAsRead(messageId);
     }
 
-    markAllAsRead(messageId: number): Observable<void> {
+    markAllAsRead(messageId: string): Observable<void> {
         return this.client.markAllAsRead(messageId);
     }
 }

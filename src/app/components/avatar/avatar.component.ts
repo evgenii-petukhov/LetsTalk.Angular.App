@@ -29,7 +29,7 @@ export class AvatarComponent implements OnChanges {
                 this.setBackgroundImage(this.urlOptions[0] as string, this.defaultPhotoUrl);
                 return;
             case ImageUrlType.imageId:
-                this.storeService.getImageContent(this.urlOptions[0] as number).then(image => {
+                this.storeService.getImageContent(this.urlOptions[0] as string).then(image => {
                     this.setBackgroundImage(image.content);
                 }).catch(() => {
                     this.setBackgroundImage(this.defaultPhotoUrl);
@@ -42,14 +42,14 @@ export class AvatarComponent implements OnChanges {
     }
 
     private getTypeInfo(value: (string | number)): ImageUrlType {
-        if (Number(value)) {
-            return ImageUrlType.imageId;
-        }
-
         const stringValue = (value as string);
 
         if (stringValue.startsWith('http') || stringValue.startsWith('blob:https')) {
             return ImageUrlType.url;
+        }
+
+        if (stringValue) {
+            return ImageUrlType.imageId;
         }
 
         return ImageUrlType.unknown;

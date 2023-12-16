@@ -29,7 +29,7 @@ export class FileStorageService {
         return this.fileUploadService.uploadImageAsync(request, { authorization: this.tokenService.getToken() });
     }
 
-    download(imageId: number): Promise<DownloadImageResponse> {
+    download(imageId: string): Promise<DownloadImageResponse> {
         const request = new DownloadImageRequest();
         request.setImageId(imageId);
         return this.fileUploadService.downloadImageAsync(request, { authorization: this.tokenService.getToken() });

@@ -23,7 +23,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
     layout$ = this.store.select(selectLayoutSettings);
 
     private accounts: readonly IAccountDto[] = [];
-    private selectedAccountId: number;
+    private selectedAccountId: string;
     private selectedAccount: IAccountDto;
     private isWindowActive = true;
     private unsubscribe$: Subject<void> = new Subject<void>();

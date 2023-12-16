@@ -251,7 +251,7 @@ export class ApiClient {
      * @param page (optional) 
      * @return Success
      */
-    messageAll(accountId: number, page: number | undefined): Observable<MessageDto[]> {
+    messageAll(accountId: string, page: number | undefined): Observable<MessageDto[]> {
         let url_ = this.baseUrl + "/api/Message/{accountId}?";
         if (accountId === undefined || accountId === null)
             throw new Error("The parameter 'accountId' must be defined.");
@@ -373,7 +373,7 @@ export class ApiClient {
      * @param messageId (optional) 
      * @return Success
      */
-    markAsRead(messageId: number | undefined): Observable<void> {
+    markAsRead(messageId: string | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/Message/MarkAsRead?";
         if (messageId === null)
             throw new Error("The parameter 'messageId' cannot be null.");
@@ -425,7 +425,7 @@ export class ApiClient {
      * @param messageId (optional) 
      * @return Success
      */
-    markAllAsRead(messageId: number | undefined): Observable<void> {
+    markAllAsRead(messageId: string | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/Message/MarkAllAsRead?";
         if (messageId === null)
             throw new Error("The parameter 'messageId' cannot be null.");
@@ -475,7 +475,7 @@ export class ApiClient {
 }
 
 export class AccountDto implements IAccountDto {
-    id?: number;
+    id?: string | undefined;
     accountTypeId?: number;
     photoUrl?: string | undefined;
     firstName?: string | undefined;
@@ -483,8 +483,8 @@ export class AccountDto implements IAccountDto {
     email?: string | undefined;
     unreadCount?: number;
     lastMessageDate?: number;
-    lastMessageId?: number;
-    imageId?: number | undefined;
+    lastMessageId?: string | undefined;
+    imageId?: string | undefined;
 
     constructor(data?: IAccountDto) {
         if (data) {
@@ -534,7 +534,7 @@ export class AccountDto implements IAccountDto {
 }
 
 export interface IAccountDto {
-    id?: number;
+    id?: string | undefined;
     accountTypeId?: number;
     photoUrl?: string | undefined;
     firstName?: string | undefined;
@@ -542,14 +542,14 @@ export interface IAccountDto {
     email?: string | undefined;
     unreadCount?: number;
     lastMessageDate?: number;
-    lastMessageId?: number;
-    imageId?: number | undefined;
+    lastMessageId?: string | undefined;
+    imageId?: string | undefined;
 }
 
 export class CreateMessageRequest implements ICreateMessageRequest {
     text?: string | undefined;
-    recipientId?: number;
-    imageId?: number | undefined;
+    recipientId?: string | undefined;
+    imageId?: string | undefined;
 
     constructor(data?: ICreateMessageRequest) {
         if (data) {
@@ -586,14 +586,14 @@ export class CreateMessageRequest implements ICreateMessageRequest {
 
 export interface ICreateMessageRequest {
     text?: string | undefined;
-    recipientId?: number;
-    imageId?: number | undefined;
+    recipientId?: string | undefined;
+    imageId?: string | undefined;
 }
 
 export class ImagePreviewDto implements IImagePreviewDto {
-    messageId?: number;
-    id?: number;
-    accountId?: number;
+    messageId?: string | undefined;
+    id?: string | undefined;
+    accountId?: string | undefined;
     width?: number | undefined;
     height?: number | undefined;
 
@@ -635,16 +635,16 @@ export class ImagePreviewDto implements IImagePreviewDto {
 }
 
 export interface IImagePreviewDto {
-    messageId?: number;
-    id?: number;
-    accountId?: number;
+    messageId?: string | undefined;
+    id?: string | undefined;
+    accountId?: string | undefined;
     width?: number | undefined;
     height?: number | undefined;
 }
 
 export class LinkPreviewDto implements ILinkPreviewDto {
-    messageId?: number;
-    accountId?: number;
+    messageId?: string | undefined;
+    accountId?: string | undefined;
     title?: string | undefined;
     imageUrl?: string | undefined;
     url?: string | undefined;
@@ -687,8 +687,8 @@ export class LinkPreviewDto implements ILinkPreviewDto {
 }
 
 export interface ILinkPreviewDto {
-    messageId?: number;
-    accountId?: number;
+    messageId?: string | undefined;
+    accountId?: string | undefined;
     title?: string | undefined;
     imageUrl?: string | undefined;
     url?: string | undefined;
@@ -779,15 +779,15 @@ export interface ILoginResponseDto {
 }
 
 export class MessageDto implements IMessageDto {
-    id?: number;
+    id?: string | undefined;
     text?: string | undefined;
     textHtml?: string | undefined;
-    senderId?: number;
-    recipientId?: number;
+    senderId?: string | undefined;
+    recipientId?: string | undefined;
     isMine?: boolean | undefined;
     created?: number;
     linkPreview?: LinkPreviewDto;
-    imageId?: number | undefined;
+    imageId?: string | undefined;
     imagePreview?: ImagePreviewDto;
 
     constructor(data?: IMessageDto) {
@@ -838,15 +838,15 @@ export class MessageDto implements IMessageDto {
 }
 
 export interface IMessageDto {
-    id?: number;
+    id?: string | undefined;
     text?: string | undefined;
     textHtml?: string | undefined;
-    senderId?: number;
-    recipientId?: number;
+    senderId?: string | undefined;
+    recipientId?: string | undefined;
     isMine?: boolean | undefined;
     created?: number;
     linkPreview?: LinkPreviewDto;
-    imageId?: number | undefined;
+    imageId?: string | undefined;
     imagePreview?: ImagePreviewDto;
 }
 
@@ -854,7 +854,7 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
     email?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    imageId?: number | undefined;
+    imageId?: string | undefined;
 
     constructor(data?: IUpdateProfileRequest) {
         if (data) {
@@ -895,7 +895,7 @@ export interface IUpdateProfileRequest {
     email?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    imageId?: number | undefined;
+    imageId?: string | undefined;
 }
 
 export class ApiException extends Error {
