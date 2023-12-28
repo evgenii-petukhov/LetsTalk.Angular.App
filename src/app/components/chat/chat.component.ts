@@ -115,7 +115,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.apiService.sendMessage(
                         this.accountId,
                         undefined,
-                        response.getImageId()
+                        response
                     ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
                         messageDto.isMine = true;
                         this.storeService.addMessage(messageDto);

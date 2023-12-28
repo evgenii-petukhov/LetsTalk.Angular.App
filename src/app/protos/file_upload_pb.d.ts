@@ -30,6 +30,18 @@ export class UploadImageResponse extends jspb.Message {
   getImageId(): string;
   setImageId(value: string): UploadImageResponse;
 
+  getWidth(): number;
+  setWidth(value: number): UploadImageResponse;
+
+  getHeight(): number;
+  setHeight(value: number): UploadImageResponse;
+
+  getImageFormat(): number;
+  setImageFormat(value: number): UploadImageResponse;
+
+  getSignature(): string;
+  setSignature(value: string): UploadImageResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UploadImageResponse.AsObject;
   static toObject(includeInstance: boolean, msg: UploadImageResponse): UploadImageResponse.AsObject;
@@ -41,6 +53,10 @@ export class UploadImageResponse extends jspb.Message {
 export namespace UploadImageResponse {
   export type AsObject = {
     imageId: string,
+    width: number,
+    height: number,
+    imageFormat: number,
+    signature: string,
   }
 }
 
