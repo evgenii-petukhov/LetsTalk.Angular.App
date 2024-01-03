@@ -27,8 +27,8 @@ export namespace UploadImageRequest {
 }
 
 export class UploadImageResponse extends jspb.Message {
-  getImageId(): string;
-  setImageId(value: string): UploadImageResponse;
+  getId(): string;
+  setId(value: string): UploadImageResponse;
 
   getWidth(): number;
   setWidth(value: number): UploadImageResponse;
@@ -52,7 +52,7 @@ export class UploadImageResponse extends jspb.Message {
 
 export namespace UploadImageResponse {
   export type AsObject = {
-    imageId: string,
+    id: string,
     width: number,
     height: number,
     imageFormat: number,

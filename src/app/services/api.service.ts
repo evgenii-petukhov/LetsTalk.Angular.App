@@ -49,7 +49,7 @@ export class ApiService {
             firstName,
             lastName,
             image: image ? new ImageRequestModel({
-                id: image.getImageId(),
+                id: image.getId(),
                 width: image.getWidth(),
                 height: image.getHeight(),
                 imageFormat: image.getImageFormat(),
@@ -64,7 +64,7 @@ export class ApiService {
             recipientId,
             text,
             image: image ? new ImageRequestModel({
-                id: image.getImageId(),
+                id: image.getId(),
                 width: image.getWidth(),
                 height: image.getHeight(),
                 imageFormat: image.getImageFormat(),
