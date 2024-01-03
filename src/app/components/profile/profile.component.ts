@@ -10,7 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ImageService } from 'src/app/services/image.service';
 import { environment } from 'src/environments/environment';
 import { FileStorageService } from 'src/app/services/file-storage.service';
-import { ImageRoles } from 'src/app/protos/file_upload_pb';
+import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { AccountDto } from 'src/app/api-client/api-client';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -67,9 +67,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.isSending = true;
         const sizeLimits = environment.imageSettings.limits.avatar;
         this.resizeAvatar(this.form.value.photoUrl, sizeLimits.width, sizeLimits.height).then((blob: Blob) => {
-            return blob ? this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.AVATAR) : Promise.resolve(null);
+            return blob ? this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.AVATAR) : Promise.resolve<UploadImageResponse>(null);
         }).then(response => {
-            this.submitForm(response?.getImageId());
+            this.submitForm(response);
         }).catch(e => {
             console.error(e);
             this.isSending = false;
@@ -96,12 +96,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
         return photoUrl ? this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight) : Promise.resolve(null);
     }
 
-    private submitForm(imageId: string): void {
+    private submitForm(response: UploadImageResponse): void {
         this.apiService.saveProfile(
             this.form.value.email,
             this.form.value.firstName,
             this.form.value.lastName,
-            imageId).pipe(takeUntil(this.unsubscribe$)).subscribe({
+            response).pipe(takeUntil(this.unsubscribe$)).subscribe({
                 next: (accountDto: AccountDto) => {
                     this.storeService.setLoggedInUser(accountDto);
                     this.router.navigate(['chats']);

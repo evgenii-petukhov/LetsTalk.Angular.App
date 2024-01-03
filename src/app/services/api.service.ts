@@ -9,8 +9,10 @@ import {
     CreateMessageRequest,
     IMessageDto,
     UpdateProfileRequest,
-    AccountDto
+    AccountDto,
+    ImageRequestModel
 } from '../api-client/api-client';
+import { UploadImageResponse } from '../protos/file_upload_pb';
 
 @Injectable({
     providedIn: 'root'
@@ -41,21 +43,35 @@ export class ApiService {
         return this.client.profile();
     }
 
-    saveProfile(email: string, firstName: string, lastName: string, imageId: string): Observable<AccountDto> {
+    saveProfile(email: string, firstName: string, lastName: string, image?: UploadImageResponse): Observable<AccountDto> {
         const request = new UpdateProfileRequest({
             email,
             firstName,
             lastName,
-            imageId
+            image: image ? new ImageRequestModel({
+                id: image.getId(),
+                width: image.getWidth(),
+                height: image.getHeight(),
+                imageFormat: image.getImageFormat(),
+                signature: image.getSignature()
+            }) : null
         });
         return this.client.account(request);
     }
 
-    sendMessage(recipientId: string, text?: string, imageId?: string): Observable<IMessageDto> {
-        const request = new CreateMessageRequest();
-        request.recipientId = recipientId;
-        request.text = text;
-        request.imageId = imageId;
+    sendMessage(recipientId: string, text?: string, image?: UploadImageResponse): Observable<IMessageDto> {
+        const request = new CreateMessageRequest({
+            recipientId,
+            text,
+            image: image ? new ImageRequestModel({
+                id: image.getId(),
+                width: image.getWidth(),
+                height: image.getHeight(),
+                imageFormat: image.getImageFormat(),
+                signature: image.getSignature()
+            }) : null
+        });
+
         return this.client.message(request);
     }
 

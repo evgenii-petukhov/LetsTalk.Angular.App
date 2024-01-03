@@ -317,7 +317,11 @@ proto.file_upload.UploadImageResponse.prototype.toObject = function(opt_includeI
  */
 proto.file_upload.UploadImageResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    imageId: jspb.Message.getFieldWithDefault(msg, 1, "")
+    id: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    width: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    height: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    imageFormat: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    signature: jspb.Message.getFieldWithDefault(msg, 5, "")
   };
 
   if (includeInstance) {
@@ -356,7 +360,23 @@ proto.file_upload.UploadImageResponse.deserializeBinaryFromReader = function(msg
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setImageId(value);
+      msg.setId(value);
+      break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setWidth(value);
+      break;
+    case 3:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setHeight(value);
+      break;
+    case 4:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setImageFormat(value);
+      break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSignature(value);
       break;
     default:
       reader.skipField();
@@ -387,10 +407,38 @@ proto.file_upload.UploadImageResponse.prototype.serializeBinary = function() {
  */
 proto.file_upload.UploadImageResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getImageId();
+  f = message.getId();
   if (f.length > 0) {
     writer.writeString(
       1,
+      f
+    );
+  }
+  f = message.getWidth();
+  if (f !== 0) {
+    writer.writeInt32(
+      2,
+      f
+    );
+  }
+  f = message.getHeight();
+  if (f !== 0) {
+    writer.writeInt32(
+      3,
+      f
+    );
+  }
+  f = message.getImageFormat();
+  if (f !== 0) {
+    writer.writeInt32(
+      4,
+      f
+    );
+  }
+  f = message.getSignature();
+  if (f.length > 0) {
+    writer.writeString(
+      5,
       f
     );
   }
@@ -398,10 +446,10 @@ proto.file_upload.UploadImageResponse.serializeBinaryToWriter = function(message
 
 
 /**
- * optional string image_id = 1;
+ * optional string id = 1;
  * @return {string}
  */
-proto.file_upload.UploadImageResponse.prototype.getImageId = function() {
+proto.file_upload.UploadImageResponse.prototype.getId = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -410,8 +458,80 @@ proto.file_upload.UploadImageResponse.prototype.getImageId = function() {
  * @param {string} value
  * @return {!proto.file_upload.UploadImageResponse} returns this
  */
-proto.file_upload.UploadImageResponse.prototype.setImageId = function(value) {
+proto.file_upload.UploadImageResponse.prototype.setId = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional int32 width = 2;
+ * @return {number}
+ */
+proto.file_upload.UploadImageResponse.prototype.getWidth = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.file_upload.UploadImageResponse} returns this
+ */
+proto.file_upload.UploadImageResponse.prototype.setWidth = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional int32 height = 3;
+ * @return {number}
+ */
+proto.file_upload.UploadImageResponse.prototype.getHeight = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.file_upload.UploadImageResponse} returns this
+ */
+proto.file_upload.UploadImageResponse.prototype.setHeight = function(value) {
+  return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * optional int32 image_format = 4;
+ * @return {number}
+ */
+proto.file_upload.UploadImageResponse.prototype.getImageFormat = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.file_upload.UploadImageResponse} returns this
+ */
+proto.file_upload.UploadImageResponse.prototype.setImageFormat = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional string signature = 5;
+ * @return {string}
+ */
+proto.file_upload.UploadImageResponse.prototype.getSignature = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.file_upload.UploadImageResponse} returns this
+ */
+proto.file_upload.UploadImageResponse.prototype.setSignature = function(value) {
+  return jspb.Message.setProto3StringField(this, 5, value);
 };
 
 

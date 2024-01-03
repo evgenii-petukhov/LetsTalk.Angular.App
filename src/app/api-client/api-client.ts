@@ -549,7 +549,7 @@ export interface IAccountDto {
 export class CreateMessageRequest implements ICreateMessageRequest {
     text?: string | undefined;
     recipientId?: string | undefined;
-    imageId?: string | undefined;
+    image?: ImageRequestModel;
 
     constructor(data?: ICreateMessageRequest) {
         if (data) {
@@ -564,7 +564,7 @@ export class CreateMessageRequest implements ICreateMessageRequest {
         if (_data) {
             this.text = _data["text"];
             this.recipientId = _data["recipientId"];
-            this.imageId = _data["imageId"];
+            this.image = _data["image"] ? ImageRequestModel.fromJS(_data["image"]) : <any>undefined;
         }
     }
 
@@ -579,7 +579,7 @@ export class CreateMessageRequest implements ICreateMessageRequest {
         data = typeof data === 'object' ? data : {};
         data["text"] = this.text;
         data["recipientId"] = this.recipientId;
-        data["imageId"] = this.imageId;
+        data["image"] = this.image ? this.image.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -587,7 +587,7 @@ export class CreateMessageRequest implements ICreateMessageRequest {
 export interface ICreateMessageRequest {
     text?: string | undefined;
     recipientId?: string | undefined;
-    imageId?: string | undefined;
+    image?: ImageRequestModel;
 }
 
 export class ImagePreviewDto implements IImagePreviewDto {
@@ -640,6 +640,58 @@ export interface IImagePreviewDto {
     accountId?: string | undefined;
     width?: number | undefined;
     height?: number | undefined;
+}
+
+export class ImageRequestModel implements IImageRequestModel {
+    id?: string | undefined;
+    width?: number;
+    height?: number;
+    imageFormat?: number;
+    signature?: string | undefined;
+
+    constructor(data?: IImageRequestModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.width = _data["width"];
+            this.height = _data["height"];
+            this.imageFormat = _data["imageFormat"];
+            this.signature = _data["signature"];
+        }
+    }
+
+    static fromJS(data: any): ImageRequestModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImageRequestModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["width"] = this.width;
+        data["height"] = this.height;
+        data["imageFormat"] = this.imageFormat;
+        data["signature"] = this.signature;
+        return data;
+    }
+}
+
+export interface IImageRequestModel {
+    id?: string | undefined;
+    width?: number;
+    height?: number;
+    imageFormat?: number;
+    signature?: string | undefined;
 }
 
 export class LinkPreviewDto implements ILinkPreviewDto {
@@ -854,7 +906,7 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
     email?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    imageId?: string | undefined;
+    image?: ImageRequestModel;
 
     constructor(data?: IUpdateProfileRequest) {
         if (data) {
@@ -870,7 +922,7 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
             this.email = _data["email"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
-            this.imageId = _data["imageId"];
+            this.image = _data["image"] ? ImageRequestModel.fromJS(_data["image"]) : <any>undefined;
         }
     }
 
@@ -886,7 +938,7 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
         data["email"] = this.email;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
-        data["imageId"] = this.imageId;
+        data["image"] = this.image ? this.image.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -895,7 +947,7 @@ export interface IUpdateProfileRequest {
     email?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    imageId?: string | undefined;
+    image?: ImageRequestModel;
 }
 
 export class ApiException extends Error {
