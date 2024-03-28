@@ -1,6 +1,6 @@
 <div>
     <ul>
-        <li *ngFor="let account of (accounts$ | async | orderBy:['unreadCount','lastMessageDate','firstName','lastName']:['desc','desc','asc','asc'])"
+        <li *ngFor="let account of (accounts$ | async | orderBy:['unreadCount','lastMessageDate','chatName']:['desc','desc','asc'])"
             [ngClass]="(selectedAccountId$ | async) === account.id && 'selected'">
             <app-account-list-item [account]="account"
                 (accountSelected)="onAccountSelected($event)">
