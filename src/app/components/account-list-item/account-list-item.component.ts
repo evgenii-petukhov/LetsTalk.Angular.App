@@ -7,11 +7,11 @@ import { IAccountDto } from 'src/app/api-client/api-client';
     styleUrls: ['./account-list-item.component.scss']
 })
 export class AccountListItemComponent{
-    @Input() account: IAccountDto;
-    @Output() accountSelected = new EventEmitter<string>();
+    @Input() chat: IAccountDto;
+    @Output() chatSelected = new EventEmitter<string>();
 
-    onAccountSelected(): boolean {
-        this.accountSelected.emit(this.account.id);
+    onChatSelected(): boolean {
+        this.chatSelected.emit(this.chat.id);
         return false;
     }
 }

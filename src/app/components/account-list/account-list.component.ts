@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { IAccountDto } from 'src/app/api-client/api-client';
-import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
-import { selectSelectedAccountId } from 'src/app/state/selected-account-id/select-selected-account-id.selectors';
+import { selectChats } from 'src/app/state/chats/chats.selector';
+import { selectSelectedChatId } from 'src/app/state/selected-chat-id/select-selected-chat-id.selectors';
 import { StoreService } from 'src/app/services/store.service';
 import { Subject, takeUntil } from 'rxjs';
-import { selectSelectedAccount } from 'src/app/state/selected-account/select-selected-account.selector';
+import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-chat.selector';
 
 @Component({
     selector: 'app-account-list',
@@ -13,25 +13,25 @@ import { selectSelectedAccount } from 'src/app/state/selected-account/select-sel
     styleUrls: ['./account-list.component.scss'],
 })
 export class AccountListComponent implements OnInit, OnDestroy {
-    accounts: readonly IAccountDto[] = [];
-    accounts$ = this.store.select(selectAccounts);
-    selectedAccountId$ = this.store.select(selectSelectedAccountId);
-    selectedAccount$ = this.store.select(selectSelectedAccount);
+    chats: readonly IAccountDto[] = [];
+    chats$ = this.store.select(selectChats);
+    selectedChatId$ = this.store.select(selectSelectedChatId);
+    selectedChat$ = this.store.select(selectSelectedChat);
 
     private unsubscribe$: Subject<void> = new Subject<void>();
-    private selectedAccount: IAccountDto;
+    private selectedChat: IAccountDto;
 
     constructor(
         private store: Store,
         private storeService: StoreService) { }
 
     ngOnInit(): void {
-        this.accounts$.pipe(takeUntil(this.unsubscribe$)).subscribe(accounts => {
-            this.accounts = accounts;
+        this.chats$.pipe(takeUntil(this.unsubscribe$)).subscribe(chats => {
+            this.chats = chats;
         });
 
-        this.selectedAccount$.pipe(takeUntil(this.unsubscribe$)).subscribe(account => {
-            this.selectedAccount = account;
+        this.selectedChat$.pipe(takeUntil(this.unsubscribe$)).subscribe(chat => {
+            this.selectedChat = chat;
         });
     }
 
@@ -40,9 +40,9 @@ export class AccountListComponent implements OnInit, OnDestroy {
         this.unsubscribe$.complete();
     }
 
-    onAccountSelected(accountId: string): void {
-        this.storeService.setSelectedAccountId(accountId);
-        this.storeService.markAllAsRead(this.selectedAccount);
+    onChatSelected(chatId: string): void {
+        this.storeService.setSelectedChatId(chatId);
+        this.storeService.markAllAsRead(this.selectedChat);
         this.storeService.setLayoutSettings({ activeArea: 'chat' });
     }
 }

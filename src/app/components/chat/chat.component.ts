@@ -12,7 +12,7 @@ import { ApiService } from '../../services/api.service';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
-import { selectSelectedAccountId } from 'src/app/state/selected-account-id/select-selected-account-id.selectors';
+import { selectSelectedChatId } from 'src/app/state/selected-chat-id/select-selected-chat-id.selectors';
 import { selectMessages } from 'src/app/state/messages/messages.selector';
 import { StoreService } from 'src/app/services/store.service';
 import { Message } from 'src/app/models/message';
@@ -37,9 +37,9 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     faCamera = faCamera;
     messages$ = this.store.select(selectMessages);
 
-    private accountId$ = this.store.select(selectSelectedAccountId);
+    private chatId$ = this.store.select(selectSelectedChatId);
     private scrollContainer: HTMLDivElement;
-    private accountId: string;
+    private chatId: string;
     private unsubscribe$: Subject<void> = new Subject<void>();
     private pageIndex = 0;
     private scrollCounter = 0;
@@ -58,19 +58,19 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     @validate
     send(@required message: string): void {
         this.apiService.sendMessage(
-            this.accountId,
+            this.chatId,
             message
         ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
             messageDto.isMine = true;
             this.storeService.addMessage(messageDto);
-            this.storeService.setLastMessageInfo(this.accountId, messageDto.created, messageDto.id);
+            this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
         });
         this.message = '';
     }
 
     ngOnInit(): void {
-        this.accountId$.pipe(takeUntil(this.unsubscribe$)).subscribe(accountId => {
-            this.accountId = accountId;
+        this.chatId$.pipe(takeUntil(this.unsubscribe$)).subscribe(chatId => {
+            this.chatId = chatId;
             this.storeService.initMessages([]);
             this.pageIndex = 0;
             this.scrollCounter = 0;
@@ -113,13 +113,13 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
                     return this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.MESSAGE);
                 }).then(response => {
                     this.apiService.sendMessage(
-                        this.accountId,
+                        this.chatId,
                         undefined,
                         response
                     ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
                         messageDto.isMine = true;
                         this.storeService.addMessage(messageDto);
-                        this.storeService.setLastMessageInfo(this.accountId, messageDto.created, messageDto.id);
+                        this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
                         eventTarget.value = null;
                     });
                 }).catch(e => {
@@ -149,13 +149,13 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private loadMessages(): void {
-        if (this.accountId === null) {
+        if (this.chatId === null) {
             return;
         }
         this.scrollCounter++;
         this.previousScrollHeight = this.scrollContainer?.scrollHeight ?? 0;
         this.apiService.getMessages(
-            this.accountId,
+            this.chatId,
             this.pageIndex
         ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDtos => {
             this.storeService.addMessages(messageDtos);
@@ -168,7 +168,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
                     ? messageDtos.find(message => message.created === lastMessageDate)?.id
                     : '';
 
-                this.storeService.setLastMessageInfo(this.accountId, lastMessageDate, lastMessageId);
+                this.storeService.setLastMessageInfo(this.chatId, lastMessageDate, lastMessageId);
                 this.isMessageListLoaded = true;
             }
             if (messageDtos.length === 0) {

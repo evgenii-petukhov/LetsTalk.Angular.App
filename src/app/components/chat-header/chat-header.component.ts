@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectSelectedAccount } from 'src/app/state/selected-account/select-selected-account.selector';
+import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-chat.selector';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { StoreService } from 'src/app/services/store.service';
 
@@ -11,7 +11,7 @@ import { StoreService } from 'src/app/services/store.service';
 })
 export class ChatHeaderComponent {
     faChevronLeft = faChevronLeft;
-    account$ = this.store.select(selectSelectedAccount);
+    chat$ = this.store.select(selectSelectedChat);
 
     constructor(
         private store: Store,
@@ -19,6 +19,6 @@ export class ChatHeaderComponent {
 
     onBackClicked(): void {
         this.storeService.setLayoutSettings({ activeArea: 'contacts' });
-        this.storeService.setSelectedAccountId(null);
+        this.storeService.setSelectedChatId(null);
     }
 }

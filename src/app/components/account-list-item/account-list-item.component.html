@@ -1,17 +1,17 @@
-<a href="#" *ngIf="account" (click)="onAccountSelected()">
+<a href="#" *ngIf="chat" (click)="onChatSelected()">
     <app-avatar class="user-photo"
-        [urlOptions]="[account.imageId, account.photoUrl]"></app-avatar>
+        [urlOptions]="[chat.imageId, chat.photoUrl]"></app-avatar>
     <div class="user-details">
         <div class="user-name">
-            {{ account.chatName }}
+            {{ chat.chatName }}
         </div>
-        <div class="unread-count" *ngIf="account.unreadCount">
+        <div class="unread-count" *ngIf="chat.unreadCount">
             <div class="unread-count-text">
-                {{account.unreadCount}}
+                {{chat.unreadCount}}
             </div>
         </div>
         <div class="social-icon">
-            <app-social-media-icon [iconTypeId]="account.accountTypeId"></app-social-media-icon>
+            <app-social-media-icon [iconTypeId]="chat.accountTypeId"></app-social-media-icon>
         </div>
     </div>
 </a>

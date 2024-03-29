@@ -3,13 +3,13 @@ import { ApiService } from '../../services/api.service';
 import { SignalrService } from 'src/app/services/signalr.service';
 import { IAccountDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto } from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
-import { selectSelectedAccountId } from 'src/app/state/selected-account-id/select-selected-account-id.selectors';
+import { selectSelectedChatId } from 'src/app/state/selected-chat-id/select-selected-chat-id.selectors';
 import { selectLayoutSettings } from 'src/app/state/layout-settings/select-layout-settings.selectors';
 import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
 import { Subject, takeUntil } from 'rxjs';
 import { selectViededImageId } from 'src/app/state/viewed-image-id/viewed-image-id.selectors';
-import { selectSelectedAccount } from 'src/app/state/selected-account/select-selected-account.selector';
+import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-chat.selector';
 
 @Component({
     selector: 'app-messenger',
@@ -17,14 +17,14 @@ import { selectSelectedAccount } from 'src/app/state/selected-account/select-sel
     styleUrls: ['./messenger.component.scss']
 })
 export class MessengerComponent implements OnInit, OnDestroy {
-    selectedAccountId$ = this.store.select(selectSelectedAccountId);
-    selectedAccount$ = this.store.select(selectSelectedAccount);
+    selectedChatId$ = this.store.select(selectSelectedChatId);
+    selectedChat$ = this.store.select(selectSelectedChat);
     selectedViewedImageId$ = this.store.select(selectViededImageId);
     layout$ = this.store.select(selectLayoutSettings);
 
     private chats: readonly IAccountDto[] = [];
-    private selectedAccountId: string;
-    private selectedAccount: IAccountDto;
+    private selectedChatId: string;
+    private selectedChat: IAccountDto;
     private isWindowActive = true;
     private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -39,7 +39,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
     @HostListener('document:visibilitychange', ['$event'])
     onVisibilityChange(event: Event): void {
         this.isWindowActive = !(event.target as Document).hidden;
-        this.storeService.markAllAsRead(this.selectedAccount);
+        this.storeService.markAllAsRead(this.selectedChat);
     }
 
     async ngOnInit(): Promise<void> {
@@ -47,12 +47,12 @@ export class MessengerComponent implements OnInit, OnDestroy {
             this.chats = chats;
         });
 
-        this.selectedAccountId$.pipe(takeUntil(this.unsubscribe$)).subscribe(accountId => {
-            this.selectedAccountId = accountId;
+        this.selectedChatId$.pipe(takeUntil(this.unsubscribe$)).subscribe(chatId => {
+            this.selectedChatId = chatId;
         });
 
-        this.selectedAccount$.pipe(takeUntil(this.unsubscribe$)).subscribe(account => {
-            this.selectedAccount = account;
+        this.selectedChat$.pipe(takeUntil(this.unsubscribe$)).subscribe(chat => {
+            this.selectedChat = chat;
         });
 
         await this.signalrService.init(
@@ -69,10 +69,10 @@ export class MessengerComponent implements OnInit, OnDestroy {
 
     handleMessageNotification(messageDto: IMessageDto): void {
         this.storeService.setLastMessageInfo(messageDto.senderId, messageDto.created, messageDto.id);
-        if ([messageDto.senderId, messageDto.recipientId].indexOf(this.selectedAccountId) > -1) {
+        if ([messageDto.senderId, messageDto.recipientId].indexOf(this.selectedChatId) > -1) {
             this.storeService.addMessage(messageDto);
         }
-        if (this.isWindowActive && (messageDto.senderId === this.selectedAccountId)) {
+        if (this.isWindowActive && (messageDto.senderId === this.selectedChatId)) {
             this.apiService.markAsRead(messageDto.id).pipe(takeUntil(this.unsubscribe$)).subscribe();
         } else {
             const sender = this.chats.find(chat => chat.id === messageDto.senderId);
@@ -87,14 +87,14 @@ export class MessengerComponent implements OnInit, OnDestroy {
     }
 
     handleLinkPreviewNotification(linkPreviewDto: ILinkPreviewDto): void {
-        if (linkPreviewDto.accountId !== this.selectedAccountId) {
+        if (linkPreviewDto.accountId !== this.selectedChatId) {
             return;
         }
         this.storeService.setLinkPreview(linkPreviewDto);
     }
 
     handleImagePreviewNotification(imagePreviewDto: IImagePreviewDto): void {
-        if (imagePreviewDto.accountId !== this.selectedAccountId) {
+        if (imagePreviewDto.accountId !== this.selectedChatId) {
             return;
         }
         this.storeService.setImagePreview(imagePreviewDto);
