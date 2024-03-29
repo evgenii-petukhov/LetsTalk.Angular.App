@@ -42,14 +42,14 @@ export class StoreService {
         });
     }
 
-    getAccounts(): Promise<readonly IAccountDto[]> {
+    getChats(): Promise<readonly IAccountDto[]> {
         return new Promise<readonly IAccountDto[]>(resolve => {
             this.store.select(selectAccounts).subscribe(accounts => {
                 if (accounts) {
                     resolve(accounts);
                     return;
                 }
-                this.apiService.getAccounts().subscribe(response => {
+                this.apiService.getChats().subscribe(response => {
                     this.store.dispatch(accountsActions.init({ accounts: response }));
                     resolve(response);
                 });

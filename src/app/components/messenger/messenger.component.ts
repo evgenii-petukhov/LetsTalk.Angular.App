@@ -22,7 +22,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
     selectedViewedImageId$ = this.store.select(selectViededImageId);
     layout$ = this.store.select(selectLayoutSettings);
 
-    private accounts: readonly IAccountDto[] = [];
+    private chats: readonly IAccountDto[] = [];
     private selectedAccountId: string;
     private selectedAccount: IAccountDto;
     private isWindowActive = true;
@@ -43,8 +43,8 @@ export class MessengerComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit(): Promise<void> {
-        this.storeService.getAccounts().then(accounts => {
-            this.accounts = accounts;
+        this.storeService.getChats().then(chats => {
+            this.chats = chats;
         });
 
         this.selectedAccountId$.pipe(takeUntil(this.unsubscribe$)).subscribe(accountId => {
@@ -75,7 +75,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
         if (this.isWindowActive && (messageDto.senderId === this.selectedAccountId)) {
             this.apiService.markAsRead(messageDto.id).pipe(takeUntil(this.unsubscribe$)).subscribe();
         } else {
-            const sender = this.accounts.find(account => account.id === messageDto.senderId);
+            const sender = this.chats.find(chat => chat.id === messageDto.senderId);
             if (sender) {
                 this.storeService.incrementUnreadMessages(messageDto.senderId);
                 this.notificationService.showNotification(
