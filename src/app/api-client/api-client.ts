@@ -144,11 +144,11 @@ export class ApiClient {
      * @param page (optional) 
      * @return Success
      */
-    messageAll(accountId: string, page: number | undefined): Observable<MessageDto[]> {
-        let url_ = this.baseUrl + "/api/Message/{accountId}?";
-        if (accountId === undefined || accountId === null)
-            throw new Error("The parameter 'accountId' must be defined.");
-        url_ = url_.replace("{accountId}", encodeURIComponent("" + accountId));
+    messageAll(chatId: string, page: number | undefined): Observable<MessageDto[]> {
+        let url_ = this.baseUrl + "/api/Message/{chatId}?";
+        if (chatId === undefined || chatId === null)
+            throw new Error("The parameter 'chatId' must be defined.");
+        url_ = url_.replace("{chatId}", encodeURIComponent("" + chatId));
         if (page === null)
             throw new Error("The parameter 'page' cannot be null.");
         else if (page !== undefined)

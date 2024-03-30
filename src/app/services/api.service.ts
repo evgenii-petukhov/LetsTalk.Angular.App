@@ -36,8 +36,8 @@ export class ApiService {
         return this.client.chat();
     }
 
-    getMessages(accountId: string, pageIndex: number): Observable<IMessageDto[]> {
-        return this.client.messageAll(accountId, !pageIndex ? undefined : pageIndex);
+    getMessages(chatId: string, pageIndex: number): Observable<IMessageDto[]> {
+        return this.client.messageAll(chatId, !pageIndex ? undefined : pageIndex);
     }
 
     getProfile(): Observable<IProfileDto> {
