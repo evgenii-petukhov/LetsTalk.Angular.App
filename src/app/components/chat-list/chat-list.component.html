@@ -2,9 +2,9 @@
     <ul>
         <li *ngFor="let chat of (chats$ | async | orderBy:['unreadCount','lastMessageDate','chatName']:['desc','desc','asc'])"
             [ngClass]="(selectedChatId$ | async) === chat.id && 'selected'">
-            <app-account-list-item [chat]="chat"
+            <app-chat-list-item [chat]="chat"
                 (chatSelected)="onChatSelected($event)">
-            </app-account-list-item>
+            </app-chat-list-item>
         </li>
     </ul>
 </div>

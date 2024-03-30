@@ -8,11 +8,11 @@ import { Subject, takeUntil } from 'rxjs';
 import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-chat.selector';
 
 @Component({
-    selector: 'app-account-list',
-    templateUrl: './account-list.component.html',
-    styleUrls: ['./account-list.component.scss'],
+    selector: 'app-chat-list',
+    templateUrl: './chat-list.component.html',
+    styleUrls: ['./chat-list.component.scss'],
 })
-export class AccountListComponent implements OnInit, OnDestroy {
+export class ChatListComponent implements OnInit, OnDestroy {
     chats: readonly IChatDto[] = [];
     chats$ = this.store.select(selectChats);
     selectedChatId$ = this.store.select(selectSelectedChatId);

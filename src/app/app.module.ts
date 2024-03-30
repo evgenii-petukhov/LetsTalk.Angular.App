@@ -12,9 +12,9 @@ import { environment } from '../environments/environment';
 import { authInterceptorProvider } from './providers/auth-interceptor-provider';
 import { API_BASE_URL } from './api-client/api-client';
 import { apiClientProvider } from './providers/api-client-provider';
-import { AccountListComponent } from './components/account-list/account-list.component';
+import { ChatListComponent } from './components/chat-list/chat-list.component';
 import { MessengerComponent } from './components/messenger/messenger.component';
-import { AccountListItemComponent } from './components/account-list-item/account-list-item.component';
+import { ChatListItemComponent } from './components/chat-list-item/chat-list-item.component';
 import { SocialLoginModule } from '@abacritt/angularx-social-login';
 import { BrowserModule } from '@angular/platform-browser';
 import { MessageComponent } from './components/message/message.component';
@@ -43,9 +43,9 @@ import { grpcLogInterceptorProvider } from './providers/grpc-log-interceptor-pro
         AuthComponent,
         ChatComponent,
         ProfileComponent,
-        AccountListComponent,
+        ChatListComponent,
         MessengerComponent,
-        AccountListItemComponent,
+        ChatListItemComponent,
         MessageComponent,
         LoggedInUserComponent,
         SocialMediaIconComponent,

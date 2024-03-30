@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AccountListComponent } from './account-list.component';
+import { ChatListComponent } from './chat-list.component';
 
-describe('AccountListComponent', () => {
-    let component: AccountListComponent;
-    let fixture: ComponentFixture<AccountListComponent>;
+describe('ChatListComponent', () => {
+    let component: ChatListComponent;
+    let fixture: ComponentFixture<ChatListComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [AccountListComponent]
+            declarations: [ChatListComponent]
         })
             .compileComponents();
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(AccountListComponent);
+        fixture = TestBed.createComponent(ChatListComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
