@@ -1,7 +1,7 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { SignalrService } from 'src/app/services/signalr.service';
-import { IAccountDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto } from 'src/app/api-client/api-client';
+import { IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto } from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
 import { selectSelectedChatId } from 'src/app/state/selected-chat-id/select-selected-chat-id.selectors';
 import { selectLayoutSettings } from 'src/app/state/layout-settings/select-layout-settings.selectors';
@@ -22,9 +22,9 @@ export class MessengerComponent implements OnInit, OnDestroy {
     selectedViewedImageId$ = this.store.select(selectViededImageId);
     layout$ = this.store.select(selectLayoutSettings);
 
-    private chats: readonly IAccountDto[] = [];
+    private chats: readonly IChatDto[] = [];
     private selectedChatId: string;
-    private selectedChat: IAccountDto;
+    private selectedChat: IChatDto;
     private isWindowActive = true;
     private unsubscribe$: Subject<void> = new Subject<void>();
 

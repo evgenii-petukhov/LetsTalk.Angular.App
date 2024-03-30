@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { IAccountDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto } from '../api-client/api-client';
+import { IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto, IProfileDto } from '../api-client/api-client';
 import { chatsActions } from '../state/chats/chats.actions';
 import { ILayoutSettngs } from '../models/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
@@ -26,7 +26,7 @@ export class StoreService {
         private apiService: ApiService,
         private fileStorageService: FileStorageService) {}
 
-    markAllAsRead(chat: IAccountDto): void {
+    markAllAsRead(chat: IChatDto): void {
         if (!chat || chat.unreadCount === 0) {
             return;
         }
@@ -42,8 +42,8 @@ export class StoreService {
         });
     }
 
-    getChats(): Promise<readonly IAccountDto[]> {
-        return new Promise<readonly IAccountDto[]>(resolve => {
+    getChats(): Promise<readonly IChatDto[]> {
+        return new Promise<readonly IChatDto[]>(resolve => {
             this.store.select(selectChats).subscribe(chats => {
                 if (chats) {
                     resolve(chats);
@@ -90,8 +90,8 @@ export class StoreService {
         this.store.dispatch(layoutSettingsActions.init({ settings }));
     }
 
-    getLoggedInUser(): Promise<IAccountDto> {
-        return new Promise<IAccountDto>(resolve => {
+    getLoggedInUser(): Promise<IProfileDto> {
+        return new Promise<IProfileDto>(resolve => {
             this.store.select(selectLoggedInUser).subscribe(account => {
                 if (account) {
                     resolve(account);
@@ -106,7 +106,7 @@ export class StoreService {
         });
     }
 
-    setLoggedInUser(account: IAccountDto): void {
+    setLoggedInUser(account: IProfileDto): void {
         this.store.dispatch(loggedInUserActions.set({ account }));
     }
 

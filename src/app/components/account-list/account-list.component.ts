@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { IAccountDto } from 'src/app/api-client/api-client';
+import { IChatDto } from 'src/app/api-client/api-client';
 import { selectChats } from 'src/app/state/chats/chats.selector';
 import { selectSelectedChatId } from 'src/app/state/selected-chat-id/select-selected-chat-id.selectors';
 import { StoreService } from 'src/app/services/store.service';
@@ -13,13 +13,13 @@ import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-
     styleUrls: ['./account-list.component.scss'],
 })
 export class AccountListComponent implements OnInit, OnDestroy {
-    chats: readonly IAccountDto[] = [];
+    chats: readonly IChatDto[] = [];
     chats$ = this.store.select(selectChats);
     selectedChatId$ = this.store.select(selectSelectedChatId);
     selectedChat$ = this.store.select(selectSelectedChat);
 
     private unsubscribe$: Subject<void> = new Subject<void>();
-    private selectedChat: IAccountDto;
+    private selectedChat: IChatDto;
 
     constructor(
         private store: Store,

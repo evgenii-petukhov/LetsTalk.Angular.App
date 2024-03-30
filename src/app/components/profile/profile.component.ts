@@ -11,7 +11,7 @@ import { ImageService } from 'src/app/services/image.service';
 import { environment } from 'src/environments/environment';
 import { FileStorageService } from 'src/app/services/file-storage.service';
 import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
-import { AccountDto } from 'src/app/api-client/api-client';
+import { ProfileDto } from 'src/app/api-client/api-client';
 import { Subject, takeUntil } from 'rxjs';
 
 // https://angular.io/guide/reactive-forms
@@ -102,8 +102,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
             this.form.value.firstName,
             this.form.value.lastName,
             response).pipe(takeUntil(this.unsubscribe$)).subscribe({
-                next: (accountDto: AccountDto) => {
-                    this.storeService.setLoggedInUser(accountDto);
+                next: (profileDto: ProfileDto) => {
+                    this.storeService.setLoggedInUser(profileDto);
                     this.router.navigate(['chats']);
                 },
                 error: e => {

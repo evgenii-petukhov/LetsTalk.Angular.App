@@ -5,12 +5,13 @@ import {
     LoginRequest,
     LoginResponseDto,
     ApiClient,
-    IAccountDto,
     CreateMessageRequest,
     IMessageDto,
     UpdateProfileRequest,
-    AccountDto,
-    ImageRequestModel
+    ImageRequestModel,
+    IChatDto,
+    IProfileDto,
+    ProfileDto
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 
@@ -31,7 +32,7 @@ export class ApiService {
         return this.client.login(request);
     }
 
-    getChats(): Observable<IAccountDto[]> {
+    getChats(): Observable<IChatDto[]> {
         return this.client.chat();
     }
 
@@ -39,11 +40,11 @@ export class ApiService {
         return this.client.messageAll(accountId, !pageIndex ? undefined : pageIndex);
     }
 
-    getProfile(): Observable<IAccountDto> {
+    getProfile(): Observable<IProfileDto> {
         return this.client.profileGET();
     }
 
-    saveProfile(email: string, firstName: string, lastName: string, image?: UploadImageResponse): Observable<AccountDto> {
+    saveProfile(email: string, firstName: string, lastName: string, image?: UploadImageResponse): Observable<ProfileDto> {
         const request = new UpdateProfileRequest({
             email,
             firstName,

@@ -1,4 +1,4 @@
 import { createFeatureSelector } from '@ngrx/store';
-import { IAccountDto } from 'src/app/api-client/api-client';
+import { IChatDto } from 'src/app/api-client/api-client';
 
-export const selectChats = createFeatureSelector<readonly IAccountDto[]>('chats');
+export const selectChats = createFeatureSelector<readonly IChatDto[]>('chats');

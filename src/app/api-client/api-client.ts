@@ -85,7 +85,7 @@ export class ApiClient {
     /**
      * @return Success
      */
-    chat(): Observable<AccountDto[]> {
+    chat(): Observable<ChatDto[]> {
         let url_ = this.baseUrl + "/api/Chat";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -104,14 +104,14 @@ export class ApiClient {
                 try {
                     return this.processChat(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<AccountDto[]>;
+                    return _observableThrow(e) as any as Observable<ChatDto[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<AccountDto[]>;
+                return _observableThrow(response_) as any as Observable<ChatDto[]>;
         }));
     }
 
-    protected processChat(response: HttpResponseBase): Observable<AccountDto[]> {
+    protected processChat(response: HttpResponseBase): Observable<ChatDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -125,7 +125,7 @@ export class ApiClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(AccountDto.fromJS(item));
+                    result200!.push(ChatDto.fromJS(item));
             }
             else {
                 result200 = <any>null;
@@ -369,7 +369,7 @@ export class ApiClient {
     /**
      * @return Success
      */
-    profileGET(): Observable<AccountDto> {
+    profileGET(): Observable<ProfileDto> {
         let url_ = this.baseUrl + "/api/Profile";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -388,14 +388,14 @@ export class ApiClient {
                 try {
                     return this.processProfileGET(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<AccountDto>;
+                    return _observableThrow(e) as any as Observable<ProfileDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<AccountDto>;
+                return _observableThrow(response_) as any as Observable<ProfileDto>;
         }));
     }
 
-    protected processProfileGET(response: HttpResponseBase): Observable<AccountDto> {
+    protected processProfileGET(response: HttpResponseBase): Observable<ProfileDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -406,7 +406,7 @@ export class ApiClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AccountDto.fromJS(resultData200);
+            result200 = ProfileDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -421,7 +421,7 @@ export class ApiClient {
      * @param body (optional) 
      * @return Success
      */
-    profilePUT(body: UpdateProfileRequest | undefined): Observable<AccountDto> {
+    profilePUT(body: UpdateProfileRequest | undefined): Observable<ProfileDto> {
         let url_ = this.baseUrl + "/api/Profile";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -444,14 +444,14 @@ export class ApiClient {
                 try {
                     return this.processProfilePUT(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<AccountDto>;
+                    return _observableThrow(e) as any as Observable<ProfileDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<AccountDto>;
+                return _observableThrow(response_) as any as Observable<ProfileDto>;
         }));
     }
 
-    protected processProfilePUT(response: HttpResponseBase): Observable<AccountDto> {
+    protected processProfilePUT(response: HttpResponseBase): Observable<ProfileDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -462,7 +462,7 @@ export class ApiClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AccountDto.fromJS(resultData200);
+            result200 = ProfileDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -474,20 +474,17 @@ export class ApiClient {
     }
 }
 
-export class AccountDto implements IAccountDto {
+export class ChatDto implements IChatDto {
     id?: string | undefined;
     accountTypeId?: number;
     photoUrl?: string | undefined;
-    firstName?: string | undefined;
-    lastName?: string | undefined;
     chatName?: string | undefined;
-    email?: string | undefined;
     unreadCount?: number;
     lastMessageDate?: number;
     lastMessageId?: string | undefined;
     imageId?: string | undefined;
 
-    constructor(data?: IAccountDto) {
+    constructor(data?: IChatDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -501,10 +498,7 @@ export class AccountDto implements IAccountDto {
             this.id = _data["id"];
             this.accountTypeId = _data["accountTypeId"];
             this.photoUrl = _data["photoUrl"];
-            this.firstName = _data["firstName"];
-            this.lastName = _data["lastName"];
             this.chatName = _data["chatName"];
-            this.email = _data["email"];
             this.unreadCount = _data["unreadCount"];
             this.lastMessageDate = _data["lastMessageDate"];
             this.lastMessageId = _data["lastMessageId"];
@@ -512,9 +506,9 @@ export class AccountDto implements IAccountDto {
         }
     }
 
-    static fromJS(data: any): AccountDto {
+    static fromJS(data: any): ChatDto {
         data = typeof data === 'object' ? data : {};
-        let result = new AccountDto();
+        let result = new ChatDto();
         result.init(data);
         return result;
     }
@@ -524,10 +518,7 @@ export class AccountDto implements IAccountDto {
         data["id"] = this.id;
         data["accountTypeId"] = this.accountTypeId;
         data["photoUrl"] = this.photoUrl;
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
         data["chatName"] = this.chatName;
-        data["email"] = this.email;
         data["unreadCount"] = this.unreadCount;
         data["lastMessageDate"] = this.lastMessageDate;
         data["lastMessageId"] = this.lastMessageId;
@@ -536,14 +527,11 @@ export class AccountDto implements IAccountDto {
     }
 }
 
-export interface IAccountDto {
+export interface IChatDto {
     id?: string | undefined;
     accountTypeId?: number;
     photoUrl?: string | undefined;
-    firstName?: string | undefined;
-    lastName?: string | undefined;
     chatName?: string | undefined;
-    email?: string | undefined;
     unreadCount?: number;
     lastMessageDate?: number;
     lastMessageId?: string | undefined;
@@ -904,6 +892,62 @@ export interface IMessageDto {
     linkPreview?: LinkPreviewDto;
     imageId?: string | undefined;
     imagePreview?: ImagePreviewDto;
+}
+
+export class ProfileDto implements IProfileDto {
+    id?: string | undefined;
+    photoUrl?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    email?: string | undefined;
+    imageId?: string | undefined;
+
+    constructor(data?: IProfileDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.photoUrl = _data["photoUrl"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.email = _data["email"];
+            this.imageId = _data["imageId"];
+        }
+    }
+
+    static fromJS(data: any): ProfileDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProfileDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["photoUrl"] = this.photoUrl;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["email"] = this.email;
+        data["imageId"] = this.imageId;
+        return data;
+    }
+}
+
+export interface IProfileDto {
+    id?: string | undefined;
+    photoUrl?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    email?: string | undefined;
+    imageId?: string | undefined;
 }
 
 export class UpdateProfileRequest implements IUpdateProfileRequest {

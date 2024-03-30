@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { IAccountDto } from 'src/app/api-client/api-client';
+import { IChatDto } from 'src/app/api-client/api-client';
 
 @Component({
     selector: 'app-account-list-item',
@@ -7,7 +7,7 @@ import { IAccountDto } from 'src/app/api-client/api-client';
     styleUrls: ['./account-list-item.component.scss']
 })
 export class AccountListItemComponent{
-    @Input() chat: IAccountDto;
+    @Input() chat: IChatDto;
     @Output() chatSelected = new EventEmitter<string>();
 
     onChatSelected(): boolean {
