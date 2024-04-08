@@ -60,9 +60,9 @@ export class ApiService {
         return this.client.profilePUT(request);
     }
 
-    sendMessage(recipientId: string, text?: string, image?: UploadImageResponse): Observable<IMessageDto> {
+    sendMessage(chatId: string, text?: string, image?: UploadImageResponse): Observable<IMessageDto> {
         const request = new CreateMessageRequest({
-            recipientId,
+            chatId,
             text,
             image: image ? new ImageRequestModel({
                 id: image.getId(),
@@ -78,9 +78,5 @@ export class ApiService {
 
     markAsRead(messageId: string): Observable<void> {
         return this.client.markAsRead(messageId);
-    }
-
-    markAllAsRead(messageId: string): Observable<void> {
-        return this.client.markAllAsRead(messageId);
     }
 }

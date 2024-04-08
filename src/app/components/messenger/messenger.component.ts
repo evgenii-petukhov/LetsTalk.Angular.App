@@ -68,18 +68,23 @@ export class MessengerComponent implements OnInit, OnDestroy {
     }
 
     handleMessageNotification(messageDto: IMessageDto): void {
-        this.storeService.setLastMessageInfo(messageDto.senderId, messageDto.created, messageDto.id);
-        if ([messageDto.senderId, messageDto.recipientId].indexOf(this.selectedChatId) > -1) {
+        this.storeService.setLastMessageInfo(messageDto.chatId, messageDto.created, messageDto.id);
+        if (messageDto.chatId === this.selectedChatId) {
             this.storeService.addMessage(messageDto);
         }
-        if (this.isWindowActive && (messageDto.senderId === this.selectedChatId)) {
+
+        if (messageDto.isMine) {
+            return;
+        }
+
+        if (this.isWindowActive && (messageDto.chatId === this.selectedChatId)) {
             this.apiService.markAsRead(messageDto.id).pipe(takeUntil(this.unsubscribe$)).subscribe();
         } else {
-            const sender = this.chats.find(chat => chat.id === messageDto.senderId);
-            if (sender) {
-                this.storeService.incrementUnreadMessages(messageDto.senderId);
+            const chat = this.chats.find(chat => chat.id === messageDto.chatId);
+            if (chat) {
+                this.storeService.incrementUnreadMessages(messageDto.chatId);
                 this.notificationService.showNotification(
-                    `${sender.chatName}`,
+                    `${chat.chatName}`,
                     messageDto.imageId ? 'Image' : messageDto.text,
                     this.isWindowActive);
             }
@@ -87,14 +92,14 @@ export class MessengerComponent implements OnInit, OnDestroy {
     }
 
     handleLinkPreviewNotification(linkPreviewDto: ILinkPreviewDto): void {
-        if (linkPreviewDto.accountId !== this.selectedChatId) {
+        if (linkPreviewDto.chatId !== this.selectedChatId) {
             return;
         }
         this.storeService.setLinkPreview(linkPreviewDto);
     }
 
     handleImagePreviewNotification(imagePreviewDto: IImagePreviewDto): void {
-        if (imagePreviewDto.accountId !== this.selectedChatId) {
+        if (imagePreviewDto.chatId !== this.selectedChatId) {
             return;
         }
         this.storeService.setImagePreview(imagePreviewDto);

@@ -315,58 +315,6 @@ export class ApiClient {
     }
 
     /**
-     * @param messageId (optional) 
-     * @return Success
-     */
-    markAllAsRead(messageId: string | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/Message/MarkAllAsRead?";
-        if (messageId === null)
-            throw new Error("The parameter 'messageId' cannot be null.");
-        else if (messageId !== undefined)
-            url_ += "messageId=" + encodeURIComponent("" + messageId) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMarkAllAsRead(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processMarkAllAsRead(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<void>;
-        }));
-    }
-
-    protected processMarkAllAsRead(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return _observableOf(null as any);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-
-    /**
      * @return Success
      */
     profileGET(): Observable<ProfileDto> {
@@ -540,7 +488,7 @@ export interface IChatDto {
 
 export class CreateMessageRequest implements ICreateMessageRequest {
     text?: string | undefined;
-    recipientId?: string | undefined;
+    chatId?: string | undefined;
     image?: ImageRequestModel;
 
     constructor(data?: ICreateMessageRequest) {
@@ -555,7 +503,7 @@ export class CreateMessageRequest implements ICreateMessageRequest {
     init(_data?: any) {
         if (_data) {
             this.text = _data["text"];
-            this.recipientId = _data["recipientId"];
+            this.chatId = _data["chatId"];
             this.image = _data["image"] ? ImageRequestModel.fromJS(_data["image"]) : <any>undefined;
         }
     }
@@ -570,7 +518,7 @@ export class CreateMessageRequest implements ICreateMessageRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["text"] = this.text;
-        data["recipientId"] = this.recipientId;
+        data["chatId"] = this.chatId;
         data["image"] = this.image ? this.image.toJSON() : <any>undefined;
         return data;
     }
@@ -578,14 +526,14 @@ export class CreateMessageRequest implements ICreateMessageRequest {
 
 export interface ICreateMessageRequest {
     text?: string | undefined;
-    recipientId?: string | undefined;
+    chatId?: string | undefined;
     image?: ImageRequestModel;
 }
 
 export class ImagePreviewDto implements IImagePreviewDto {
     messageId?: string | undefined;
     id?: string | undefined;
-    accountId?: string | undefined;
+    chatId?: string | undefined;
     width?: number | undefined;
     height?: number | undefined;
 
@@ -602,7 +550,7 @@ export class ImagePreviewDto implements IImagePreviewDto {
         if (_data) {
             this.messageId = _data["messageId"];
             this.id = _data["id"];
-            this.accountId = _data["accountId"];
+            this.chatId = _data["chatId"];
             this.width = _data["width"];
             this.height = _data["height"];
         }
@@ -619,7 +567,7 @@ export class ImagePreviewDto implements IImagePreviewDto {
         data = typeof data === 'object' ? data : {};
         data["messageId"] = this.messageId;
         data["id"] = this.id;
-        data["accountId"] = this.accountId;
+        data["chatId"] = this.chatId;
         data["width"] = this.width;
         data["height"] = this.height;
         return data;
@@ -629,7 +577,7 @@ export class ImagePreviewDto implements IImagePreviewDto {
 export interface IImagePreviewDto {
     messageId?: string | undefined;
     id?: string | undefined;
-    accountId?: string | undefined;
+    chatId?: string | undefined;
     width?: number | undefined;
     height?: number | undefined;
 }
@@ -688,7 +636,7 @@ export interface IImageRequestModel {
 
 export class LinkPreviewDto implements ILinkPreviewDto {
     messageId?: string | undefined;
-    accountId?: string | undefined;
+    chatId?: string | undefined;
     title?: string | undefined;
     imageUrl?: string | undefined;
     url?: string | undefined;
@@ -705,7 +653,7 @@ export class LinkPreviewDto implements ILinkPreviewDto {
     init(_data?: any) {
         if (_data) {
             this.messageId = _data["messageId"];
-            this.accountId = _data["accountId"];
+            this.chatId = _data["chatId"];
             this.title = _data["title"];
             this.imageUrl = _data["imageUrl"];
             this.url = _data["url"];
@@ -722,7 +670,7 @@ export class LinkPreviewDto implements ILinkPreviewDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["messageId"] = this.messageId;
-        data["accountId"] = this.accountId;
+        data["chatId"] = this.chatId;
         data["title"] = this.title;
         data["imageUrl"] = this.imageUrl;
         data["url"] = this.url;
@@ -732,7 +680,7 @@ export class LinkPreviewDto implements ILinkPreviewDto {
 
 export interface ILinkPreviewDto {
     messageId?: string | undefined;
-    accountId?: string | undefined;
+    chatId?: string | undefined;
     title?: string | undefined;
     imageUrl?: string | undefined;
     url?: string | undefined;
@@ -826,8 +774,7 @@ export class MessageDto implements IMessageDto {
     id?: string | undefined;
     text?: string | undefined;
     textHtml?: string | undefined;
-    senderId?: string | undefined;
-    recipientId?: string | undefined;
+    chatId?: string | undefined;
     isMine?: boolean | undefined;
     created?: number;
     linkPreview?: LinkPreviewDto;
@@ -848,8 +795,7 @@ export class MessageDto implements IMessageDto {
             this.id = _data["id"];
             this.text = _data["text"];
             this.textHtml = _data["textHtml"];
-            this.senderId = _data["senderId"];
-            this.recipientId = _data["recipientId"];
+            this.chatId = _data["chatId"];
             this.isMine = _data["isMine"];
             this.created = _data["created"];
             this.linkPreview = _data["linkPreview"] ? LinkPreviewDto.fromJS(_data["linkPreview"]) : <any>undefined;
@@ -870,8 +816,7 @@ export class MessageDto implements IMessageDto {
         data["id"] = this.id;
         data["text"] = this.text;
         data["textHtml"] = this.textHtml;
-        data["senderId"] = this.senderId;
-        data["recipientId"] = this.recipientId;
+        data["chatId"] = this.chatId;
         data["isMine"] = this.isMine;
         data["created"] = this.created;
         data["linkPreview"] = this.linkPreview ? this.linkPreview.toJSON() : <any>undefined;
@@ -885,8 +830,7 @@ export interface IMessageDto {
     id?: string | undefined;
     text?: string | undefined;
     textHtml?: string | undefined;
-    senderId?: string | undefined;
-    recipientId?: string | undefined;
+    chatId?: string | undefined;
     isMine?: boolean | undefined;
     created?: number;
     linkPreview?: LinkPreviewDto;
