@@ -78,7 +78,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
         }
 
         if (this.isWindowActive && (messageDto.chatId === this.selectedChatId)) {
-            this.apiService.markAsRead(messageDto.id).pipe(takeUntil(this.unsubscribe$)).subscribe();
+            this.apiService.markAsRead(messageDto.chatId, messageDto.id).pipe(takeUntil(this.unsubscribe$)).subscribe();
         } else {
             const chat = this.chats.find(chat => chat.id === messageDto.chatId);
             if (chat) {

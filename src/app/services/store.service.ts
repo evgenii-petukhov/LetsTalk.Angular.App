@@ -31,7 +31,7 @@ export class StoreService {
             return;
         }
 
-        this.apiService.markAsRead(chat.lastMessageId).subscribe(() => {
+        this.apiService.markAsRead(chat.id, chat.lastMessageId).subscribe(() => {
             setTimeout(() => {
                 this.setLastMessageInfo(chat.id, chat.lastMessageDate, chat.lastMessageId);
                 this.store.dispatch(chatsActions.setUnreadCount({

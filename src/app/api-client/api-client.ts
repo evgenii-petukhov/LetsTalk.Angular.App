@@ -263,11 +263,16 @@ export class ApiClient {
     }
 
     /**
+     * @param chatId (optional) 
      * @param messageId (optional) 
      * @return Success
      */
-    markAsRead(messageId: string | undefined): Observable<void> {
+    markAsRead(chatId: string | undefined, messageId: string | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/Message/MarkAsRead?";
+        if (chatId === null)
+            throw new Error("The parameter 'chatId' cannot be null.");
+        else if (chatId !== undefined)
+            url_ += "chatId=" + encodeURIComponent("" + chatId) + "&";
         if (messageId === null)
             throw new Error("The parameter 'messageId' cannot be null.");
         else if (messageId !== undefined)

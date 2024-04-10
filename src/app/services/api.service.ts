@@ -76,7 +76,7 @@ export class ApiService {
         return this.client.message(request);
     }
 
-    markAsRead(messageId: string): Observable<void> {
-        return this.client.markAsRead(messageId);
+    markAsRead(chatId: string, messageId: string): Observable<void> {
+        return this.client.markAsRead(chatId, messageId);
     }
 }
