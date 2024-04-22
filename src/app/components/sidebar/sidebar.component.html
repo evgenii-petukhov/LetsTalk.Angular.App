@@ -1,2 +1,8 @@
+<button class="new-chat-button" (click)="switchToAcccountList()">
+    <fa-icon [icon]="faCirclePlus" [title]="'New chat'"></fa-icon>
+</button>
 <app-logged-in-user></app-logged-in-user>
-<app-chat-list></app-chat-list>
+<app-chat-list *ngIf="state === sidebarState.chats; else accounts"></app-chat-list>
+<ng-template #accounts>
+
+</ng-template>
