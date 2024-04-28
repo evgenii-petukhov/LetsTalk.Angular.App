@@ -36,6 +36,10 @@ export class ApiService {
         return this.client.chat();
     }
 
+    getAccounts(): Observable<IChatDto[]> {
+        return this.client.account();
+    }
+
     getMessages(chatId: string, pageIndex: number): Observable<IMessageDto[]> {
         return this.client.messageAll(chatId, !pageIndex ? undefined : pageIndex);
     }

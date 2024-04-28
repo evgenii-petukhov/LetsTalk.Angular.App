@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { IChatDto } from 'src/app/api-client/api-client';
+import { IAccountDto } from 'src/app/api-client/api-client';
 import { Subject, takeUntil } from 'rxjs';
 import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
 
@@ -10,7 +10,7 @@ import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
     styleUrls: ['./account-list.component.scss'],
 })
 export class AccountListComponent implements OnInit, OnDestroy {
-    accounts: readonly IChatDto[] = [];
+    accounts: readonly IAccountDto[] = [];
     accounts$ = this.store.select(selectAccounts);
 
     private unsubscribe$: Subject<void> = new Subject<void>();

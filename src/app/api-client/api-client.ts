@@ -27,6 +27,64 @@ export class ApiClient {
     }
 
     /**
+     * @return Success
+     */
+    account(): Observable<AccountDto[]> {
+        let url_ = this.baseUrl + "/api/Account";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAccount(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAccount(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<AccountDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<AccountDto[]>;
+        }));
+    }
+
+    protected processAccount(response: HttpResponseBase): Observable<AccountDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(AccountDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -425,6 +483,62 @@ export class ApiClient {
         }
         return _observableOf(null as any);
     }
+}
+
+export class AccountDto implements IAccountDto {
+    id?: string | undefined;
+    accountTypeId?: number;
+    photoUrl?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    imageId?: string | undefined;
+
+    constructor(data?: IAccountDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.accountTypeId = _data["accountTypeId"];
+            this.photoUrl = _data["photoUrl"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.imageId = _data["imageId"];
+        }
+    }
+
+    static fromJS(data: any): AccountDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AccountDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["accountTypeId"] = this.accountTypeId;
+        data["photoUrl"] = this.photoUrl;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["imageId"] = this.imageId;
+        return data;
+    }
+}
+
+export interface IAccountDto {
+    id?: string | undefined;
+    accountTypeId?: number;
+    photoUrl?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    imageId?: string | undefined;
 }
 
 export class ChatDto implements IChatDto {

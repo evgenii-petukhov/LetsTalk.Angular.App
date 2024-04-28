@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
+import { faRightFromBracket, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { selectLoggedInUser } from 'src/app/state/logged-in-user/logged-in-user.selectors';
@@ -12,7 +12,10 @@ import { StoreService } from 'src/app/services/store.service';
 })
 export class LoggedInUserComponent implements OnInit {
     faRightFromBracket = faRightFromBracket;
+    faChevronLeft = faChevronLeft;
     account$ = this.store.select(selectLoggedInUser);
+    @Output() backButtonClicked = new EventEmitter();
+    @Input() @HostBinding('class.navigation-active') isNavigationActive: boolean = false;
 
     constructor(
         private tokenStorageService: TokenStorageService,
@@ -27,6 +30,11 @@ export class LoggedInUserComponent implements OnInit {
     logout(): boolean {
         this.tokenStorageService.signOut();
         window.location.reload();
+        return false;
+    }
+
+    onBackButtonClicked(): boolean {
+        this.backButtonClicked.emit();
         return false;
     }
 }

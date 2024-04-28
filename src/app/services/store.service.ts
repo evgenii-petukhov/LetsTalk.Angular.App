@@ -66,7 +66,7 @@ export class StoreService {
                     resolve(accounts);
                     return;
                 }
-                this.apiService.getChats().subscribe(response => {
+                this.apiService.getAccounts().subscribe(response => {
                     this.store.dispatch(accountsActions.init({ accounts: response }));
                     resolve(response);
                 });

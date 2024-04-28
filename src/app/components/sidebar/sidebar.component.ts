@@ -15,4 +15,8 @@ export class SidebarComponent {
     switchToAcccountList(): void {
         this.state = SidebarState.accounts;
     }
+
+    onBackButtonClicked(): void {
+        this.state = SidebarState.chats;
+    }
 }

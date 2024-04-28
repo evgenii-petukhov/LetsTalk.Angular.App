@@ -1,6 +1,7 @@
 <button class="new-chat-button" (click)="switchToAcccountList()" *ngIf="state === sidebarState.chats">
     <fa-icon [icon]="faCirclePlus" [title]="'New chat'"></fa-icon>
 </button>
-<app-logged-in-user></app-logged-in-user>
+<app-logged-in-user [isNavigationActive]="state === sidebarState.accounts"
+    (backButtonClicked)="onBackButtonClicked()"></app-logged-in-user>
 <app-chat-list *ngIf="state === sidebarState.chats"></app-chat-list>
 <app-account-list *ngIf="state === sidebarState.accounts"></app-account-list>

@@ -3,7 +3,7 @@
         [urlOptions]="[account.imageId, account.photoUrl]"></app-avatar>
     <div class="user-details">
         <div class="user-name">
-            {{ account.chatName }}
+            {{ account.firstName }} {{ account.lastName }}
         </div>
         <div class="social-icon">
             <app-social-media-icon [iconTypeId]="account.accountTypeId"></app-social-media-icon>
