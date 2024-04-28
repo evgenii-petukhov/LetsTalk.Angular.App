@@ -15,6 +15,8 @@ import { selectImages } from '../state/images/images.selector';
 import { FileStorageService } from './file-storage.service';
 import { viewedImageIdActions } from '../state/viewed-image-id/viewed-image-id.actions';
 import { Image } from '../models/image';
+import { selectAccounts } from '../state/accounts/accounts.selector';
+import { accountsActions } from '../state/accounts/accounts.actions';
 
 @Injectable({
     providedIn: 'root'
@@ -51,6 +53,21 @@ export class StoreService {
                 }
                 this.apiService.getChats().subscribe(response => {
                     this.store.dispatch(chatsActions.init({ chats: response }));
+                    resolve(response);
+                });
+            }).unsubscribe();
+        });
+    }
+
+    getAccounts(): Promise<readonly IChatDto[]> {
+        return new Promise<readonly IChatDto[]>(resolve => {
+            this.store.select(selectAccounts).subscribe(accounts => {
+                if (accounts) {
+                    resolve(accounts);
+                    return;
+                }
+                this.apiService.getChats().subscribe(response => {
+                    this.store.dispatch(accountsActions.init({ accounts: response }));
                     resolve(response);
                 });
             }).unsubscribe();

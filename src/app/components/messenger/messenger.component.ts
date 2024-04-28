@@ -47,6 +47,8 @@ export class MessengerComponent implements OnInit, OnDestroy {
             this.chats = chats;
         });
 
+        this.storeService.getAccounts();
+
         this.selectedChatId$.pipe(takeUntil(this.unsubscribe$)).subscribe(chatId => {
             this.selectedChatId = chatId;
         });

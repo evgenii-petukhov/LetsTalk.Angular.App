@@ -1,0 +1,12 @@
+<a href="#" *ngIf="account">
+    <app-avatar class="user-photo"
+        [urlOptions]="[account.imageId, account.photoUrl]"></app-avatar>
+    <div class="user-details">
+        <div class="user-name">
+            {{ account.chatName }}
+        </div>
+        <div class="social-icon">
+            <app-social-media-icon [iconTypeId]="account.accountTypeId"></app-social-media-icon>
+        </div>
+    </div>
+</a>

@@ -36,6 +36,8 @@ import { ImageComponent } from './components/image/image.component';
 import { ImageViewerComponent } from './components/image-viewer/image-viewer.component';
 import { httpLogInterceptorProvider } from './providers/http-log-interceptor-provider';
 import { grpcLogInterceptorProvider } from './providers/grpc-log-interceptor-provider';
+import { AccountListComponent } from './components/account-list/account-list.component';
+import { AccountListItemComponent } from './components/account-list-item/account-list-item.component';
 
 @NgModule({
     declarations: [
@@ -44,8 +46,10 @@ import { grpcLogInterceptorProvider } from './providers/grpc-log-interceptor-pro
         ChatComponent,
         ProfileComponent,
         ChatListComponent,
+        AccountListComponent,
         MessengerComponent,
         ChatListItemComponent,
+        AccountListItemComponent,
         MessageComponent,
         LoggedInUserComponent,
         SocialMediaIconComponent,

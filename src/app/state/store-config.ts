@@ -1,3 +1,4 @@
+import { accountsReducer } from './accounts/accounts.reducer';
 import { chatsReducer } from './chats/chats.reducer';
 import { imagesReducer } from './images/images.reducer';
 import { layoutSettingsReducer } from './layout-settings/layout-settings.reducer';
@@ -10,6 +11,7 @@ export const storeConfig = {
     messages: messagesReducer,
     selectedChatId: selectedChatIdReducer,
     chats: chatsReducer,
+    accounts: accountsReducer,
     loggedInUser: loggedInUserReducer,
     layoutSettings: layoutSettingsReducer,
     images: imagesReducer,
