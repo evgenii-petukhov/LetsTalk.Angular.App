@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { IAccountDto } from 'src/app/api-client/api-client';
 import { Subject, takeUntil } from 'rxjs';
@@ -12,6 +12,7 @@ import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
 export class AccountListComponent implements OnInit, OnDestroy {
     accounts: readonly IAccountDto[] = [];
     accounts$ = this.store.select(selectAccounts);
+    @Output() accountSelected = new EventEmitter<string>();
 
     private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -30,6 +31,6 @@ export class AccountListComponent implements OnInit, OnDestroy {
     }
 
     onAccountSelected(accountId: string): void {
-        console.log(`Selected account: ${accountId}`);
+        this.accountSelected.emit(accountId);
     }
 }

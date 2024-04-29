@@ -4,4 +4,5 @@
 <app-logged-in-user [isNavigationActive]="state === sidebarState.accounts"
     (backButtonClicked)="onBackButtonClicked()"></app-logged-in-user>
 <app-chat-list *ngIf="state === sidebarState.chats"></app-chat-list>
-<app-account-list *ngIf="state === sidebarState.accounts"></app-account-list>
+<app-account-list *ngIf="state === sidebarState.accounts"
+    (accountSelected)="onAccountSelected($event)"></app-account-list>

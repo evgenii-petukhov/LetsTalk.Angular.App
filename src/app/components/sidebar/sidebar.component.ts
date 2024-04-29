@@ -19,4 +19,9 @@ export class SidebarComponent {
     onBackButtonClicked(): void {
         this.state = SidebarState.chats;
     }
+
+    onAccountSelected(accountId: string): void {
+        console.log(`Selected account: ${accountId}`);
+        this.state = SidebarState.chats;
+    }
 }
