@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto, IProfileDto } from '../api-client/api-client';
+import { IAccountDto, IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto, IProfileDto } from '../api-client/api-client';
 import { chatsActions } from '../state/chats/chats.actions';
 import { ILayoutSettngs } from '../models/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
@@ -26,7 +26,7 @@ export class StoreService {
     constructor(
         private store: Store,
         private apiService: ApiService,
-        private fileStorageService: FileStorageService) {}
+        private fileStorageService: FileStorageService) { }
 
     markAllAsRead(chat: IChatDto): void {
         if (!chat || chat.unreadCount === 0) {
@@ -59,8 +59,8 @@ export class StoreService {
         });
     }
 
-    getAccounts(): Promise<readonly IChatDto[]> {
-        return new Promise<readonly IChatDto[]>(resolve => {
+    getAccounts(): Promise<readonly IAccountDto[]> {
+        return new Promise<readonly IAccountDto[]>(resolve => {
             this.store.select(selectAccounts).subscribe(accounts => {
                 if (accounts) {
                     resolve(accounts);

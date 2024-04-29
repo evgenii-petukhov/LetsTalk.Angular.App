@@ -11,7 +11,8 @@ import {
     ImageRequestModel,
     IChatDto,
     IProfileDto,
-    ProfileDto
+    ProfileDto,
+    IAccountDto
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 
@@ -36,7 +37,7 @@ export class ApiService {
         return this.client.chat();
     }
 
-    getAccounts(): Observable<IChatDto[]> {
+    getAccounts(): Observable<IAccountDto[]> {
         return this.client.account();
     }
 

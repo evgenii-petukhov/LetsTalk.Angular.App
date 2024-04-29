@@ -1,8 +1,8 @@
 import { createReducer, on } from '@ngrx/store';
-import { IChatDto } from 'src/app/api-client/api-client';
+import { IAccountDto } from 'src/app/api-client/api-client';
 import { accountsActions } from './accounts.actions';
 
-export const initialState: readonly IChatDto[] = null;
+export const initialState: readonly IAccountDto[] = null;
 
 export const accountsReducer = createReducer(
     initialState,
