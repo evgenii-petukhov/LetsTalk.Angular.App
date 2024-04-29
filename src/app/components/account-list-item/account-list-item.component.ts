@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { IAccountDto } from 'src/app/api-client/api-client';
 
 @Component({
@@ -8,4 +8,10 @@ import { IAccountDto } from 'src/app/api-client/api-client';
 })
 export class AccountListItemComponent{
     @Input() account: IAccountDto;
+    @Output() accountSelected = new EventEmitter<string>();
+
+    onAccountSelected(): boolean {
+        this.accountSelected.emit(this.account.id);
+        return false;
+    }
 }

@@ -28,4 +28,8 @@ export class AccountListComponent implements OnInit, OnDestroy {
         this.unsubscribe$.next();
         this.unsubscribe$.complete();
     }
+
+    onAccountSelected(accountId: string): void {
+        console.log(`Selected account: ${accountId}`);
+    }
 }
