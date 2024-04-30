@@ -550,6 +550,8 @@ export class ChatDto implements IChatDto {
     lastMessageDate?: number;
     lastMessageId?: string | undefined;
     imageId?: string | undefined;
+    isIndividual?: boolean;
+    accountId?: string | undefined;
 
     constructor(data?: IChatDto) {
         if (data) {
@@ -570,6 +572,8 @@ export class ChatDto implements IChatDto {
             this.lastMessageDate = _data["lastMessageDate"];
             this.lastMessageId = _data["lastMessageId"];
             this.imageId = _data["imageId"];
+            this.isIndividual = _data["isIndividual"];
+            this.accountId = _data["accountId"];
         }
     }
 
@@ -590,6 +594,8 @@ export class ChatDto implements IChatDto {
         data["lastMessageDate"] = this.lastMessageDate;
         data["lastMessageId"] = this.lastMessageId;
         data["imageId"] = this.imageId;
+        data["isIndividual"] = this.isIndividual;
+        data["accountId"] = this.accountId;
         return data;
     }
 }
@@ -603,6 +609,8 @@ export interface IChatDto {
     lastMessageDate?: number;
     lastMessageId?: string | undefined;
     imageId?: string | undefined;
+    isIndividual?: boolean;
+    accountId?: string | undefined;
 }
 
 export class CreateMessageRequest implements ICreateMessageRequest {

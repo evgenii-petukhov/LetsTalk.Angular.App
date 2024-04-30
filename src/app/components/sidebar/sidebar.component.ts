@@ -1,27 +1,40 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
+import { Store } from '@ngrx/store';
+import { Subject, takeUntil } from 'rxjs';
 import { SidebarState } from 'src/app/enums/sidebar-state';
+import { StoreService } from 'src/app/services/store.service';
+import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-settings.selectors';
 
 @Component({
     selector: 'app-sidebar',
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss']
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
     faCirclePlus = faCirclePlus;
-    state = SidebarState.chats;
-    sidebarState = SidebarState;
+    isChatListShown = true;
+    isAccountListShown = false;
+    layout$ = this.store.select(selectLayoutSettings);
+
+    private unsubscribe$: Subject<void> = new Subject<void>();
+
+    constructor(
+        private store: Store,
+        private storeService: StoreService) { }
+
+    ngOnInit(): void {
+        this.layout$.pipe(takeUntil(this.unsubscribe$)).subscribe(layout => {
+            this.isChatListShown = layout.sidebarState === SidebarState.chats;
+            this.isAccountListShown = layout.sidebarState === SidebarState.accounts;
+        });
+    }
 
     switchToAcccountList(): void {
-        this.state = SidebarState.accounts;
+        this.storeService.setLayoutSettings({ sidebarState: SidebarState.accounts });
     }
 
     onBackButtonClicked(): void {
-        this.state = SidebarState.chats;
-    }
-
-    onAccountSelected(accountId: string): void {
-        console.log(`Selected account: ${accountId}`);
-        this.state = SidebarState.chats;
+        this.storeService.setLayoutSettings({ sidebarState: SidebarState.chats });
     }
 }

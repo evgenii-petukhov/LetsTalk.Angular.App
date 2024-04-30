@@ -4,12 +4,13 @@ import { SignalrService } from 'src/app/services/signalr.service';
 import { IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto } from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
 import { selectSelectedChatId } from 'src/app/state/selected-chat-id/select-selected-chat-id.selectors';
-import { selectLayoutSettings } from 'src/app/state/layout-settings/select-layout-settings.selectors';
+import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-settings.selectors';
 import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
 import { Subject, takeUntil } from 'rxjs';
 import { selectViededImageId } from 'src/app/state/viewed-image-id/viewed-image-id.selectors';
 import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-chat.selector';
+import { ActiveArea } from 'src/app/enums/active-areas';
 
 @Component({
     selector: 'app-messenger',
@@ -21,6 +22,8 @@ export class MessengerComponent implements OnInit, OnDestroy {
     selectedChat$ = this.store.select(selectSelectedChat);
     selectedViewedImageId$ = this.store.select(selectViededImageId);
     layout$ = this.store.select(selectLayoutSettings);
+    isSidebarShown = true;
+    isChatShown = false;
 
     private chats: readonly IChatDto[] = [];
     private selectedChatId: string;
@@ -55,6 +58,11 @@ export class MessengerComponent implements OnInit, OnDestroy {
 
         this.selectedChat$.pipe(takeUntil(this.unsubscribe$)).subscribe(chat => {
             this.selectedChat = chat;
+        });
+
+        this.layout$.pipe(takeUntil(this.unsubscribe$)).subscribe(layout => {
+            this.isSidebarShown = layout.activeArea === ActiveArea.sidebar;
+            this.isChatShown = layout.activeArea === ActiveArea.chat;
         });
 
         await this.signalrService.init(

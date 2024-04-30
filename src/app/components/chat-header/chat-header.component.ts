@@ -3,6 +3,7 @@ import { Store } from '@ngrx/store';
 import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-chat.selector';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { StoreService } from 'src/app/services/store.service';
+import { ActiveArea } from 'src/app/enums/active-areas';
 
 @Component({
     selector: 'app-chat-header',
@@ -18,7 +19,7 @@ export class ChatHeaderComponent {
         private storeService: StoreService) {}
 
     onBackClicked(): void {
-        this.storeService.setLayoutSettings({ activeArea: 'contacts' });
+        this.storeService.setLayoutSettings({ activeArea: ActiveArea.sidebar });
         this.storeService.setSelectedChatId(null);
     }
 }

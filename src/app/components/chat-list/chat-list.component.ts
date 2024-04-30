@@ -6,6 +6,7 @@ import { selectSelectedChatId } from 'src/app/state/selected-chat-id/select-sele
 import { StoreService } from 'src/app/services/store.service';
 import { Subject, takeUntil } from 'rxjs';
 import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-chat.selector';
+import { ActiveArea } from 'src/app/enums/active-areas';
 
 @Component({
     selector: 'app-chat-list',
@@ -43,6 +44,6 @@ export class ChatListComponent implements OnInit, OnDestroy {
     onChatSelected(chatId: string): void {
         this.storeService.setSelectedChatId(chatId);
         this.storeService.markAllAsRead(this.selectedChat);
-        this.storeService.setLayoutSettings({ activeArea: 'chat' });
+        this.storeService.setLayoutSettings({ activeArea: ActiveArea.chat });
     }
 }
