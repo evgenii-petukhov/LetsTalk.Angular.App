@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { IAccountDto, IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto, IProfileDto } from '../api-client/api-client';
+import { ChatDto, IAccountDto, IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto, IProfileDto } from '../api-client/api-client';
 import { chatsActions } from '../state/chats/chats.actions';
 import { ILayoutSettngs } from '../models/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
@@ -101,6 +101,10 @@ export class StoreService {
     setLastMessageInfo(chatId: string, date: number, id: string): void {
         this.store.dispatch(chatsActions.setLastMessageDate({ chatId, date }));
         this.store.dispatch(chatsActions.setLastMessageId({ chatId, id }));
+    }
+
+    addChat(chatDto: ChatDto): void {
+        this.store.dispatch(chatsActions.add({ chatDto }));
     }
 
     setLayoutSettings(settings: ILayoutSettngs): void {

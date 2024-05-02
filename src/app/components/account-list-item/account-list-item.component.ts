@@ -8,10 +8,10 @@ import { IAccountDto } from 'src/app/api-client/api-client';
 })
 export class AccountListItemComponent{
     @Input() account: IAccountDto;
-    @Output() accountSelected = new EventEmitter<string>();
+    @Output() accountSelected = new EventEmitter<IAccountDto>();
 
     onAccountSelected(): boolean {
-        this.accountSelected.emit(this.account.id);
+        this.accountSelected.emit(this.account);
         return false;
     }
 }

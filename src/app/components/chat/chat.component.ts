@@ -22,6 +22,7 @@ import { environment } from 'src/environments/environment';
 import { ImageService } from 'src/app/services/image.service';
 import { ImageRoles } from 'src/app/protos/file_upload_pb';
 import { FileStorageService } from 'src/app/services/file-storage.service';
+import { IdGeneratorService } from 'src/app/services/id-generator.service';
 
 @Component({
     selector: 'app-chat',
@@ -52,8 +53,8 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         private store: Store,
         private storeService: StoreService,
         private imageService: ImageService,
-        private fileStorageService: FileStorageService
-    ) { }
+        private fileStorageService: FileStorageService,
+        private idGeneratorService: IdGeneratorService) { }
 
     @validate
     send(@required message: string): void {
@@ -70,6 +71,9 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit(): void {
         this.chatId$.pipe(takeUntil(this.unsubscribe$)).subscribe(chatId => {
+            if (this.idGeneratorService.isFake(chatId)) {
+                return;
+            }
             this.chatId = chatId;
             this.storeService.initMessages([]);
             this.pageIndex = 0;

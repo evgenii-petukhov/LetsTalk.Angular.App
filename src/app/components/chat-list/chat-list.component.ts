@@ -7,6 +7,7 @@ import { StoreService } from 'src/app/services/store.service';
 import { Subject, takeUntil } from 'rxjs';
 import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-chat.selector';
 import { ActiveArea } from 'src/app/enums/active-areas';
+import { IdGeneratorService } from 'src/app/services/id-generator.service';
 
 @Component({
     selector: 'app-chat-list',
@@ -24,7 +25,8 @@ export class ChatListComponent implements OnInit, OnDestroy {
 
     constructor(
         private store: Store,
-        private storeService: StoreService) { }
+        private storeService: StoreService,
+        private idGeneratorService: IdGeneratorService) { }
 
     ngOnInit(): void {
         this.chats$.pipe(takeUntil(this.unsubscribe$)).subscribe(chats => {
@@ -43,7 +45,11 @@ export class ChatListComponent implements OnInit, OnDestroy {
 
     onChatSelected(chatId: string): void {
         this.storeService.setSelectedChatId(chatId);
-        this.storeService.markAllAsRead(this.selectedChat);
+
+        if (!this.idGeneratorService.isFake(chatId)) {
+            this.storeService.markAllAsRead(this.selectedChat);
+        }
+
         this.storeService.setLayoutSettings({ activeArea: ActiveArea.chat });
     }
 }
