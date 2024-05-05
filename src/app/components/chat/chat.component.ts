@@ -17,7 +17,7 @@ import { selectMessages } from 'src/app/state/messages/messages.selector';
 import { StoreService } from 'src/app/services/store.service';
 import { Message } from 'src/app/models/message';
 import { required, validate } from 'src/app/decorators/required.decorator';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ImageService } from 'src/app/services/image.service';
 import { ImageRoles } from 'src/app/protos/file_upload_pb';
@@ -62,20 +62,25 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     send(@required message: string): void {
         this.message = '';
 
+        const createNewChat = this.chat.isIndividual && this.idGeneratorService.isFake(this.chatId);
+
         new Promise<string>(resolve => {
-            if (this.chat.isIndividual && this.idGeneratorService.isFake(this.chatId)) {
-                this.apiService.createIndividualChat(this.chat.accountIds[0]).pipe(takeUntil(this.unsubscribe$)).subscribe(chatDto => {
-                    this.storeService.updateChatId(this.chatId, chatDto.id);
-                    this.storeService.setSelectedChatId(chatDto.id);
+            if (createNewChat) {
+                this.apiService.createIndividualChat(this.chat.accountIds[0]).pipe(take(1)).subscribe(chatDto => {
                     resolve(chatDto.id);
                 });
             } else {
                 resolve(this.chatId);
             }
-        }).then(chatId => this.apiService.sendMessage(chatId, message).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
-            messageDto.isMine = true;
-            this.storeService.addMessage(messageDto);
-            this.storeService.setLastMessageInfo(chatId, messageDto.created, messageDto.id);
+        }).then(chatId => this.apiService.sendMessage(chatId, message).pipe(take(1)).subscribe(messageDto => {
+            if (createNewChat) {
+                this.storeService.updateChatId(this.chatId, chatId);
+                this.storeService.setSelectedChatId(chatId);
+            } else {
+                messageDto.isMine = true;
+                this.storeService.addMessage(messageDto);
+                this.storeService.setLastMessageInfo(chatId, messageDto.created, messageDto.id);
+            }
         }));
     }
 
@@ -131,7 +136,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.chatId,
                         undefined,
                         response
-                    ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
+                    ).pipe(take(1)).subscribe(messageDto => {
                         messageDto.isMine = true;
                         this.storeService.addMessage(messageDto);
                         this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);

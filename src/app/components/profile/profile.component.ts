@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
 import { FileStorageService } from 'src/app/services/file-storage.service';
 import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { ProfileDto } from 'src/app/api-client/api-client';
-import { Subject, takeUntil } from 'rxjs';
+import { take } from 'rxjs';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -26,7 +26,6 @@ import { Subject, takeUntil } from 'rxjs';
 export class ProfileComponent implements OnInit, OnDestroy {
     account$ = this.store.select(selectLoggedInUser);
     isSending = false;
-    private unsubscribe$: Subject<void> = new Subject<void>();
 
     form = this.fb.group({
         firstName: ['', Validators.required],
@@ -58,8 +57,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.unsubscribe$.next();
-        this.unsubscribe$.complete();
         URL.revokeObjectURL(this.form.value.photoUrl);
     }
 
@@ -101,7 +98,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             this.form.value.email,
             this.form.value.firstName,
             this.form.value.lastName,
-            response).pipe(takeUntil(this.unsubscribe$)).subscribe({
+            response).pipe(take(1)).subscribe({
                 next: (profileDto: ProfileDto) => {
                     this.storeService.setLoggedInUser(profileDto);
                     this.router.navigate(['chats']);

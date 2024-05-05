@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-settings.selectors';
 import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 import { selectViewedImageId } from 'src/app/state/viewed-image-id/viewed-image-id.selectors';
 import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-chat.selector';
 import { ActiveArea } from 'src/app/enums/active-areas';
@@ -83,7 +83,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
         }
 
         if (this.isWindowActive && (messageDto.chatId === this.selectedChat?.id)) {
-            this.apiService.markAsRead(messageDto.chatId, messageDto.id).pipe(takeUntil(this.unsubscribe$)).subscribe();
+            this.apiService.markAsRead(messageDto.chatId, messageDto.id).pipe(take(1)).subscribe();
         } else {
             const chat = this.chats.find(chat => chat.id === messageDto.chatId);
             if (chat) {
