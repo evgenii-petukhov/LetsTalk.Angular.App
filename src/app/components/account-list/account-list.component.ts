@@ -25,7 +25,6 @@ export class AccountListComponent implements OnInit, OnDestroy {
         private idGeneratorService: IdGeneratorService) { }
 
     ngOnInit(): void {
-        this.storeService.initChatStorage();
         this.storeService.initAccountStorage();
 
         this.store.select(selectChats).pipe(takeUntil(this.unsubscribe$)).subscribe(chats => {

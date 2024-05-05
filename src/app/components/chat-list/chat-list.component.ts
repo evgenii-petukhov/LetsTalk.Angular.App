@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { IChatDto } from 'src/app/api-client/api-client';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/select-selected-chat-id.selectors';
@@ -13,7 +13,7 @@ import { selectChats } from 'src/app/state/chats/chats.selector';
     templateUrl: './chat-list.component.html',
     styleUrls: ['./chat-list.component.scss'],
 })
-export class ChatListComponent implements OnInit, OnDestroy {
+export class ChatListComponent implements OnDestroy {
     chats$ = this.store.select(selectChats);
     selectedChatId$ = this.store.select(selectSelectedChatId);
 
@@ -23,10 +23,6 @@ export class ChatListComponent implements OnInit, OnDestroy {
         private store: Store,
         private storeService: StoreService,
         private idGeneratorService: IdGeneratorService) { }
-
-    ngOnInit(): void {
-        this.storeService.initChatStorage();
-    }
 
     ngOnDestroy(): void {
         this.unsubscribe$.next();
