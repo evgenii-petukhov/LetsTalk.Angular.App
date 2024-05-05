@@ -10,6 +10,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { selectViewedImageId } from 'src/app/state/viewed-image-id/viewed-image-id.selectors';
 import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-chat.selector';
 import { ActiveArea } from 'src/app/enums/active-areas';
+import { selectSelectedChatId } from 'src/app/state/selected-chat/select-selected-chat-id.selectors';
 
 @Component({
     selector: 'app-messenger',
@@ -17,10 +18,11 @@ import { ActiveArea } from 'src/app/enums/active-areas';
     styleUrls: ['./messenger.component.scss']
 })
 export class MessengerComponent implements OnInit, OnDestroy {
-    selectedChat$ = this.store.select(selectSelectedChat);
+    selectedChatId$ = this.store.select(selectSelectedChatId);
     selectedViewedImageId$ = this.store.select(selectViewedImageId);
     isSidebarShown = true;
     isChatShown = false;
+    selectedChatId: string;
 
     private chats: readonly IChatDto[] = [];
     private selectedChat: IChatDto;
@@ -46,7 +48,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
             this.chats = chats;
         });
 
-        this.selectedChat$.pipe(takeUntil(this.unsubscribe$)).subscribe(chat => {
+        this.store.select(selectSelectedChat).pipe(takeUntil(this.unsubscribe$)).subscribe(chat => {
             this.selectedChat = chat;
         });
 

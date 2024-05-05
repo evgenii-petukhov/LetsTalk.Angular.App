@@ -59,10 +59,10 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         private idGeneratorService: IdGeneratorService) { }
 
     @validate
-    send(@required message: string): void {
+    async send(@required message: string): Promise<string | void> {
         this.message = '';
 
-        new Promise<string>(resolve => {
+        const chatId = await new Promise<string>(resolve => {
             if (this.idGeneratorService.isFake(this.chatId)) {
                 this.apiService.createIndividualChat(this.chat.accountId).pipe(takeUntil(this.unsubscribe$)).subscribe(chatDto => {
                     this.storeService.updateChatId(this.chatId, chatDto.id);
@@ -72,15 +72,11 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
                 resolve(this.chatId);
             }
-        }).then(chatId => {
-            this.apiService.sendMessage(
-                chatId,
-                message
-            ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
-                messageDto.isMine = true;
-                this.storeService.addMessage(messageDto);
-                this.storeService.setLastMessageInfo(chatId, messageDto.created, messageDto.id);
-            });
+        });
+        this.apiService.sendMessage(chatId, message).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
+            messageDto.isMine = true;
+            this.storeService.addMessage(messageDto);
+            this.storeService.setLastMessageInfo(chatId, messageDto.created, messageDto.id);
         });
     }
 
