@@ -1,3 +1,3 @@
 import { createFeatureSelector } from '@ngrx/store';
 
-export const selectViededImageId = createFeatureSelector<string>('viewedImageId');
+export const selectViewedImageId = createFeatureSelector<string>('viewedImageId');

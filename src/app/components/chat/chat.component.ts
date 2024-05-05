@@ -12,7 +12,7 @@ import { ApiService } from '../../services/api.service';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
-import { selectSelectedChatId } from 'src/app/state/selected-chat-id/select-selected-chat-id.selectors';
+import { selectSelectedChatId } from 'src/app/state/selected-chat/select-selected-chat-id.selectors';
 import { selectMessages } from 'src/app/state/messages/messages.selector';
 import { StoreService } from 'src/app/services/store.service';
 import { Message } from 'src/app/models/message';
@@ -23,6 +23,8 @@ import { ImageService } from 'src/app/services/image.service';
 import { ImageRoles } from 'src/app/protos/file_upload_pb';
 import { FileStorageService } from 'src/app/services/file-storage.service';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
+import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-chat.selector';
+import { IChatDto } from 'src/app/api-client/api-client';
 
 @Component({
     selector: 'app-chat',
@@ -38,8 +40,8 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     faCamera = faCamera;
     messages$ = this.store.select(selectMessages);
 
-    private chatId$ = this.store.select(selectSelectedChatId);
     private scrollContainer: HTMLDivElement;
+    private chat: IChatDto;
     private chatId: string;
     private unsubscribe$: Subject<void> = new Subject<void>();
     private pageIndex = 0;
@@ -58,28 +60,42 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @validate
     send(@required message: string): void {
-        this.apiService.sendMessage(
-            this.chatId,
-            message
-        ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
-            messageDto.isMine = true;
-            this.storeService.addMessage(messageDto);
-            this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
-        });
         this.message = '';
+
+        new Promise<string>(resolve => {
+            if (this.idGeneratorService.isFake(this.chatId)) {
+                this.apiService.createIndividualChat(this.chat.accountId).pipe(takeUntil(this.unsubscribe$)).subscribe(chatDto => {
+                    this.storeService.updateChatId(this.chatId, chatDto.id);
+                    this.chatId = chatDto.id;
+                    resolve(chatDto.id);
+                });
+            } else {
+                resolve(this.chatId);
+            }
+        }).then(chatId => {
+            this.apiService.sendMessage(
+                chatId,
+                message
+            ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
+                messageDto.isMine = true;
+                this.storeService.addMessage(messageDto);
+                this.storeService.setLastMessageInfo(chatId, messageDto.created, messageDto.id);
+            });
+        });
     }
 
     ngOnInit(): void {
-        this.chatId$.pipe(takeUntil(this.unsubscribe$)).subscribe(chatId => {
-            if (this.idGeneratorService.isFake(chatId)) {
-                return;
-            }
+        this.store.select(selectSelectedChatId).pipe(takeUntil(this.unsubscribe$)).subscribe(chatId => {
             this.chatId = chatId;
             this.storeService.initMessages([]);
             this.pageIndex = 0;
             this.scrollCounter = 0;
             this.isMessageListLoaded = false;
             this.loadMessages();
+        });
+
+        this.store.select(selectSelectedChat).pipe(takeUntil(this.unsubscribe$)).subscribe(chat => {
+            this.chat = chat;
         });
     }
 
@@ -153,7 +169,8 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private loadMessages(): void {
-        if (this.chatId === null) {
+        if (this.chatId === null || this.idGeneratorService.isFake(this.chatId)) {
+            this.isMessageListLoaded = true;
             return;
         }
         this.scrollCounter++;

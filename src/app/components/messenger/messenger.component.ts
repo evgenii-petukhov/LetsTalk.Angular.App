@@ -3,12 +3,11 @@ import { ApiService } from '../../services/api.service';
 import { SignalrService } from 'src/app/services/signalr.service';
 import { IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto } from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
-import { selectSelectedChatId } from 'src/app/state/selected-chat-id/select-selected-chat-id.selectors';
 import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-settings.selectors';
 import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
 import { Subject, takeUntil } from 'rxjs';
-import { selectViededImageId } from 'src/app/state/viewed-image-id/viewed-image-id.selectors';
+import { selectViewedImageId } from 'src/app/state/viewed-image-id/viewed-image-id.selectors';
 import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-chat.selector';
 import { ActiveArea } from 'src/app/enums/active-areas';
 
@@ -18,15 +17,12 @@ import { ActiveArea } from 'src/app/enums/active-areas';
     styleUrls: ['./messenger.component.scss']
 })
 export class MessengerComponent implements OnInit, OnDestroy {
-    selectedChatId$ = this.store.select(selectSelectedChatId);
     selectedChat$ = this.store.select(selectSelectedChat);
-    selectedViewedImageId$ = this.store.select(selectViededImageId);
-    layout$ = this.store.select(selectLayoutSettings);
+    selectedViewedImageId$ = this.store.select(selectViewedImageId);
     isSidebarShown = true;
     isChatShown = false;
 
     private chats: readonly IChatDto[] = [];
-    private selectedChatId: string;
     private selectedChat: IChatDto;
     private isWindowActive = true;
     private unsubscribe$: Subject<void> = new Subject<void>();
@@ -50,17 +46,11 @@ export class MessengerComponent implements OnInit, OnDestroy {
             this.chats = chats;
         });
 
-        this.storeService.getAccounts();
-
-        this.selectedChatId$.pipe(takeUntil(this.unsubscribe$)).subscribe(chatId => {
-            this.selectedChatId = chatId;
-        });
-
         this.selectedChat$.pipe(takeUntil(this.unsubscribe$)).subscribe(chat => {
             this.selectedChat = chat;
         });
 
-        this.layout$.pipe(takeUntil(this.unsubscribe$)).subscribe(layout => {
+        this.store.select(selectLayoutSettings).pipe(takeUntil(this.unsubscribe$)).subscribe(layout => {
             this.isSidebarShown = layout.activeArea === ActiveArea.sidebar;
             this.isChatShown = layout.activeArea === ActiveArea.chat;
         });
@@ -79,7 +69,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
 
     handleMessageNotification(messageDto: IMessageDto): void {
         this.storeService.setLastMessageInfo(messageDto.chatId, messageDto.created, messageDto.id);
-        if (messageDto.chatId === this.selectedChatId) {
+        if (messageDto.chatId === this.selectedChat?.id) {
             this.storeService.addMessage(messageDto);
         }
 
@@ -87,7 +77,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
             return;
         }
 
-        if (this.isWindowActive && (messageDto.chatId === this.selectedChatId)) {
+        if (this.isWindowActive && (messageDto.chatId === this.selectedChat?.id)) {
             this.apiService.markAsRead(messageDto.chatId, messageDto.id).pipe(takeUntil(this.unsubscribe$)).subscribe();
         } else {
             const chat = this.chats.find(chat => chat.id === messageDto.chatId);
@@ -102,14 +92,14 @@ export class MessengerComponent implements OnInit, OnDestroy {
     }
 
     handleLinkPreviewNotification(linkPreviewDto: ILinkPreviewDto): void {
-        if (linkPreviewDto.chatId !== this.selectedChatId) {
+        if (linkPreviewDto.chatId !== this.selectedChat?.id) {
             return;
         }
         this.storeService.setLinkPreview(linkPreviewDto);
     }
 
     handleImagePreviewNotification(imagePreviewDto: IImagePreviewDto): void {
-        if (imagePreviewDto.chatId !== this.selectedChatId) {
+        if (imagePreviewDto.chatId !== this.selectedChat?.id) {
             return;
         }
         this.storeService.setImagePreview(imagePreviewDto);

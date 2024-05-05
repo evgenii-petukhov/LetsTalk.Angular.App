@@ -1,15 +1,15 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from './api.service';
 import { TokenStorageService } from './token-storage.service';
 import { SocialAuthService } from '@abacritt/angularx-social-login';
 import { SignalrService } from './signalr.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
-export class AuthService implements OnDestroy {
+export class AuthService {
 
     private unsubscribe$: Subject<void> = new Subject<void>();
 
@@ -20,15 +20,10 @@ export class AuthService implements OnDestroy {
         private router: Router,
         private signalrService: SignalrService) { }
 
-    ngOnDestroy(): void {
-        this.unsubscribe$.next();
-        this.unsubscribe$.complete();
-    }
-
     signIn(providerId: string): void {
         this.socialAuthService.signIn(providerId)
             .then(async response => {
-                this.apiService.login(response).pipe(takeUntil(this.unsubscribe$)).subscribe(data => {
+                this.apiService.login(response).pipe(take(1)).subscribe(data => {
                     this.tokenStorage.saveToken(data.token);
                     this.tokenStorage.saveUser(data);
                     this.router.navigate(['chats']);

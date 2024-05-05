@@ -6,7 +6,7 @@ import { ILayoutSettngs } from '../models/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
 import { loggedInUserActions } from '../state/logged-in-user/logged-in-user.actions';
 import { messagesActions } from '../state/messages/messages.actions';
-import { selectedChatIdActions } from '../state/selected-chat-id/selected-chat-id.actions';
+import { selectedChatIdActions } from '../state/selected-chat/selected-chat-id.actions';
 import { selectLoggedInUser } from '../state/logged-in-user/logged-in-user.selectors';
 import { ApiService } from './api.service';
 import { selectChats } from '../state/chats/chats.selector';
@@ -17,6 +17,7 @@ import { viewedImageIdActions } from '../state/viewed-image-id/viewed-image-id.a
 import { Image } from '../models/image';
 import { selectAccounts } from '../state/accounts/accounts.selector';
 import { accountsActions } from '../state/accounts/accounts.actions';
+import { take } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -33,7 +34,7 @@ export class StoreService {
             return;
         }
 
-        this.apiService.markAsRead(chat.id, chat.lastMessageId).subscribe(() => {
+        this.apiService.markAsRead(chat.id, chat.lastMessageId).pipe(take(1)).subscribe(() => {
             setTimeout(() => {
                 this.setLastMessageInfo(chat.id, chat.lastMessageDate, chat.lastMessageId);
                 this.store.dispatch(chatsActions.setUnreadCount({
@@ -46,31 +47,31 @@ export class StoreService {
 
     getChats(): Promise<readonly IChatDto[]> {
         return new Promise<readonly IChatDto[]>(resolve => {
-            this.store.select(selectChats).subscribe(chats => {
+            this.store.select(selectChats).pipe(take(1)).subscribe(chats => {
                 if (chats) {
                     resolve(chats);
                     return;
                 }
-                this.apiService.getChats().subscribe(response => {
+                this.apiService.getChats().pipe(take(1)).subscribe(response => {
                     this.store.dispatch(chatsActions.init({ chats: response }));
                     resolve(response);
                 });
-            }).unsubscribe();
+            });
         });
     }
 
     getAccounts(): Promise<readonly IAccountDto[]> {
         return new Promise<readonly IAccountDto[]>(resolve => {
-            this.store.select(selectAccounts).subscribe(accounts => {
+            this.store.select(selectAccounts).pipe(take(1)).subscribe(accounts => {
                 if (accounts) {
                     resolve(accounts);
                     return;
                 }
-                this.apiService.getAccounts().subscribe(response => {
+                this.apiService.getAccounts().pipe(take(1)).subscribe(response => {
                     this.store.dispatch(accountsActions.init({ accounts: response }));
                     resolve(response);
                 });
-            }).unsubscribe();
+            });
         });
     }
 
@@ -103,6 +104,10 @@ export class StoreService {
         this.store.dispatch(chatsActions.setLastMessageId({ chatId, id }));
     }
 
+    updateChatId(chatId: string, newChatId: string): void {
+        this.store.dispatch(chatsActions.updateChatId({ chatId, newChatId }));
+    }
+
     addChat(chatDto: ChatDto): void {
         this.store.dispatch(chatsActions.add({ chatDto }));
     }
@@ -113,17 +118,17 @@ export class StoreService {
 
     getLoggedInUser(): Promise<IProfileDto> {
         return new Promise<IProfileDto>(resolve => {
-            this.store.select(selectLoggedInUser).subscribe(account => {
+            this.store.select(selectLoggedInUser).pipe(take(1)).subscribe(account => {
                 if (account) {
                     resolve(account);
                     return;
                 }
 
-                this.apiService.getProfile().subscribe(response => {
+                this.apiService.getProfile().pipe(take(1)).subscribe(response => {
                     this.store.dispatch(loggedInUserActions.init({ account: response }));
                     resolve(response);
                 });
-            }).unsubscribe();
+            });
         });
     }
 
@@ -142,7 +147,7 @@ export class StoreService {
     // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
     getImageContent(imageId: string): Promise<Image> {
         return new Promise<Image>((resolve, reject) => {
-            this.store.select(selectImages).subscribe(images => {
+            this.store.select(selectImages).pipe(take(1)).subscribe(images => {
                 const image = images?.find(x => x.imageId === imageId);
                 if (image) {
                     resolve(image);
@@ -162,7 +167,7 @@ export class StoreService {
                     }));
                     resolve(image);
                 }).catch(() => reject());
-            }).unsubscribe();
+            });
         });
     }
 }

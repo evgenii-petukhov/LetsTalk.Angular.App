@@ -12,7 +12,8 @@ import {
     IChatDto,
     IProfileDto,
     ProfileDto,
-    IAccountDto
+    IAccountDto,
+    CreateIndividualChatRequest
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 
@@ -34,7 +35,7 @@ export class ApiService {
     }
 
     getChats(): Observable<IChatDto[]> {
-        return this.client.chat();
+        return this.client.chatAll();
     }
 
     getAccounts(): Observable<IAccountDto[]> {
@@ -79,6 +80,14 @@ export class ApiService {
         });
 
         return this.client.message(request);
+    }
+
+    createIndividualChat(accountId: string): Observable<IChatDto> {
+        const request = new CreateIndividualChatRequest({
+            accountId: accountId
+        });
+
+        return this.client.chat(request);
     }
 
     markAsRead(chatId: string, messageId: string): Observable<void> {

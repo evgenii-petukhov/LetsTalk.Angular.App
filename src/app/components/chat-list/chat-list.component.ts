@@ -1,11 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { IChatDto } from 'src/app/api-client/api-client';
-import { selectChats } from 'src/app/state/chats/chats.selector';
-import { selectSelectedChatId } from 'src/app/state/selected-chat-id/select-selected-chat-id.selectors';
+import { selectSelectedChatId } from 'src/app/state/selected-chat/select-selected-chat-id.selectors';
 import { StoreService } from 'src/app/services/store.service';
-import { Subject, takeUntil } from 'rxjs';
-import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-chat.selector';
+import { Subject } from 'rxjs';
 import { ActiveArea } from 'src/app/enums/active-areas';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
 
@@ -16,12 +14,9 @@ import { IdGeneratorService } from 'src/app/services/id-generator.service';
 })
 export class ChatListComponent implements OnInit, OnDestroy {
     chats: readonly IChatDto[] = [];
-    chats$ = this.store.select(selectChats);
     selectedChatId$ = this.store.select(selectSelectedChatId);
-    selectedChat$ = this.store.select(selectSelectedChat);
 
     private unsubscribe$: Subject<void> = new Subject<void>();
-    private selectedChat: IChatDto;
 
     constructor(
         private store: Store,
@@ -29,12 +24,8 @@ export class ChatListComponent implements OnInit, OnDestroy {
         private idGeneratorService: IdGeneratorService) { }
 
     ngOnInit(): void {
-        this.chats$.pipe(takeUntil(this.unsubscribe$)).subscribe(chats => {
+        this.storeService.getChats().then(chats => {
             this.chats = chats;
-        });
-
-        this.selectedChat$.pipe(takeUntil(this.unsubscribe$)).subscribe(chat => {
-            this.selectedChat = chat;
         });
     }
 
@@ -43,11 +34,11 @@ export class ChatListComponent implements OnInit, OnDestroy {
         this.unsubscribe$.complete();
     }
 
-    onChatSelected(chatId: string): void {
-        this.storeService.setSelectedChatId(chatId);
+    onChatSelected(chat: IChatDto): void {
+        this.storeService.setSelectedChatId(chat.id);
 
-        if (!this.idGeneratorService.isFake(chatId)) {
-            this.storeService.markAllAsRead(this.selectedChat);
+        if (!this.idGeneratorService.isFake(chat.id)) {
+            this.storeService.markAllAsRead(chat);
         }
 
         this.storeService.setLayoutSettings({ activeArea: ActiveArea.chat });

@@ -9,6 +9,7 @@ export const chatsActions = createActionGroup({
         incrementUnread: props<{chatId: string}>(),
         setLastMessageDate: props<{chatId: string; date: number}>(),
         setLastMessageId: props<{chatId: string; id: string}>(),
+        updateChatId: props<{chatId: string; newChatId: string}>(),
         add: props<{ chatDto: IChatDto }>(),
     }
 });

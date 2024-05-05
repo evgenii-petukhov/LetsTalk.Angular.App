@@ -19,5 +19,8 @@ export const chatsReducer = createReducer(
     on(chatsActions.setLastMessageId, (_state, { chatId, id }) => _state.map(chat => chat.id === chatId
         ? new ChatDto({ ...chat, lastMessageId: id })
         : chat)),
+    on(chatsActions.updateChatId, (_state, { chatId, newChatId }) => _state.map(chat => chat.id === chatId
+        ? new ChatDto({ ...chat, id: newChatId })
+        : chat)),
     on(chatsActions.add, (_state, { chatDto }) => [..._state, chatDto]),
 );

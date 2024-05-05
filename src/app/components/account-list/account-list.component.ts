@@ -1,10 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { ChatDto, IAccountDto, IChatDto } from 'src/app/api-client/api-client';
-import { Subject, takeUntil } from 'rxjs';
-import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
+import { Subject } from 'rxjs';
 import { StoreService } from 'src/app/services/store.service';
-import { selectChats } from 'src/app/state/chats/chats.selector';
 import { SidebarState } from 'src/app/enums/sidebar-state';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
 
@@ -14,20 +11,22 @@ import { IdGeneratorService } from 'src/app/services/id-generator.service';
     styleUrls: ['./account-list.component.scss'],
 })
 export class AccountListComponent implements OnInit, OnDestroy {
-    accounts$ = this.store.select(selectAccounts);
+    accounts: readonly IAccountDto[] = [];
 
     private unsubscribe$: Subject<void> = new Subject<void>();
-    private selectedChat: IChatDto;
     private chats: readonly IChatDto[] = [];
 
     constructor(
-        private store: Store,
         private storeService: StoreService,
         private idGeneratorService: IdGeneratorService) { }
 
     ngOnInit(): void {
-        this.store.select(selectChats).pipe(takeUntil(this.unsubscribe$)).subscribe(chats => {
+        this.storeService.getChats().then(chats => {
             this.chats = chats;
+        });
+
+        this.storeService.getAccounts().then(accounts => {
+            this.accounts = accounts;
         });
     }
 
@@ -37,10 +36,10 @@ export class AccountListComponent implements OnInit, OnDestroy {
     }
 
     onAccountSelected(account: IAccountDto): void {
-        const chatId = this.chats.find(chat => chat.isIndividual && chat.accountId === account.id)?.id;
-        if (chatId) {
-            this.storeService.setSelectedChatId(chatId);
-            this.storeService.markAllAsRead(this.selectedChat);
+        const chat = this.chats.find(chat => chat.isIndividual && chat.accountId === account.id);
+        if (chat) {
+            this.storeService.setSelectedChatId(chat.id);
+            this.storeService.markAllAsRead(chat);
         } else {
             const chatDto = new ChatDto();
             chatDto.id = this.idGeneratorService.getNextFakeId().toString();
