@@ -6,6 +6,7 @@ import { StoreService } from 'src/app/services/store.service';
 import { Subject } from 'rxjs';
 import { ActiveArea } from 'src/app/enums/active-areas';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
+import { selectChats } from 'src/app/state/chats/chats.selector';
 
 @Component({
     selector: 'app-chat-list',
@@ -13,7 +14,7 @@ import { IdGeneratorService } from 'src/app/services/id-generator.service';
     styleUrls: ['./chat-list.component.scss'],
 })
 export class ChatListComponent implements OnInit, OnDestroy {
-    chats: readonly IChatDto[] = [];
+    chats$ = this.store.select(selectChats);
     selectedChatId$ = this.store.select(selectSelectedChatId);
 
     private unsubscribe$: Subject<void> = new Subject<void>();
@@ -24,9 +25,7 @@ export class ChatListComponent implements OnInit, OnDestroy {
         private idGeneratorService: IdGeneratorService) { }
 
     ngOnInit(): void {
-        this.storeService.getChats().then(chats => {
-            this.chats = chats;
-        });
+        this.storeService.initChatStorage();
     }
 
     ngOnDestroy(): void {

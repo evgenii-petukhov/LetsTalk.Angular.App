@@ -607,7 +607,7 @@ export class ChatDto implements IChatDto {
     lastMessageId?: string | undefined;
     imageId?: string | undefined;
     isIndividual?: boolean;
-    accountId?: string | undefined;
+    accountIds?: string[] | undefined;
 
     constructor(data?: IChatDto) {
         if (data) {
@@ -629,7 +629,11 @@ export class ChatDto implements IChatDto {
             this.lastMessageId = _data["lastMessageId"];
             this.imageId = _data["imageId"];
             this.isIndividual = _data["isIndividual"];
-            this.accountId = _data["accountId"];
+            if (Array.isArray(_data["accountIds"])) {
+                this.accountIds = [] as any;
+                for (let item of _data["accountIds"])
+                    this.accountIds!.push(item);
+            }
         }
     }
 
@@ -651,7 +655,11 @@ export class ChatDto implements IChatDto {
         data["lastMessageId"] = this.lastMessageId;
         data["imageId"] = this.imageId;
         data["isIndividual"] = this.isIndividual;
-        data["accountId"] = this.accountId;
+        if (Array.isArray(this.accountIds)) {
+            data["accountIds"] = [];
+            for (let item of this.accountIds)
+                data["accountIds"].push(item);
+        }
         return data;
     }
 }
@@ -666,7 +674,7 @@ export interface IChatDto {
     lastMessageId?: string | undefined;
     imageId?: string | undefined;
     isIndividual?: boolean;
-    accountId?: string | undefined;
+    accountIds?: string[] | undefined;
 }
 
 export class CreateIndividualChatRequest implements ICreateIndividualChatRequest {

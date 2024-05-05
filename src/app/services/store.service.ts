@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { ChatDto, IAccountDto, IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto, IProfileDto } from '../api-client/api-client';
+import { ChatDto, IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto, IProfileDto } from '../api-client/api-client';
 import { chatsActions } from '../state/chats/chats.actions';
 import { ILayoutSettngs } from '../models/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
@@ -45,33 +45,23 @@ export class StoreService {
         });
     }
 
-    getChats(): Promise<readonly IChatDto[]> {
-        return new Promise<readonly IChatDto[]>(resolve => {
-            this.store.select(selectChats).pipe(take(1)).subscribe(chats => {
-                if (chats) {
-                    resolve(chats);
-                    return;
-                }
+    initChatStorage(): void {
+        this.store.select(selectChats).pipe(take(1)).subscribe(chats => {
+            if (!chats) {
                 this.apiService.getChats().pipe(take(1)).subscribe(response => {
                     this.store.dispatch(chatsActions.init({ chats: response }));
-                    resolve(response);
                 });
-            });
+            }
         });
     }
 
-    getAccounts(): Promise<readonly IAccountDto[]> {
-        return new Promise<readonly IAccountDto[]>(resolve => {
-            this.store.select(selectAccounts).pipe(take(1)).subscribe(accounts => {
-                if (accounts) {
-                    resolve(accounts);
-                    return;
-                }
+    initAccountStorage(): void {
+        this.store.select(selectAccounts).pipe(take(1)).subscribe(accounts => {
+            if (!accounts) {
                 this.apiService.getAccounts().pipe(take(1)).subscribe(response => {
                     this.store.dispatch(accountsActions.init({ accounts: response }));
-                    resolve(response);
                 });
-            });
+            }
         });
     }
 

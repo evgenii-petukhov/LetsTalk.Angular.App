@@ -59,25 +59,24 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         private idGeneratorService: IdGeneratorService) { }
 
     @validate
-    async send(@required message: string): Promise<string | void> {
+    send(@required message: string): void {
         this.message = '';
 
-        const chatId = await new Promise<string>(resolve => {
-            if (this.idGeneratorService.isFake(this.chatId)) {
-                this.apiService.createIndividualChat(this.chat.accountId).pipe(takeUntil(this.unsubscribe$)).subscribe(chatDto => {
+        new Promise<string>(resolve => {
+            if (this.chat.isIndividual && this.idGeneratorService.isFake(this.chatId)) {
+                this.apiService.createIndividualChat(this.chat.accountIds[0]).pipe(takeUntil(this.unsubscribe$)).subscribe(chatDto => {
                     this.storeService.updateChatId(this.chatId, chatDto.id);
-                    this.chatId = chatDto.id;
+                    this.storeService.setSelectedChatId(chatDto.id);
                     resolve(chatDto.id);
                 });
             } else {
                 resolve(this.chatId);
             }
-        });
-        this.apiService.sendMessage(chatId, message).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
+        }).then(chatId => this.apiService.sendMessage(chatId, message).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
             messageDto.isMine = true;
             this.storeService.addMessage(messageDto);
             this.storeService.setLastMessageInfo(chatId, messageDto.created, messageDto.id);
-        });
+        }));
     }
 
     ngOnInit(): void {

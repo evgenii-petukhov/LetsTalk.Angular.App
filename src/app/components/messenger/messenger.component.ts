@@ -11,6 +11,7 @@ import { selectViewedImageId } from 'src/app/state/viewed-image-id/viewed-image-
 import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-chat.selector';
 import { ActiveArea } from 'src/app/enums/active-areas';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/select-selected-chat-id.selectors';
+import { selectChats } from 'src/app/state/chats/chats.selector';
 
 @Component({
     selector: 'app-messenger',
@@ -44,7 +45,9 @@ export class MessengerComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit(): Promise<void> {
-        this.storeService.getChats().then(chats => {
+        this.storeService.initChatStorage();
+
+        this.store.select(selectChats).pipe(takeUntil(this.unsubscribe$)).subscribe(chats => {
             this.chats = chats;
         });
 
