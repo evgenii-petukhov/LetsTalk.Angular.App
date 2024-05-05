@@ -12,7 +12,7 @@ import { ApiService } from '../../services/api.service';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
-import { selectSelectedChatId } from 'src/app/state/selected-chat/select-selected-chat-id.selectors';
+import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { selectMessages } from 'src/app/state/messages/messages.selector';
 import { StoreService } from 'src/app/services/store.service';
 import { Message } from 'src/app/models/message';
@@ -23,7 +23,7 @@ import { ImageService } from 'src/app/services/image.service';
 import { ImageRoles } from 'src/app/protos/file_upload_pb';
 import { FileStorageService } from 'src/app/services/file-storage.service';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
-import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-chat.selector';
+import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { IChatDto } from 'src/app/api-client/api-client';
 
 @Component({

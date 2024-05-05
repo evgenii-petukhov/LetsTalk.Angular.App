@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { IChatDto } from 'src/app/api-client/api-client';
-import { selectSelectedChatId } from 'src/app/state/selected-chat/select-selected-chat-id.selectors';
+import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { StoreService } from 'src/app/services/store.service';
 import { Subject } from 'rxjs';
 import { ActiveArea } from 'src/app/enums/active-areas';

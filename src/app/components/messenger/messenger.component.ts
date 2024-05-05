@@ -8,9 +8,9 @@ import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
 import { Subject, take, takeUntil } from 'rxjs';
 import { selectViewedImageId } from 'src/app/state/viewed-image-id/viewed-image-id.selectors';
-import { selectSelectedChat } from 'src/app/state/selected-chat/select-selected-chat.selector';
+import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { ActiveArea } from 'src/app/enums/active-areas';
-import { selectSelectedChatId } from 'src/app/state/selected-chat/select-selected-chat-id.selectors';
+import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { selectChats } from 'src/app/state/chats/chats.selector';
 
 @Component({
