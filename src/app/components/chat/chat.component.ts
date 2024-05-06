@@ -62,26 +62,20 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     send(@required message: string): void {
         this.message = '';
 
-        const createNewChat = this.chat.isIndividual && this.idGeneratorService.isFake(this.chatId);
-
-        new Promise<string>(resolve => {
-            if (createNewChat) {
-                this.apiService.createIndividualChat(this.chat.accountIds[0]).pipe(take(1)).subscribe(chatDto => {
-                    resolve(chatDto.id);
+        if (this.chat.isIndividual && this.idGeneratorService.isFake(this.chatId)) {
+            this.apiService.createIndividualChat(this.chat.accountIds[0]).pipe(take(1)).subscribe(chatDto => {
+                this.apiService.sendMessage(chatDto.id, message).pipe(take(1)).subscribe(() => {
+                    this.storeService.updateChatId(this.chatId, chatDto.id);
+                    this.storeService.setSelectedChatId(chatDto.id);
                 });
-            } else {
-                resolve(this.chatId);
-            }
-        }).then(chatId => this.apiService.sendMessage(chatId, message).pipe(take(1)).subscribe(messageDto => {
-            if (createNewChat) {
-                this.storeService.updateChatId(this.chatId, chatId);
-                this.storeService.setSelectedChatId(chatId);
-            } else {
+            });
+        } else {
+            this.apiService.sendMessage(this.chatId, message).pipe(take(1)).subscribe(messageDto => {
                 messageDto.isMine = true;
                 this.storeService.addMessage(messageDto);
-                this.storeService.setLastMessageInfo(chatId, messageDto.created, messageDto.id);
-            }
-        }));
+                this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
+            });
+        }
     }
 
     ngOnInit(): void {
