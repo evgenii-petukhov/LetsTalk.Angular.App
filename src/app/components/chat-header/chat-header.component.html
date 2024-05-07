@@ -2,12 +2,12 @@
     <fa-icon [icon]="faChevronLeft" [title]="'Back'"></fa-icon>
 </button>
 <app-avatar class="user-photo"
-    [urlOptions]="[(account$ | async).imageId, (account$ | async).photoUrl]"></app-avatar>
+    [urlOptions]="[(chat$ | async).imageId, (chat$ | async).photoUrl]"></app-avatar>
 <div class="user-details">
     <div class="user-name">
-        {{ (account$ | async).firstName }} {{ (account$ | async).lastName }}
+        {{ (chat$ | async).chatName }}
     </div>
     <div class="social-icon">
-        <app-social-media-icon [iconTypeId]="(account$ | async).accountTypeId"></app-social-media-icon>
+        <app-social-media-icon [iconTypeId]="(chat$ | async).accountTypeId"></app-social-media-icon>
     </div>
 </div>

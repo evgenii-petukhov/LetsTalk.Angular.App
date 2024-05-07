@@ -8,7 +8,6 @@ export class Message {
     id?: string;
     text?: string | undefined;
     textHtml?: string | undefined;
-    senderId?: string;
     recipientId?: string;
     isMine?: boolean | undefined;
     created?: Date;

@@ -1,14 +1,17 @@
 <div class="logged-in-user-container">
     <div class="logged-in-user-inner-container">
-        <a [routerLink]="['/profile']" title="Edit profile">
+        <button class="back" (click)="onBackButtonClicked()" *ngIf="isNavigationActive">
+            <fa-icon [icon]="faChevronLeft" [title]="'Back'"></fa-icon>
+        </button>
+        <a [routerLink]="['/profile']" title="Edit profile" *ngIf="!isNavigationActive">
             <app-avatar class="user-photo"
                 [urlOptions]="(account$ | async) && [(account$ | async).imageId, (account$ | async).photoUrl]"
                 class="user-photo">
             </app-avatar>
         </a>
         <div class="user-details">
-            <div class="user-name">You</div>
-            <a href="#" class="icon" (click)="logout()" title="Log out">
+            <div class="user-name">{{ isNavigationActive ? 'Select contact' : 'You' }}</div>
+            <a href="#" class="icon" (click)="logout()" title="Log out" *ngIf="!isNavigationActive">
                 <fa-icon [icon]="faRightFromBracket"></fa-icon>
             </a>
         </div>

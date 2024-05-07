@@ -5,12 +5,15 @@ import {
     LoginRequest,
     LoginResponseDto,
     ApiClient,
-    IAccountDto,
     CreateMessageRequest,
     IMessageDto,
     UpdateProfileRequest,
-    AccountDto,
-    ImageRequestModel
+    ImageRequestModel,
+    IChatDto,
+    IProfileDto,
+    ProfileDto,
+    IAccountDto,
+    CreateIndividualChatRequest
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 
@@ -31,19 +34,23 @@ export class ApiService {
         return this.client.login(request);
     }
 
+    getChats(): Observable<IChatDto[]> {
+        return this.client.chatAll();
+    }
+
     getAccounts(): Observable<IAccountDto[]> {
-        return this.client.accountAll();
+        return this.client.account();
     }
 
-    getMessages(accountId: string, pageIndex: number): Observable<IMessageDto[]> {
-        return this.client.messageAll(accountId, !pageIndex ? undefined : pageIndex);
+    getMessages(chatId: string, pageIndex: number): Observable<IMessageDto[]> {
+        return this.client.messageAll(chatId, !pageIndex ? undefined : pageIndex);
     }
 
-    getProfile(): Observable<IAccountDto> {
-        return this.client.profile();
+    getProfile(): Observable<IProfileDto> {
+        return this.client.profileGET();
     }
 
-    saveProfile(email: string, firstName: string, lastName: string, image?: UploadImageResponse): Observable<AccountDto> {
+    saveProfile(email: string, firstName: string, lastName: string, image?: UploadImageResponse): Observable<ProfileDto> {
         const request = new UpdateProfileRequest({
             email,
             firstName,
@@ -56,12 +63,12 @@ export class ApiService {
                 signature: image.getSignature()
             }) : null
         });
-        return this.client.account(request);
+        return this.client.profilePUT(request);
     }
 
-    sendMessage(recipientId: string, text?: string, image?: UploadImageResponse): Observable<IMessageDto> {
+    sendMessage(chatId: string, text?: string, image?: UploadImageResponse): Observable<IMessageDto> {
         const request = new CreateMessageRequest({
-            recipientId,
+            chatId,
             text,
             image: image ? new ImageRequestModel({
                 id: image.getId(),
@@ -75,11 +82,15 @@ export class ApiService {
         return this.client.message(request);
     }
 
-    markAsRead(messageId: string): Observable<void> {
-        return this.client.markAsRead(messageId);
+    createIndividualChat(accountId: string): Observable<IChatDto> {
+        const request = new CreateIndividualChatRequest({
+            accountId: accountId
+        });
+
+        return this.client.chat(request);
     }
 
-    markAllAsRead(messageId: string): Observable<void> {
-        return this.client.markAllAsRead(messageId);
+    markAsRead(chatId: string, messageId: string): Observable<void> {
+        return this.client.markAsRead(chatId, messageId);
     }
 }

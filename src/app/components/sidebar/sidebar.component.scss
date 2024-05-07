@@ -6,6 +6,23 @@
     min-width: 300px;
     flex-direction: column;
     box-shadow: 0 0 5px 3px rgb(0 0 0 / 20%);
+    position: relative;
+
+    .new-chat-button {
+        background: none;
+        position: absolute;
+        right: 15px;
+        bottom: 15px;
+        font-size: 40px;
+        line-height: 40px;
+        border: none;
+        color: #ffc523;
+        padding: 0;
+
+        fa-icon {
+            filter:drop-shadow(1px 1px 0 rgb(0 0 0 / 35%));
+        }
+    }
 
     @include media-breakpoint-down(lg) {
         display: none;

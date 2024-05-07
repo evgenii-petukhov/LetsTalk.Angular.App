@@ -8,12 +8,10 @@ describe('AccountListItemComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AccountListItemComponent ]
+      imports: [AccountListItemComponent]
     })
     .compileComponents();
-  });
-
-  beforeEach(() => {
+    
     fixture = TestBed.createComponent(AccountListItemComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -1,20 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { IAccountDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto } from '../api-client/api-client';
-import { accountsActions } from '../state/accounts/accounts.actions';
+import { ChatDto, IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto, IProfileDto } from '../api-client/api-client';
+import { chatsActions } from '../state/chats/chats.actions';
 import { ILayoutSettngs } from '../models/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
 import { loggedInUserActions } from '../state/logged-in-user/logged-in-user.actions';
 import { messagesActions } from '../state/messages/messages.actions';
-import { selectedAccountIdActions } from '../state/selected-account-id/selected-account-id.actions';
+import { selectedChatIdActions } from '../state/selected-chat/selected-chat-id.actions';
 import { selectLoggedInUser } from '../state/logged-in-user/logged-in-user.selectors';
 import { ApiService } from './api.service';
-import { selectAccounts } from '../state/accounts/accounts.selector';
+import { selectChats } from '../state/chats/chats.selector';
 import { imagesActions } from '../state/images/images.actions';
 import { selectImages } from '../state/images/images.selector';
 import { FileStorageService } from './file-storage.service';
 import { viewedImageIdActions } from '../state/viewed-image-id/viewed-image-id.actions';
 import { Image } from '../models/image';
+import { selectAccounts } from '../state/accounts/accounts.selector';
+import { accountsActions } from '../state/accounts/accounts.actions';
+import { take } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -24,36 +27,41 @@ export class StoreService {
     constructor(
         private store: Store,
         private apiService: ApiService,
-        private fileStorageService: FileStorageService) {}
+        private fileStorageService: FileStorageService) { }
 
-    markAllAsRead(account: IAccountDto): void {
-        if (!account || account.unreadCount === 0) {
+    markAllAsRead(chat: IChatDto): void {
+        if (!chat || chat.unreadCount === 0) {
             return;
         }
 
-        this.apiService.markAllAsRead(account.lastMessageId).subscribe(() => {
+        this.apiService.markAsRead(chat.id, chat.lastMessageId).pipe(take(1)).subscribe(() => {
             setTimeout(() => {
-                this.setLastMessageInfo(account.id, account.lastMessageDate, account.lastMessageId);
-                this.store.dispatch(accountsActions.setUnreadCount({
-                    accountId: account.id,
+                this.setLastMessageInfo(chat.id, chat.lastMessageDate, chat.lastMessageId);
+                this.store.dispatch(chatsActions.setUnreadCount({
+                    chatId: chat.id,
                     unreadCount: 0
                 }));
             }, 1000);
         });
     }
 
-    getAccounts(): Promise<readonly IAccountDto[]> {
-        return new Promise<readonly IAccountDto[]>(resolve => {
-            this.store.select(selectAccounts).subscribe(accounts => {
-                if (accounts) {
-                    resolve(accounts);
-                    return;
-                }
-                this.apiService.getAccounts().subscribe(response => {
-                    this.store.dispatch(accountsActions.init({ accounts: response }));
-                    resolve(response);
+    initChatStorage(): void {
+        this.store.select(selectChats).pipe(take(1)).subscribe(chats => {
+            if (!chats) {
+                this.apiService.getChats().pipe(take(1)).subscribe(response => {
+                    this.store.dispatch(chatsActions.init({ chats: response }));
                 });
-            }).unsubscribe();
+            }
+        });
+    }
+
+    initAccountStorage(): void {
+        this.store.select(selectAccounts).pipe(take(1)).subscribe(accounts => {
+            if (!accounts) {
+                this.apiService.getAccounts().pipe(take(1)).subscribe(response => {
+                    this.store.dispatch(accountsActions.init({ accounts: response }));
+                });
+            }
         });
     }
 
@@ -77,41 +85,49 @@ export class StoreService {
         this.store.dispatch(messagesActions.setImagePreview({ imagePreviewDto }));
     }
 
-    incrementUnreadMessages(accountId: string): void {
-        this.store.dispatch(accountsActions.incrementUnread({ accountId }));
+    incrementUnreadMessages(chatId: string): void {
+        this.store.dispatch(chatsActions.incrementUnread({ chatId }));
     }
 
-    setLastMessageInfo(accountId: string, date: number, id: string): void {
-        this.store.dispatch(accountsActions.setLastMessageDate({ accountId, date }));
-        this.store.dispatch(accountsActions.setLastMessageId({ accountId, id }));
+    setLastMessageInfo(chatId: string, date: number, id: string): void {
+        this.store.dispatch(chatsActions.setLastMessageDate({ chatId, date }));
+        this.store.dispatch(chatsActions.setLastMessageId({ chatId, id }));
+    }
+
+    updateChatId(chatId: string, newChatId: string): void {
+        this.store.dispatch(chatsActions.updateChatId({ chatId, newChatId }));
+    }
+
+    addChat(chatDto: ChatDto): void {
+        this.store.dispatch(chatsActions.add({ chatDto }));
     }
 
     setLayoutSettings(settings: ILayoutSettngs): void {
         this.store.dispatch(layoutSettingsActions.init({ settings }));
     }
 
-    getLoggedInUser(): Promise<IAccountDto> {
-        return new Promise<IAccountDto>(resolve => {
-            this.store.select(selectLoggedInUser).subscribe(account => {
+    getLoggedInUser(): Promise<IProfileDto> {
+        return new Promise<IProfileDto>(resolve => {
+            this.store.select(selectLoggedInUser).pipe(take(1)).subscribe(account => {
                 if (account) {
                     resolve(account);
                     return;
                 }
 
-                this.apiService.getProfile().subscribe(response => {
+                this.apiService.getProfile().pipe(take(1)).subscribe(response => {
                     this.store.dispatch(loggedInUserActions.init({ account: response }));
                     resolve(response);
                 });
-            }).unsubscribe();
+            });
         });
     }
 
-    setLoggedInUser(account: IAccountDto): void {
+    setLoggedInUser(account: IProfileDto): void {
         this.store.dispatch(loggedInUserActions.set({ account }));
     }
 
-    setSelectedAccountId(accountId: string): void {
-        this.store.dispatch(selectedAccountIdActions.init({ accountId }));
+    setSelectedChatId(chatId: string): void {
+        this.store.dispatch(selectedChatIdActions.init({ chatId }));
     }
 
     setViewedImageId(imageId: string): void {
@@ -121,7 +137,7 @@ export class StoreService {
     // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
     getImageContent(imageId: string): Promise<Image> {
         return new Promise<Image>((resolve, reject) => {
-            this.store.select(selectImages).subscribe(images => {
+            this.store.select(selectImages).pipe(take(1)).subscribe(images => {
                 const image = images?.find(x => x.imageId === imageId);
                 if (image) {
                     resolve(image);
@@ -141,7 +157,7 @@ export class StoreService {
                     }));
                     resolve(image);
                 }).catch(() => reject());
-            }).unsubscribe();
+            });
         });
     }
 }

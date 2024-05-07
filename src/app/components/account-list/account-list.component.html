@@ -1,9 +1,7 @@
 <div>
     <ul>
-        <li *ngFor="let account of (accounts$ | async | orderBy:['unreadCount','lastMessageDate','firstName','lastName']:['desc','desc','asc','asc'])"
-            [ngClass]="(selectedAccountId$ | async) === account.id && 'selected'">
-            <app-account-list-item [account]="account"
-                (accountSelected)="onAccountSelected($event)">
+        <li *ngFor="let account of (accounts$ | async | orderBy:['chatName']:['asc'])">
+            <app-account-list-item [account]="account" (accountSelected)="onAccountSelected($event)">
             </app-account-list-item>
         </li>
     </ul>

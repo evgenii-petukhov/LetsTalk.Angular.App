@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { IAccountDto } from 'src/app/api-client/api-client';
-import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
-import { selectSelectedAccountId } from 'src/app/state/selected-account-id/select-selected-account-id.selectors';
-import { StoreService } from 'src/app/services/store.service';
+import { ChatDto, IAccountDto, IChatDto } from 'src/app/api-client/api-client';
 import { Subject, takeUntil } from 'rxjs';
-import { selectSelectedAccount } from 'src/app/state/selected-account/select-selected-account.selector';
+import { StoreService } from 'src/app/services/store.service';
+import { SidebarState } from 'src/app/enums/sidebar-state';
+import { IdGeneratorService } from 'src/app/services/id-generator.service';
+import { Store } from '@ngrx/store';
+import { selectChats } from 'src/app/state/chats/chats.selector';
+import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
 
 @Component({
     selector: 'app-account-list',
@@ -13,25 +14,21 @@ import { selectSelectedAccount } from 'src/app/state/selected-account/select-sel
     styleUrls: ['./account-list.component.scss'],
 })
 export class AccountListComponent implements OnInit, OnDestroy {
-    accounts: readonly IAccountDto[] = [];
     accounts$ = this.store.select(selectAccounts);
-    selectedAccountId$ = this.store.select(selectSelectedAccountId);
-    selectedAccount$ = this.store.select(selectSelectedAccount);
 
     private unsubscribe$: Subject<void> = new Subject<void>();
-    private selectedAccount: IAccountDto;
+    private chats: readonly IChatDto[] = [];
 
     constructor(
         private store: Store,
-        private storeService: StoreService) { }
+        private storeService: StoreService,
+        private idGeneratorService: IdGeneratorService) { }
 
     ngOnInit(): void {
-        this.accounts$.pipe(takeUntil(this.unsubscribe$)).subscribe(accounts => {
-            this.accounts = accounts;
-        });
+        this.storeService.initAccountStorage();
 
-        this.selectedAccount$.pipe(takeUntil(this.unsubscribe$)).subscribe(account => {
-            this.selectedAccount = account;
+        this.store.select(selectChats).pipe(takeUntil(this.unsubscribe$)).subscribe(chats => {
+            this.chats = chats;
         });
     }
 
@@ -40,9 +37,25 @@ export class AccountListComponent implements OnInit, OnDestroy {
         this.unsubscribe$.complete();
     }
 
-    onAccountSelected(accountId: string): void {
-        this.storeService.setSelectedAccountId(accountId);
-        this.storeService.markAllAsRead(this.selectedAccount);
-        this.storeService.setLayoutSettings({ activeArea: 'chat' });
+    onAccountSelected(account: IAccountDto): void {
+        const chat = this.chats.find(chat => chat.isIndividual && chat.accountIds[0] === account.id);
+        if (chat) {
+            this.storeService.setSelectedChatId(chat.id);
+            this.storeService.markAllAsRead(chat);
+        } else {
+            const chatDto = new ChatDto();
+            chatDto.id = this.idGeneratorService.getNextFakeId().toString();
+            chatDto.isIndividual = true;
+            chatDto.accountIds = [account.id];
+            chatDto.accountTypeId = account.accountTypeId;
+            chatDto.chatName = `${account.firstName} ${account.lastName}`;
+            chatDto.imageId = account.imageId;
+            chatDto.photoUrl = account.photoUrl;
+            chatDto.unreadCount = 0;
+
+            this.storeService.addChat(chatDto);
+            this.storeService.setSelectedChatId(chatDto.id);
+        }
+        this.storeService.setLayoutSettings({ sidebarState: SidebarState.chats });
     }
 }

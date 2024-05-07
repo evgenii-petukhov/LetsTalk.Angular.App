@@ -12,16 +12,19 @@ import { ApiService } from '../../services/api.service';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
-import { selectSelectedAccountId } from 'src/app/state/selected-account-id/select-selected-account-id.selectors';
+import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { selectMessages } from 'src/app/state/messages/messages.selector';
 import { StoreService } from 'src/app/services/store.service';
 import { Message } from 'src/app/models/message';
 import { required, validate } from 'src/app/decorators/required.decorator';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ImageService } from 'src/app/services/image.service';
 import { ImageRoles } from 'src/app/protos/file_upload_pb';
 import { FileStorageService } from 'src/app/services/file-storage.service';
+import { IdGeneratorService } from 'src/app/services/id-generator.service';
+import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
+import { IChatDto } from 'src/app/api-client/api-client';
 
 @Component({
     selector: 'app-chat',
@@ -37,9 +40,9 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     faCamera = faCamera;
     messages$ = this.store.select(selectMessages);
 
-    private accountId$ = this.store.select(selectSelectedAccountId);
     private scrollContainer: HTMLDivElement;
-    private accountId: string;
+    private chat: IChatDto;
+    private chatId: string;
     private unsubscribe$: Subject<void> = new Subject<void>();
     private pageIndex = 0;
     private scrollCounter = 0;
@@ -52,30 +55,41 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         private store: Store,
         private storeService: StoreService,
         private imageService: ImageService,
-        private fileStorageService: FileStorageService
-    ) { }
+        private fileStorageService: FileStorageService,
+        private idGeneratorService: IdGeneratorService) { }
 
     @validate
     send(@required message: string): void {
-        this.apiService.sendMessage(
-            this.accountId,
-            message
-        ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
-            messageDto.isMine = true;
-            this.storeService.addMessage(messageDto);
-            this.storeService.setLastMessageInfo(this.accountId, messageDto.created, messageDto.id);
-        });
         this.message = '';
+
+        if (this.chat.isIndividual && this.idGeneratorService.isFake(this.chatId)) {
+            this.apiService.createIndividualChat(this.chat.accountIds[0]).pipe(take(1)).subscribe(chatDto => {
+                this.apiService.sendMessage(chatDto.id, message).pipe(take(1)).subscribe(() => {
+                    this.storeService.updateChatId(this.chatId, chatDto.id);
+                    this.storeService.setSelectedChatId(chatDto.id);
+                });
+            });
+        } else {
+            this.apiService.sendMessage(this.chatId, message).pipe(take(1)).subscribe(messageDto => {
+                messageDto.isMine = true;
+                this.storeService.addMessage(messageDto);
+                this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
+            });
+        }
     }
 
     ngOnInit(): void {
-        this.accountId$.pipe(takeUntil(this.unsubscribe$)).subscribe(accountId => {
-            this.accountId = accountId;
+        this.store.select(selectSelectedChatId).pipe(takeUntil(this.unsubscribe$)).subscribe(chatId => {
+            this.chatId = chatId;
             this.storeService.initMessages([]);
             this.pageIndex = 0;
             this.scrollCounter = 0;
             this.isMessageListLoaded = false;
             this.loadMessages();
+        });
+
+        this.store.select(selectSelectedChat).pipe(takeUntil(this.unsubscribe$)).subscribe(chat => {
+            this.chat = chat;
         });
     }
 
@@ -113,13 +127,13 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
                     return this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.MESSAGE);
                 }).then(response => {
                     this.apiService.sendMessage(
-                        this.accountId,
+                        this.chatId,
                         undefined,
                         response
-                    ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDto => {
+                    ).pipe(take(1)).subscribe(messageDto => {
                         messageDto.isMine = true;
                         this.storeService.addMessage(messageDto);
-                        this.storeService.setLastMessageInfo(this.accountId, messageDto.created, messageDto.id);
+                        this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
                         eventTarget.value = null;
                     });
                 }).catch(e => {
@@ -149,13 +163,14 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private loadMessages(): void {
-        if (this.accountId === null) {
+        if (this.chatId === null || this.idGeneratorService.isFake(this.chatId)) {
+            this.isMessageListLoaded = true;
             return;
         }
         this.scrollCounter++;
         this.previousScrollHeight = this.scrollContainer?.scrollHeight ?? 0;
         this.apiService.getMessages(
-            this.accountId,
+            this.chatId,
             this.pageIndex
         ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDtos => {
             this.storeService.addMessages(messageDtos);
@@ -168,7 +183,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
                     ? messageDtos.find(message => message.created === lastMessageDate)?.id
                     : '';
 
-                this.storeService.setLastMessageInfo(this.accountId, lastMessageDate, lastMessageId);
+                this.storeService.setLastMessageInfo(this.chatId, lastMessageDate, lastMessageId);
                 this.isMessageListLoaded = true;
             }
             if (messageDtos.length === 0) {
