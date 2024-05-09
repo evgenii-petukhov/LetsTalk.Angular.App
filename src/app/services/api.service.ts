@@ -60,7 +60,8 @@ export class ApiService {
                 width: image.getWidth(),
                 height: image.getHeight(),
                 imageFormat: image.getImageFormat(),
-                signature: image.getSignature()
+                signature: image.getSignature(),
+                signatureDate: image.getSignatureDate()
             }) : null
         });
         return this.client.profilePUT(request);
@@ -75,7 +76,8 @@ export class ApiService {
                 width: image.getWidth(),
                 height: image.getHeight(),
                 imageFormat: image.getImageFormat(),
-                signature: image.getSignature()
+                signature: image.getSignature(),
+                signatureDate: image.getSignatureDate()
             }) : null
         });
 

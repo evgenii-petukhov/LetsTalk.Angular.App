@@ -321,7 +321,8 @@ proto.file_upload.UploadImageResponse.toObject = function(includeInstance, msg) 
     width: jspb.Message.getFieldWithDefault(msg, 2, 0),
     height: jspb.Message.getFieldWithDefault(msg, 3, 0),
     imageFormat: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    signature: jspb.Message.getFieldWithDefault(msg, 5, "")
+    signature: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    signatureDate: jspb.Message.getFieldWithDefault(msg, 6, 0)
   };
 
   if (includeInstance) {
@@ -377,6 +378,10 @@ proto.file_upload.UploadImageResponse.deserializeBinaryFromReader = function(msg
     case 5:
       var value = /** @type {string} */ (reader.readString());
       msg.setSignature(value);
+      break;
+    case 6:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setSignatureDate(value);
       break;
     default:
       reader.skipField();
@@ -439,6 +444,13 @@ proto.file_upload.UploadImageResponse.serializeBinaryToWriter = function(message
   if (f.length > 0) {
     writer.writeString(
       5,
+      f
+    );
+  }
+  f = message.getSignatureDate();
+  if (f !== 0) {
+    writer.writeInt64(
+      6,
       f
     );
   }
@@ -532,6 +544,24 @@ proto.file_upload.UploadImageResponse.prototype.getSignature = function() {
  */
 proto.file_upload.UploadImageResponse.prototype.setSignature = function(value) {
   return jspb.Message.setProto3StringField(this, 5, value);
+};
+
+
+/**
+ * optional int64 signature_date = 6;
+ * @return {number}
+ */
+proto.file_upload.UploadImageResponse.prototype.getSignatureDate = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.file_upload.UploadImageResponse} returns this
+ */
+proto.file_upload.UploadImageResponse.prototype.setSignatureDate = function(value) {
+  return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 

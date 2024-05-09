@@ -42,6 +42,9 @@ export class UploadImageResponse extends jspb.Message {
   getSignature(): string;
   setSignature(value: string): UploadImageResponse;
 
+  getSignatureDate(): number;
+  setSignatureDate(value: number): UploadImageResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UploadImageResponse.AsObject;
   static toObject(includeInstance: boolean, msg: UploadImageResponse): UploadImageResponse.AsObject;
@@ -57,6 +60,7 @@ export namespace UploadImageResponse {
     height: number,
     imageFormat: number,
     signature: string,
+    signatureDate: number,
   }
 }
 

@@ -815,6 +815,7 @@ export class ImageRequestModel implements IImageRequestModel {
     height?: number;
     imageFormat?: number;
     signature?: string | undefined;
+    signatureDate?: number;
 
     constructor(data?: IImageRequestModel) {
         if (data) {
@@ -832,6 +833,7 @@ export class ImageRequestModel implements IImageRequestModel {
             this.height = _data["height"];
             this.imageFormat = _data["imageFormat"];
             this.signature = _data["signature"];
+            this.signatureDate = _data["signatureDate"];
         }
     }
 
@@ -849,6 +851,7 @@ export class ImageRequestModel implements IImageRequestModel {
         data["height"] = this.height;
         data["imageFormat"] = this.imageFormat;
         data["signature"] = this.signature;
+        data["signatureDate"] = this.signatureDate;
         return data;
     }
 }
@@ -859,6 +862,7 @@ export interface IImageRequestModel {
     height?: number;
     imageFormat?: number;
     signature?: string | undefined;
+    signatureDate?: number;
 }
 
 export class LinkPreviewDto implements ILinkPreviewDto {
