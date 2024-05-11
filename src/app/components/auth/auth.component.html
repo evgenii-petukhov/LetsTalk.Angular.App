@@ -1,5 +1,5 @@
 <div class="centered">
-    <div class="login-text">Sign in with social media</div>
+    <div class="login-text">Sign in options</div>
     <div class="login-options">
         <ul>
             <li>
@@ -11,6 +11,11 @@
                 <button class="btn btn-outline-primary" (click)="signInWithVK()">
                     <app-social-media-icon [iconTypeId]="2"></app-social-media-icon>VK
                 </button>
+            </li>
+            <li>
+                <a class="btn btn-outline-primary" [routerLink]="['/login-by-email']">
+                    <fa-icon [icon]="faEnvelope"></fa-icon>E-mail
+                </a>
             </li>
         </ul>
     </div>
