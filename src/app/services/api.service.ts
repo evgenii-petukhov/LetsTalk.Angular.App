@@ -13,7 +13,8 @@ import {
     IProfileDto,
     ProfileDto,
     IAccountDto,
-    CreateIndividualChatRequest
+    CreateIndividualChatRequest,
+    EmailLoginRequest
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 
@@ -32,6 +33,15 @@ export class ApiService {
         });
 
         return this.client.login(request);
+    }
+
+    loginByEmail(email: string, code: number): Observable<LoginResponseDto> {
+        const request = new EmailLoginRequest({
+            email: email,
+            code: code
+        });
+
+        return this.client.emailLogin(request);
     }
 
     getChats(): Observable<IChatDto[]> {
@@ -92,5 +102,9 @@ export class ApiService {
 
     markAsRead(chatId: string, messageId: string): Observable<void> {
         return this.client.markAsRead(chatId, messageId);
+    }
+
+    generateLoginCode(email: string): Observable<void> {
+        return this.client.generateLoginCode(email);
     }
 }

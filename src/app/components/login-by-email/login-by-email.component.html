@@ -1,18 +1,22 @@
 <div class="centered">
-    <div class="login-text">Please, enter your e-mail</div>
+    <div class="login-text" *ngIf="!isCodeRequested">Please, enter your email</div>
+    <div class="login-text" *ngIf="isCodeRequested">Please, enter the 4-digit code we sent to your email</div>
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="form-floating mb-3">
-            <input type="email" id="email" class="form-control" placeholder="E-mail" formControlName="email"
-                [ngClass]="form.controls['email'].invalid && 'is-invalid'" />
-            <label for="email">E-mail</label>
+        <div class="form-floating mb-3" *ngIf="!isCodeRequested">
+            <input type="email" id="email" class="form-control" placeholder="Email" formControlName="email"
+                [ngClass]="form.controls['email'].invalid && (form.controls['email'].touched || form.controls['email'].dirty) && 'is-invalid'" />
+            <label for="email">Email</label>
         </div>
-        <div class="form-floating mb-3">
-            <input type="text" id="code" class="form-control" placeholder="Code"
-                formControlName="code" [ngClass]="form.controls['code'].invalid && 'is-invalid'" />
+        <div class="form-floating mb-3" *ngIf="isCodeRequested">
+            <input type="text" id="code" class="form-control" placeholder="Code" formControlName="code"
+                [ngClass]="form.controls['code'].invalid && (form.controls['code'].touched || form.controls['code'].dirty) && 'is-invalid'" />
             <label for="code">Code</label>
         </div>
         <div class="form-floating mb-3 login-buttons">
-            <button type="submit" class="btn btn-primary" [disabled]="!form.valid">OK</button>
+            <button type="button" class="btn btn-primary" [disabled]="form.controls['email'].invalid"
+                (click)="onCodeRequested()" *ngIf="!isCodeRequested">Get a
+                code</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!form.valid" *ngIf="isCodeRequested">OK</button>
             <button type="button" class="btn btn-outline-primary" (click)="onBack()">Cancel</button>
         </div>
     </form>

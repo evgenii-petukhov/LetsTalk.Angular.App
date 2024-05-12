@@ -27,9 +27,9 @@
             <label for="lastname">Last name</label>
         </div>
         <div class="form-floating mb-3">
-            <input type="email" id="email" class="form-control" placeholder="E-mail" formControlName="email"
+            <input type="email" id="email" class="form-control" placeholder="Email" formControlName="email"
                 [ngClass]="form.controls['email'].invalid && 'is-invalid'" />
-            <label for="email">E-mail</label>
+            <label for="email">Email</label>
         </div>
         <div class="form-floating mb-3 profile-buttons">
             <button type="submit" class="btn btn-primary" [disabled]="!form.valid || isSending">OK</button>
