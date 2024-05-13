@@ -200,7 +200,7 @@ export class ApiClient {
      * @param email (optional) 
      * @return Success
      */
-    generateLoginCode(email: string | undefined): Observable<void> {
+    generateLoginCode(email: string | undefined): Observable<GenerateLoginCodeResponseDto> {
         let url_ = this.baseUrl + "/api/Authentication/generate-login-code?";
         if (email === null)
             throw new Error("The parameter 'email' cannot be null.");
@@ -212,6 +212,7 @@ export class ApiClient {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
+                "Accept": "text/plain"
             })
         };
 
@@ -222,14 +223,14 @@ export class ApiClient {
                 try {
                     return this.processGenerateLoginCode(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
+                    return _observableThrow(e) as any as Observable<GenerateLoginCodeResponseDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<void>;
+                return _observableThrow(response_) as any as Observable<GenerateLoginCodeResponseDto>;
         }));
     }
 
-    protected processGenerateLoginCode(response: HttpResponseBase): Observable<void> {
+    protected processGenerateLoginCode(response: HttpResponseBase): Observable<GenerateLoginCodeResponseDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -238,7 +239,10 @@ export class ApiClient {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return _observableOf(null as any);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GenerateLoginCodeResponseDto.fromJS(resultData200);
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -903,6 +907,42 @@ export class EmailLoginRequest implements IEmailLoginRequest {
 export interface IEmailLoginRequest {
     email?: string | undefined;
     code?: number;
+}
+
+export class GenerateLoginCodeResponseDto implements IGenerateLoginCodeResponseDto {
+    codeValidInSeconds?: number;
+
+    constructor(data?: IGenerateLoginCodeResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.codeValidInSeconds = _data["codeValidInSeconds"];
+        }
+    }
+
+    static fromJS(data: any): GenerateLoginCodeResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GenerateLoginCodeResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["codeValidInSeconds"] = this.codeValidInSeconds;
+        return data;
+    }
+}
+
+export interface IGenerateLoginCodeResponseDto {
+    codeValidInSeconds?: number;
 }
 
 export class ImagePreviewDto implements IImagePreviewDto {

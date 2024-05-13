@@ -12,11 +12,14 @@
                 [ngClass]="form.controls['code'].invalid && (form.controls['code'].touched || form.controls['code'].dirty) && 'is-invalid'" />
             <label for="code">Code</label>
         </div>
+        <div class="form-floating mb-3" *ngIf="isCodeRequested && codeValidInSeconds > 0">
+            New code can be requested in {{codeValidInSeconds}} sec.
+        </div>
         <div class="form-floating mb-3 login-buttons">
             <button type="button" class="btn btn-primary" [disabled]="form.controls['email'].invalid"
-                (click)="onCodeRequested()" *ngIf="!isCodeRequested">Get a
+                (click)="onCodeRequested()" *ngIf="!isCodeRequested || codeValidInSeconds === 0">Get a
                 code</button>
-            <button type="submit" class="btn btn-primary" [disabled]="!form.valid" *ngIf="isCodeRequested">OK</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!form.valid" *ngIf="isCodeRequested && codeValidInSeconds > 0">OK</button>
             <button type="button" class="btn btn-outline-primary" (click)="onBack()">Cancel</button>
         </div>
     </form>

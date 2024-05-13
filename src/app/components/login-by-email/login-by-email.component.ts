@@ -18,6 +18,8 @@ export class LoginByEmailComponent {
     });
 
     isCodeRequested = false;
+    codeValidInSeconds = 0;
+    codeValidTimerId = 0;
 
     constructor(
         private router: Router,
@@ -38,8 +40,16 @@ export class LoginByEmailComponent {
     }
 
     onCodeRequested(): void {
-        this.apiService.generateLoginCode(this.form.value.email).pipe(take(1)).subscribe(() => {
+        this.apiService.generateLoginCode(this.form.value.email).pipe(take(1)).subscribe(data => {
             this.isCodeRequested = true;
+            this.codeValidInSeconds = data.codeValidInSeconds;
+            this.codeValidTimerId = window.setInterval(() => {
+                if (this.codeValidInSeconds === 0) {
+                    window.clearInterval(this.codeValidTimerId);
+                } else {
+                    --this.codeValidInSeconds;
+                }
+            }, 1000);
         });
     }
 }

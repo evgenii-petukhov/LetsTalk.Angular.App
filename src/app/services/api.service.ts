@@ -14,7 +14,8 @@ import {
     ProfileDto,
     IAccountDto,
     CreateIndividualChatRequest,
-    EmailLoginRequest
+    EmailLoginRequest,
+    GenerateLoginCodeResponseDto
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 
@@ -104,7 +105,7 @@ export class ApiService {
         return this.client.markAsRead(chatId, messageId);
     }
 
-    generateLoginCode(email: string): Observable<void> {
+    generateLoginCode(email: string): Observable<GenerateLoginCodeResponseDto> {
         return this.client.generateLoginCode(email);
     }
 }
