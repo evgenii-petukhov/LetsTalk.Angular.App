@@ -4,6 +4,7 @@ import { AuthComponent } from './components/auth/auth.component';
 import { MessengerComponent } from './components/messenger/messenger.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { authGuard } from './guards/auth-guard';
+import { profileGuard } from './guards/profile-guard';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { LoginByEmailComponent } from './components/login-by-email/login-by-email.component';
 
@@ -28,7 +29,7 @@ const routes: Routes = [
     {
         path: 'chats',
         component: MessengerComponent,
-        canActivate: [authGuard]
+        canActivate: [authGuard, profileGuard]
     },
     {
         path: 'profile',
