@@ -102,10 +102,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
                 next: (profileDto: ProfileDto) => {
                     this.storeService.setLoggedInUser(profileDto);
                     this.router.navigate(['chats']);
+                    this.isSending = false;
                 },
                 error: e => {
                     const details = JSON.parse(e.response);
                     this.toastr.error(details.title, 'Error');
+                    this.isSending = false;
                 }
             });
     }

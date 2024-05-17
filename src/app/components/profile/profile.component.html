@@ -32,7 +32,7 @@
             <label for="email">Email</label>
         </div>
         <div class="form-floating mb-3 profile-buttons">
-            <button type="submit" class="btn btn-primary" [disabled]="!form.valid || isSending">OK</button>
+            <button type="submit" class="btn btn-primary" [disabled]="isSending || !form.valid">OK</button>
             <button type="button" class="btn btn-outline-primary" (click)="onBack()">Cancel</button>
         </div>
         <div class="profile-privacy-policy">
