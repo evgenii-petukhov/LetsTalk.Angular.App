@@ -1258,7 +1258,6 @@ export class ProfileDto implements IProfileDto {
     photoUrl?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    email?: string | undefined;
     imageId?: string | undefined;
 
     constructor(data?: IProfileDto) {
@@ -1276,7 +1275,6 @@ export class ProfileDto implements IProfileDto {
             this.photoUrl = _data["photoUrl"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
-            this.email = _data["email"];
             this.imageId = _data["imageId"];
         }
     }
@@ -1294,7 +1292,6 @@ export class ProfileDto implements IProfileDto {
         data["photoUrl"] = this.photoUrl;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
-        data["email"] = this.email;
         data["imageId"] = this.imageId;
         return data;
     }
@@ -1305,12 +1302,10 @@ export interface IProfileDto {
     photoUrl?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    email?: string | undefined;
     imageId?: string | undefined;
 }
 
 export class UpdateProfileRequest implements IUpdateProfileRequest {
-    email?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
     image?: ImageRequestModel;
@@ -1326,7 +1321,6 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
 
     init(_data?: any) {
         if (_data) {
-            this.email = _data["email"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
             this.image = _data["image"] ? ImageRequestModel.fromJS(_data["image"]) : <any>undefined;
@@ -1342,7 +1336,6 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["email"] = this.email;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["image"] = this.image ? this.image.toJSON() : <any>undefined;
@@ -1351,7 +1344,6 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
 }
 
 export interface IUpdateProfileRequest {
-    email?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
     image?: ImageRequestModel;

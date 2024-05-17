@@ -61,9 +61,8 @@ export class ApiService {
         return this.client.profileGET();
     }
 
-    saveProfile(email: string, firstName: string, lastName: string, image?: UploadImageResponse): Observable<ProfileDto> {
+    saveProfile(firstName: string, lastName: string, image?: UploadImageResponse): Observable<ProfileDto> {
         const request = new UpdateProfileRequest({
-            email,
             firstName,
             lastName,
             image: image ? new ImageRequestModel({

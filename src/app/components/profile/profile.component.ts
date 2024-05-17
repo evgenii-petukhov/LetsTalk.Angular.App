@@ -30,7 +30,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     form = this.fb.group({
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
-        email: ['', Validators.email],
         photoUrl: [null]
     });
     faUpload = faUpload;
@@ -50,7 +49,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
             this.form.setValue({
                 firstName: account.firstName,
                 lastName: account.lastName,
-                email: account.email,
                 photoUrl: null
             });
         });
@@ -95,7 +93,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     private submitForm(response: UploadImageResponse): void {
         this.apiService.saveProfile(
-            this.form.value.email,
             this.form.value.firstName,
             this.form.value.lastName,
             response).pipe(take(1)).subscribe({

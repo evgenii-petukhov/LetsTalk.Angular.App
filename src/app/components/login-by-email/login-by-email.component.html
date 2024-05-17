@@ -17,9 +17,9 @@
         </div>
         <div class="form-floating mb-3 login-buttons">
             <button type="button" class="btn btn-primary" [disabled]="form.controls['email'].invalid"
-                (click)="onCodeRequested()" *ngIf="!isCodeRequested || codeValidInSeconds === 0">Get a
-                code</button>
-            <button type="submit" class="btn btn-primary" [disabled]="!form.valid" *ngIf="isCodeRequested && codeValidInSeconds > 0">OK</button>
+                (click)="onCodeRequested()" *ngIf="!isCodeRequested || codeValidInSeconds === 0">Get code</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!form.valid"
+                *ngIf="isCodeRequested && codeValidInSeconds > 0">OK</button>
             <button type="button" class="btn btn-outline-primary" (click)="onBack()">Cancel</button>
         </div>
     </form>
