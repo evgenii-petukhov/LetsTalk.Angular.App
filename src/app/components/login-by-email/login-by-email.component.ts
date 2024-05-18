@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs';
+import { LoginResponseDto } from 'src/app/api-client/api-client';
 import { ApiService } from 'src/app/services/api.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 
@@ -25,13 +27,20 @@ export class LoginByEmailComponent {
         private router: Router,
         private fb: FormBuilder,
         private apiService: ApiService,
-        private tokenStorage: TokenStorageService) { }
+        private tokenStorage: TokenStorageService,
+        private toastr: ToastrService) { }
 
     onSubmit(): void {
-        this.apiService.loginByEmail(this.form.value.email, Number(this.form.value.code)).pipe(take(1)).subscribe(data => {
-            this.tokenStorage.saveToken(data.token);
-            this.tokenStorage.saveUser(data);
-            this.router.navigate(['chats']);
+        this.apiService.loginByEmail(this.form.value.email, Number(this.form.value.code)).pipe(take(1)).subscribe({
+            next: (loginResponseDto: LoginResponseDto) => {
+                this.tokenStorage.saveToken(loginResponseDto.token);
+                this.tokenStorage.saveUser(loginResponseDto);
+                this.router.navigate(['chats']);
+            },
+            error: e => {
+                const details = JSON.parse(e.response);
+                this.toastr.error(details.title, 'Error');
+            }
         });
     }
 
