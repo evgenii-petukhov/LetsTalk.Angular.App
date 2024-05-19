@@ -1,8 +1,8 @@
 <div class="centered">
-    <div class="login-text">Sign in options</div>
+    <div class="login-text">Sign in with</div>
     <div class="login-options">
         <ul>
-            <li>
+            <li *ngIf="isFacebookProviderAvailable">
                 <button class="btn btn-outline-primary" (click)="signInWithFB()">
                     <app-social-media-icon [iconTypeId]="1"></app-social-media-icon>Facebook
                 </button>

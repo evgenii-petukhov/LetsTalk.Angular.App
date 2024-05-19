@@ -12,6 +12,7 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 export class AuthComponent {
 
     isVkProviderAvailable = !!(environment as any).login.vkAppId;
+    isFacebookProviderAvailable = !!(environment as any).login.facebookAppId;
     faEnvelope = faEnvelope;
 
     constructor(
