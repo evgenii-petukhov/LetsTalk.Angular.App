@@ -45,14 +45,20 @@ export class StoreService {
         });
     }
 
-    initChatStorage(): void {
-        this.store.select(selectChats).pipe(take(1)).subscribe(chats => {
-            if (!chats) {
-                this.apiService.getChats().pipe(take(1)).subscribe(response => {
-                    this.store.dispatch(chatsActions.init({ chats: response }));
-                });
-            }
-        });
+    initChatStorage(force?: boolean): void {
+        if (force) {
+            this.apiService.getChats().pipe(take(1)).subscribe(response => {
+                this.store.dispatch(chatsActions.init({ chats: response }));
+            });
+        } else {
+            this.store.select(selectChats).pipe(take(1)).subscribe(chats => {
+                if (!chats) {
+                    this.apiService.getChats().pipe(take(1)).subscribe(response => {
+                        this.store.dispatch(chatsActions.init({ chats: response }));
+                    });
+                }
+            });
+        }
     }
 
     initAccountStorage(): void {

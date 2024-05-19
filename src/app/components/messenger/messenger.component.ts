@@ -92,6 +92,8 @@ export class MessengerComponent implements OnInit, OnDestroy {
                     `${chat.chatName}`,
                     messageDto.imageId ? 'Image' : messageDto.text,
                     this.isWindowActive);
+            } else {
+                this.storeService.initChatStorage(true);
             }
         }
     }
