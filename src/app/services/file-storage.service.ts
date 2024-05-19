@@ -12,7 +12,7 @@ export class FileStorageService {
     private fileUploadService: FileUploadGrpcEndpointClient;
 
     constructor(
-        private tokenService: TokenStorageService,
+        private tokenStorageService: TokenStorageService,
         @Inject(GRPC_INTERCEPTORS) interceptors: any[]) {
         this.fileUploadService = new FileUploadGrpcEndpointClient(environment.services.fileStorage.url, {}, { 'unaryInterceptors': interceptors });
     }
@@ -26,12 +26,12 @@ export class FileStorageService {
         const request = new UploadImageRequest();
         request.setContent(content);
         request.setImageRole(imageRole);
-        return this.fileUploadService.uploadImageAsync(request, { authorization: this.tokenService.getToken() });
+        return this.fileUploadService.uploadImageAsync(request, { authorization: this.tokenStorageService.getToken() });
     }
 
     download(imageId: string): Promise<DownloadImageResponse> {
         const request = new DownloadImageRequest();
         request.setImageId(imageId);
-        return this.fileUploadService.downloadImageAsync(request, { authorization: this.tokenService.getToken() });
+        return this.fileUploadService.downloadImageAsync(request, { authorization: this.tokenStorageService.getToken() });
     }
 }

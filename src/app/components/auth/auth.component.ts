@@ -26,8 +26,4 @@ export class AuthComponent {
     signInWithVK(): void {
         this.authService.signIn(VKLoginProvider.PROVIDER_ID);
     }
-
-    signOut(): void {
-        this.authService.signOut();
-    }
 }

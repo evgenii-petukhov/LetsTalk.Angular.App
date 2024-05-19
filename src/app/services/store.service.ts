@@ -113,16 +113,19 @@ export class StoreService {
     }
 
     getLoggedInUser(): Promise<IProfileDto> {
-        return new Promise<IProfileDto>(resolve => {
+        return new Promise<IProfileDto>((resolve, reject) => {
             this.store.select(selectLoggedInUser).pipe(take(1)).subscribe(account => {
                 if (account) {
                     resolve(account);
                     return;
                 }
 
-                this.apiService.getProfile().pipe(take(1)).subscribe(response => {
-                    this.store.dispatch(loggedInUserActions.init({ account: response }));
-                    resolve(response);
+                this.apiService.getProfile().pipe(take(1)).subscribe({
+                    next: response => {
+                        this.store.dispatch(loggedInUserActions.init({ account: response }));
+                        resolve(response);
+                    },
+                    error: e => reject(e)
                 });
             });
         });

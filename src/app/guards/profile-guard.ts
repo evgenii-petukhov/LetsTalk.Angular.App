@@ -6,6 +6,12 @@ import { StoreService } from '../services/store.service';
 export const profileGuard = (next: ActivatedRouteSnapshot) => {
     const storeService = inject(StoreService);
 
-    return new Promise<boolean | UrlTree>(resolve => storeService.getLoggedInUser().then(account => 
-        resolve(!!account.firstName && !!account.lastName ? true : createUrlTreeFromSnapshot(next, ['/', 'profile']))));
+    return new Promise<boolean | UrlTree>(resolve => {
+        storeService.getLoggedInUser().then(
+            account => resolve(!!account.firstName && !!account.lastName ? true : createUrlTreeFromSnapshot(next, ['/', 'profile'])),
+            () => {
+                window.localStorage.clear();
+                resolve(createUrlTreeFromSnapshot(next, ['/', 'auth']));}
+            );
+    });
 };
