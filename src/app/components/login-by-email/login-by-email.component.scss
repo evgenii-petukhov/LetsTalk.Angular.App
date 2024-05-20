@@ -12,7 +12,8 @@
 
         @include media-breakpoint-down(md) {
             flex: 1 1 auto;
-            border-radius: 0;
+            width: auto;
+            margin: 15px;
         }
 
         .login-text {
