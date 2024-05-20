@@ -8,10 +8,17 @@ export const profileGuard = (next: ActivatedRouteSnapshot) => {
 
     return new Promise<boolean | UrlTree>(resolve => {
         storeService.getLoggedInUser().then(
-            account => resolve(!!account.firstName && !!account.lastName ? true : createUrlTreeFromSnapshot(next, ['/', 'profile'])),
+            account => {
+                if (account) {
+                    resolve(!!account?.firstName && !!account?.lastName ? true : createUrlTreeFromSnapshot(next, ['/', 'profile']));
+                } else {
+                    window.localStorage.clear();
+                    resolve(createUrlTreeFromSnapshot(next, ['/', 'auth']));
+                }
+            },
             () => {
                 window.localStorage.clear();
-                resolve(createUrlTreeFromSnapshot(next, ['/', 'auth']));}
-            );
+                resolve(createUrlTreeFromSnapshot(next, ['/', 'auth']));
+            });
     });
 };
