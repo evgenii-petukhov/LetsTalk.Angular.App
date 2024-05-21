@@ -314,7 +314,7 @@ export class ApiClient {
      * @param body (optional) 
      * @return Success
      */
-    chat(body: CreateIndividualChatRequest | undefined): Observable<ChatDto> {
+    chat(body: CreateIndividualChatRequest | undefined): Observable<ChatDtoBase> {
         let url_ = this.baseUrl + "/api/Chat";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -337,14 +337,14 @@ export class ApiClient {
                 try {
                     return this.processChat(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<ChatDto>;
+                    return _observableThrow(e) as any as Observable<ChatDtoBase>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<ChatDto>;
+                return _observableThrow(response_) as any as Observable<ChatDtoBase>;
         }));
     }
 
-    protected processChat(response: HttpResponseBase): Observable<ChatDto> {
+    protected processChat(response: HttpResponseBase): Observable<ChatDtoBase> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -355,7 +355,7 @@ export class ApiClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = ChatDto.fromJS(resultData200);
+            result200 = ChatDtoBase.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -787,6 +787,42 @@ export interface IChatDto {
     imageId?: string | undefined;
     isIndividual?: boolean;
     accountIds?: string[] | undefined;
+}
+
+export class ChatDtoBase implements IChatDtoBase {
+    id?: string | undefined;
+
+    constructor(data?: IChatDtoBase) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): ChatDtoBase {
+        data = typeof data === 'object' ? data : {};
+        let result = new ChatDtoBase();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data;
+    }
+}
+
+export interface IChatDtoBase {
+    id?: string | undefined;
 }
 
 export class CreateIndividualChatRequest implements ICreateIndividualChatRequest {
