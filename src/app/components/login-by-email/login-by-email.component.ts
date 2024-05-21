@@ -16,7 +16,7 @@ export class LoginByEmailComponent {
 
     form = this.fb.group({
         email: ['', [Validators.email, Validators.required]],
-        code: ['', [Validators.pattern('[0-9]{4}'), Validators.required]]
+        code: ['', [Validators.pattern('\\s*\\d{4}\\s*'), Validators.required]]
     });
 
     isCodeRequested = false;
