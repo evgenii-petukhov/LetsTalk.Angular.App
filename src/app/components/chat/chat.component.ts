@@ -25,6 +25,7 @@ import { FileStorageService } from 'src/app/services/file-storage.service';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { IChatDto } from 'src/app/api-client/api-client';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-chat',
@@ -39,6 +40,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     faPaperPlane = faPaperPlane;
     faCamera = faCamera;
     messages$ = this.store.select(selectMessages);
+    isSending = false;
 
     private scrollContainer: HTMLDivElement;
     private chat: IChatDto;
@@ -56,24 +58,36 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         private storeService: StoreService,
         private imageService: ImageService,
         private fileStorageService: FileStorageService,
-        private idGeneratorService: IdGeneratorService) { }
+        private idGeneratorService: IdGeneratorService,
+        private toastr: ToastrService) { }
 
     @validate
     send(@required message: string): void {
         this.message = '';
-
+        this.isSending = true;
         if (this.chat.isIndividual && this.idGeneratorService.isFake(this.chatId)) {
-            this.apiService.createIndividualChat(this.chat.accountIds[0]).pipe(take(1)).subscribe(chatDto => {
-                this.apiService.sendMessage(chatDto.id, message).pipe(take(1)).subscribe(() => {
-                    this.storeService.updateChatId(this.chatId, chatDto.id);
-                    this.storeService.setSelectedChatId(chatDto.id);
-                });
+            this.apiService.createIndividualChat(this.chat.accountIds[0]).pipe(take(1)).subscribe({
+                next: chatDto => {
+                    this.apiService.sendMessage(chatDto.id, message).pipe(take(1)).subscribe({
+                        next: () => {
+                            this.isSending = false;
+                            this.storeService.updateChatId(this.chatId, chatDto.id);
+                            this.storeService.setSelectedChatId(chatDto.id);
+                        },
+                        error: e => this.handleSubmitError(e)
+                    });
+                },
+                error: e => this.handleSubmitError(e)
             });
         } else {
-            this.apiService.sendMessage(this.chatId, message).pipe(take(1)).subscribe(messageDto => {
-                messageDto.isMine = true;
-                this.storeService.addMessage(messageDto);
-                this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
+            this.apiService.sendMessage(this.chatId, message).pipe(take(1)).subscribe({
+                next: messageDto => {
+                    messageDto.isMine = true;
+                    this.isSending = false;
+                    this.storeService.addMessage(messageDto);
+                    this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
+                },
+                error: e => this.handleSubmitError(e)
             });
         }
     }
@@ -200,5 +214,11 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private resizeImage(photoUrl: string, maxWidth: number, maxHeight: number): Promise<Blob> {
         return photoUrl ? this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight) : Promise.resolve(null);
+    }
+
+    private handleSubmitError(e: any) {
+        const details = JSON.parse(e.response || '{}');
+        this.toastr.error(details.title, 'Error');
+        this.isSending = false;
     }
 }

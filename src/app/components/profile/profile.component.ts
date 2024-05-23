@@ -65,10 +65,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             return blob ? this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.AVATAR) : Promise.resolve<UploadImageResponse>(null);
         }).then(response => {
             this.submitForm(response);
-        }).catch(e => {
-            console.error(e);
-            this.isSending = false;
-        });
+        }).catch(e => this.handleSubmitError(e));
     }
 
     onBack(): void {
@@ -101,11 +98,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
                     this.router.navigate(['chats']);
                     this.isSending = false;
                 },
-                error: e => {
-                    const details = JSON.parse(e.response);
-                    this.toastr.error(details.title, 'Error');
-                    this.isSending = false;
-                }
+                error: e => this.handleSubmitError(e)
             });
+    }
+
+    private handleSubmitError(e: any) {
+        const details = JSON.parse(e.response || '{}');
+        this.toastr.error(details.title, 'Error');
+        this.isSending = false;
     }
 }

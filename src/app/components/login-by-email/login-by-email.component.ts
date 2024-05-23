@@ -20,6 +20,8 @@ export class LoginByEmailComponent {
     });
 
     isCodeRequested = false;
+    isCodeRequestInProgress = false;
+    isSubmitInProgress = false;
     codeValidInSeconds = 0;
     codeValidTimerId = 0;
 
@@ -31,6 +33,7 @@ export class LoginByEmailComponent {
         private toastr: ToastrService) { }
 
     onSubmit(): void {
+        this.isSubmitInProgress = true;
         this.apiService.loginByEmail(this.form.value.email, Number(this.form.value.code)).pipe(take(1)).subscribe({
             next: (loginResponseDto: LoginResponseDto) => {
                 this.tokenStorage.saveToken(loginResponseDto.token);
@@ -38,8 +41,8 @@ export class LoginByEmailComponent {
                 this.router.navigate(['chats']);
             },
             error: e => {
-                const details = JSON.parse(e.response);
-                this.toastr.error(details.title, 'Error');
+                this.showErrorToast(e);
+                this.isSubmitInProgress = false;
             }
         });
     }
@@ -49,16 +52,29 @@ export class LoginByEmailComponent {
     }
 
     onCodeRequested(): void {
-        this.apiService.generateLoginCode(this.form.value.email).pipe(take(1)).subscribe(data => {
-            this.isCodeRequested = true;
-            this.codeValidInSeconds = data.codeValidInSeconds;
-            this.codeValidTimerId = window.setInterval(() => {
-                if (this.codeValidInSeconds === 0) {
-                    window.clearInterval(this.codeValidTimerId);
-                } else {
-                    --this.codeValidInSeconds;
-                }
-            }, 1000);
+        this.isCodeRequestInProgress = true;
+        this.apiService.generateLoginCode(this.form.value.email).pipe(take(1)).subscribe({
+            next: data => {
+                this.isCodeRequested = true;
+                this.isCodeRequestInProgress = false;
+                this.codeValidInSeconds = data.codeValidInSeconds;
+                this.codeValidTimerId = window.setInterval(() => {
+                    if (this.codeValidInSeconds === 0) {
+                        window.clearInterval(this.codeValidTimerId);
+                    } else {
+                        --this.codeValidInSeconds;
+                    }
+                }, 1000);
+            },
+            error: e => {
+                this.showErrorToast(e);
+                this.isCodeRequestInProgress = false;
+            }
         });
+    }
+
+    private showErrorToast(e: any) {
+        const details = JSON.parse(e.response || '{}');
+        this.toastr.error(details.title, 'Error');
     }
 }
