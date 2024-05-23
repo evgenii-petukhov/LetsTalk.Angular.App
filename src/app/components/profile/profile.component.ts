@@ -26,6 +26,7 @@ import { take } from 'rxjs';
 export class ProfileComponent implements OnInit, OnDestroy {
     account$ = this.store.select(selectLoggedInUser);
     isSending = false;
+    email = '';
 
     form = this.fb.group({
         firstName: ['', Validators.required],
@@ -51,6 +52,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
                 lastName: account.lastName,
                 photoUrl: null
             });
+            this.email = account.email;
         });
     }
 

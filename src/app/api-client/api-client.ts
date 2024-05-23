@@ -1294,6 +1294,7 @@ export class ProfileDto implements IProfileDto {
     photoUrl?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    email?: string | undefined;
     imageId?: string | undefined;
 
     constructor(data?: IProfileDto) {
@@ -1311,6 +1312,7 @@ export class ProfileDto implements IProfileDto {
             this.photoUrl = _data["photoUrl"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
+            this.email = _data["email"];
             this.imageId = _data["imageId"];
         }
     }
@@ -1328,6 +1330,7 @@ export class ProfileDto implements IProfileDto {
         data["photoUrl"] = this.photoUrl;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
+        data["email"] = this.email;
         data["imageId"] = this.imageId;
         return data;
     }
@@ -1338,6 +1341,7 @@ export interface IProfileDto {
     photoUrl?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
+    email?: string | undefined;
     imageId?: string | undefined;
 }
 
