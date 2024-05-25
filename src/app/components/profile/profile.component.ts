@@ -13,6 +13,7 @@ import { FileStorageService } from 'src/app/services/file-storage.service';
 import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { ProfileDto } from 'src/app/api-client/api-client';
 import { take } from 'rxjs';
+import { ErrorService } from 'src/app/services/error.service';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -43,7 +44,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
         private store: Store,
         private toastr: ToastrService,
         private imageService: ImageService,
-        private fileStorageService: FileStorageService) { }
+        private fileStorageService: FileStorageService,
+        private errorService: ErrorService) { }
 
     ngOnInit(): void {
         this.storeService.getLoggedInUser().then(account => {
@@ -105,8 +107,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     private handleSubmitError(e: any) {
-        const details = JSON.parse(e.response || '{}');
-        this.toastr.error(details.title, 'Error');
+        const errors = this.errorService.getCommaSeparatedErrorMessages(e);
+        this.toastr.error(errors, 'Error');
         this.isSending = false;
     }
 }

@@ -15,7 +15,8 @@ import {
     IAccountDto,
     CreateIndividualChatRequest,
     EmailLoginRequest,
-    GenerateLoginCodeResponseDto
+    GenerateLoginCodeResponseDto,
+    GenerateLoginCodeRequest
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 
@@ -39,7 +40,8 @@ export class ApiService {
     loginByEmail(email: string, code: number): Observable<LoginResponseDto> {
         const request = new EmailLoginRequest({
             email: email,
-            code: code
+            code: code,
+            antiSpamToken: Math.floor(new Date().getTime() / 1000)
         });
 
         return this.client.emailLogin(request);
@@ -105,6 +107,11 @@ export class ApiService {
     }
 
     generateLoginCode(email: string): Observable<GenerateLoginCodeResponseDto> {
-        return this.client.generateLoginCode(email, Math.floor(new Date().getTime() / 1000));
+        const request = new GenerateLoginCodeRequest({
+            email: email,
+            antiSpamToken: Math.floor(new Date().getTime() / 1000)
+        });
+
+        return this.client.generateLoginCode(request);
     }
 }

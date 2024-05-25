@@ -26,6 +26,7 @@ import { IdGeneratorService } from 'src/app/services/id-generator.service';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { IChatDto } from 'src/app/api-client/api-client';
 import { ToastrService } from 'ngx-toastr';
+import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
     selector: 'app-chat',
@@ -59,7 +60,8 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         private imageService: ImageService,
         private fileStorageService: FileStorageService,
         private idGeneratorService: IdGeneratorService,
-        private toastr: ToastrService) { }
+        private toastr: ToastrService,
+        private errorService: ErrorService) { }
 
     @validate
     send(@required message: string): void {
@@ -217,8 +219,8 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private handleSubmitError(e: any) {
-        const details = JSON.parse(e.response || '{}');
-        this.toastr.error(details.title, 'Error');
+        const errors = this.errorService.getCommaSeparatedErrorMessages(e);
+        this.toastr.error(errors, 'Error');
         this.isSending = false;
     }
 }

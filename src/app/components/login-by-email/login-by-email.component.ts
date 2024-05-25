@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs';
 import { LoginResponseDto } from 'src/app/api-client/api-client';
 import { ApiService } from 'src/app/services/api.service';
+import { ErrorService } from 'src/app/services/error.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 
 @Component({
@@ -30,7 +31,8 @@ export class LoginByEmailComponent {
         private fb: FormBuilder,
         private apiService: ApiService,
         private tokenStorage: TokenStorageService,
-        private toastr: ToastrService) { }
+        private toastr: ToastrService,
+        private errorService: ErrorService) { }
 
     onSubmit(): void {
         this.isSubmitInProgress = true;
@@ -74,7 +76,7 @@ export class LoginByEmailComponent {
     }
 
     private showErrorToast(e: any) {
-        const details = JSON.parse(e.response || '{}');
-        this.toastr.error(details.title, 'Error');
+        const errors = this.errorService.getCommaSeparatedErrorMessages(e);
+        this.toastr.error(errors, 'Error');
     }
 }

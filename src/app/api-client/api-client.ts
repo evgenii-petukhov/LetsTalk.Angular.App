@@ -197,26 +197,21 @@ export class ApiClient {
     }
 
     /**
-     * @param email (optional) 
-     * @param _dt (optional) 
+     * @param body (optional) 
      * @return Success
      */
-    generateLoginCode(email: string | undefined, _dt: number | undefined): Observable<GenerateLoginCodeResponseDto> {
-        let url_ = this.baseUrl + "/api/Authentication/generate-login-code?";
-        if (email === null)
-            throw new Error("The parameter 'email' cannot be null.");
-        else if (email !== undefined)
-            url_ += "Email=" + encodeURIComponent("" + email) + "&";
-        if (_dt === null)
-            throw new Error("The parameter '_dt' cannot be null.");
-        else if (_dt !== undefined)
-            url_ += "_dt=" + encodeURIComponent("" + _dt) + "&";
+    generateLoginCode(body: GenerateLoginCodeRequest | undefined): Observable<GenerateLoginCodeResponseDto> {
+        let url_ = this.baseUrl + "/api/Authentication/generate-login-code";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
+                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
@@ -913,6 +908,7 @@ export interface ICreateMessageRequest {
 export class EmailLoginRequest implements IEmailLoginRequest {
     email?: string | undefined;
     code?: number;
+    antiSpamToken?: number;
 
     constructor(data?: IEmailLoginRequest) {
         if (data) {
@@ -927,6 +923,7 @@ export class EmailLoginRequest implements IEmailLoginRequest {
         if (_data) {
             this.email = _data["email"];
             this.code = _data["code"];
+            this.antiSpamToken = _data["antiSpamToken"];
         }
     }
 
@@ -941,6 +938,7 @@ export class EmailLoginRequest implements IEmailLoginRequest {
         data = typeof data === 'object' ? data : {};
         data["email"] = this.email;
         data["code"] = this.code;
+        data["antiSpamToken"] = this.antiSpamToken;
         return data;
     }
 }
@@ -948,6 +946,47 @@ export class EmailLoginRequest implements IEmailLoginRequest {
 export interface IEmailLoginRequest {
     email?: string | undefined;
     code?: number;
+    antiSpamToken?: number;
+}
+
+export class GenerateLoginCodeRequest implements IGenerateLoginCodeRequest {
+    email?: string | undefined;
+    antiSpamToken?: number;
+
+    constructor(data?: IGenerateLoginCodeRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.email = _data["email"];
+            this.antiSpamToken = _data["antiSpamToken"];
+        }
+    }
+
+    static fromJS(data: any): GenerateLoginCodeRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new GenerateLoginCodeRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["email"] = this.email;
+        data["antiSpamToken"] = this.antiSpamToken;
+        return data;
+    }
+}
+
+export interface IGenerateLoginCodeRequest {
+    email?: string | undefined;
+    antiSpamToken?: number;
 }
 
 export class GenerateLoginCodeResponseDto implements IGenerateLoginCodeResponseDto {
