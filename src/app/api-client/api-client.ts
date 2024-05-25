@@ -198,14 +198,19 @@ export class ApiClient {
 
     /**
      * @param email (optional) 
+     * @param _dt (optional) 
      * @return Success
      */
-    generateLoginCode(email: string | undefined): Observable<GenerateLoginCodeResponseDto> {
+    generateLoginCode(email: string | undefined, _dt: number | undefined): Observable<GenerateLoginCodeResponseDto> {
         let url_ = this.baseUrl + "/api/Authentication/generate-login-code?";
         if (email === null)
             throw new Error("The parameter 'email' cannot be null.");
         else if (email !== undefined)
-            url_ += "email=" + encodeURIComponent("" + email) + "&";
+            url_ += "Email=" + encodeURIComponent("" + email) + "&";
+        if (_dt === null)
+            throw new Error("The parameter '_dt' cannot be null.");
+        else if (_dt !== undefined)
+            url_ += "_dt=" + encodeURIComponent("" + _dt) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {

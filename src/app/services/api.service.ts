@@ -105,6 +105,6 @@ export class ApiService {
     }
 
     generateLoginCode(email: string): Observable<GenerateLoginCodeResponseDto> {
-        return this.client.generateLoginCode(email);
+        return this.client.generateLoginCode(email, Math.floor(new Date().getTime() / 1000));
     }
 }
