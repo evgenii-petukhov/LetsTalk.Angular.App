@@ -1,8 +1,6 @@
 export const environment = {
     production: true,
-    login: {
-        facebookAppId: '1167512300629881',
-    },
+    login: {},
     services: {
         api: {
             url: 'https://chatapi.epetukhov.cyou'

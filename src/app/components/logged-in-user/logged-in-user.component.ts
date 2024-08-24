@@ -1,7 +1,6 @@
 import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
 import { faRightFromBracket, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
-import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { selectLoggedInUser } from 'src/app/state/logged-in-user/logged-in-user.selectors';
 import { StoreService } from 'src/app/services/store.service';
 
@@ -18,7 +17,6 @@ export class LoggedInUserComponent implements OnInit {
     @Input() @HostBinding('class.navigation-active') isNavigationActive: boolean = false;
 
     constructor(
-        private tokenStorageService: TokenStorageService,
         private store: Store,
         private storeService: StoreService
     ) { }
@@ -28,7 +26,7 @@ export class LoggedInUserComponent implements OnInit {
     }
 
     logout(): boolean {
-        this.tokenStorageService.signOut();
+        window.localStorage.clear();
         window.location.reload();
         return false;
     }

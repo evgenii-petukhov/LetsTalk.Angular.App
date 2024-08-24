@@ -141,6 +141,118 @@ export class ApiClient {
     }
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    emailLogin(body: EmailLoginRequest | undefined): Observable<LoginResponseDto> {
+        let url_ = this.baseUrl + "/api/Authentication/email-login";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processEmailLogin(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processEmailLogin(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<LoginResponseDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<LoginResponseDto>;
+        }));
+    }
+
+    protected processEmailLogin(response: HttpResponseBase): Observable<LoginResponseDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = LoginResponseDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    generateLoginCode(body: GenerateLoginCodeRequest | undefined): Observable<GenerateLoginCodeResponseDto> {
+        let url_ = this.baseUrl + "/api/Authentication/generate-login-code";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGenerateLoginCode(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGenerateLoginCode(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<GenerateLoginCodeResponseDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<GenerateLoginCodeResponseDto>;
+        }));
+    }
+
+    protected processGenerateLoginCode(response: HttpResponseBase): Observable<GenerateLoginCodeResponseDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GenerateLoginCodeResponseDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * @return Success
      */
     chatAll(): Observable<ChatDto[]> {
@@ -202,7 +314,7 @@ export class ApiClient {
      * @param body (optional) 
      * @return Success
      */
-    chat(body: CreateIndividualChatRequest | undefined): Observable<ChatDto> {
+    chat(body: CreateIndividualChatRequest | undefined): Observable<ChatDtoBase> {
         let url_ = this.baseUrl + "/api/Chat";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -225,14 +337,14 @@ export class ApiClient {
                 try {
                     return this.processChat(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<ChatDto>;
+                    return _observableThrow(e) as any as Observable<ChatDtoBase>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<ChatDto>;
+                return _observableThrow(response_) as any as Observable<ChatDtoBase>;
         }));
     }
 
-    protected processChat(response: HttpResponseBase): Observable<ChatDto> {
+    protected processChat(response: HttpResponseBase): Observable<ChatDtoBase> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -243,7 +355,7 @@ export class ApiClient {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = ChatDto.fromJS(resultData200);
+            result200 = ChatDtoBase.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -677,6 +789,42 @@ export interface IChatDto {
     accountIds?: string[] | undefined;
 }
 
+export class ChatDtoBase implements IChatDtoBase {
+    id?: string | undefined;
+
+    constructor(data?: IChatDtoBase) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): ChatDtoBase {
+        data = typeof data === 'object' ? data : {};
+        let result = new ChatDtoBase();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data;
+    }
+}
+
+export interface IChatDtoBase {
+    id?: string | undefined;
+}
+
 export class CreateIndividualChatRequest implements ICreateIndividualChatRequest {
     accountId?: string | undefined;
 
@@ -755,6 +903,126 @@ export interface ICreateMessageRequest {
     text?: string | undefined;
     chatId?: string | undefined;
     image?: ImageRequestModel;
+}
+
+export class EmailLoginRequest implements IEmailLoginRequest {
+    email?: string | undefined;
+    code?: number;
+    antiSpamToken?: number;
+
+    constructor(data?: IEmailLoginRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.email = _data["email"];
+            this.code = _data["code"];
+            this.antiSpamToken = _data["antiSpamToken"];
+        }
+    }
+
+    static fromJS(data: any): EmailLoginRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmailLoginRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["email"] = this.email;
+        data["code"] = this.code;
+        data["antiSpamToken"] = this.antiSpamToken;
+        return data;
+    }
+}
+
+export interface IEmailLoginRequest {
+    email?: string | undefined;
+    code?: number;
+    antiSpamToken?: number;
+}
+
+export class GenerateLoginCodeRequest implements IGenerateLoginCodeRequest {
+    email?: string | undefined;
+    antiSpamToken?: number;
+
+    constructor(data?: IGenerateLoginCodeRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.email = _data["email"];
+            this.antiSpamToken = _data["antiSpamToken"];
+        }
+    }
+
+    static fromJS(data: any): GenerateLoginCodeRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new GenerateLoginCodeRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["email"] = this.email;
+        data["antiSpamToken"] = this.antiSpamToken;
+        return data;
+    }
+}
+
+export interface IGenerateLoginCodeRequest {
+    email?: string | undefined;
+    antiSpamToken?: number;
+}
+
+export class GenerateLoginCodeResponseDto implements IGenerateLoginCodeResponseDto {
+    codeValidInSeconds?: number;
+
+    constructor(data?: IGenerateLoginCodeResponseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.codeValidInSeconds = _data["codeValidInSeconds"];
+        }
+    }
+
+    static fromJS(data: any): GenerateLoginCodeResponseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GenerateLoginCodeResponseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["codeValidInSeconds"] = this.codeValidInSeconds;
+        return data;
+    }
+}
+
+export interface IGenerateLoginCodeResponseDto {
+    codeValidInSeconds?: number;
 }
 
 export class ImagePreviewDto implements IImagePreviewDto {
@@ -1122,7 +1390,6 @@ export interface IProfileDto {
 }
 
 export class UpdateProfileRequest implements IUpdateProfileRequest {
-    email?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
     image?: ImageRequestModel;
@@ -1138,7 +1405,6 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
 
     init(_data?: any) {
         if (_data) {
-            this.email = _data["email"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
             this.image = _data["image"] ? ImageRequestModel.fromJS(_data["image"]) : <any>undefined;
@@ -1154,7 +1420,6 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["email"] = this.email;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["image"] = this.image ? this.image.toJSON() : <any>undefined;
@@ -1163,7 +1428,6 @@ export class UpdateProfileRequest implements IUpdateProfileRequest {
 }
 
 export interface IUpdateProfileRequest {
-    email?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
     image?: ImageRequestModel;

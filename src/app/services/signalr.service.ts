@@ -26,7 +26,7 @@ export class SignalrService {
         [key: string]: (dto: any) => void
     };
 
-    constructor(private tokenService: TokenStorageService) { }
+    constructor(private tokenStorageService: TokenStorageService) { }
 
     async init(messageHandler: (messageDto: IMessageDto) => void,
         linkPreviewHandler: (response: ILinkPreviewDto) => void,
@@ -62,7 +62,7 @@ export class SignalrService {
     }
 
     private async authorize(): Promise<void> {
-        await this.hubConnectionBuilder.invoke('AuthorizeAsync', this.tokenService.getToken());
+        await this.hubConnectionBuilder.invoke('AuthorizeAsync', this.tokenStorageService.getToken());
         console.log('Notification service: authorized');
     }
 

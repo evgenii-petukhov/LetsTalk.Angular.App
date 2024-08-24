@@ -17,22 +17,21 @@
             </div>
         </div>
         <div class="form-floating mb-3">
-            <input type="firstname" id="firstname" class="form-control" placeholder="First name"
+            <input type="text" id="firstname" class="form-control" placeholder="First name"
                 formControlName="firstName" [ngClass]="form.controls['firstName'].invalid && 'is-invalid'" />
             <label for="firstname">First name</label>
         </div>
         <div class="form-floating mb-3">
-            <input type="lastname" id="lastname" class="form-control" placeholder="Last name" formControlName="lastName"
+            <input type="text" id="lastname" class="form-control" placeholder="Last name" formControlName="lastName"
                 [ngClass]="form.controls['lastName'].invalid && 'is-invalid'" />
             <label for="lastname">Last name</label>
         </div>
-        <div class="form-floating mb-3">
-            <input type="email" id="email" class="form-control" placeholder="E-mail" formControlName="email"
-                [ngClass]="form.controls['email'].invalid && 'is-invalid'" />
-            <label for="email">E-mail</label>
+        <div class="form-floating mb-3" *ngIf="email">
+            <input type="text" class="form-control" [value]="email" disabled />
+            <label for="lastname">Email</label>
         </div>
         <div class="form-floating mb-3 profile-buttons">
-            <button type="submit" class="btn btn-primary" [disabled]="!form.valid || isSending">OK</button>
+            <button type="submit" class="btn btn-primary" [disabled]="isSending || !form.valid">OK</button>
             <button type="button" class="btn btn-outline-primary" (click)="onBack()">Cancel</button>
         </div>
         <div class="profile-privacy-policy">

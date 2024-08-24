@@ -22,15 +22,15 @@
                     margin: 0 0 15px;
                     display: flex;
 
-                    button {
+                    button, a {
                         flex: 1 1 auto;
                         margin: 0 20px 0 0;
         
                         &:last-child {
                             margin: 0;
                         }
-        
-                        app-social-media-icon {
+
+                        ::ng-deep fa-icon {
                             margin: 0 5px 0 0;
                         }
                     }

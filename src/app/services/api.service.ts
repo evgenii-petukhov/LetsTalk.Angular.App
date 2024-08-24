@@ -13,7 +13,10 @@ import {
     IProfileDto,
     ProfileDto,
     IAccountDto,
-    CreateIndividualChatRequest
+    CreateIndividualChatRequest,
+    EmailLoginRequest,
+    GenerateLoginCodeResponseDto,
+    GenerateLoginCodeRequest
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 
@@ -34,6 +37,16 @@ export class ApiService {
         return this.client.login(request);
     }
 
+    loginByEmail(email: string, code: number): Observable<LoginResponseDto> {
+        const request = new EmailLoginRequest({
+            email: email,
+            code: code,
+            antiSpamToken: Math.floor(new Date().getTime() / 1000)
+        });
+
+        return this.client.emailLogin(request);
+    }
+
     getChats(): Observable<IChatDto[]> {
         return this.client.chatAll();
     }
@@ -50,9 +63,8 @@ export class ApiService {
         return this.client.profileGET();
     }
 
-    saveProfile(email: string, firstName: string, lastName: string, image?: UploadImageResponse): Observable<ProfileDto> {
+    saveProfile(firstName: string, lastName: string, image?: UploadImageResponse): Observable<ProfileDto> {
         const request = new UpdateProfileRequest({
-            email,
             firstName,
             lastName,
             image: image ? new ImageRequestModel({
@@ -92,5 +104,14 @@ export class ApiService {
 
     markAsRead(chatId: string, messageId: string): Observable<void> {
         return this.client.markAsRead(chatId, messageId);
+    }
+
+    generateLoginCode(email: string): Observable<GenerateLoginCodeResponseDto> {
+        const request = new GenerateLoginCodeRequest({
+            email: email,
+            antiSpamToken: Math.floor(new Date().getTime() / 1000)
+        });
+
+        return this.client.generateLoginCode(request);
     }
 }

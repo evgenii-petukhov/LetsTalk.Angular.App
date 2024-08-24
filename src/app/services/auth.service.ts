@@ -3,22 +3,18 @@ import { Router } from '@angular/router';
 import { ApiService } from './api.service';
 import { TokenStorageService } from './token-storage.service';
 import { SocialAuthService } from '@abacritt/angularx-social-login';
-import { SignalrService } from './signalr.service';
-import { Subject, take } from 'rxjs';
+import { take } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
 
-    private unsubscribe$: Subject<void> = new Subject<void>();
-
     constructor(
         private socialAuthService: SocialAuthService,
         private apiService: ApiService,
         private tokenStorage: TokenStorageService,
-        private router: Router,
-        private signalrService: SignalrService) { }
+        private router: Router) { }
 
     signIn(providerId: string): void {
         this.socialAuthService.signIn(providerId)
@@ -29,10 +25,5 @@ export class AuthService {
                     this.router.navigate(['chats']);
                 });
             });
-    }
-
-    signOut(): void {
-        this.signalrService.removeHandlers();
-        this.socialAuthService.signOut();
     }
 }

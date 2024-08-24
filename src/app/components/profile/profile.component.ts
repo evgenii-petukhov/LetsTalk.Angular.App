@@ -13,6 +13,7 @@ import { FileStorageService } from 'src/app/services/file-storage.service';
 import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { ProfileDto } from 'src/app/api-client/api-client';
 import { take } from 'rxjs';
+import { ErrorService } from 'src/app/services/error.service';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -26,11 +27,11 @@ import { take } from 'rxjs';
 export class ProfileComponent implements OnInit, OnDestroy {
     account$ = this.store.select(selectLoggedInUser);
     isSending = false;
+    email = '';
 
     form = this.fb.group({
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
-        email: ['', Validators.email],
         photoUrl: [null]
     });
     faUpload = faUpload;
@@ -43,16 +44,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
         private store: Store,
         private toastr: ToastrService,
         private imageService: ImageService,
-        private fileStorageService: FileStorageService) { }
+        private fileStorageService: FileStorageService,
+        private errorService: ErrorService) { }
 
     ngOnInit(): void {
         this.storeService.getLoggedInUser().then(account => {
             this.form.setValue({
                 firstName: account.firstName,
                 lastName: account.lastName,
-                email: account.email,
                 photoUrl: null
             });
+            this.email = account.email;
         });
     }
 
@@ -67,10 +69,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             return blob ? this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.AVATAR) : Promise.resolve<UploadImageResponse>(null);
         }).then(response => {
             this.submitForm(response);
-        }).catch(e => {
-            console.error(e);
-            this.isSending = false;
-        });
+        }).catch(e => this.handleSubmitError(e));
     }
 
     onBack(): void {
@@ -95,18 +94,21 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
     private submitForm(response: UploadImageResponse): void {
         this.apiService.saveProfile(
-            this.form.value.email,
             this.form.value.firstName,
             this.form.value.lastName,
             response).pipe(take(1)).subscribe({
                 next: (profileDto: ProfileDto) => {
                     this.storeService.setLoggedInUser(profileDto);
                     this.router.navigate(['chats']);
+                    this.isSending = false;
                 },
-                error: e => {
-                    const details = JSON.parse(e.response);
-                    this.toastr.error(details.title, 'Error');
-                }
+                error: e => this.handleSubmitError(e)
             });
+    }
+
+    private handleSubmitError(e: any) {
+        const errors = this.errorService.getCommaSeparatedErrorMessages(e);
+        this.toastr.error(errors, 'Error');
+        this.isSending = false;
     }
 }

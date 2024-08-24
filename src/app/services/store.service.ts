@@ -45,14 +45,20 @@ export class StoreService {
         });
     }
 
-    initChatStorage(): void {
-        this.store.select(selectChats).pipe(take(1)).subscribe(chats => {
-            if (!chats) {
-                this.apiService.getChats().pipe(take(1)).subscribe(response => {
-                    this.store.dispatch(chatsActions.init({ chats: response }));
-                });
-            }
-        });
+    initChatStorage(force?: boolean): void {
+        if (force) {
+            this.apiService.getChats().pipe(take(1)).subscribe(response => {
+                this.store.dispatch(chatsActions.init({ chats: response }));
+            });
+        } else {
+            this.store.select(selectChats).pipe(take(1)).subscribe(chats => {
+                if (!chats) {
+                    this.apiService.getChats().pipe(take(1)).subscribe(response => {
+                        this.store.dispatch(chatsActions.init({ chats: response }));
+                    });
+                }
+            });
+        }
     }
 
     initAccountStorage(): void {
@@ -107,16 +113,19 @@ export class StoreService {
     }
 
     getLoggedInUser(): Promise<IProfileDto> {
-        return new Promise<IProfileDto>(resolve => {
+        return new Promise<IProfileDto>((resolve, reject) => {
             this.store.select(selectLoggedInUser).pipe(take(1)).subscribe(account => {
                 if (account) {
                     resolve(account);
                     return;
                 }
 
-                this.apiService.getProfile().pipe(take(1)).subscribe(response => {
-                    this.store.dispatch(loggedInUserActions.init({ account: response }));
-                    resolve(response);
+                this.apiService.getProfile().pipe(take(1)).subscribe({
+                    next: response => {
+                        this.store.dispatch(loggedInUserActions.init({ account: response }));
+                        resolve(response);
+                    },
+                    error: e => reject(e)
                 });
             });
         });
