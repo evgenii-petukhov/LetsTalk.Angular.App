@@ -17,27 +17,25 @@ export class NotificationService {
         });
     }
 
-    showNotification(title: string, message: string, isWindowActive: boolean): void {
-        Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-                if (this.isServiceWorkerRegistered) {
-                    navigator.serviceWorker.ready.then(registration => {
-                        registration.showNotification(title, {
-                            body: message
-                        });
-                    });
-                    return;
-                } else if (Notification) {
-                    new Notification(title, {
-                        body: message
-                    });
-                    return;
-                }
+    async showNotification(title: string, message: string, isWindowActive: boolean): Promise<void> {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            if (this.isServiceWorkerRegistered) {
+                const registration = await navigator.serviceWorker.ready;
+                registration.showNotification(title, {
+                    body: message
+                });
+                return;
+            } else if (Notification) {
+                new Notification(title, {
+                    body: message
+                });
+                return;
             }
+        }
 
-            if (isWindowActive) {
-                this.toastr.info(message, title);
-            }
-        });
+        if (isWindowActive) {
+            this.toastr.info(message, title);
+        }
     }
 }

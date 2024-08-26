@@ -146,14 +146,15 @@ export class StoreService {
     // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
     getImageContent(imageId: string): Promise<Image> {
         return new Promise<Image>((resolve, reject) => {
-            this.store.select(selectImages).pipe(take(1)).subscribe(images => {
+            this.store.select(selectImages).pipe(take(1)).subscribe(async images => {
                 const image = images?.find(x => x.imageId === imageId);
                 if (image) {
                     resolve(image);
                     return;
                 }
 
-                this.fileStorageService.download(imageId).then(response => {
+                try {
+                    const response = await this.fileStorageService.download(imageId);
                     const content = URL.createObjectURL(new Blob([response.getContent()]));
                     const image = {
                         imageId,
@@ -165,7 +166,10 @@ export class StoreService {
                         image
                     }));
                     resolve(image);
-                }).catch(() => reject());
+                }
+                catch {
+                    reject();
+                }
             });
         });
     }

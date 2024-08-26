@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs';
 import { LoginResponseDto } from 'src/app/api-client/api-client';
+import { errorMessages } from 'src/app/constants/errors';
 import { ApiService } from 'src/app/services/api.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
@@ -31,7 +31,6 @@ export class LoginByEmailComponent {
         private fb: FormBuilder,
         private apiService: ApiService,
         private tokenStorage: TokenStorageService,
-        private toastr: ToastrService,
         private errorService: ErrorService) { }
 
     onSubmit(): void {
@@ -43,7 +42,7 @@ export class LoginByEmailComponent {
                 this.router.navigate(['chats']);
             },
             error: e => {
-                this.showErrorToast(e);
+                this.errorService.handleError(e, errorMessages.generateCode);
                 this.isSubmitInProgress = false;
             }
         });
@@ -69,14 +68,9 @@ export class LoginByEmailComponent {
                 }, 1000);
             },
             error: e => {
-                this.showErrorToast(e);
+                this.errorService.handleError(e, errorMessages.generateCode);
                 this.isCodeRequestInProgress = false;
             }
         });
-    }
-
-    private showErrorToast(e: any) {
-        const errors = this.errorService.getCommaSeparatedErrorMessages(e);
-        this.toastr.error(errors, 'Error');
     }
 }

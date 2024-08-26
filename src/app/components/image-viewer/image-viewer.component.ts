@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
+import { errorMessages } from 'src/app/constants/errors';
+import { ErrorService } from 'src/app/services/error.service';
 import { StoreService } from 'src/app/services/store.service';
 import { selectViewedImageId } from 'src/app/state/viewed-image-id/viewed-image-id.selectors';
 
@@ -15,19 +17,24 @@ export class ImageViewerComponent implements OnInit, OnDestroy {
 
     constructor(
         private storeService: StoreService,
+        private errorService: ErrorService,
         private store: Store) { }
 
     ngOnInit(): void {
-        this.store.select(selectViewedImageId).pipe(takeUntil(this.unsubscribe$)).subscribe(imageId => {
+        this.store.select(selectViewedImageId).pipe(takeUntil(this.unsubscribe$)).subscribe(async imageId => {
             if (!imageId) {
                 return;
             }
 
-            this.storeService.getImageContent(imageId).then(image => {
+            try {
+                const image = await this.storeService.getImageContent(imageId);
                 this.setBackgroundImage(image.content);
-            }).catch((e) => {
+            }
+            catch (e) {
                 console.error(e);
-            });
+                this.errorService.handleError(e, errorMessages.downloadImage);
+                this.close();
+            }
         });
     }
 

@@ -25,8 +25,8 @@ import { FileStorageService } from 'src/app/services/file-storage.service';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { IChatDto } from 'src/app/api-client/api-client';
-import { ToastrService } from 'ngx-toastr';
 import { ErrorService } from 'src/app/services/error.service';
+import { errorMessages } from 'src/app/constants/errors';
 
 @Component({
     selector: 'app-chat',
@@ -60,7 +60,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         private imageService: ImageService,
         private fileStorageService: FileStorageService,
         private idGeneratorService: IdGeneratorService,
-        private toastr: ToastrService,
         private errorService: ErrorService) { }
 
     @validate
@@ -76,10 +75,10 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
                             this.storeService.updateChatId(this.chatId, chatDto.id);
                             this.storeService.setSelectedChatId(chatDto.id);
                         },
-                        error: e => this.handleSubmitError(e)
+                        error: e => this.handleSubmitError(e, errorMessages.sendMessage)
                     });
                 },
-                error: e => this.handleSubmitError(e)
+                error: e => this.handleSubmitError(e, errorMessages.sendMessage)
             });
         } else {
             this.apiService.sendMessage(this.chatId, message).pipe(take(1)).subscribe({
@@ -89,7 +88,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.storeService.addMessage(messageDto);
                     this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
                 },
-                error: e => this.handleSubmitError(e)
+                error: e => this.handleSubmitError(e, errorMessages.sendMessage)
             });
         }
     }
@@ -109,7 +108,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
-    ngAfterViewInit() {
+    ngAfterViewInit(): void {
         this.scrollContainer = this.scrollFrame.nativeElement;
         this.itemElements.changes.pipe(takeUntil(this.unsubscribe$)).subscribe(() => {
             this.scrollSequencePromise = this.scrollSequencePromise.then(() => {
@@ -133,32 +132,40 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    onImageSelected(event: Event): void {
+    async onImageSelected(event: Event): Promise<void> {
         const eventTarget = (event.target as HTMLInputElement);
         if (eventTarget.files && eventTarget.files.length) {
-            eventTarget.files[0].arrayBuffer().then((buffer: ArrayBuffer) => {
-                const base64 = URL.createObjectURL(new Blob([buffer]));
-                const sizeLimits = environment.imageSettings.limits;
-                this.resizeImage(base64 as string, sizeLimits.picture.width, sizeLimits.picture.height).then((blob: Blob) => {
-                    return this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.MESSAGE);
-                }).then(response => {
+            const buffer = await eventTarget.files[0].arrayBuffer();
+            const base64 = URL.createObjectURL(new Blob([buffer]));
+            const sizeLimits = environment.imageSettings.limits;
+            const blob = await this.resizeImage(base64 as string, sizeLimits.picture.width, sizeLimits.picture.height);
+            try {
+                const response = await this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.MESSAGE);
+                return new Promise<void>((resolve, reject) => {
                     this.apiService.sendMessage(
                         this.chatId,
                         undefined,
                         response
-                    ).pipe(take(1)).subscribe(messageDto => {
-                        messageDto.isMine = true;
-                        this.storeService.addMessage(messageDto);
-                        this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
-                        eventTarget.value = null;
+                    ).pipe(take(1)).subscribe({
+                        next: messageDto => {
+                            messageDto.isMine = true;
+                            this.storeService.addMessage(messageDto);
+                            this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
+                            eventTarget.value = null;
+                            resolve();
+                        },
+                        error: e => reject(e)
                     });
-                }).catch(e => {
-                    eventTarget.value = null;
-                    console.error(e);
-                }).finally(() => {
-                    URL.revokeObjectURL(base64);
                 });
-            });
+            }
+            catch (e) {
+                eventTarget.value = null;
+                console.error(e);
+                this.handleSubmitError(e, errorMessages.uploadImage);
+            }
+            finally {
+                URL.revokeObjectURL(base64);
+            }
         }
     }
 
@@ -218,9 +225,8 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         return photoUrl ? this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight) : Promise.resolve(null);
     }
 
-    private handleSubmitError(e: any) {
-        const errors = this.errorService.getCommaSeparatedErrorMessages(e);
-        this.toastr.error(errors, 'Error');
+    private handleSubmitError(e: any, defaultMessage: string) {
+        this.errorService.handleError(e, defaultMessage);
         this.isSending = false;
     }
 }

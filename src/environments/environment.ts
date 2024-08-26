@@ -1,9 +1,6 @@
 export const environment = {
     production: false,
-    login: {
-        facebookAppId: '1391147151094704',
-        vkAppId: '7615545'
-    },
+    login: {},
     services: {
         api: {
             url: 'https://localhost:5000'

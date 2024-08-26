@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
@@ -11,7 +11,7 @@ import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-setti
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss']
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
     faCirclePlus = faCirclePlus;
     isChatListShown = true;
     isAccountListShown = false;
@@ -28,6 +28,11 @@ export class SidebarComponent implements OnInit {
             this.isChatListShown = layout.sidebarState === SidebarState.chats;
             this.isAccountListShown = layout.sidebarState === SidebarState.accounts;
         });
+    }
+
+    ngOnDestroy(): void {
+        this.unsubscribe$.next();
+        this.unsubscribe$.complete();
     }
 
     switchToAcccountList(): void {
