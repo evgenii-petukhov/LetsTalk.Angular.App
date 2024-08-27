@@ -6,6 +6,7 @@ import { LoginByEmailComponent } from './login-by-email.component';
 import { ApiService } from 'src/app/services/api.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
+import { InlineCountdownStubComponent } from '../inline-countdown/inline-countdown.component.stub';
 
 class MockRouter {
     navigate = jasmine.createSpy('navigate');
@@ -31,7 +32,10 @@ describe('LoginByEmailComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [LoginByEmailComponent],
+            declarations: [
+                LoginByEmailComponent,
+                InlineCountdownStubComponent
+            ],
             imports: [ReactiveFormsModule],
             providers: [
                 FormBuilder,
@@ -108,5 +112,19 @@ describe('LoginByEmailComponent', () => {
     it('should navigate to chats on back button click', () => {
         component.onBack();
         expect((component as any)['router'].navigate).toHaveBeenCalledWith(['chats']);
+    });
+
+    it('should set isCodeRequested to false when timer expires', () => {
+        component.onTimerExpired();
+        expect(component.isCodeRequested).toBeFalse();
+    });
+
+    it('should display the countdown timer if code is requested and valid in seconds is greater than 0', () => {
+        component.isCodeRequested = true;
+        component.codeValidInSeconds = 60;
+        fixture.detectChanges();
+
+        const countdownElement = fixture.nativeElement.querySelector('app-inline-countdown');
+        expect(countdownElement).toBeTruthy();
     });
 });

@@ -39,6 +39,7 @@ import { grpcLogInterceptorProvider } from './providers/grpc-log-interceptor-pro
 import { AccountListComponent } from './components/account-list/account-list.component';
 import { AccountListItemComponent } from './components/account-list-item/account-list-item.component';
 import { LoginByEmailComponent } from './components/login-by-email/login-by-email.component';
+import { InlineCountdownComponent } from './components/inline-countdown/inline-countdown.component';
 
 @NgModule({
     declarations: [
@@ -62,7 +63,8 @@ import { LoginByEmailComponent } from './components/login-by-email/login-by-emai
         PrivacyPolicyComponent,
         ImageComponent,
         ImageViewerComponent,
-        LoginByEmailComponent
+        LoginByEmailComponent,
+        InlineCountdownComponent
     ],
     imports: [
         BrowserModule,

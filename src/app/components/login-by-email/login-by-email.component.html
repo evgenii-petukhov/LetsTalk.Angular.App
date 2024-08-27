@@ -13,13 +13,15 @@
             <label for="code">Code</label>
         </div>
         <div class="form-floating mb-3" *ngIf="isCodeRequested && codeValidInSeconds > 0">
-            New code can be requested in {{codeValidInSeconds}} sec.
+            New code can be requested in <app-inline-countdown [startValue]="codeValidInSeconds"
+                (expired)="onTimerExpired()"></app-inline-countdown> sec.
         </div>
         <div class="form-floating mb-3 login-buttons">
-            <button type="button" class="btn btn-primary" [disabled]="isCodeRequestInProgress || form.controls['email'].invalid"
-                (click)="onCodeRequested()" *ngIf="!isCodeRequested || codeValidInSeconds === 0">Get code</button>
+            <button type="button" class="btn btn-primary"
+                [disabled]="isCodeRequestInProgress || form.controls['email'].invalid" (click)="onCodeRequested()"
+                *ngIf="!isCodeRequested">Get code</button>
             <button type="submit" class="btn btn-primary" [disabled]="isSubmitInProgress || !form.valid"
-                *ngIf="isCodeRequested && codeValidInSeconds > 0">OK</button>
+                *ngIf="isCodeRequested">OK</button>
             <button type="button" class="btn btn-outline-primary" (click)="onBack()">Cancel</button>
         </div>
     </form>

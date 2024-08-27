@@ -11,7 +11,7 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
 @Component({
     selector: 'app-login-by-email',
     templateUrl: './login-by-email.component.html',
-    styleUrl: './login-by-email.component.scss'
+    styleUrl: './login-by-email.component.scss',
 })
 export class LoginByEmailComponent {
 
@@ -24,7 +24,6 @@ export class LoginByEmailComponent {
     isCodeRequestInProgress = false;
     isSubmitInProgress = false;
     codeValidInSeconds = 0;
-    codeValidTimerId = 0;
 
     constructor(
         private router: Router,
@@ -59,18 +58,15 @@ export class LoginByEmailComponent {
                 this.isCodeRequested = true;
                 this.isCodeRequestInProgress = false;
                 this.codeValidInSeconds = data.codeValidInSeconds;
-                this.codeValidTimerId = window.setInterval(() => {
-                    if (this.codeValidInSeconds === 0) {
-                        window.clearInterval(this.codeValidTimerId);
-                    } else {
-                        --this.codeValidInSeconds;
-                    }
-                }, 1000);
             },
             error: e => {
                 this.errorService.handleError(e, errorMessages.generateCode);
                 this.isCodeRequestInProgress = false;
             }
         });
+    }
+
+    onTimerExpired(): void {
+        this.isCodeRequested = false;
     }
 }
