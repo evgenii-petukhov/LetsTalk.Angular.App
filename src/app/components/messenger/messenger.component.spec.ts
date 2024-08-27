@@ -110,7 +110,7 @@ describe('MessengerComponent', () => {
 
         expect(storeService.incrementUnreadMessages).toHaveBeenCalledWith(messageDto.chatId);
         expect(notificationService.showNotification).toHaveBeenCalledWith(
-            `${chat.chatName}`,
+            chat.chatName,
             messageDto.imageId ? 'Image' : messageDto.text,
             true
         );

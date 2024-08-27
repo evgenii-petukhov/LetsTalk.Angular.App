@@ -89,7 +89,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
             if (chat) {
                 this.storeService.incrementUnreadMessages(messageDto.chatId);
                 this.notificationService.showNotification(
-                    `${chat.chatName}`,
+                    chat.chatName,
                     messageDto.imageId ? 'Image' : messageDto.text,
                     this.isWindowActive);
             } else {
