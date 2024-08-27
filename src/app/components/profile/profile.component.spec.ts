@@ -100,7 +100,7 @@ describe('ProfileComponent', () => {
 
         imageService.resizeBase64Image.and.returnValue(Promise.resolve(mockBlob));
         fileStorageService.uploadImageAsBlob.and.returnValue(Promise.resolve(mockUploadResponse));
-        apiService.saveProfile.and.returnValue(of(mockProfileDto));
+        apiService.saveProfile.and.returnValue(Promise.resolve(mockProfileDto));
 
         await component.onSubmit();
 
@@ -111,9 +111,8 @@ describe('ProfileComponent', () => {
 
     it('should handle errors on form submission', async () => {
         component.form.setValue({ firstName: 'John', lastName: 'Doe', photoUrl: 'mockBase64Url' });
-        const mockError = { message: 'Error' };
 
-        imageService.resizeBase64Image.and.returnValue(Promise.reject(mockError));
+        imageService.resizeBase64Image.and.throwError(new Error('error'));
 
         await component.onSubmit();
 

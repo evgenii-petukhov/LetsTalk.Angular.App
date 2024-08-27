@@ -57,7 +57,7 @@ describe('AvatarComponent', () => {
     });
 
     it('should display default background image if getImageContent fails', async () => {
-        storeService.getImageContent.and.returnValue(Promise.reject('Error'));
+        storeService.getImageContent.and.throwError(new Error('error'));
 
         component.urlOptions = ['image-id'];
         await component.ngOnChanges();

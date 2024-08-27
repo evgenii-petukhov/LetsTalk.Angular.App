@@ -13,8 +13,8 @@ class MockRouter {
 }
 
 class MockApiService {
-    loginByEmail = jasmine.createSpy('loginByEmail').and.returnValue(of({ token: 'fakeToken' }));
-    generateLoginCode = jasmine.createSpy('generateLoginCode').and.returnValue(of({ codeValidInSeconds: 60 }));
+    loginByEmail = jasmine.createSpy('loginByEmail').and.returnValue(Promise.resolve({ token: 'fakeToken' }));
+    generateLoginCode = jasmine.createSpy('generateLoginCode').and.returnValue(Promise.resolve({ codeValidInSeconds: 60 }));
 }
 
 class MockTokenStorageService {
@@ -78,8 +78,8 @@ describe('LoginByEmailComponent', () => {
         expect(codeControl.valid).toBeTrue();
     });
 
-    it('should call onCodeRequested and handle response correctly', () => {
-        component.onCodeRequested();
+    it('should call onCodeRequested and handle response correctly', async () => {
+        await component.onCodeRequested();
         expect(component.isCodeRequested).toBeTrue();
         expect(component.isCodeRequestInProgress).toBeFalse();
         expect(component.codeValidInSeconds).toBe(60);
@@ -87,14 +87,14 @@ describe('LoginByEmailComponent', () => {
 
     it('should handle code request error correctly', () => {
         const apiService = TestBed.inject(ApiService) as jasmine.SpyObj<ApiService>;
-        apiService.generateLoginCode.and.returnValue(throwError(() => new Error('error')));
+        apiService.generateLoginCode.and.throwError(new Error('error'));
         component.onCodeRequested();
         expect(component.isCodeRequestInProgress).toBeFalse();
     });
 
-    it('should call onSubmit and handle response correctly', () => {
+    it('should call onSubmit and handle response correctly', async () => {
         component.form.setValue({ email: 'test@example.com', code: '1234' });
-        component.onSubmit();
+        await component.onSubmit();
         expect(component.isSubmitInProgress).toBeTrue();
         expect((component as any)['tokenStorage'].saveToken).toHaveBeenCalledWith('fakeToken');
         expect((component as any)['tokenStorage'].saveUser).toHaveBeenCalled();
@@ -103,7 +103,7 @@ describe('LoginByEmailComponent', () => {
 
     it('should handle submit error correctly', () => {
         const apiService = TestBed.inject(ApiService) as jasmine.SpyObj<ApiService>;
-        apiService.loginByEmail.and.returnValue(throwError(() => new Error('error')));
+        apiService.loginByEmail.and.throwError(new Error('error'));
         component.form.setValue({ email: 'test@example.com', code: '1234' });
         component.onSubmit();
         expect(component.isSubmitInProgress).toBeFalse();

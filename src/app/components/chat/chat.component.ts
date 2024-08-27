@@ -17,7 +17,7 @@ import { selectMessages } from 'src/app/state/messages/messages.selector';
 import { StoreService } from 'src/app/services/store.service';
 import { Message } from 'src/app/models/message';
 import { required, validate } from 'src/app/decorators/required.decorator';
-import { Subject, take, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ImageService } from 'src/app/services/image.service';
 import { ImageRoles } from 'src/app/protos/file_upload_pb';
@@ -63,33 +63,26 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         private errorService: ErrorService) { }
 
     @validate
-    send(@required message: string): void {
+    async send(@required message: string): Promise<void> {
         this.message = '';
         this.isSending = true;
-        if (this.chat.isIndividual && this.idGeneratorService.isFake(this.chatId)) {
-            this.apiService.createIndividualChat(this.chat.accountIds[0]).pipe(take(1)).subscribe({
-                next: chatDto => {
-                    this.apiService.sendMessage(chatDto.id, message).pipe(take(1)).subscribe({
-                        next: () => {
-                            this.isSending = false;
-                            this.storeService.updateChatId(this.chatId, chatDto.id);
-                            this.storeService.setSelectedChatId(chatDto.id);
-                        },
-                        error: e => this.handleSubmitError(e, errorMessages.sendMessage)
-                    });
-                },
-                error: e => this.handleSubmitError(e, errorMessages.sendMessage)
-            });
-        } else {
-            this.apiService.sendMessage(this.chatId, message).pipe(take(1)).subscribe({
-                next: messageDto => {
-                    messageDto.isMine = true;
-                    this.isSending = false;
-                    this.storeService.addMessage(messageDto);
-                    this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
-                },
-                error: e => this.handleSubmitError(e, errorMessages.sendMessage)
-            });
+        try {
+            if (this.chat.isIndividual && this.idGeneratorService.isFake(this.chatId)) {
+                const chatDto = await this.apiService.createIndividualChat(this.chat.accountIds[0]);
+                await this.apiService.sendMessage(chatDto.id, message);
+                this.isSending = false;
+                this.storeService.updateChatId(this.chatId, chatDto.id);
+                this.storeService.setSelectedChatId(chatDto.id);
+            } else {
+                const messageDto = await this.apiService.sendMessage(this.chatId, message);
+                messageDto.isMine = true;
+                this.isSending = false;
+                this.storeService.addMessage(messageDto);
+                this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
+            }
+        }
+        catch (e) {
+            this.handleSubmitError(e, errorMessages.sendMessage);
         }
     }
 
@@ -141,22 +134,11 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
             const blob = await this.resizeImage(base64 as string, sizeLimits.picture.width, sizeLimits.picture.height);
             try {
                 const response = await this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.MESSAGE);
-                return new Promise<void>((resolve, reject) => {
-                    this.apiService.sendMessage(
-                        this.chatId,
-                        undefined,
-                        response
-                    ).pipe(take(1)).subscribe({
-                        next: messageDto => {
-                            messageDto.isMine = true;
-                            this.storeService.addMessage(messageDto);
-                            this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
-                            eventTarget.value = null;
-                            resolve();
-                        },
-                        error: e => reject(e)
-                    });
-                });
+                const messageDto = await this.apiService.sendMessage(this.chatId, undefined, response);
+                messageDto.isMine = true;
+                this.storeService.addMessage(messageDto);
+                this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
+                eventTarget.value = null;
             }
             catch (e) {
                 eventTarget.value = null;
@@ -199,7 +181,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
             this.storeService.addMessages(messageDtos);
             if (!this.isMessageListLoaded) {
                 const lastMessageDate = messageDtos.length
-                    ? Math.max(... messageDtos.map(x => x.created))
+                    ? Math.max(...messageDtos.map(x => x.created))
                     : 0;
 
                 const lastMessageId = messageDtos.length

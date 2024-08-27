@@ -1,6 +1,6 @@
 import { SocialUser } from '@abacritt/angularx-social-login';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import {
     LoginRequest,
     LoginResponseDto,
@@ -37,33 +37,33 @@ export class ApiService {
         return this.client.login(request);
     }
 
-    loginByEmail(email: string, code: number): Observable<LoginResponseDto> {
+    loginByEmail(email: string, code: number): Promise<LoginResponseDto> {
         const request = new EmailLoginRequest({
             email: email,
             code: code,
             antiSpamToken: Math.floor(new Date().getTime() / 1000)
         });
 
-        return this.client.emailLogin(request);
+        return firstValueFrom(this.client.emailLogin(request));
     }
 
-    getChats(): Observable<IChatDto[]> {
-        return this.client.chatAll();
+    getChats(): Promise<IChatDto[]> {
+        return firstValueFrom(this.client.chatAll());
     }
 
-    getAccounts(): Observable<IAccountDto[]> {
-        return this.client.account();
+    getAccounts(): Promise<IAccountDto[]> {
+        return firstValueFrom(this.client.account());
     }
 
     getMessages(chatId: string, pageIndex: number): Observable<IMessageDto[]> {
         return this.client.messageAll(chatId, !pageIndex ? undefined : pageIndex);
     }
 
-    getProfile(): Observable<IProfileDto> {
-        return this.client.profileGET();
+    getProfile(): Promise<IProfileDto> {
+        return firstValueFrom(this.client.profileGET());
     }
 
-    saveProfile(firstName: string, lastName: string, image?: UploadImageResponse): Observable<ProfileDto> {
+    saveProfile(firstName: string, lastName: string, image?: UploadImageResponse): Promise<ProfileDto> {
         const request = new UpdateProfileRequest({
             firstName,
             lastName,
@@ -75,10 +75,10 @@ export class ApiService {
                 signature: image.getSignature()
             }) : null
         });
-        return this.client.profilePUT(request);
+        return firstValueFrom(this.client.profilePUT(request));
     }
 
-    sendMessage(chatId: string, text?: string, image?: UploadImageResponse): Observable<IMessageDto> {
+    async sendMessage(chatId: string, text?: string, image?: UploadImageResponse): Promise<IMessageDto> {
         const request = new CreateMessageRequest({
             chatId,
             text,
@@ -91,27 +91,27 @@ export class ApiService {
             }) : null
         });
 
-        return this.client.message(request);
+        return firstValueFrom(this.client.message(request));
     }
 
-    createIndividualChat(accountId: string): Observable<IChatDto> {
+    async createIndividualChat(accountId: string): Promise<IChatDto> {
         const request = new CreateIndividualChatRequest({
             accountId: accountId
         });
 
-        return this.client.chat(request);
+        return firstValueFrom(this.client.chat(request));
     }
 
-    markAsRead(chatId: string, messageId: string): Observable<void> {
-        return this.client.markAsRead(chatId, messageId);
+    markAsRead(chatId: string, messageId: string): Promise<void> {
+        return firstValueFrom(this.client.markAsRead(chatId, messageId));
     }
 
-    generateLoginCode(email: string): Observable<GenerateLoginCodeResponseDto> {
+    generateLoginCode(email: string): Promise<GenerateLoginCodeResponseDto> {
         const request = new GenerateLoginCodeRequest({
             email: email,
             antiSpamToken: Math.floor(new Date().getTime() / 1000)
         });
 
-        return this.client.generateLoginCode(request);
+        return firstValueFrom(this.client.generateLoginCode(request));
     }
 }

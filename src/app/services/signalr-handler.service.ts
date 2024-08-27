@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { SignalrService } from './signalr.service';
-import { take } from 'rxjs';
 import { IMessageDto, ILinkPreviewDto, IImagePreviewDto, IChatDto } from '../api-client/api-client';
 import { StoreService } from './store.service';
 import { ApiService } from './api.service';
@@ -18,7 +17,7 @@ export class SignalrHandlerService {
     ) { }
 
     async initHandlers(
-        handleMessageNotification: (messageDto: IMessageDto) => void,
+        handleMessageNotification: (messageDto: IMessageDto) => Promise<void>,
         handleLinkPreviewNotification: (linkPreviewDto: ILinkPreviewDto) => void,
         handleImagePreviewNotification: (imagePreviewDto: IImagePreviewDto) => void
     ): Promise<void> {
@@ -32,7 +31,7 @@ export class SignalrHandlerService {
         this.signalrService.removeHandlers();
     }
 
-    handleMessageNotification(messageDto: IMessageDto, selectedChatId: string, chats: readonly IChatDto[], isWindowActive: boolean): void {
+    async handleMessageNotification(messageDto: IMessageDto, selectedChatId: string, chats: readonly IChatDto[], isWindowActive: boolean): Promise<void> {
         this.storeService.setLastMessageInfo(messageDto.chatId, messageDto.created, messageDto.id);
         if (messageDto.chatId === selectedChatId) {
             this.storeService.addMessage(messageDto);
@@ -43,7 +42,7 @@ export class SignalrHandlerService {
         }
 
         if (isWindowActive && (messageDto.chatId === selectedChatId)) {
-            this.apiService.markAsRead(messageDto.chatId, messageDto.id).pipe(take(1)).subscribe();
+            await this.apiService.markAsRead(messageDto.chatId, messageDto.id);
         } else {
             const chat = chats.find(chat => chat.id === messageDto.chatId);
             if (chat) {
@@ -53,7 +52,7 @@ export class SignalrHandlerService {
                     messageDto.imageId ? 'Image' : messageDto.text,
                     isWindowActive);
             } else {
-                this.storeService.initChatStorage(true);
+                await this.storeService.initChatStorage(true);
             }
         }
     }

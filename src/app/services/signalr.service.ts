@@ -28,7 +28,7 @@ export class SignalrService {
 
     constructor(private tokenStorageService: TokenStorageService) { }
 
-    async init(messageHandler: (messageDto: IMessageDto) => void,
+    async init(messageHandler: (messageDto: IMessageDto) => Promise<void>,
         linkPreviewHandler: (response: ILinkPreviewDto) => void,
         imagePreviewHandler: (response: IImagePreviewDto) => void): Promise<void> {
         if (this.isInitialized) {

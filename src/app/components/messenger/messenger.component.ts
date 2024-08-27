@@ -41,7 +41,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit(): Promise<void> {
-        this.storeService.initChatStorage();
+        await this.storeService.initChatStorage();
 
         this.store.select(selectChats).pipe(takeUntil(this.unsubscribe$)).subscribe(chats => {
             this.chats = chats;

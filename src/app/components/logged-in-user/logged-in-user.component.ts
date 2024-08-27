@@ -21,8 +21,8 @@ export class LoggedInUserComponent implements OnInit {
         private storeService: StoreService
     ) { }
 
-    ngOnInit(): void {
-        this.storeService.getLoggedInUser();
+    async ngOnInit(): Promise<void> {
+        await this.storeService.getLoggedInUser();
     }
 
     logout(): boolean {

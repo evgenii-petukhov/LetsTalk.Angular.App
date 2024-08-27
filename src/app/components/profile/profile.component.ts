@@ -10,8 +10,6 @@ import { ImageService } from 'src/app/services/image.service';
 import { environment } from 'src/environments/environment';
 import { FileStorageService } from 'src/app/services/file-storage.service';
 import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
-import { ProfileDto } from 'src/app/api-client/api-client';
-import { take } from 'rxjs';
 import { ErrorService } from 'src/app/services/error.service';
 import { errorMessages } from 'src/app/constants/errors';
 
@@ -67,7 +65,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         try {
             const blob = await this.resizeAvatar(this.form.value.photoUrl, sizeLimits.width, sizeLimits.height);
             const response = blob ? await this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.AVATAR) : null;
-            this.submitForm(response);
+            await this.submitForm(response);
         }
         catch (e) {
             this.handleSubmitError(e, errorMessages.uploadImage);
@@ -94,24 +92,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
         return photoUrl ? this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight) : Promise.resolve(null);
     }
 
-    private submitForm(response: UploadImageResponse): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            this.apiService.saveProfile(
-                this.form.value.firstName,
-                this.form.value.lastName,
-                response).pipe(take(1)).subscribe({
-                    next: (profileDto: ProfileDto) => {
-                        this.storeService.setLoggedInUser(profileDto);
-                        this.router.navigate(['chats']);
-                        this.isSending = false;
-                        resolve();
-                    },
-                    error: e => {
-                        this.handleSubmitError(e, errorMessages.saveProfile);
-                        reject(e);
-                    }
-                });
-        });
+    private async submitForm(response: UploadImageResponse): Promise<void> {
+        try {
+            const profileDto = await this.apiService.saveProfile(
+                this.form.value.firstName, this.form.value.lastName, response);
+            this.storeService.setLoggedInUser(profileDto);
+            this.router.navigate(['chats']);
+            this.isSending = false;
+        }
+        catch (e) {
+            this.handleSubmitError(e, errorMessages.saveProfile);
+        }
     }
 
     private handleSubmitError(e: any, defaultMessage: string) {
