@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 @Injectable({
     providedIn: 'root'
 })
-export class NotificationService {
+export class BrowserNotificationService {
 
     private isServiceWorkerRegistered = false;
 
