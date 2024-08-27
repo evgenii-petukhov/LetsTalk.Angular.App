@@ -1,8 +1,6 @@
-import { SocialUser } from '@abacritt/angularx-social-login';
 import { Injectable } from '@angular/core';
 import { firstValueFrom, Observable } from 'rxjs';
 import {
-    LoginRequest,
     LoginResponseDto,
     ApiClient,
     CreateMessageRequest,
@@ -26,16 +24,6 @@ import { UploadImageResponse } from '../protos/file_upload_pb';
 export class ApiService {
 
     constructor(private client: ApiClient) { }
-
-    login(data: SocialUser): Observable<LoginResponseDto> {
-        const request = new LoginRequest({
-            id: data.id.toString(),
-            provider: data.provider,
-            authToken: data.authToken
-        });
-
-        return this.client.login(request);
-    }
 
     loginByEmail(email: string, code: number): Promise<LoginResponseDto> {
         const request = new EmailLoginRequest({

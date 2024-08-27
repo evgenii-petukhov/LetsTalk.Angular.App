@@ -15,7 +15,6 @@ import { apiClientProvider } from './providers/api-client-provider';
 import { ChatListComponent } from './components/chat-list/chat-list.component';
 import { MessengerComponent } from './components/messenger/messenger.component';
 import { ChatListItemComponent } from './components/chat-list-item/chat-list-item.component';
-import { SocialLoginModule } from '@abacritt/angularx-social-login';
 import { BrowserModule } from '@angular/platform-browser';
 import { MessageComponent } from './components/message/message.component';
 import { ToastrModule } from 'ngx-toastr';
@@ -27,7 +26,6 @@ import { StoreModule } from '@ngrx/store';
 import { storeConfig } from './state/store-config';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { OrderByPipe } from './pipes/orderby';
-import { socialAuthProvider } from './providers/social-auth-provider';
 import { VisibleOnlyPipe } from './pipes/visibleOnly';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AvatarComponent } from './components/avatar/avatar.component';
@@ -69,7 +67,6 @@ import { InlineCountdownComponent } from './components/inline-countdown/inline-c
     imports: [
         BrowserModule,
         AppRoutingModule,
-        SocialLoginModule,
         NgbModule,
         HttpClientModule,
         FontAwesomeModule,
@@ -84,7 +81,6 @@ import { InlineCountdownComponent } from './components/inline-countdown/inline-c
         httpLogInterceptorProvider,
         grpcLogInterceptorProvider,
         apiClientProvider,
-        socialAuthProvider,
         {
             provide: API_BASE_URL,
             useFactory: () => environment.services.api.url
