@@ -70,19 +70,20 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.chat.isIndividual && this.idGeneratorService.isFake(this.chatId)) {
                 const chatDto = await this.apiService.createIndividualChat(this.chat.accountIds[0]);
                 await this.apiService.sendMessage(chatDto.id, message);
-                this.isSending = false;
                 this.storeService.updateChatId(this.chatId, chatDto.id);
                 this.storeService.setSelectedChatId(chatDto.id);
             } else {
                 const messageDto = await this.apiService.sendMessage(this.chatId, message);
                 messageDto.isMine = true;
-                this.isSending = false;
                 this.storeService.addMessage(messageDto);
                 this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
             }
         }
         catch (e) {
             this.handleSubmitError(e, errorMessages.sendMessage);
+        }
+        finally {
+            this.isSending = false;
         }
     }
 
@@ -152,7 +153,9 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private scrollToBottom(): void {
-        const scrollHeight = this.scrollCounter === 0 ? this.scrollContainer.scrollHeight : this.scrollContainer.scrollHeight - this.previousScrollHeight;
+        const scrollHeight = this.scrollCounter === 0
+            ? this.scrollContainer.scrollHeight
+            : this.scrollContainer.scrollHeight - this.previousScrollHeight;
 
         if (!scrollHeight) {
             return;
@@ -204,11 +207,12 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private resizeImage(photoUrl: string, maxWidth: number, maxHeight: number): Promise<Blob> {
-        return photoUrl ? this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight) : Promise.resolve(null);
+        return photoUrl
+            ? this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight)
+            : Promise.resolve(null);
     }
 
     private handleSubmitError(e: any, defaultMessage: string) {
         this.errorService.handleError(e, defaultMessage);
-        this.isSending = false;
     }
 }
