@@ -114,6 +114,7 @@ export class StoreService {
 
         const response = await this.apiService.getProfile();
         this.store.dispatch(loggedInUserActions.init({ account: response }));
+        return response;
     }
 
     setLoggedInUser(account: IProfileDto): void {

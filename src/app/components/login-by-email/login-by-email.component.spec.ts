@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
 import { LoginByEmailComponent } from './login-by-email.component';
 import { ApiService } from 'src/app/services/api.service';
 import { ErrorService } from 'src/app/services/error.service';
@@ -95,7 +94,7 @@ describe('LoginByEmailComponent', () => {
     it('should call onSubmit and handle response correctly', async () => {
         component.form.setValue({ email: 'test@example.com', code: '1234' });
         await component.onSubmit();
-        expect(component.isSubmitInProgress).toBeTrue();
+        expect(component.isSubmitInProgress).toBeFalse();
         expect((component as any)['tokenStorage'].saveToken).toHaveBeenCalledWith('fakeToken');
         expect((component as any)['tokenStorage'].saveUser).toHaveBeenCalled();
         expect((component as any)['router'].navigate).toHaveBeenCalledWith(['chats']);

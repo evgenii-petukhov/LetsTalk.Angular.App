@@ -36,10 +36,12 @@ export class LoginByEmailComponent {
             const loginResponseDto = await this.apiService.loginByEmail(this.form.value.email, Number(this.form.value.code));
             this.tokenStorage.saveToken(loginResponseDto.token);
             this.tokenStorage.saveUser(loginResponseDto);
-            this.router.navigate(['chats']);
+            await this.router.navigate(['chats']);
         }
         catch (e) {
             this.errorService.handleError(e, errorMessages.generateCode);
+        }
+        finally {
             this.isSubmitInProgress = false;
         }
     }

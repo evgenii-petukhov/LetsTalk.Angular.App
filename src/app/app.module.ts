@@ -38,6 +38,7 @@ import { AccountListComponent } from './components/account-list/account-list.com
 import { AccountListItemComponent } from './components/account-list-item/account-list-item.component';
 import { LoginByEmailComponent } from './components/login-by-email/login-by-email.component';
 import { InlineCountdownComponent } from './components/inline-countdown/inline-countdown.component';
+import { SendMessageComponent } from './components/send-message/send-message.component';
 
 @NgModule({
     declarations: [
@@ -62,7 +63,8 @@ import { InlineCountdownComponent } from './components/inline-countdown/inline-c
         ImageComponent,
         ImageViewerComponent,
         LoginByEmailComponent,
-        InlineCountdownComponent
+        InlineCountdownComponent,
+        SendMessageComponent
     ],
     imports: [
         BrowserModule,

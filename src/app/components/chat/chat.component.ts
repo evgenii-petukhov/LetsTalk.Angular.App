@@ -9,24 +9,13 @@ import {
     ViewChildren
 } from '@angular/core';
 import { ApiService } from '../../services/api.service';
-import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
-import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { selectMessages } from 'src/app/state/messages/messages.selector';
 import { StoreService } from 'src/app/services/store.service';
 import { Message } from 'src/app/models/message';
-import { required, validate } from 'src/app/decorators/required.decorator';
 import { Subject, takeUntil } from 'rxjs';
-import { environment } from 'src/environments/environment';
-import { ImageService } from 'src/app/services/image.service';
-import { ImageRoles } from 'src/app/protos/file_upload_pb';
-import { FileStorageService } from 'src/app/services/file-storage.service';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
-import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
-import { IChatDto } from 'src/app/api-client/api-client';
-import { ErrorService } from 'src/app/services/error.service';
-import { errorMessages } from 'src/app/constants/errors';
 
 @Component({
     selector: 'app-chat',
@@ -37,14 +26,8 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     //https://pumpingco.de/blog/automatic-scrolling-only-if-a-user-already-scrolled-the-bottom-of-a-page-in-angular/
     @ViewChild('scrollFrame', { static: false }) scrollFrame: ElementRef;
     @ViewChildren('scrollItem') itemElements: QueryList<any>;
-    message = '';
-    faPaperPlane = faPaperPlane;
-    faCamera = faCamera;
     messages$ = this.store.select(selectMessages);
-    isSending = false;
-
     private scrollContainer: HTMLDivElement;
-    private chat: IChatDto;
     private chatId: string;
     private unsubscribe$: Subject<void> = new Subject<void>();
     private pageIndex = 0;
@@ -57,35 +40,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         private apiService: ApiService,
         private store: Store,
         private storeService: StoreService,
-        private imageService: ImageService,
-        private fileStorageService: FileStorageService,
-        private idGeneratorService: IdGeneratorService,
-        private errorService: ErrorService) { }
-
-    @validate
-    async send(@required message: string): Promise<void> {
-        this.message = '';
-        this.isSending = true;
-        try {
-            if (this.chat.isIndividual && this.idGeneratorService.isFake(this.chatId)) {
-                const chatDto = await this.apiService.createIndividualChat(this.chat.accountIds[0]);
-                await this.apiService.sendMessage(chatDto.id, message);
-                this.storeService.updateChatId(this.chatId, chatDto.id);
-                this.storeService.setSelectedChatId(chatDto.id);
-            } else {
-                const messageDto = await this.apiService.sendMessage(this.chatId, message);
-                messageDto.isMine = true;
-                this.storeService.addMessage(messageDto);
-                this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
-            }
-        }
-        catch (e) {
-            this.handleSubmitError(e, errorMessages.sendMessage);
-        }
-        finally {
-            this.isSending = false;
-        }
-    }
+        private idGeneratorService: IdGeneratorService,) { }
 
     ngOnInit(): void {
         this.store.select(selectSelectedChatId).pipe(takeUntil(this.unsubscribe$)).subscribe(chatId => {
@@ -95,10 +50,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
             this.scrollCounter = 0;
             this.isMessageListLoaded = false;
             this.loadMessages();
-        });
-
-        this.store.select(selectSelectedChat).pipe(takeUntil(this.unsubscribe$)).subscribe(chat => {
-            this.chat = chat;
         });
     }
 
@@ -123,32 +74,6 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     onScroll(): void {
         if (this.isMessageListLoaded && this.scrollFrame.nativeElement.scrollTop === 0) {
             this.loadMessages();
-        }
-    }
-
-    async onImageSelected(event: Event): Promise<void> {
-        const eventTarget = (event.target as HTMLInputElement);
-        if (eventTarget.files && eventTarget.files.length) {
-            const buffer = await eventTarget.files[0].arrayBuffer();
-            const base64 = URL.createObjectURL(new Blob([buffer]));
-            const sizeLimits = environment.imageSettings.limits;
-            const blob = await this.resizeImage(base64 as string, sizeLimits.picture.width, sizeLimits.picture.height);
-            try {
-                const response = await this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.MESSAGE);
-                const messageDto = await this.apiService.sendMessage(this.chatId, undefined, response);
-                messageDto.isMine = true;
-                this.storeService.addMessage(messageDto);
-                this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
-                eventTarget.value = null;
-            }
-            catch (e) {
-                eventTarget.value = null;
-                console.error(e);
-                this.handleSubmitError(e, errorMessages.uploadImage);
-            }
-            finally {
-                URL.revokeObjectURL(base64);
-            }
         }
     }
 
@@ -204,15 +129,5 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private decreaseScrollCounter(): void {
         this.scrollCounter = (this.scrollCounter > 0 ? -1 : 0) + this.scrollCounter;
-    }
-
-    private resizeImage(photoUrl: string, maxWidth: number, maxHeight: number): Promise<Blob> {
-        return photoUrl
-            ? this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight)
-            : Promise.resolve(null);
-    }
-
-    private handleSubmitError(e: any, defaultMessage: string) {
-        this.errorService.handleError(e, defaultMessage);
     }
 }

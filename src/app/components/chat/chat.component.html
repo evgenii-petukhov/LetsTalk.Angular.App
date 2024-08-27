@@ -8,18 +8,5 @@
             </li>
         </ul>
     </div>
-    <div class="send-message-container">
-        <div class="textarea-container">
-            <textarea [(ngModel)]="message" (keydown.control.enter)="send(message)" name="message"></textarea>
-        </div>
-        <div class="button-container">
-            <button title="Select a picture">
-                <input type="file" (change)="onImageSelected($event)"/>
-                <fa-icon [icon]="faCamera"></fa-icon>
-            </button>
-            <button (click)="send(message)" [disabled]="isSending || !message.trim()" title="Send (Ctrl+Enter)">
-                <fa-icon [icon]="faPaperPlane"></fa-icon>
-            </button>
-        </div>
-    </div>
+    <app-send-message></app-send-message>
 </div>
