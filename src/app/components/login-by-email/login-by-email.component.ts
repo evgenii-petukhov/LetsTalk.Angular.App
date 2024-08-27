@@ -46,8 +46,8 @@ export class LoginByEmailComponent {
         }
     }
 
-    onBack(): void {
-        this.router.navigate(['chats']);
+    async onBack(): Promise<void> {
+        await this.router.navigate(['chats']);
     }
 
     async onCodeRequested(): Promise<void> {

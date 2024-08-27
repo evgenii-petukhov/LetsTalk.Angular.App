@@ -72,8 +72,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
     }
 
-    onBack(): void {
-        this.router.navigate(['chats']);
+    async onBack(): Promise<void> {
+        await this.router.navigate(['chats']);
     }
 
     async onAvatarSelected(event: Event): Promise<void> {
@@ -97,7 +97,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             const profileDto = await this.apiService.saveProfile(
                 this.form.value.firstName, this.form.value.lastName, response);
             this.storeService.setLoggedInUser(profileDto);
-            this.router.navigate(['chats']);
+            await this.router.navigate(['chats']);
             this.isSending = false;
         }
         catch (e) {
