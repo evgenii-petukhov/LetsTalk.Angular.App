@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { required, validate } from 'src/app/decorators/required.decorator';
 import { IChatDto } from 'src/app/api-client/api-client';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
-import { Subject, takeUntil } from 'rxjs';
+import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
 import { ApiService } from 'src/app/services/api.service';
@@ -42,11 +42,11 @@ export class SendMessageComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.store.select(selectSelectedChatId).pipe(takeUntil(this.unsubscribe$)).subscribe(chatId => {
+        combineLatest([
+            this.store.select(selectSelectedChatId),
+            this.store.select(selectSelectedChat)
+        ]).pipe(takeUntil(this.unsubscribe$)).subscribe(([chatId, chat]) => {
             this.chatId = chatId;
-        });
-
-        this.store.select(selectSelectedChat).pipe(takeUntil(this.unsubscribe$)).subscribe(chat => {
             this.chat = chat;
         });
     }

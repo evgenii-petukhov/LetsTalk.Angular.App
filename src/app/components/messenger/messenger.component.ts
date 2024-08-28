@@ -3,7 +3,7 @@ import { IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto } from 'src/ap
 import { Store } from '@ngrx/store';
 import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-settings.selectors';
 import { StoreService } from 'src/app/services/store.service';
-import { Subject, takeUntil } from 'rxjs';
+import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { selectViewedImageId } from 'src/app/state/viewed-image-id/viewed-image-id.selectors';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { ActiveArea } from 'src/app/enums/active-areas';
@@ -43,15 +43,13 @@ export class MessengerComponent implements OnInit, OnDestroy {
     async ngOnInit(): Promise<void> {
         await this.storeService.initChatStorage();
 
-        this.store.select(selectChats).pipe(takeUntil(this.unsubscribe$)).subscribe(chats => {
+        combineLatest([
+            this.store.select(selectChats),
+            this.store.select(selectSelectedChat),
+            this.store.select(selectLayoutSettings)
+        ]).pipe(takeUntil(this.unsubscribe$)).subscribe(([chats, chat, layout]) => {
             this.chats = chats;
-        });
-
-        this.store.select(selectSelectedChat).pipe(takeUntil(this.unsubscribe$)).subscribe(chat => {
             this.selectedChat = chat;
-        });
-
-        this.store.select(selectLayoutSettings).pipe(takeUntil(this.unsubscribe$)).subscribe(layout => {
             this.isSidebarShown = layout.activeArea === ActiveArea.sidebar;
             this.isChatShown = layout.activeArea === ActiveArea.chat;
         });
