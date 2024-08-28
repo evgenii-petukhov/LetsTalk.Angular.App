@@ -5,13 +5,15 @@ import { IImagePreviewDto, ILinkPreviewDto, IMessageDto } from '../api-client/ap
 import { ConstantRetryPolicy } from './constant-retry-policy';
 import { TokenStorageService } from './token-storage.service';
 
+type TypeNames = 'MessageDto' | 'LinkPreviewDto' | 'ImagePreviewDto';
+
 @Injectable({
     providedIn: 'root'
 })
 export class SignalrService {
     private retryPolicy = new ConstantRetryPolicy(environment.services.notifications.connectionInterval);
     private hubConnectionBuilder = new HubConnectionBuilder()
-        .withUrl(`${environment.services.notifications.url}`, {
+        .withUrl(environment.services.notifications.url, {
             skipNegotiation: true,
             transport: HttpTransportType.WebSockets
         })
@@ -22,13 +24,11 @@ export class SignalrService {
     private isInitialized = false;
     private notificationEventName = 'SendNotificationAsync';
     private connectionTimerId: number;
-    private handlerMapping: {
-        [key: string]: (dto: any) => void
-    };
+    private handlerMapping: Record<TypeNames, <T extends IMessageDto | ILinkPreviewDto | IImagePreviewDto>(dto: T) => void>;
 
     constructor(private tokenStorageService: TokenStorageService) { }
 
-    async init(messageHandler: (messageDto: IMessageDto) => void,
+    async init(messageHandler: (messageDto: IMessageDto) => Promise<void>,
         linkPreviewHandler: (response: ILinkPreviewDto) => void,
         imagePreviewHandler: (response: IImagePreviewDto) => void): Promise<void> {
         if (this.isInitialized) {
@@ -36,9 +36,9 @@ export class SignalrService {
         }
 
         this.handlerMapping = {
-            'MessageDto': messageHandler,
-            'LinkPreviewDto': linkPreviewHandler,
-            'ImagePreviewDto': imagePreviewHandler
+            MessageDto: messageHandler,
+            LinkPreviewDto: linkPreviewHandler,
+            ImagePreviewDto: imagePreviewHandler
         };
 
         await this.setUpConnection();
@@ -71,7 +71,7 @@ export class SignalrService {
             await this.hubConnectionBuilder.start();
             this.isInitialized = true;
             window.clearInterval(this.connectionTimerId);
-            this.hubConnectionBuilder.on(this.notificationEventName, (dto: any, typeName: string) => {
+            this.hubConnectionBuilder.on(this.notificationEventName, (dto: any, typeName: TypeNames) => {
                 this.handlerMapping[typeName]?.(dto);
             });
             await this.authorize();

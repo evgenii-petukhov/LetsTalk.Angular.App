@@ -43,15 +43,16 @@ export class AccountListComponent implements OnInit, OnDestroy {
             this.storeService.setSelectedChatId(chat.id);
             this.storeService.markAllAsRead(chat);
         } else {
-            const chatDto = new ChatDto();
-            chatDto.id = this.idGeneratorService.getNextFakeId().toString();
-            chatDto.isIndividual = true;
-            chatDto.accountIds = [account.id];
-            chatDto.accountTypeId = account.accountTypeId;
-            chatDto.chatName = `${account.firstName} ${account.lastName}`;
-            chatDto.imageId = account.imageId;
-            chatDto.photoUrl = account.photoUrl;
-            chatDto.unreadCount = 0;
+            const chatDto = new ChatDto({
+                id: this.idGeneratorService.getNextFakeId().toString(),
+                isIndividual: true,
+                accountIds: [account.id],
+                accountTypeId: account.accountTypeId,
+                chatName: `${account.firstName} ${account.lastName}`,
+                imageId: account.imageId,
+                photoUrl: account.photoUrl,
+                unreadCount: 0
+            });
 
             this.storeService.addChat(chatDto);
             this.storeService.setSelectedChatId(chatDto.id);

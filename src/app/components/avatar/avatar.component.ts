@@ -1,5 +1,7 @@
 import { Component, Input, OnChanges } from '@angular/core';
+import { errorMessages } from 'src/app/constants/errors';
 import { ImageUrlType } from 'src/app/enums/image-url-type';
+import { ErrorService } from 'src/app/services/error.service';
 import { StoreService } from 'src/app/services/store.service';
 
 @Component({
@@ -14,9 +16,10 @@ export class AvatarComponent implements OnChanges {
 
     constructor(
         private storeService: StoreService,
+        private errorService: ErrorService,
     ) { }
 
-    ngOnChanges(): void {
+    async ngOnChanges(): Promise<void> {
         this.urlOptions = this.urlOptions ?? [];
         this.urlOptions = this.urlOptions.filter(url => url);
         if (this.urlOptions.length === 0) {
@@ -29,11 +32,14 @@ export class AvatarComponent implements OnChanges {
                 this.setBackgroundImage(this.urlOptions[0] as string, this.defaultPhotoUrl);
                 return;
             case ImageUrlType.imageId:
-                this.storeService.getImageContent(this.urlOptions[0] as string).then(image => {
+                try {
+                    const image = await this.storeService.getImageContent(this.urlOptions[0] as string);
                     this.setBackgroundImage(image.content);
-                }).catch(() => {
+                }
+                catch (e) {
                     this.setBackgroundImage(this.defaultPhotoUrl);
-                });
+                    this.errorService.handleError(e, errorMessages.downloadImage);
+                }
                 return;
             default:
                 this.setBackgroundImage(this.defaultPhotoUrl);

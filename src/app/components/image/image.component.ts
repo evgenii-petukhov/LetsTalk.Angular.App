@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { errorMessages } from 'src/app/constants/errors';
 import { ImagePreview } from 'src/app/models/imagePreview';
+import { ErrorService } from 'src/app/services/error.service';
 import { StoreService } from 'src/app/services/store.service';
 import { environment } from 'src/environments/environment';
 
@@ -21,24 +23,27 @@ export class ImageComponent implements OnInit {
 
     constructor(
         private storeService: StoreService,
+        private errorService: ErrorService,
         private cdr: ChangeDetectorRef
     ) { }
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
         if (!this.imagePreview) {
             return;
         }
 
-        this.storeService.getImageContent(this.imagePreview.id).then(image => {
+        this.setSize(this.imagePreview.width, this.imagePreview.height);
+
+        try {
+            const image = await this.storeService.getImageContent(this.imagePreview.id);
             this.url = image.content;
             this.setSize(image.width, image.height);
             this.isLoading = false;
             this.cdr.detectChanges();
-        }).catch(e => {
-            console.error(e);
-        });
-
-        this.setSize(this.imagePreview.width, this.imagePreview.height);
+        }
+        catch (e) {
+            this.errorService.handleError(e, errorMessages.downloadImage);
+        }
     }
 
     openImageViewer(e: PointerEvent): void {

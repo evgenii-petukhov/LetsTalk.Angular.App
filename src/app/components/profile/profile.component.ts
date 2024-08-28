@@ -6,14 +6,11 @@ import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import { selectLoggedInUser } from 'src/app/state/logged-in-user/logged-in-user.selectors';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
-import { ImageService } from 'src/app/services/image.service';
 import { environment } from 'src/environments/environment';
-import { FileStorageService } from 'src/app/services/file-storage.service';
 import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
-import { ProfileDto } from 'src/app/api-client/api-client';
-import { take } from 'rxjs';
 import { ErrorService } from 'src/app/services/error.service';
+import { errorMessages } from 'src/app/constants/errors';
+import { ImageUploadService } from 'src/app/services/image-upload.service';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -42,73 +39,67 @@ export class ProfileComponent implements OnInit, OnDestroy {
         private storeService: StoreService,
         private apiService: ApiService,
         private store: Store,
-        private toastr: ToastrService,
-        private imageService: ImageService,
-        private fileStorageService: FileStorageService,
+        private imageUploadService: ImageUploadService,
         private errorService: ErrorService) { }
 
-    ngOnInit(): void {
-        this.storeService.getLoggedInUser().then(account => {
-            this.form.setValue({
-                firstName: account.firstName,
-                lastName: account.lastName,
-                photoUrl: null
-            });
-            this.email = account.email;
+    async ngOnInit(): Promise<void> {
+        const account = await this.storeService.getLoggedInUser();
+
+        this.form.setValue({
+            firstName: account.firstName,
+            lastName: account.lastName,
+            photoUrl: null
         });
+        this.email = account.email;
     }
 
     ngOnDestroy(): void {
         URL.revokeObjectURL(this.form.value.photoUrl);
     }
 
-    onSubmit(): void {
+    async onSubmit(): Promise<void> {
         this.isSending = true;
         const sizeLimits = environment.imageSettings.limits.avatar;
-        this.resizeAvatar(this.form.value.photoUrl, sizeLimits.width, sizeLimits.height).then((blob: Blob) => {
-            return blob ? this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.AVATAR) : Promise.resolve<UploadImageResponse>(null);
-        }).then(response => {
-            this.submitForm(response);
-        }).catch(e => this.handleSubmitError(e));
+        try {
+            const response = await this.imageUploadService.resizeAndUploadImage(this.form.value.photoUrl, sizeLimits.width, sizeLimits.height, ImageRoles.AVATAR);
+            await this.submitForm(response);
+        }
+        catch (e) {
+            this.handleSubmitError(e, errorMessages.uploadImage);
+        }
     }
 
-    onBack(): void {
-        this.router.navigate(['chats']);
+    async onBack(): Promise<void> {
+        await this.router.navigate(['chats']);
     }
 
-    onAvatarSelected(event: Event): void {
+    async onAvatarSelected(event: Event): Promise<void> {
         const files = (event.target as HTMLInputElement).files;
+
         if (files && files.length) {
-            files[0].arrayBuffer().then((buffer: ArrayBuffer) => {
-                const base64 = URL.createObjectURL(new Blob([buffer]));
-                this.form.patchValue({
-                    photoUrl: base64
-                });
+            const buffer = await files[0].arrayBuffer();
+            const base64 = URL.createObjectURL(new Blob([buffer]));
+            this.form.patchValue({
+                photoUrl: base64
             });
         }
     }
 
-    private resizeAvatar(photoUrl: string, maxWidth: number, maxHeight: number): Promise<Blob> {
-        return photoUrl ? this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight) : Promise.resolve(null);
+    private async submitForm(response: UploadImageResponse): Promise<void> {
+        try {
+            const profileDto = await this.apiService.saveProfile(
+                this.form.value.firstName, this.form.value.lastName, response);
+            this.storeService.setLoggedInUser(profileDto);
+            await this.router.navigate(['chats']);
+            this.isSending = false;
+        }
+        catch (e) {
+            this.handleSubmitError(e, errorMessages.saveProfile);
+        }
     }
 
-    private submitForm(response: UploadImageResponse): void {
-        this.apiService.saveProfile(
-            this.form.value.firstName,
-            this.form.value.lastName,
-            response).pipe(take(1)).subscribe({
-                next: (profileDto: ProfileDto) => {
-                    this.storeService.setLoggedInUser(profileDto);
-                    this.router.navigate(['chats']);
-                    this.isSending = false;
-                },
-                error: e => this.handleSubmitError(e)
-            });
-    }
-
-    private handleSubmitError(e: any) {
-        const errors = this.errorService.getCommaSeparatedErrorMessages(e);
-        this.toastr.error(errors, 'Error');
+    private handleSubmitError(e: any, defaultMessage: string) {
+        this.errorService.handleError(e, defaultMessage);
         this.isSending = false;
     }
 }

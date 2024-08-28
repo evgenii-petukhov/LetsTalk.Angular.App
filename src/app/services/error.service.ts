@@ -1,15 +1,22 @@
 import { Injectable } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class ErrorService {
-    
-    getCommaSeparatedErrorMessages(e: any): string {
-        const response = JSON.parse(e.response || '{}');
+    constructor(private toastr: ToastrService) { }
+
+    handleError(e: any, defaultMessage: string): void {
+        const errors = this.getCommaSeparatedErrorMessages(e, defaultMessage);
+        this.toastr.error(errors, 'Error');
+    }
+
+    private getCommaSeparatedErrorMessages(e: any, defaultMessage: string): string {
+        const response = JSON.parse(e?.response || '{}');
         return Object.entries(response.errors || {})
             .map(x => x[1] as string)
             .flat()
-            .reduce((acc, cur) => acc = (acc === '' ? acc : acc +', ') + cur, '');
+            .join(', ') || defaultMessage;
     }
 }

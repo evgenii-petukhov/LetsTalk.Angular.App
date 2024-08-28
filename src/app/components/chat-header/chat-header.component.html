@@ -1,8 +1,7 @@
 <button class="back" (click)="onBackClicked()">
     <fa-icon [icon]="faChevronLeft" [title]="'Back'"></fa-icon>
 </button>
-<app-avatar class="user-photo"
-    [urlOptions]="[(chat$ | async).imageId, (chat$ | async).photoUrl]"></app-avatar>
+<app-avatar class="user-photo" [urlOptions]="[(chat$ | async).imageId, (chat$ | async).photoUrl]"></app-avatar>
 <div class="user-details">
     <div class="user-name">
         {{ (chat$ | async).chatName }}

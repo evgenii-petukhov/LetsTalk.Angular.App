@@ -5,7 +5,7 @@
         </button>
         <a [routerLink]="['/profile']" title="Edit profile" *ngIf="!isNavigationActive">
             <app-avatar class="user-photo"
-                [urlOptions]="(account$ | async) && [(account$ | async).imageId, (account$ | async).photoUrl]"
+                [urlOptions]="account && [account.imageId, account.photoUrl]"
                 class="user-photo">
             </app-avatar>
         </a>

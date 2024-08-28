@@ -1,17 +1,15 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { ApiService } from '../../services/api.service';
-import { SignalrService } from 'src/app/services/signalr.service';
 import { IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto } from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
 import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-settings.selectors';
-import { NotificationService } from 'src/app/services/notification.service';
 import { StoreService } from 'src/app/services/store.service';
-import { Subject, take, takeUntil } from 'rxjs';
+import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { selectViewedImageId } from 'src/app/state/viewed-image-id/viewed-image-id.selectors';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { ActiveArea } from 'src/app/enums/active-areas';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { selectChats } from 'src/app/state/chats/chats.selector';
+import { SignalrHandlerService } from 'src/app/services/signalr-handler.service';
 
 @Component({
     selector: 'app-messenger',
@@ -31,11 +29,9 @@ export class MessengerComponent implements OnInit, OnDestroy {
     private unsubscribe$: Subject<void> = new Subject<void>();
 
     constructor(
-        private apiService: ApiService,
-        private signalrService: SignalrService,
-        private notificationService: NotificationService,
         private store: Store,
-        private storeService: StoreService
+        private storeService: StoreService,
+        private signalrHandlerService: SignalrHandlerService,
     ) { }
 
     @HostListener('document:visibilitychange', ['$event'])
@@ -45,22 +41,20 @@ export class MessengerComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit(): Promise<void> {
-        this.storeService.initChatStorage();
+        await this.storeService.initChatStorage();
 
-        this.store.select(selectChats).pipe(takeUntil(this.unsubscribe$)).subscribe(chats => {
+        combineLatest([
+            this.store.select(selectChats),
+            this.store.select(selectSelectedChat),
+            this.store.select(selectLayoutSettings)
+        ]).pipe(takeUntil(this.unsubscribe$)).subscribe(([chats, chat, layout]) => {
             this.chats = chats;
-        });
-
-        this.store.select(selectSelectedChat).pipe(takeUntil(this.unsubscribe$)).subscribe(chat => {
             this.selectedChat = chat;
-        });
-
-        this.store.select(selectLayoutSettings).pipe(takeUntil(this.unsubscribe$)).subscribe(layout => {
             this.isSidebarShown = layout.activeArea === ActiveArea.sidebar;
             this.isChatShown = layout.activeArea === ActiveArea.chat;
         });
 
-        await this.signalrService.init(
+        await this.signalrHandlerService.initHandlers(
             this.handleMessageNotification.bind(this),
             this.handleLinkPreviewNotification.bind(this),
             this.handleImagePreviewNotification.bind(this));
@@ -69,46 +63,18 @@ export class MessengerComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.unsubscribe$.next();
         this.unsubscribe$.complete();
-        this.signalrService.removeHandlers();
+        this.signalrHandlerService.removeHandlers();
     }
 
-    handleMessageNotification(messageDto: IMessageDto): void {
-        this.storeService.setLastMessageInfo(messageDto.chatId, messageDto.created, messageDto.id);
-        if (messageDto.chatId === this.selectedChat?.id) {
-            this.storeService.addMessage(messageDto);
-        }
-
-        if (messageDto.isMine) {
-            return;
-        }
-
-        if (this.isWindowActive && (messageDto.chatId === this.selectedChat?.id)) {
-            this.apiService.markAsRead(messageDto.chatId, messageDto.id).pipe(take(1)).subscribe();
-        } else {
-            const chat = this.chats.find(chat => chat.id === messageDto.chatId);
-            if (chat) {
-                this.storeService.incrementUnreadMessages(messageDto.chatId);
-                this.notificationService.showNotification(
-                    `${chat.chatName}`,
-                    messageDto.imageId ? 'Image' : messageDto.text,
-                    this.isWindowActive);
-            } else {
-                this.storeService.initChatStorage(true);
-            }
-        }
+    handleMessageNotification(dto: IMessageDto): void {
+        this.signalrHandlerService.handleMessageNotification(dto, this.selectedChat?.id, this.chats, this.isWindowActive);
     }
 
-    handleLinkPreviewNotification(linkPreviewDto: ILinkPreviewDto): void {
-        if (linkPreviewDto.chatId !== this.selectedChat?.id) {
-            return;
-        }
-        this.storeService.setLinkPreview(linkPreviewDto);
+    handleLinkPreviewNotification(dto: ILinkPreviewDto): void {
+        this.signalrHandlerService.handleLinkPreviewNotification(dto, this.selectedChat?.id);
     }
 
-    handleImagePreviewNotification(imagePreviewDto: IImagePreviewDto): void {
-        if (imagePreviewDto.chatId !== this.selectedChat?.id) {
-            return;
-        }
-        this.storeService.setImagePreview(imagePreviewDto);
+    handleImagePreviewNotification(dto: IImagePreviewDto): void {
+        this.signalrHandlerService.handleImagePreviewNotification(dto, this.selectedChat?.id);
     }
 }

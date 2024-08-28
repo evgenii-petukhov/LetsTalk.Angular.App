@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { ChatDto, IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto, IProfileDto } from '../api-client/api-client';
+import { IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto, IProfileDto } from '../api-client/api-client';
 import { chatsActions } from '../state/chats/chats.actions';
 import { ILayoutSettngs } from '../models/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
@@ -17,7 +17,7 @@ import { viewedImageIdActions } from '../state/viewed-image-id/viewed-image-id.a
 import { Image } from '../models/image';
 import { selectAccounts } from '../state/accounts/accounts.selector';
 import { accountsActions } from '../state/accounts/accounts.actions';
-import { take } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -29,46 +29,39 @@ export class StoreService {
         private apiService: ApiService,
         private fileStorageService: FileStorageService) { }
 
-    markAllAsRead(chat: IChatDto): void {
+    async markAllAsRead(chat: IChatDto): Promise<void> {
         if (!chat || chat.unreadCount === 0) {
             return;
         }
 
-        this.apiService.markAsRead(chat.id, chat.lastMessageId).pipe(take(1)).subscribe(() => {
-            setTimeout(() => {
-                this.setLastMessageInfo(chat.id, chat.lastMessageDate, chat.lastMessageId);
-                this.store.dispatch(chatsActions.setUnreadCount({
-                    chatId: chat.id,
-                    unreadCount: 0
-                }));
-            }, 1000);
-        });
+        await this.apiService.markAsRead(chat.id, chat.lastMessageId);
+        
+        this.setLastMessageInfo(chat.id, chat.lastMessageDate, chat.lastMessageId);
+        this.store.dispatch(chatsActions.setUnreadCount({
+            chatId: chat.id,
+            unreadCount: 0
+        }));
     }
 
-    initChatStorage(force?: boolean): void {
+    async initChatStorage(force?: boolean): Promise<void> {
         if (force) {
-            this.apiService.getChats().pipe(take(1)).subscribe(response => {
-                this.store.dispatch(chatsActions.init({ chats: response }));
-            });
+            const response = await this.apiService.getChats();
+            this.store.dispatch(chatsActions.init({ chats: response }));
         } else {
-            this.store.select(selectChats).pipe(take(1)).subscribe(chats => {
-                if (!chats) {
-                    this.apiService.getChats().pipe(take(1)).subscribe(response => {
-                        this.store.dispatch(chatsActions.init({ chats: response }));
-                    });
-                }
-            });
+            const chats = await firstValueFrom(this.store.select(selectChats));
+            if (!chats) {
+                const response = await this.apiService.getChats();
+                this.store.dispatch(chatsActions.init({ chats: response }));
+            }
         }
     }
 
-    initAccountStorage(): void {
-        this.store.select(selectAccounts).pipe(take(1)).subscribe(accounts => {
-            if (!accounts) {
-                this.apiService.getAccounts().pipe(take(1)).subscribe(response => {
-                    this.store.dispatch(accountsActions.init({ accounts: response }));
-                });
-            }
-        });
+    async initAccountStorage(): Promise<void> {
+        const accounts = await firstValueFrom(this.store.select(selectAccounts));
+        if (!accounts) {
+            const response = await this.apiService.getAccounts();
+            this.store.dispatch(accountsActions.init({ accounts: response }));
+        }
     }
 
     initMessages(messageDtos: IMessageDto[]): void {
@@ -104,7 +97,7 @@ export class StoreService {
         this.store.dispatch(chatsActions.updateChatId({ chatId, newChatId }));
     }
 
-    addChat(chatDto: ChatDto): void {
+    addChat(chatDto: IChatDto): void {
         this.store.dispatch(chatsActions.add({ chatDto }));
     }
 
@@ -112,23 +105,15 @@ export class StoreService {
         this.store.dispatch(layoutSettingsActions.init({ settings }));
     }
 
-    getLoggedInUser(): Promise<IProfileDto> {
-        return new Promise<IProfileDto>((resolve, reject) => {
-            this.store.select(selectLoggedInUser).pipe(take(1)).subscribe(account => {
-                if (account) {
-                    resolve(account);
-                    return;
-                }
+    async getLoggedInUser(): Promise<IProfileDto> {
+        const account = await firstValueFrom(this.store.select(selectLoggedInUser));
+        if (account) {
+            return account;
+        }
 
-                this.apiService.getProfile().pipe(take(1)).subscribe({
-                    next: response => {
-                        this.store.dispatch(loggedInUserActions.init({ account: response }));
-                        resolve(response);
-                    },
-                    error: e => reject(e)
-                });
-            });
-        });
+        const response = await this.apiService.getProfile();
+        this.store.dispatch(loggedInUserActions.init({ account: response }));
+        return response;
     }
 
     setLoggedInUser(account: IProfileDto): void {
@@ -144,29 +129,24 @@ export class StoreService {
     }
 
     // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
-    getImageContent(imageId: string): Promise<Image> {
-        return new Promise<Image>((resolve, reject) => {
-            this.store.select(selectImages).pipe(take(1)).subscribe(images => {
-                const image = images?.find(x => x.imageId === imageId);
-                if (image) {
-                    resolve(image);
-                    return;
-                }
+    async getImageContent(imageId: string): Promise<Image> {
+        const images = await firstValueFrom(this.store.select(selectImages));
+        let image = images?.find(x => x.imageId === imageId);
+        if (image) {
+            return image;
+        }
 
-                this.fileStorageService.download(imageId).then(response => {
-                    const content = URL.createObjectURL(new Blob([response.getContent()]));
-                    const image = {
-                        imageId,
-                        content,
-                        width: response.getWidth(),
-                        height: response.getHeight()
-                    };
-                    this.store.dispatch(imagesActions.add({
-                        image
-                    }));
-                    resolve(image);
-                }).catch(() => reject());
-            });
-        });
+        const response = await this.fileStorageService.download(imageId);
+        const content = URL.createObjectURL(new Blob([response.getContent()]));
+        image = {
+            imageId,
+            content,
+            width: response.getWidth(),
+            height: response.getHeight()
+        };
+        this.store.dispatch(imagesActions.add({
+            image
+        }));
+        return image;
     }
 }

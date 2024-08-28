@@ -108,19 +108,13 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
-          }
-        },
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "LetsTalk:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "LetsTalk:serve:production"
-            }
+            "scripts": [],
+            "codeCoverageExclude": [
+              "src/app/api-client/**",
+              "src/app/protos/**",
+              "src/app/services/mocks/**",
+              "src/app/components/**/*.stub.ts"
+            ]
           }
         },
         "lint": {

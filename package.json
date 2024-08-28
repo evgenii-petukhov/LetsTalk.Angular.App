@@ -8,12 +8,10 @@
     "build:dev": "ng build --configuration development --watch",
     "build:dev:hosting": "ng build --configuration development-hosting",
     "test": "ng test",
-    "lint": "ng lint --fix && npx stylelint \"**/*.scss\" --fix",
-    "e2e": "ng e2e"
+    "lint": "ng lint --fix && npx stylelint \"**/*.scss\" --fix"
   },
   "private": true,
   "dependencies": {
-    "@abacritt/angularx-social-login": "^2.2.0",
     "@angular/animations": "~17.2.4",
     "@angular/common": "~17.2.4",
     "@angular/compiler": "~17.2.4",
@@ -66,7 +64,7 @@
     "jasmine-spec-reporter": "~7.0.0",
     "karma": "~6.4.3",
     "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage-istanbul-reporter": "~3.0.3",
+    "karma-coverage": "^2.2.1",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "^2.1.0",
     "stylelint": "^16.2.1",
