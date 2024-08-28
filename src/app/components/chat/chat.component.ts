@@ -43,13 +43,13 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         private idGeneratorService: IdGeneratorService,) { }
 
     ngOnInit(): void {
-        this.store.select(selectSelectedChatId).pipe(takeUntil(this.unsubscribe$)).subscribe(chatId => {
+        this.store.select(selectSelectedChatId).pipe(takeUntil(this.unsubscribe$)).subscribe(async chatId => {
             this.chatId = chatId;
             this.storeService.initMessages([]);
             this.pageIndex = 0;
             this.scrollCounter = 0;
             this.isMessageListLoaded = false;
-            this.loadMessages();
+            await this.loadMessages();
         });
     }
 
@@ -71,9 +71,9 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         return !!message.text || !!message.imageId;
     }
 
-    onScroll(): void {
+    async onScroll(): Promise<void> {
         if (this.isMessageListLoaded && this.scrollFrame.nativeElement.scrollTop === 0) {
-            this.loadMessages();
+            await this.loadMessages();
         }
     }
 
@@ -95,36 +95,35 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         this.decreaseScrollCounter();
     }
 
-    private loadMessages(): void {
+    private async loadMessages(): Promise<void> {
         if (this.chatId === null || this.idGeneratorService.isFake(this.chatId)) {
             this.isMessageListLoaded = true;
             return;
         }
         this.scrollCounter++;
         this.previousScrollHeight = this.scrollContainer?.scrollHeight ?? 0;
-        this.apiService.getMessages(
+        const messageDtos = await this.apiService.getMessages(
             this.chatId,
             this.pageIndex
-        ).pipe(takeUntil(this.unsubscribe$)).subscribe(messageDtos => {
-            this.storeService.addMessages(messageDtos);
-            if (!this.isMessageListLoaded) {
-                const lastMessageDate = messageDtos.length
-                    ? Math.max(...messageDtos.map(x => x.created))
-                    : 0;
+        );
+        this.storeService.addMessages(messageDtos);
+        if (!this.isMessageListLoaded) {
+            const lastMessageDate = messageDtos.length
+                ? Math.max(...messageDtos.map(x => x.created))
+                : 0;
 
-                const lastMessageId = messageDtos.length
-                    ? messageDtos.find(message => message.created === lastMessageDate)?.id
-                    : '';
+            const lastMessageId = messageDtos.length
+                ? messageDtos.find(message => message.created === lastMessageDate)?.id
+                : '';
 
-                this.storeService.setLastMessageInfo(this.chatId, lastMessageDate, lastMessageId);
-                this.isMessageListLoaded = true;
-            }
-            if (messageDtos.length === 0) {
-                this.decreaseScrollCounter();
-            } else {
-                this.pageIndex++;
-            }
-        });
+            this.storeService.setLastMessageInfo(this.chatId, lastMessageDate, lastMessageId);
+            this.isMessageListLoaded = true;
+        }
+        if (messageDtos.length === 0) {
+            this.decreaseScrollCounter();
+        } else {
+            this.pageIndex++;
+        }
     }
 
     private decreaseScrollCounter(): void {

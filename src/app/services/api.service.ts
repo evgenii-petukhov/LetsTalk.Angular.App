@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { firstValueFrom, Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import {
     LoginResponseDto,
     ApiClient,
@@ -43,8 +43,8 @@ export class ApiService {
         return firstValueFrom(this.client.account());
     }
 
-    getMessages(chatId: string, pageIndex: number): Observable<IMessageDto[]> {
-        return this.client.messageAll(chatId, !pageIndex ? undefined : pageIndex);
+    getMessages(chatId: string, pageIndex: number): Promise<IMessageDto[]> {
+        return firstValueFrom(this.client.messageAll(chatId, !pageIndex ? undefined : pageIndex));
     }
 
     getProfile(): Promise<IProfileDto> {
