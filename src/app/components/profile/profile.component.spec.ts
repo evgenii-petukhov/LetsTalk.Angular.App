@@ -11,6 +11,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AvatarStubComponent } from '../avatar/avatar.stub';
 import { ImageUploadService } from 'src/app/services/image-upload.service';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('ProfileComponent', () => {
     let component: ProfileComponent;
@@ -39,7 +40,8 @@ describe('ProfileComponent', () => {
                 { provide: Router, useValue: router },
                 { provide: ImageUploadService, useValue: imageUploadService },
                 { provide: ErrorService, useValue: errorService }
-            ]
+            ],
+            schemas: [NO_ERRORS_SCHEMA]
         }).compileComponents();
     });
 
