@@ -9,6 +9,7 @@
         </div>
         <div class="form-floating mb-3" *ngIf="isCodeRequested">
             <input type="text" id="code" class="form-control" placeholder="Code" formControlName="code"
+                autocomplete="off"
                 [ngClass]="form.controls['code'].invalid && (form.controls['code'].touched || form.controls['code'].dirty) && 'is-invalid'" />
             <label for="code">Code</label>
         </div>
