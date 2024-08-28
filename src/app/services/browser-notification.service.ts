@@ -25,16 +25,12 @@ export class BrowserNotificationService {
                 registration.showNotification(title, {
                     body: message
                 });
-                return;
-            } else if (Notification) {
+            } else {
                 new Notification(title, {
                     body: message
-                });
-                return;
+                });  
             }
-        }
-
-        if (isWindowActive) {
+        } else if (isWindowActive) {
             this.toastr.info(message, title);
         }
     }
