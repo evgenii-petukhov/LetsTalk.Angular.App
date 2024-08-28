@@ -114,7 +114,7 @@ describe('SendMessageComponent', () => {
     it('should handle image selection and upload', async () => {
         const mockFile = new File(['dummy content'], 'example.png', { type: 'image/png' });
         const event = { target: { files: [mockFile] } } as any;
-        const imageUrl = 'data:image/png;base64,...'; // Mocked base64 string
+        const imageUrl = 'data:image/png;base64,...';
         const mockMessageDto = { id: 'msgId1', created: Date.now(), isMine: true };
 
         spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);
@@ -133,7 +133,7 @@ describe('SendMessageComponent', () => {
     it('should handle errors during image upload', async () => {
         const mockFile = new File(['dummy content'], 'example.png', { type: 'image/png' });
         const event = { target: { files: [mockFile] } } as any;
-        const imageUrl = 'data:image/png;base64,...'; // Mocked base64 string
+        const imageUrl = 'data:image/png;base64,...';
         const error = new Error('Upload failed');
 
         spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);
