@@ -6,12 +6,11 @@ import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import { selectLoggedInUser } from 'src/app/state/logged-in-user/logged-in-user.selectors';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
-import { ImageService } from 'src/app/services/image.service';
 import { environment } from 'src/environments/environment';
-import { FileStorageService } from 'src/app/services/file-storage.service';
 import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { ErrorService } from 'src/app/services/error.service';
 import { errorMessages } from 'src/app/constants/errors';
+import { ImageUploadService } from 'src/app/services/image-upload.service';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -40,8 +39,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         private storeService: StoreService,
         private apiService: ApiService,
         private store: Store,
-        private imageService: ImageService,
-        private fileStorageService: FileStorageService,
+        private imageUploadService: ImageUploadService,
         private errorService: ErrorService) { }
 
     async ngOnInit(): Promise<void> {
@@ -63,8 +61,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.isSending = true;
         const sizeLimits = environment.imageSettings.limits.avatar;
         try {
-            const blob = await this.resizeAvatar(this.form.value.photoUrl, sizeLimits.width, sizeLimits.height);
-            const response = blob ? await this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.AVATAR) : null;
+            const response = await this.imageUploadService.resizeAndUploadImage(this.form.value.photoUrl, sizeLimits.width, sizeLimits.height, ImageRoles.AVATAR);
             await this.submitForm(response);
         }
         catch (e) {
@@ -86,10 +83,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
                 photoUrl: base64
             });
         }
-    }
-
-    private resizeAvatar(photoUrl: string, maxWidth: number, maxHeight: number): Promise<Blob> {
-        return photoUrl ? this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight) : Promise.resolve(null);
     }
 
     private async submitForm(response: UploadImageResponse): Promise<void> {

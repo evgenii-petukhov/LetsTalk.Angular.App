@@ -2,17 +2,15 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProfileComponent } from './profile.component';
 import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ImageService } from 'src/app/services/image.service';
 import { StoreService } from 'src/app/services/store.service';
 import { ApiService } from 'src/app/services/api.service';
-import { FileStorageService } from 'src/app/services/file-storage.service';
 import { ErrorService } from 'src/app/services/error.service';
-import { of } from 'rxjs';
 import { UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { IProfileDto, ProfileDto } from 'src/app/api-client/api-client';
 import { provideMockStore } from '@ngrx/store/testing';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AvatarStubComponent } from '../avatar/avatar.stub';
+import { ImageUploadService } from 'src/app/services/image-upload.service';
 
 describe('ProfileComponent', () => {
     let component: ProfileComponent;
@@ -20,16 +18,14 @@ describe('ProfileComponent', () => {
     let storeService: jasmine.SpyObj<StoreService>;
     let apiService: jasmine.SpyObj<ApiService>;
     let router: jasmine.SpyObj<Router>;
-    let imageService: jasmine.SpyObj<ImageService>;
-    let fileStorageService: jasmine.SpyObj<FileStorageService>;
+    let imageUploadService: jasmine.SpyObj<ImageUploadService>;
     let errorService: jasmine.SpyObj<ErrorService>;
 
     beforeEach(async () => {
         storeService = jasmine.createSpyObj('StoreService', ['getLoggedInUser', 'setLoggedInUser']);
         apiService = jasmine.createSpyObj('ApiService', ['saveProfile']);
         router = jasmine.createSpyObj('Router', ['navigate']);
-        imageService = jasmine.createSpyObj('ImageService', ['resizeBase64Image']);
-        fileStorageService = jasmine.createSpyObj('FileStorageService', ['uploadImageAsBlob']);
+        imageUploadService = jasmine.createSpyObj('ImageUploadService', ['resizeAndUploadImage']);
         errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
 
         await TestBed.configureTestingModule({
@@ -41,8 +37,7 @@ describe('ProfileComponent', () => {
                 { provide: StoreService, useValue: storeService },
                 { provide: ApiService, useValue: apiService },
                 { provide: Router, useValue: router },
-                { provide: ImageService, useValue: imageService },
-                { provide: FileStorageService, useValue: fileStorageService },
+                { provide: ImageUploadService, useValue: imageUploadService },
                 { provide: ErrorService, useValue: errorService }
             ]
         }).compileComponents();
@@ -94,12 +89,10 @@ describe('ProfileComponent', () => {
 
     it('should submit the form and navigate to chats on success', async () => {
         component.form.setValue({ firstName: 'John', lastName: 'Doe', photoUrl: 'mockBase64Url' });
-        const mockBlob = new Blob([''], { type: 'image/png' });
         const mockUploadResponse = new UploadImageResponse();
         const mockProfileDto = new ProfileDto();
 
-        imageService.resizeBase64Image.and.returnValue(Promise.resolve(mockBlob));
-        fileStorageService.uploadImageAsBlob.and.returnValue(Promise.resolve(mockUploadResponse));
+        imageUploadService.resizeAndUploadImage.and.returnValue(Promise.resolve(mockUploadResponse));
         apiService.saveProfile.and.returnValue(Promise.resolve(mockProfileDto));
 
         await component.onSubmit();
@@ -112,7 +105,7 @@ describe('ProfileComponent', () => {
     it('should handle errors on form submission', async () => {
         component.form.setValue({ firstName: 'John', lastName: 'Doe', photoUrl: 'mockBase64Url' });
 
-        imageService.resizeBase64Image.and.throwError(new Error('error'));
+        imageUploadService.resizeAndUploadImage.and.throwError(new Error('error'));
 
         await component.onSubmit();
 

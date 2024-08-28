@@ -42,7 +42,6 @@ export class ImageComponent implements OnInit {
             this.cdr.detectChanges();
         }
         catch (e) {
-            console.error(e);
             this.errorService.handleError(e, errorMessages.downloadImage);
         }
     }

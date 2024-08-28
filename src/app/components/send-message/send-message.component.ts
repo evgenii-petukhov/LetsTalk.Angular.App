@@ -12,10 +12,9 @@ import { errorMessages } from 'src/app/constants/errors';
 import { ErrorService } from 'src/app/services/error.service';
 import { environment } from 'src/environments/environment';
 import { ImageRoles } from 'src/app/protos/file_upload_pb';
-import { FileStorageService } from 'src/app/services/file-storage.service';
-import { ImageService } from 'src/app/services/image.service';
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
+import { ImageUploadService } from 'src/app/services/image-upload.service';
 
 @Component({
     selector: 'app-send-message',
@@ -37,9 +36,8 @@ export class SendMessageComponent implements OnInit {
         private errorService: ErrorService,
         private storeService: StoreService,
         private idGeneratorService: IdGeneratorService,
-        private imageService: ImageService,
-        private fileStorageService: FileStorageService,
-    ) {}
+        private imageUploadService: ImageUploadService,
+    ) { }
 
     ngOnInit(): void {
         combineLatest([
@@ -69,7 +67,7 @@ export class SendMessageComponent implements OnInit {
             }
         }
         catch (e) {
-            this.handleSubmitError(e, errorMessages.sendMessage);
+            this.errorService.handleError(e, errorMessages.sendMessage);
         }
         finally {
             this.isSending = false;
@@ -82,9 +80,8 @@ export class SendMessageComponent implements OnInit {
             const buffer = await eventTarget.files[0].arrayBuffer();
             const base64 = URL.createObjectURL(new Blob([buffer]));
             const sizeLimits = environment.imageSettings.limits;
-            const blob = await this.resizeImage(base64 as string, sizeLimits.picture.width, sizeLimits.picture.height);
             try {
-                const response = await this.fileStorageService.uploadImageAsBlob(blob, ImageRoles.MESSAGE);
+                const response = await this.imageUploadService.resizeAndUploadImage(base64 as string, sizeLimits.picture.width, sizeLimits.picture.height, ImageRoles.MESSAGE);
                 const messageDto = await this.apiService.sendMessage(this.chatId, undefined, response);
                 messageDto.isMine = true;
                 this.storeService.addMessage(messageDto);
@@ -93,22 +90,11 @@ export class SendMessageComponent implements OnInit {
             }
             catch (e) {
                 eventTarget.value = null;
-                console.error(e);
-                this.handleSubmitError(e, errorMessages.uploadImage);
+                this.errorService.handleError(e, errorMessages.uploadImage);
             }
             finally {
                 URL.revokeObjectURL(base64);
             }
         }
-    }
-
-    private resizeImage(photoUrl: string, maxWidth: number, maxHeight: number): Promise<Blob> {
-        return photoUrl
-            ? this.imageService.resizeBase64Image(photoUrl, maxWidth, maxHeight)
-            : Promise.resolve(null);
-    }
-
-    private handleSubmitError(e: any, defaultMessage: string) {
-        this.errorService.handleError(e, defaultMessage);
     }
 }

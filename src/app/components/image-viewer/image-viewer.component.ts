@@ -31,7 +31,6 @@ export class ImageViewerComponent implements OnInit, OnDestroy {
                 this.setBackgroundImage(image.content);
             }
             catch (e) {
-                console.error(e);
                 this.errorService.handleError(e, errorMessages.downloadImage);
                 this.close();
             }
