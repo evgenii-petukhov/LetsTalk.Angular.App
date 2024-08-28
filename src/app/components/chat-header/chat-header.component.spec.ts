@@ -7,6 +7,7 @@ import { StoreService } from 'src/app/services/store.service';
 import { ActiveArea } from 'src/app/enums/active-areas';
 import { OrderByPipe } from 'src/app/pipes/orderby';
 import { AvatarStubComponent } from '../avatar/avatar.stub';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 describe('ChatHeaderComponent', () => {
     let component: ChatHeaderComponent;
@@ -30,7 +31,8 @@ describe('ChatHeaderComponent', () => {
             providers: [
                 { provide: Store, useValue: store },
                 { provide: StoreService, useValue: storeService }
-            ]
+            ],
+            imports: [FontAwesomeModule]
         })
             .compileComponents();
     });
