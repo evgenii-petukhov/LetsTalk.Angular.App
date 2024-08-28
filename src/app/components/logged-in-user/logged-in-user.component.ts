@@ -1,8 +1,7 @@
 import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
 import { faRightFromBracket, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
-import { Store } from '@ngrx/store';
-import { selectLoggedInUser } from 'src/app/state/logged-in-user/logged-in-user.selectors';
 import { StoreService } from 'src/app/services/store.service';
+import { IProfileDto } from 'src/app/api-client/api-client';
 
 @Component({
     selector: 'app-logged-in-user',
@@ -12,17 +11,16 @@ import { StoreService } from 'src/app/services/store.service';
 export class LoggedInUserComponent implements OnInit {
     faRightFromBracket = faRightFromBracket;
     faChevronLeft = faChevronLeft;
-    account$ = this.store.select(selectLoggedInUser);
+    account: IProfileDto;
     @Output() backButtonClicked = new EventEmitter();
     @Input() @HostBinding('class.navigation-active') isNavigationActive: boolean = false;
 
     constructor(
-        private store: Store,
         private storeService: StoreService
     ) { }
 
     async ngOnInit(): Promise<void> {
-        await this.storeService.getLoggedInUser();
+        this.account = await this.storeService.getLoggedInUser();
     }
 
     logout(): boolean {
