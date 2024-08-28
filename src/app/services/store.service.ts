@@ -35,13 +35,12 @@ export class StoreService {
         }
 
         await this.apiService.markAsRead(chat.id, chat.lastMessageId);
-        setTimeout(() => {
-            this.setLastMessageInfo(chat.id, chat.lastMessageDate, chat.lastMessageId);
-            this.store.dispatch(chatsActions.setUnreadCount({
-                chatId: chat.id,
-                unreadCount: 0
-            }));
-        }, 1000);
+        
+        this.setLastMessageInfo(chat.id, chat.lastMessageDate, chat.lastMessageId);
+        this.store.dispatch(chatsActions.setUnreadCount({
+            chatId: chat.id,
+            unreadCount: 0
+        }));
     }
 
     async initChatStorage(force?: boolean): Promise<void> {
