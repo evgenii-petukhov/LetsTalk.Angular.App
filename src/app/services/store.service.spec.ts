@@ -224,7 +224,7 @@ describe('StoreService', () => {
         it('should dispatch add action', () => {
             const chat: IChatDto = { id: '1' };
 
-            service.addChat(chat as any);
+            service.addChat(chat);
 
             expect(store.dispatch).toHaveBeenCalledWith(chatsActions.add({ chatDto: chat }));
         });

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { ChatDto, IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto, IProfileDto } from '../api-client/api-client';
+import { IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto, IProfileDto } from '../api-client/api-client';
 import { chatsActions } from '../state/chats/chats.actions';
 import { ILayoutSettngs } from '../models/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
@@ -97,7 +97,7 @@ export class StoreService {
         this.store.dispatch(chatsActions.updateChatId({ chatId, newChatId }));
     }
 
-    addChat(chatDto: ChatDto): void {
+    addChat(chatDto: IChatDto): void {
         this.store.dispatch(chatsActions.add({ chatDto }));
     }
 

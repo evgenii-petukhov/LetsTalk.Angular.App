@@ -69,7 +69,7 @@ describe('VisibleOnlyPipe', () => {
             { name: 'Alice', visible: true },
             { name: 'Bob', visible: true }
         ];
-        const callback = (item: any) => false;
+        const callback = () => false;
 
         const result = pipe.transform(items, callback);
 
