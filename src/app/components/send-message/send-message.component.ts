@@ -54,17 +54,7 @@ export class SendMessageComponent implements OnInit {
         this.message = '';
         this.isSending = true;
         try {
-            if (this.chat.isIndividual && this.idGeneratorService.isFake(this.chatId)) {
-                const chatDto = await this.apiService.createIndividualChat(this.chat.accountIds[0]);
-                await this.apiService.sendMessage(chatDto.id, message);
-                this.storeService.updateChatId(this.chatId, chatDto.id);
-                this.storeService.setSelectedChatId(chatDto.id);
-            } else {
-                const messageDto = await this.apiService.sendMessage(this.chatId, message);
-                messageDto.isMine = true;
-                this.storeService.addMessage(messageDto);
-                this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
-            }
+            await this.processSendMessage(message);
         }
         catch (e) {
             this.errorService.handleError(e, errorMessages.sendMessage);
@@ -83,9 +73,7 @@ export class SendMessageComponent implements OnInit {
             try {
                 const response = await this.imageUploadService.resizeAndUploadImage(base64 as string, sizeLimits.picture.width, sizeLimits.picture.height, ImageRoles.MESSAGE);
                 const messageDto = await this.apiService.sendMessage(this.chatId, undefined, response);
-                messageDto.isMine = true;
-                this.storeService.addMessage(messageDto);
-                this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
+                this.addMessageToStore(messageDto);
                 eventTarget.value = null;
             }
             catch (e) {
@@ -96,5 +84,35 @@ export class SendMessageComponent implements OnInit {
                 URL.revokeObjectURL(base64);
             }
         }
+    }
+
+    private async processSendMessage(message: string): Promise<void> {
+        if (this.shouldCreateIndividualChat()) {
+            await this.handleIndividualChatCreation(message);
+        } else {
+            await this.handleMessageSending(message);
+        }
+    }
+
+    private shouldCreateIndividualChat(): boolean {
+        return this.chat.isIndividual && this.idGeneratorService.isFake(this.chatId);
+    }
+
+    private async handleIndividualChatCreation(message: string): Promise<void> {
+        const chatDto = await this.apiService.createIndividualChat(this.chat.accountIds[0]);
+        await this.apiService.sendMessage(chatDto.id, message);
+        this.storeService.updateChatId(this.chatId, chatDto.id);
+        this.storeService.setSelectedChatId(chatDto.id);
+    }
+
+    private async handleMessageSending(message: string): Promise<void> {
+        const messageDto = await this.apiService.sendMessage(this.chatId, message);
+        this.addMessageToStore(messageDto);
+    }
+
+    private addMessageToStore(messageDto: any): void {
+        messageDto.isMine = true;
+        this.storeService.addMessage(messageDto);
+        this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
     }
 }
