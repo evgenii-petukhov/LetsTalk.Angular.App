@@ -2,6 +2,6 @@ import { Component } from '@angular/core';
 
 @Component({
     selector: 'app-chat',
-    template: '<p>Mock Chat</p>',
+    template: '',
 })
 export class StubChatComponent { }

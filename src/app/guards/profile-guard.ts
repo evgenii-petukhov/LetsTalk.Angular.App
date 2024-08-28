@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { ActivatedRouteSnapshot, UrlTree, createUrlTreeFromSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, createUrlTreeFromSnapshot } from '@angular/router';
 import { StoreService } from '../services/store.service';
 
 // https://blog.herodevs.com/functional-router-guards-in-angular-15-open-the-door-to-happier-code-4a53bb60f78a

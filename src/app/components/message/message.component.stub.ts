@@ -3,7 +3,7 @@ import { Message } from 'src/app/models/message';
 
 @Component({
     selector: 'app-message',
-    template: ''
+    template: '<div></div>'
 })
 export class MessageStubComponent {
     @Input() message: Message;

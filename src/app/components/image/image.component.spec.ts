@@ -10,7 +10,6 @@ describe('ImageComponent', () => {
     let component: ImageComponent;
     let fixture: ComponentFixture<ImageComponent>;
     let storeService: jasmine.SpyObj<StoreService>;
-    let cdr: ChangeDetectorRef;
 
     beforeEach(waitForAsync(() => {
         const storeServiceSpy = jasmine.createSpyObj('StoreService', ['getImageContent', 'setViewedImageId']);
@@ -26,7 +25,6 @@ describe('ImageComponent', () => {
         }).compileComponents();
 
         storeService = TestBed.inject(StoreService) as jasmine.SpyObj<StoreService>;
-        cdr = TestBed.inject(ChangeDetectorRef);
     }));
 
     beforeEach(() => {

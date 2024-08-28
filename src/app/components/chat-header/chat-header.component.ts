@@ -1,4 +1,4 @@
-import { Component, NgModule } from '@angular/core';
+import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
