@@ -5,7 +5,6 @@ import { StoreService } from './store.service';
 import { ApiService } from './api.service';
 import { BrowserNotificationService } from './browser-notification.service';
 import { IMessageDto, ILinkPreviewDto, IImagePreviewDto, IChatDto } from '../api-client/api-client';
-import { of } from 'rxjs';
 
 describe('SignalrHandlerService', () => {
   let service: SignalrHandlerService;
