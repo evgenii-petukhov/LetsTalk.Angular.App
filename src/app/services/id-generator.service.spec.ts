@@ -6,7 +6,7 @@ describe('IdGeneratorService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [IdGeneratorService]
+            providers: [IdGeneratorService],
         });
         service = TestBed.inject(IdGeneratorService);
     });

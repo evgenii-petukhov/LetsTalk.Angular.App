@@ -3,7 +3,7 @@ import { ImagePreview } from 'src/app/models/imagePreview';
 
 @Component({
     selector: 'app-image',
-    template: '<div></div>'
+    template: '<div></div>',
 })
 export class ImageStubComponent {
     @Input() imagePreview: ImagePreview;

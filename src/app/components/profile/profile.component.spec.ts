@@ -23,15 +23,22 @@ describe('ProfileComponent', () => {
     let errorService: jasmine.SpyObj<ErrorService>;
 
     beforeEach(async () => {
-        storeService = jasmine.createSpyObj('StoreService', ['getLoggedInUser', 'setLoggedInUser']);
-        storeService.getLoggedInUser.and.returnValue(Promise.resolve({
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'john.doe@example.com'
-        } as IProfileDto));
+        storeService = jasmine.createSpyObj('StoreService', [
+            'getLoggedInUser',
+            'setLoggedInUser',
+        ]);
+        storeService.getLoggedInUser.and.returnValue(
+            Promise.resolve({
+                firstName: 'John',
+                lastName: 'Doe',
+                email: 'john.doe@example.com',
+            } as IProfileDto),
+        );
         apiService = jasmine.createSpyObj('ApiService', ['saveProfile']);
         router = jasmine.createSpyObj('Router', ['navigate']);
-        imageUploadService = jasmine.createSpyObj('ImageUploadService', ['resizeAndUploadImage']);
+        imageUploadService = jasmine.createSpyObj('ImageUploadService', [
+            'resizeAndUploadImage',
+        ]);
         errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
 
         await TestBed.configureTestingModule({
@@ -44,9 +51,9 @@ describe('ProfileComponent', () => {
                 { provide: ApiService, useValue: apiService },
                 { provide: Router, useValue: router },
                 { provide: ImageUploadService, useValue: imageUploadService },
-                { provide: ErrorService, useValue: errorService }
+                { provide: ErrorService, useValue: errorService },
             ],
-            schemas: [NO_ERRORS_SCHEMA]
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 
@@ -61,15 +68,21 @@ describe('ProfileComponent', () => {
     });
 
     it('should initialize the form with the logged-in user data', async () => {
-        const mockAccount = { firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com' };
-        storeService.getLoggedInUser.and.returnValue(Promise.resolve(mockAccount));
+        const mockAccount = {
+            firstName: 'John',
+            lastName: 'Doe',
+            email: 'john.doe@example.com',
+        };
+        storeService.getLoggedInUser.and.returnValue(
+            Promise.resolve(mockAccount),
+        );
 
         await component.ngOnInit();
 
         expect(component.form.value).toEqual({
             firstName: 'John',
             lastName: 'Doe',
-            photoUrl: null
+            photoUrl: null,
         });
         expect(component.email).toBe('john.doe@example.com');
     });
@@ -83,7 +96,9 @@ describe('ProfileComponent', () => {
         const mockFile = new File([''], 'avatar.png', { type: 'image/png' });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const event = { target: { files: [mockFile] } } as any;
-        spyOn(mockFile, 'arrayBuffer').and.returnValue(Promise.resolve(new ArrayBuffer(8)));
+        spyOn(mockFile, 'arrayBuffer').and.returnValue(
+            Promise.resolve(new ArrayBuffer(8)),
+        );
 
         await component.onAvatarSelected(event);
 
@@ -91,24 +106,38 @@ describe('ProfileComponent', () => {
     });
 
     it('should submit the form and navigate to chats on success', async () => {
-        component.form.setValue({ firstName: 'John', lastName: 'Doe', photoUrl: 'mockBase64Url' });
+        component.form.setValue({
+            firstName: 'John',
+            lastName: 'Doe',
+            photoUrl: 'mockBase64Url',
+        });
         const mockUploadResponse = new UploadImageResponse();
         const mockProfileDto = new ProfileDto();
 
-        imageUploadService.resizeAndUploadImage.and.returnValue(Promise.resolve(mockUploadResponse));
+        imageUploadService.resizeAndUploadImage.and.returnValue(
+            Promise.resolve(mockUploadResponse),
+        );
         apiService.saveProfile.and.returnValue(Promise.resolve(mockProfileDto));
 
         await component.onSubmit();
 
         expect(component.isSending).toBeFalse();
-        expect(storeService.setLoggedInUser).toHaveBeenCalledWith(mockProfileDto);
+        expect(storeService.setLoggedInUser).toHaveBeenCalledWith(
+            mockProfileDto,
+        );
         expect(router.navigate).toHaveBeenCalledWith(['chats']);
     });
 
     it('should handle errors on form submission', async () => {
-        component.form.setValue({ firstName: 'John', lastName: 'Doe', photoUrl: 'mockBase64Url' });
+        component.form.setValue({
+            firstName: 'John',
+            lastName: 'Doe',
+            photoUrl: 'mockBase64Url',
+        });
 
-        imageUploadService.resizeAndUploadImage.and.throwError(new Error('error'));
+        imageUploadService.resizeAndUploadImage.and.throwError(
+            new Error('error'),
+        );
 
         await component.onSubmit();
 
@@ -120,6 +149,8 @@ describe('ProfileComponent', () => {
 
         component.ngOnDestroy();
 
-        expect(URL.revokeObjectURL).toHaveBeenCalledWith(component.form.value.photoUrl);
+        expect(URL.revokeObjectURL).toHaveBeenCalledWith(
+            component.form.value.photoUrl,
+        );
     });
 });

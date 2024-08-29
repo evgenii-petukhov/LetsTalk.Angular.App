@@ -1,6 +1,19 @@
 import { TestBed } from '@angular/core/testing';
 import { ApiService } from './api.service';
-import { ApiClient, EmailLoginRequest, UpdateProfileRequest, CreateMessageRequest, CreateIndividualChatRequest, GenerateLoginCodeRequest, LoginResponseDto, ChatDto, AccountDto, MessageDto, ProfileDto, GenerateLoginCodeResponseDto } from '../api-client/api-client';
+import {
+    ApiClient,
+    EmailLoginRequest,
+    UpdateProfileRequest,
+    CreateMessageRequest,
+    CreateIndividualChatRequest,
+    GenerateLoginCodeRequest,
+    LoginResponseDto,
+    ChatDto,
+    AccountDto,
+    MessageDto,
+    ProfileDto,
+    GenerateLoginCodeResponseDto,
+} from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 import { of } from 'rxjs';
 
@@ -10,26 +23,22 @@ describe('ApiService', () => {
 
     const mockMessage = new MessageDto({
         id: '1',
-        text: 'Hello'
+        text: 'Hello',
     });
 
-    const mockMessages = [
-        mockMessage
-    ];
+    const mockMessages = [mockMessage];
 
     const mockProfile = new ProfileDto({
         firstName: 'John',
-        lastName: 'Doe'
+        lastName: 'Doe',
     });
 
     const mockChat = new ChatDto({
         id: '1',
-        chatName: 'Chat 1'
+        chatName: 'Chat 1',
     });
 
-    const mockChats = [
-        mockChat
-    ];
+    const mockChats = [mockChat];
 
     beforeEach(() => {
         apiClient = jasmine.createSpyObj('ApiClient', [
@@ -42,14 +51,14 @@ describe('ApiService', () => {
             'message',
             'chat',
             'markAsRead',
-            'generateLoginCode'
+            'generateLoginCode',
         ]);
 
         TestBed.configureTestingModule({
             providers: [
                 ApiService,
-                { provide: ApiClient, useValue: apiClient }
-            ]
+                { provide: ApiClient, useValue: apiClient },
+            ],
         });
 
         service = TestBed.inject(ApiService);
@@ -68,7 +77,9 @@ describe('ApiService', () => {
         const result = await service.loginByEmail('test@example.com', 123456);
 
         // Assert
-        expect(apiClient.emailLogin).toHaveBeenCalledWith(jasmine.any(EmailLoginRequest));
+        expect(apiClient.emailLogin).toHaveBeenCalledWith(
+            jasmine.any(EmailLoginRequest),
+        );
         expect(result).toEqual(mockResponse);
     });
 
@@ -89,8 +100,8 @@ describe('ApiService', () => {
         const mockAccounts = [
             new AccountDto({
                 id: '1',
-                firstName: 'John'
-            })
+                firstName: 'John',
+            }),
         ];
         apiClient.account.and.returnValue(of(mockAccounts));
 
@@ -141,7 +152,9 @@ describe('ApiService', () => {
         const result = await service.saveProfile('John', 'Doe', mockImage);
 
         // Assert
-        expect(apiClient.profilePUT).toHaveBeenCalledWith(jasmine.any(UpdateProfileRequest));
+        expect(apiClient.profilePUT).toHaveBeenCalledWith(
+            jasmine.any(UpdateProfileRequest),
+        );
         expect(result).toEqual(mockProfile);
     });
 
@@ -153,7 +166,9 @@ describe('ApiService', () => {
         const result = await service.sendMessage('chatId', 'Hello');
 
         // Assert
-        expect(apiClient.message).toHaveBeenCalledWith(jasmine.any(CreateMessageRequest));
+        expect(apiClient.message).toHaveBeenCalledWith(
+            jasmine.any(CreateMessageRequest),
+        );
         expect(result).toEqual(mockMessage);
     });
 
@@ -165,7 +180,9 @@ describe('ApiService', () => {
         const result = await service.createIndividualChat('accountId');
 
         // Assert
-        expect(apiClient.chat).toHaveBeenCalledWith(jasmine.any(CreateIndividualChatRequest));
+        expect(apiClient.chat).toHaveBeenCalledWith(
+            jasmine.any(CreateIndividualChatRequest),
+        );
         expect(result).toEqual(mockChat);
     });
 
@@ -177,7 +194,10 @@ describe('ApiService', () => {
         const result = await service.markAsRead('chatId', 'messageId');
 
         // Assert
-        expect(apiClient.markAsRead).toHaveBeenCalledWith('chatId', 'messageId');
+        expect(apiClient.markAsRead).toHaveBeenCalledWith(
+            'chatId',
+            'messageId',
+        );
         expect(result).toBeUndefined();
     });
 
@@ -190,7 +210,9 @@ describe('ApiService', () => {
         const result = await service.generateLoginCode('test@example.com');
 
         // Assert
-        expect(apiClient.generateLoginCode).toHaveBeenCalledWith(jasmine.any(GenerateLoginCodeRequest));
+        expect(apiClient.generateLoginCode).toHaveBeenCalledWith(
+            jasmine.any(GenerateLoginCodeRequest),
+        );
         expect(result).toEqual(mockResponse);
     });
 });

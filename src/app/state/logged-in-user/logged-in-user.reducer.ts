@@ -7,5 +7,8 @@ export const initialState: IProfileDto = null;
 export const loggedInUserReducer = createReducer(
     initialState,
     on(loggedInUserActions.init, (_state, { account }) => account),
-    on(loggedInUserActions.set, (_state, { account }) => ({..._state, ...account})),
+    on(loggedInUserActions.set, (_state, { account }) => ({
+        ..._state,
+        ...account,
+    })),
 );

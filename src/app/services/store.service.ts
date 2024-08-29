@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto, IProfileDto } from '../api-client/api-client';
+import {
+    IChatDto,
+    IImagePreviewDto,
+    ILinkPreviewDto,
+    IMessageDto,
+    IProfileDto,
+} from '../api-client/api-client';
 import { chatsActions } from '../state/chats/chats.actions';
 import { ILayoutSettings } from '../models/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
@@ -20,14 +26,14 @@ import { accountsActions } from '../state/accounts/accounts.actions';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
 })
 export class StoreService {
-
     constructor(
         private store: Store,
         private apiService: ApiService,
-        private fileStorageService: FileStorageService) { }
+        private fileStorageService: FileStorageService,
+    ) {}
 
     async markAllAsRead(chat: IChatDto): Promise<void> {
         if (!chat || chat.unreadCount === 0) {
@@ -35,12 +41,18 @@ export class StoreService {
         }
 
         await this.apiService.markAsRead(chat.id, chat.lastMessageId);
-        
-        this.setLastMessageInfo(chat.id, chat.lastMessageDate, chat.lastMessageId);
-        this.store.dispatch(chatsActions.setUnreadCount({
-            chatId: chat.id,
-            unreadCount: 0
-        }));
+
+        this.setLastMessageInfo(
+            chat.id,
+            chat.lastMessageDate,
+            chat.lastMessageId,
+        );
+        this.store.dispatch(
+            chatsActions.setUnreadCount({
+                chatId: chat.id,
+                unreadCount: 0,
+            }),
+        );
     }
 
     async initChatStorage(force?: boolean): Promise<void> {
@@ -57,7 +69,9 @@ export class StoreService {
     }
 
     async initAccountStorage(): Promise<void> {
-        const accounts = await firstValueFrom(this.store.select(selectAccounts));
+        const accounts = await firstValueFrom(
+            this.store.select(selectAccounts),
+        );
         if (!accounts) {
             const response = await this.apiService.getAccounts();
             this.store.dispatch(accountsActions.init({ accounts: response }));
@@ -81,7 +95,9 @@ export class StoreService {
     }
 
     setImagePreview(imagePreviewDto: IImagePreviewDto): void {
-        this.store.dispatch(messagesActions.setImagePreview({ imagePreviewDto }));
+        this.store.dispatch(
+            messagesActions.setImagePreview({ imagePreviewDto }),
+        );
     }
 
     incrementUnreadMessages(chatId: string): void {
@@ -106,7 +122,9 @@ export class StoreService {
     }
 
     async getLoggedInUser(): Promise<IProfileDto> {
-        const account = await firstValueFrom(this.store.select(selectLoggedInUser));
+        const account = await firstValueFrom(
+            this.store.select(selectLoggedInUser),
+        );
         if (account) {
             return account;
         }
@@ -131,7 +149,7 @@ export class StoreService {
     // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
     async getImageContent(imageId: string): Promise<Image> {
         const images = await firstValueFrom(this.store.select(selectImages));
-        let image = images?.find(x => x.imageId === imageId);
+        let image = images?.find((x) => x.imageId === imageId);
         if (image) {
             return image;
         }
@@ -142,11 +160,13 @@ export class StoreService {
             imageId,
             content,
             width: response.getWidth(),
-            height: response.getHeight()
+            height: response.getHeight(),
         };
-        this.store.dispatch(imagesActions.add({
-            image
-        }));
+        this.store.dispatch(
+            imagesActions.add({
+                image,
+            }),
+        );
         return image;
     }
 }

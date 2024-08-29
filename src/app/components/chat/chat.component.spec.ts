@@ -23,8 +23,14 @@ describe('ChatComponent', () => {
         store = jasmine.createSpyObj('Store', ['select']);
         store.select.and.returnValue(of([]));
         apiService = jasmine.createSpyObj('ApiService', ['getMessages']);
-        storeService = jasmine.createSpyObj('StoreService', ['initMessages', 'addMessages', 'setLastMessageInfo']);
-        idGeneratorService = jasmine.createSpyObj('IdGeneratorService', ['isFake']);
+        storeService = jasmine.createSpyObj('StoreService', [
+            'initMessages',
+            'addMessages',
+            'setLastMessageInfo',
+        ]);
+        idGeneratorService = jasmine.createSpyObj('IdGeneratorService', [
+            'isFake',
+        ]);
 
         await TestBed.configureTestingModule({
             declarations: [
@@ -32,14 +38,14 @@ describe('ChatComponent', () => {
                 ChatHeaderStubComponent,
                 MessageStubComponent,
                 SendMessageStubComponent,
-                VisibleOnlyPipe
+                VisibleOnlyPipe,
             ],
             providers: [
                 { provide: Store, useValue: store },
                 { provide: ApiService, useValue: apiService },
                 { provide: StoreService, useValue: storeService },
-                { provide: IdGeneratorService, useValue: idGeneratorService }
-            ]
+                { provide: IdGeneratorService, useValue: idGeneratorService },
+            ],
         }).compileComponents();
     });
 
@@ -57,14 +63,17 @@ describe('ChatComponent', () => {
         // Arrange
         apiService.getMessages.and.returnValue(Promise.resolve([]));
         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-        const loadMessagesSpy = spyOn<any>(component, 'loadMessages').and.callThrough();
+        const loadMessagesSpy = spyOn<any>(
+            component,
+            'loadMessages',
+        ).and.callThrough();
 
         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         (component as any)['isMessageListLoaded'] = true;
         component.scrollFrame = {
             nativeElement: {
-                scrollTop: 0
-            }
+                scrollTop: 0,
+            },
         } as ElementRef;
 
         // Act

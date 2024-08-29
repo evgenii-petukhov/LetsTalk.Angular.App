@@ -1,4 +1,4 @@
-import { ImagePreviewDto } from "../api-client/api-client";
+import { ImagePreviewDto } from '../api-client/api-client';
 
 export class ImagePreview {
     messageId?: string;

@@ -17,24 +17,29 @@ describe('ChatHeaderComponent', () => {
 
     beforeEach(async () => {
         store = jasmine.createSpyObj('Store', ['select']);
-        store.select.and.returnValue(of({
-            chatName: 'Chat A',
-            imageId: 'img1',
-            photoUrl: 'url1'
-        }));
-        storeService = jasmine.createSpyObj('StoreService', ['setLayoutSettings', 'setSelectedChatId']);
+        store.select.and.returnValue(
+            of({
+                chatName: 'Chat A',
+                imageId: 'img1',
+                photoUrl: 'url1',
+            }),
+        );
+        storeService = jasmine.createSpyObj('StoreService', [
+            'setLayoutSettings',
+            'setSelectedChatId',
+        ]);
 
         await TestBed.configureTestingModule({
             declarations: [
                 ChatHeaderComponent,
                 AvatarStubComponent,
-                OrderByPipe
+                OrderByPipe,
             ],
             providers: [
                 { provide: Store, useValue: store },
-                { provide: StoreService, useValue: storeService }
+                { provide: StoreService, useValue: storeService },
             ],
-            imports: [FontAwesomeModule]
+            imports: [FontAwesomeModule],
         }).compileComponents();
     });
 
@@ -46,18 +51,27 @@ describe('ChatHeaderComponent', () => {
 
     it('should call setLayoutSettings and setSelectedChatId on back button click', () => {
         component.onBackClicked();
-        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({ activeArea: ActiveArea.sidebar });
+        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({
+            activeArea: ActiveArea.sidebar,
+        });
         expect(storeService.setSelectedChatId).toHaveBeenCalledWith(null);
     });
 
     it('should display the chat name and pass correct urlOptions to app-avatar', () => {
         fixture.detectChanges();
 
-        const userNameElement = fixture.debugElement.query(By.css('.user-name'));
+        const userNameElement = fixture.debugElement.query(
+            By.css('.user-name'),
+        );
         expect(userNameElement.nativeElement.textContent).toContain('Chat A');
 
-        const avatarComponent = fixture.debugElement.query(By.directive(AvatarStubComponent));
+        const avatarComponent = fixture.debugElement.query(
+            By.directive(AvatarStubComponent),
+        );
         expect(avatarComponent).toBeTruthy();
-        expect(avatarComponent.componentInstance.urlOptions).toEqual(['img1', 'url1']);
+        expect(avatarComponent.componentInstance.urlOptions).toEqual([
+            'img1',
+            'url1',
+        ]);
     });
 });

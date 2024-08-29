@@ -1,7 +1,6 @@
 import { ApiClient } from '../api-client/api-client';
 
-export const apiClientProvider =
-{
+export const apiClientProvider = {
     provide: ApiClient,
-    useClass: ApiClient
+    useClass: ApiClient,
 };

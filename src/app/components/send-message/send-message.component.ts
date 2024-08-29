@@ -19,7 +19,7 @@ import { ImageUploadService } from 'src/app/services/image-upload.service';
 @Component({
     selector: 'app-send-message',
     templateUrl: './send-message.component.html',
-    styleUrl: './send-message.component.scss'
+    styleUrl: './send-message.component.scss',
 })
 export class SendMessageComponent implements OnInit {
     message = '';
@@ -37,16 +37,18 @@ export class SendMessageComponent implements OnInit {
         private storeService: StoreService,
         private idGeneratorService: IdGeneratorService,
         private imageUploadService: ImageUploadService,
-    ) { }
+    ) {}
 
     ngOnInit(): void {
         combineLatest([
             this.store.select(selectSelectedChatId),
-            this.store.select(selectSelectedChat)
-        ]).pipe(takeUntil(this.unsubscribe$)).subscribe(([chatId, chat]) => {
-            this.chatId = chatId;
-            this.chat = chat;
-        });
+            this.store.select(selectSelectedChat),
+        ])
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe(([chatId, chat]) => {
+                this.chatId = chatId;
+                this.chat = chat;
+            });
     }
 
     @validate
@@ -55,32 +57,38 @@ export class SendMessageComponent implements OnInit {
         this.isSending = true;
         try {
             await this.processSendMessage(message);
-        }
-        catch (e) {
+        } catch (e) {
             this.errorService.handleError(e, errorMessages.sendMessage);
-        }
-        finally {
+        } finally {
             this.isSending = false;
         }
     }
 
     async onImageSelected(event: Event): Promise<void> {
-        const eventTarget = (event.target as HTMLInputElement);
+        const eventTarget = event.target as HTMLInputElement;
         if (eventTarget.files && eventTarget.files.length) {
             const buffer = await eventTarget.files[0].arrayBuffer();
             const base64 = URL.createObjectURL(new Blob([buffer]));
             const sizeLimits = environment.imageSettings.limits;
             try {
-                const response = await this.imageUploadService.resizeAndUploadImage(base64 as string, sizeLimits.picture.width, sizeLimits.picture.height, ImageRoles.MESSAGE);
-                const messageDto = await this.apiService.sendMessage(this.chatId, undefined, response);
+                const response =
+                    await this.imageUploadService.resizeAndUploadImage(
+                        base64 as string,
+                        sizeLimits.picture.width,
+                        sizeLimits.picture.height,
+                        ImageRoles.MESSAGE,
+                    );
+                const messageDto = await this.apiService.sendMessage(
+                    this.chatId,
+                    undefined,
+                    response,
+                );
                 this.addMessageToStore(messageDto);
                 eventTarget.value = null;
-            }
-            catch (e) {
+            } catch (e) {
                 eventTarget.value = null;
                 this.errorService.handleError(e, errorMessages.uploadImage);
-            }
-            finally {
+            } finally {
                 URL.revokeObjectURL(base64);
             }
         }
@@ -95,24 +103,36 @@ export class SendMessageComponent implements OnInit {
     }
 
     private shouldCreateIndividualChat(): boolean {
-        return this.chat.isIndividual && this.idGeneratorService.isFake(this.chatId);
+        return (
+            this.chat.isIndividual &&
+            this.idGeneratorService.isFake(this.chatId)
+        );
     }
 
     private async handleIndividualChatCreation(message: string): Promise<void> {
-        const chatDto = await this.apiService.createIndividualChat(this.chat.accountIds[0]);
+        const chatDto = await this.apiService.createIndividualChat(
+            this.chat.accountIds[0],
+        );
         await this.apiService.sendMessage(chatDto.id, message);
         this.storeService.updateChatId(this.chatId, chatDto.id);
         this.storeService.setSelectedChatId(chatDto.id);
     }
 
     private async handleMessageSending(message: string): Promise<void> {
-        const messageDto = await this.apiService.sendMessage(this.chatId, message);
+        const messageDto = await this.apiService.sendMessage(
+            this.chatId,
+            message,
+        );
         this.addMessageToStore(messageDto);
     }
 
     private addMessageToStore(messageDto: IMessageDto): void {
         messageDto.isMine = true;
         this.storeService.addMessage(messageDto);
-        this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);
+        this.storeService.setLastMessageInfo(
+            this.chatId,
+            messageDto.created,
+            messageDto.id,
+        );
     }
 }

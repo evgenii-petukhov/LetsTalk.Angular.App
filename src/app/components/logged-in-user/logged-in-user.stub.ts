@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
     selector: 'app-logged-in-user',
-    template: '<div></div>'
+    template: '<div></div>',
 })
 export class LoggedInUserStubComponent {
     @Input() isNavigationActive: string;

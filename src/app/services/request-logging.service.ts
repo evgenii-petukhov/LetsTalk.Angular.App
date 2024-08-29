@@ -1,12 +1,19 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
 })
 export class RequestLoggingService {
-
-    log(protocol: string, url: string, time: number, downloaded: number, uploaded: number): void {
-        console.log(`[${protocol}] ${url} ${time.toFixed()}ms${this.getDownloadString(downloaded)}${this.getUploadString(uploaded)}`);
+    log(
+        protocol: string,
+        url: string,
+        time: number,
+        downloaded: number,
+        uploaded: number,
+    ): void {
+        console.log(
+            `[${protocol}] ${url} ${time.toFixed()}ms${this.getDownloadString(downloaded)}${this.getUploadString(uploaded)}`,
+        );
     }
 
     private getDownloadString(volume: number) {

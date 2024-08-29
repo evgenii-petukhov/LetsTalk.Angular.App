@@ -7,7 +7,7 @@ describe('RequestLoggingService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [RequestLoggingService]
+            providers: [RequestLoggingService],
         });
         service = TestBed.inject(RequestLoggingService);
 
@@ -29,7 +29,7 @@ describe('RequestLoggingService', () => {
             service.log(protocol, url, time, downloaded, uploaded);
 
             expect(consoleSpy).toHaveBeenCalledWith(
-                `[${protocol}] ${url} ${time.toFixed()}ms ▼${Math.ceil(downloaded / 1024)}kB ▲${Math.ceil(uploaded / 1024)}kB`
+                `[${protocol}] ${url} ${time.toFixed()}ms ▼${Math.ceil(downloaded / 1024)}kB ▲${Math.ceil(uploaded / 1024)}kB`,
             );
         });
 
@@ -43,7 +43,7 @@ describe('RequestLoggingService', () => {
             service.log(protocol, url, time, downloaded, uploaded);
 
             expect(consoleSpy).toHaveBeenCalledWith(
-                `[${protocol}] ${url} ${time.toFixed()}ms`
+                `[${protocol}] ${url} ${time.toFixed()}ms`,
             );
         });
     });

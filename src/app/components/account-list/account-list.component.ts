@@ -22,14 +22,18 @@ export class AccountListComponent implements OnInit, OnDestroy {
     constructor(
         private store: Store,
         private storeService: StoreService,
-        private idGeneratorService: IdGeneratorService) { }
+        private idGeneratorService: IdGeneratorService,
+    ) {}
 
     ngOnInit(): void {
         this.storeService.initAccountStorage();
 
-        this.store.select(selectChats).pipe(takeUntil(this.unsubscribe$)).subscribe(chats => {
-            this.chats = chats;
-        });
+        this.store
+            .select(selectChats)
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe((chats) => {
+                this.chats = chats;
+            });
     }
 
     ngOnDestroy(): void {
@@ -38,7 +42,9 @@ export class AccountListComponent implements OnInit, OnDestroy {
     }
 
     onAccountSelected(account: IAccountDto): void {
-        const chat = this.chats.find(chat => chat.isIndividual && chat.accountIds[0] === account.id);
+        const chat = this.chats.find(
+            (chat) => chat.isIndividual && chat.accountIds[0] === account.id,
+        );
         if (chat) {
             this.storeService.setSelectedChatId(chat.id);
             this.storeService.markAllAsRead(chat);
@@ -51,12 +57,14 @@ export class AccountListComponent implements OnInit, OnDestroy {
                 chatName: `${account.firstName} ${account.lastName}`,
                 imageId: account.imageId,
                 photoUrl: account.photoUrl,
-                unreadCount: 0
+                unreadCount: 0,
             });
 
             this.storeService.addChat(chatDto);
             this.storeService.setSelectedChatId(chatDto.id);
         }
-        this.storeService.setLayoutSettings({ sidebarState: SidebarState.chats });
+        this.storeService.setLayoutSettings({
+            sidebarState: SidebarState.chats,
+        });
     }
 }

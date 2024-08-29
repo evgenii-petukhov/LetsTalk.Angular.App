@@ -1,8 +1,15 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+} from '@angular/core';
 
 @Component({
     selector: 'app-inline-countdown',
-    templateUrl: './inline-countdown.component.html'
+    templateUrl: './inline-countdown.component.html',
 })
 export class InlineCountdownComponent implements OnInit, OnDestroy {
     @Input() startValue: number;

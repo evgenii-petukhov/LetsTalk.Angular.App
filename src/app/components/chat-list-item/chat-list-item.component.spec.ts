@@ -9,10 +9,7 @@ describe('ChatListItemComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [
-                ChatListItemComponent,
-                AvatarStubComponent,
-            ],
+            declarations: [ChatListItemComponent, AvatarStubComponent],
         }).compileComponents();
     });
 
@@ -61,9 +58,12 @@ describe('ChatListItemComponent', () => {
         const nameElement = fixture.nativeElement.querySelector('.user-name');
         expect(nameElement.textContent).toContain(chat.chatName);
 
-        const unreadCountElement = fixture.nativeElement.querySelector('.unread-count');
+        const unreadCountElement =
+            fixture.nativeElement.querySelector('.unread-count');
         expect(unreadCountElement).toBeTruthy();
-        expect(unreadCountElement.querySelector('.unread-count-text').textContent).toContain(chat.unreadCount.toString());
+        expect(
+            unreadCountElement.querySelector('.unread-count-text').textContent,
+        ).toContain(chat.unreadCount.toString());
     });
 
     it('should not display unread count if unreadCount is not present', () => {
@@ -78,7 +78,8 @@ describe('ChatListItemComponent', () => {
         component.chat = chat;
         fixture.detectChanges();
 
-        const unreadCountElement = fixture.nativeElement.querySelector('.unread-count');
+        const unreadCountElement =
+            fixture.nativeElement.querySelector('.unread-count');
         expect(unreadCountElement).toBeFalsy();
     });
 });

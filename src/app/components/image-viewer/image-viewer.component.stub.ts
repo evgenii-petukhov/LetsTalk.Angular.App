@@ -4,4 +4,4 @@ import { Component } from '@angular/core';
     selector: 'app-image-viewer',
     template: '<p>Mock Image Viewer</p>',
 })
-export class StubImageViewerComponent { }
+export class StubImageViewerComponent {}

@@ -11,10 +11,7 @@ describe('MessageComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [
-                MessageComponent,
-                ImageStubComponent
-            ]
+            declarations: [MessageComponent, ImageStubComponent],
         }).compileComponents();
     });
 
@@ -48,7 +45,10 @@ describe('MessageComponent', () => {
     });
 
     it('should apply "extra-padding" class when message.textHtml is present and message.isMine is false or message.linkPreview is not present', () => {
-        const mockMessage = new Message({ textHtml: '<p>Some HTML</p>', isMine: false });
+        const mockMessage = new Message({
+            textHtml: '<p>Some HTML</p>',
+            isMine: false,
+        });
         component.message = mockMessage;
 
         fixture.detectChanges();
@@ -62,53 +62,68 @@ describe('MessageComponent', () => {
             linkPreview: {
                 url: 'https://example.com',
                 imageUrl: 'https://example.com/image.png',
-                title: 'Example'
-            }
+                title: 'Example',
+            },
         });
         component.message = mockMessage;
-    
+
         fixture.detectChanges();
-    
-        const bubbleElement = fixture.debugElement.query(By.css('.bubble')).nativeElement;
-        const hasExtraPadding = bubbleElement.classList.contains('extra-padding');
+
+        const bubbleElement = fixture.debugElement.query(
+            By.css('.bubble'),
+        ).nativeElement;
+        const hasExtraPadding =
+            bubbleElement.classList.contains('extra-padding');
         expect(hasExtraPadding).toBeFalsy();
     });
-    
+
     it('should display link preview with image when linkPreview.imageUrl is provided and no image error', () => {
         const mockMessage = new Message({
-            linkPreview: { url: 'http://example.com', imageUrl: 'http://example.com/image.jpg', title: 'Example' }
+            linkPreview: {
+                url: 'http://example.com',
+                imageUrl: 'http://example.com/image.jpg',
+                title: 'Example',
+            },
         });
         component.message = mockMessage;
 
         fixture.detectChanges();
 
-        const linkPreviewImage = fixture.debugElement.query(By.css('.link-preview-image img'));
+        const linkPreviewImage = fixture.debugElement.query(
+            By.css('.link-preview-image img'),
+        );
         expect(linkPreviewImage).toBeTruthy();
-        expect(linkPreviewImage.nativeElement.src).toBe('http://example.com/image.jpg');
+        expect(linkPreviewImage.nativeElement.src).toBe(
+            'http://example.com/image.jpg',
+        );
     });
 
     it('should not display link preview image when isImageError is true', () => {
         const mockMessage = new Message({
-            linkPreview: { imageUrl: 'http://example.com/image.jpg' }
+            linkPreview: { imageUrl: 'http://example.com/image.jpg' },
         });
         component.message = mockMessage;
         component.isImageError = true;
 
         fixture.detectChanges();
 
-        const linkPreviewImage = fixture.debugElement.query(By.css('.link-preview-image img'));
+        const linkPreviewImage = fixture.debugElement.query(
+            By.css('.link-preview-image img'),
+        );
         expect(linkPreviewImage).toBeFalsy();
     });
 
     it('should display link preview text', () => {
         const mockMessage = new Message({
-            linkPreview: { url: 'http://example.com', title: 'Example' }
+            linkPreview: { url: 'http://example.com', title: 'Example' },
         });
         component.message = mockMessage;
 
         fixture.detectChanges();
 
-        const linkPreviewText = fixture.debugElement.query(By.css('.link-preview-text')).nativeElement;
+        const linkPreviewText = fixture.debugElement.query(
+            By.css('.link-preview-text'),
+        ).nativeElement;
         expect(linkPreviewText.textContent).toContain('Example');
     });
 
@@ -118,14 +133,20 @@ describe('MessageComponent', () => {
 
         fixture.detectChanges();
 
-        const contentElement = fixture.debugElement.query(By.css('.content')).nativeElement;
+        const contentElement = fixture.debugElement.query(
+            By.css('.content'),
+        ).nativeElement;
         expect(contentElement.innerHTML).toContain('<b>Bold Text</b>');
     });
 
     it('should display image when message.imageId is provided', () => {
         const mockMessage = new Message({
             imageId: 1,
-            imagePreview: new ImagePreview({ id: '1', width: 100, height: 100 })
+            imagePreview: new ImagePreview({
+                id: '1',
+                width: 100,
+                height: 100,
+            }),
         });
         component.message = mockMessage;
 
@@ -139,17 +160,19 @@ describe('MessageComponent', () => {
         const localDate = new Date(2023, 7, 23, 14, 34);
         const mockMessage = new Message({ created: localDate });
         component.message = mockMessage;
-    
+
         fixture.detectChanges();
-    
-        const timeElement = fixture.debugElement.query(By.css('.time')).nativeElement;
-        
+
+        const timeElement = fixture.debugElement.query(
+            By.css('.time'),
+        ).nativeElement;
+
         const hours = localDate.getHours().toString().padStart(2, '0');
         const minutes = localDate.getMinutes().toString().padStart(2, '0');
         const expectedTime = `${hours}:${minutes}`;
-        
+
         expect(timeElement.textContent.trim()).toBe(expectedTime);
-    });    
+    });
 
     it('should set isImageError to true when onImageError is called', () => {
         component.onImageError();

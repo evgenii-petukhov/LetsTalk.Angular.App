@@ -1,4 +1,4 @@
 export enum AccountType {
     facebook = 1,
-    vk = 2
+    vk = 2,
 }

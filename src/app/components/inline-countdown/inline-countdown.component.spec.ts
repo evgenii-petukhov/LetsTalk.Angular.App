@@ -8,7 +8,7 @@ describe('InlineCountdownComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [InlineCountdownComponent]
+            declarations: [InlineCountdownComponent],
         }).compileComponents();
     });
 

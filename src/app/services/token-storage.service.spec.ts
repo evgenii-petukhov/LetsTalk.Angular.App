@@ -7,12 +7,16 @@ describe('TokenStorageService', () => {
     let localStorageSpy: jasmine.SpyObj<Storage>;
 
     beforeEach(() => {
-        localStorageSpy = jasmine.createSpyObj('Storage', ['getItem', 'setItem', 'removeItem']);
+        localStorageSpy = jasmine.createSpyObj('Storage', [
+            'getItem',
+            'setItem',
+            'removeItem',
+        ]);
 
         spyOnProperty(window, 'localStorage').and.returnValue(localStorageSpy);
 
         TestBed.configureTestingModule({
-            providers: [TokenStorageService]
+            providers: [TokenStorageService],
         });
         service = TestBed.inject(TokenStorageService);
     });
@@ -27,8 +31,13 @@ describe('TokenStorageService', () => {
 
             service.saveToken(token);
 
-            expect(localStorageSpy.removeItem).toHaveBeenCalledWith('auth-token');
-            expect(localStorageSpy.setItem).toHaveBeenCalledWith('auth-token', token);
+            expect(localStorageSpy.removeItem).toHaveBeenCalledWith(
+                'auth-token',
+            );
+            expect(localStorageSpy.setItem).toHaveBeenCalledWith(
+                'auth-token',
+                token,
+            );
         });
     });
 
@@ -41,8 +50,13 @@ describe('TokenStorageService', () => {
 
             service.saveUser(user);
 
-            expect(localStorageSpy.removeItem).toHaveBeenCalledWith('auth-user');
-            expect(localStorageSpy.setItem).toHaveBeenCalledWith('auth-user', userJson);
+            expect(localStorageSpy.removeItem).toHaveBeenCalledWith(
+                'auth-user',
+            );
+            expect(localStorageSpy.setItem).toHaveBeenCalledWith(
+                'auth-user',
+                userJson,
+            );
         });
     });
 

@@ -64,7 +64,7 @@ import { SendMessageComponent } from './components/send-message/send-message.com
         ImageViewerComponent,
         LoginByEmailComponent,
         InlineCountdownComponent,
-        SendMessageComponent
+        SendMessageComponent,
     ],
     imports: [
         BrowserModule,
@@ -76,7 +76,7 @@ import { SendMessageComponent } from './components/send-message/send-message.com
         BrowserAnimationsModule,
         ToastrModule.forRoot(),
         StoreModule.forRoot(storeConfig),
-        ReactiveFormsModule
+        ReactiveFormsModule,
     ],
     providers: [
         authInterceptorProvider,
@@ -85,9 +85,9 @@ import { SendMessageComponent } from './components/send-message/send-message.com
         apiClientProvider,
         {
             provide: API_BASE_URL,
-            useFactory: () => environment.services.api.url
-        }
+            useFactory: () => environment.services.api.url,
+        },
     ],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

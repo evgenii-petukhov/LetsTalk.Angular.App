@@ -10,7 +10,7 @@ describe('AccountListItemComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [AccountListItemComponent, AvatarStubComponent]
+            declarations: [AccountListItemComponent, AvatarStubComponent],
         }).compileComponents();
     });
 
@@ -22,13 +22,18 @@ describe('AccountListItemComponent', () => {
             firstName: 'John',
             lastName: 'Doe',
             imageId: 'image1',
-            photoUrl: 'https://example.com/photo.jpg'
+            photoUrl: 'https://example.com/photo.jpg',
         } as IAccountDto;
         fixture.detectChanges();
     });
 
     it('should render the avatar component with correct url options', () => {
-        const avatarComponent = fixture.debugElement.query(By.directive(AvatarStubComponent)).componentInstance as AvatarStubComponent;
-        expect(avatarComponent.urlOptions).toEqual(['image1', 'https://example.com/photo.jpg']);
+        const avatarComponent = fixture.debugElement.query(
+            By.directive(AvatarStubComponent),
+        ).componentInstance as AvatarStubComponent;
+        expect(avatarComponent.urlOptions).toEqual([
+            'image1',
+            'https://example.com/photo.jpg',
+        ]);
     });
 });

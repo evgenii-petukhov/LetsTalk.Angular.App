@@ -4,6 +4,6 @@ import { Image } from 'src/app/models/image';
 export const imagesActions = createActionGroup({
     source: 'Images',
     events: {
-        add: props<{ image: Image }>()
-    }
+        add: props<{ image: Image }>(),
+    },
 });

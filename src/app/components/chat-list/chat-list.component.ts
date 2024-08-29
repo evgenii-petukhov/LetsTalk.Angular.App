@@ -22,7 +22,8 @@ export class ChatListComponent implements OnDestroy {
     constructor(
         private store: Store,
         private storeService: StoreService,
-        private idGeneratorService: IdGeneratorService) { }
+        private idGeneratorService: IdGeneratorService,
+    ) {}
 
     ngOnDestroy(): void {
         this.unsubscribe$.next();

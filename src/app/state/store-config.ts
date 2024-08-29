@@ -15,5 +15,5 @@ export const storeConfig = {
     loggedInUser: loggedInUserReducer,
     layoutSettings: layoutSettingsReducer,
     images: imagesReducer,
-    viewedImageId: viewedImageIdReducer
+    viewedImageId: viewedImageIdReducer,
 };

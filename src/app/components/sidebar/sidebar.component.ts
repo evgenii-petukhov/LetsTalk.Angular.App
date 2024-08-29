@@ -9,7 +9,7 @@ import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-setti
 @Component({
     selector: 'app-sidebar',
     templateUrl: './sidebar.component.html',
-    styleUrls: ['./sidebar.component.scss']
+    styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent implements OnInit, OnDestroy {
     faCirclePlus = faCirclePlus;
@@ -21,12 +21,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
     constructor(
         private store: Store,
-        private storeService: StoreService) { }
+        private storeService: StoreService,
+    ) {}
 
     ngOnInit(): void {
-        this.layout$.pipe(takeUntil(this.unsubscribe$)).subscribe(layout => {
+        this.layout$.pipe(takeUntil(this.unsubscribe$)).subscribe((layout) => {
             this.isChatListShown = layout.sidebarState === SidebarState.chats;
-            this.isAccountListShown = layout.sidebarState === SidebarState.accounts;
+            this.isAccountListShown =
+                layout.sidebarState === SidebarState.accounts;
         });
     }
 
@@ -36,10 +38,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
 
     switchToAccountList(): void {
-        this.storeService.setLayoutSettings({ sidebarState: SidebarState.accounts });
+        this.storeService.setLayoutSettings({
+            sidebarState: SidebarState.accounts,
+        });
     }
 
     onBackButtonClicked(): void {
-        this.storeService.setLayoutSettings({ sidebarState: SidebarState.chats });
+        this.storeService.setLayoutSettings({
+            sidebarState: SidebarState.chats,
+        });
     }
 }

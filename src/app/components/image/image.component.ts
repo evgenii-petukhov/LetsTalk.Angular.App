@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Input,
+    OnInit,
+} from '@angular/core';
 import { errorMessages } from 'src/app/constants/errors';
 import { ImagePreview } from 'src/app/models/imagePreview';
 import { ErrorService } from 'src/app/services/error.service';
@@ -9,7 +15,7 @@ import { environment } from 'src/environments/environment';
     selector: 'app-image',
     templateUrl: './image.component.html',
     styleUrls: ['./image.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImageComponent implements OnInit {
     @Input() imagePreview: ImagePreview;
@@ -24,8 +30,8 @@ export class ImageComponent implements OnInit {
     constructor(
         private storeService: StoreService,
         private errorService: ErrorService,
-        private cdr: ChangeDetectorRef
-    ) { }
+        private cdr: ChangeDetectorRef,
+    ) {}
 
     async ngOnInit(): Promise<void> {
         if (!this.imagePreview) {
@@ -35,13 +41,14 @@ export class ImageComponent implements OnInit {
         this.setSize(this.imagePreview.width, this.imagePreview.height);
 
         try {
-            const image = await this.storeService.getImageContent(this.imagePreview.id);
+            const image = await this.storeService.getImageContent(
+                this.imagePreview.id,
+            );
             this.url = image.content;
             this.setSize(image.width, image.height);
             this.isLoading = false;
             this.cdr.detectChanges();
-        }
-        catch (e) {
+        } catch (e) {
             this.errorService.handleError(e, errorMessages.downloadImage);
         }
     }
@@ -58,8 +65,10 @@ export class ImageComponent implements OnInit {
             return;
         }
 
-        const scaleX = width > this.sizeLimit.width ? this.sizeLimit.width / width : 1;
-        const scaleY = height > this.sizeLimit.height ? this.sizeLimit.height / height : 1;
+        const scaleX =
+            width > this.sizeLimit.width ? this.sizeLimit.width / width : 1;
+        const scaleY =
+            height > this.sizeLimit.height ? this.sizeLimit.height / height : 1;
         const scale = Math.min(scaleX, scaleY);
         this.width = scale * width;
         this.height = scale * height;

@@ -4,4 +4,4 @@ import { Component } from '@angular/core';
     selector: 'app-sidebar',
     template: '<p>Mock Sidebar</p>',
 })
-export class StubSidebarComponent { }
+export class StubSidebarComponent {}

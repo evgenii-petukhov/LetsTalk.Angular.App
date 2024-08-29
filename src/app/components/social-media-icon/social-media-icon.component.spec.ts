@@ -12,7 +12,7 @@ describe('SocialMediaIconComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [SocialMediaIconComponent],
-            imports: [FontAwesomeModule]
+            imports: [FontAwesomeModule],
         }).compileComponents();
     });
 

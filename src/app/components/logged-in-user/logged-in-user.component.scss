@@ -5,13 +5,17 @@
 :host {
     color: #000;
     background: rgb(255 197 35);
-    background: linear-gradient(90deg, rgb(255 197 35 / 100%) 0%, rgb(255 211 86 / 100%) 100%);
+    background: linear-gradient(
+        90deg,
+        rgb(255 197 35 / 100%) 0%,
+        rgb(255 211 86 / 100%) 100%
+    );
 
     &.navigation-active {
         background: rgb(0 0 0 / 10%);
 
         .logged-in-user-container {
-            .logged-in-user-inner-container { 
+            .logged-in-user-inner-container {
                 padding-left: 0;
 
                 .user-details {

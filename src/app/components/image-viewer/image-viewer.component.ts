@@ -9,7 +9,7 @@ import { selectViewedImageId } from 'src/app/state/viewed-image-id/viewed-image-
 @Component({
     selector: 'app-image-viewer',
     templateUrl: './image-viewer.component.html',
-    styleUrls: ['./image-viewer.component.scss']
+    styleUrls: ['./image-viewer.component.scss'],
 })
 export class ImageViewerComponent implements OnInit, OnDestroy {
     backgroundImage: string;
@@ -18,23 +18,30 @@ export class ImageViewerComponent implements OnInit, OnDestroy {
     constructor(
         private storeService: StoreService,
         private errorService: ErrorService,
-        private store: Store) { }
+        private store: Store,
+    ) {}
 
     ngOnInit(): void {
-        this.store.select(selectViewedImageId).pipe(takeUntil(this.unsubscribe$)).subscribe(async imageId => {
-            if (!imageId) {
-                return;
-            }
+        this.store
+            .select(selectViewedImageId)
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe(async (imageId) => {
+                if (!imageId) {
+                    return;
+                }
 
-            try {
-                const image = await this.storeService.getImageContent(imageId);
-                this.setBackgroundImage(image.content);
-            }
-            catch (e) {
-                this.errorService.handleError(e, errorMessages.downloadImage);
-                this.close();
-            }
-        });
+                try {
+                    const image =
+                        await this.storeService.getImageContent(imageId);
+                    this.setBackgroundImage(image.content);
+                } catch (e) {
+                    this.errorService.handleError(
+                        e,
+                        errorMessages.downloadImage,
+                    );
+                    this.close();
+                }
+            });
     }
 
     ngOnDestroy(): void {
@@ -47,6 +54,6 @@ export class ImageViewerComponent implements OnInit, OnDestroy {
     }
 
     private setBackgroundImage(...urls: string[]) {
-        this.backgroundImage = urls.map(url => `url('${url}')`).join(', ');
+        this.backgroundImage = urls.map((url) => `url('${url}')`).join(', ');
     }
 }

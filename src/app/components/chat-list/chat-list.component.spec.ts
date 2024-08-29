@@ -21,16 +21,27 @@ describe('ChatListComponent', () => {
 
     beforeEach(async () => {
         store = jasmine.createSpyObj('Store', ['select']);
-        storeService = jasmine.createSpyObj('StoreService', ['setSelectedChatId', 'markAllAsRead', 'setLayoutSettings']);
-        apiService = jasmine.createSpyObj('ApiService', ['sendMessage', 'markAsRead']);
-        fileStorageService = jasmine.createSpyObj('FileStorageService', ['uploadImageAsBlob']);
-        idGeneratorService = jasmine.createSpyObj('IdGeneratorService', ['isFake']);
+        storeService = jasmine.createSpyObj('StoreService', [
+            'setSelectedChatId',
+            'markAllAsRead',
+            'setLayoutSettings',
+        ]);
+        apiService = jasmine.createSpyObj('ApiService', [
+            'sendMessage',
+            'markAsRead',
+        ]);
+        fileStorageService = jasmine.createSpyObj('FileStorageService', [
+            'uploadImageAsBlob',
+        ]);
+        idGeneratorService = jasmine.createSpyObj('IdGeneratorService', [
+            'isFake',
+        ]);
 
         await TestBed.configureTestingModule({
             declarations: [
                 ChatListComponent,
                 ChatListItemStubComponent,
-                OrderByPipe
+                OrderByPipe,
             ],
             providers: [
                 { provide: ApiService, useValue: apiService },
@@ -67,7 +78,9 @@ describe('ChatListComponent', () => {
 
         expect(storeService.setSelectedChatId).toHaveBeenCalledWith(chat.id);
         expect(storeService.markAllAsRead).toHaveBeenCalledWith(chat);
-        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({ activeArea: ActiveArea.chat });
+        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({
+            activeArea: ActiveArea.chat,
+        });
     });
 
     it('should not call markAllAsRead if chat ID is fake', () => {
@@ -85,6 +98,8 @@ describe('ChatListComponent', () => {
 
         expect(storeService.setSelectedChatId).toHaveBeenCalledWith(chat.id);
         expect(storeService.markAllAsRead).not.toHaveBeenCalled();
-        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({ activeArea: ActiveArea.chat });
+        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({
+            activeArea: ActiveArea.chat,
+        });
     });
 });

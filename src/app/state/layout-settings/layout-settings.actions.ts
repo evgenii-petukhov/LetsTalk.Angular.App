@@ -5,5 +5,5 @@ export const layoutSettingsActions = createActionGroup({
     source: 'Layout',
     events: {
         init: props<{ settings: ILayoutSettings }>(),
-    }
+    },
 });

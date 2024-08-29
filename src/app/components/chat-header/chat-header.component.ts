@@ -8,7 +8,7 @@ import { ActiveArea } from 'src/app/enums/active-areas';
 @Component({
     selector: 'app-chat-header',
     templateUrl: './chat-header.component.html',
-    styleUrls: ['./chat-header.component.scss']
+    styleUrls: ['./chat-header.component.scss'],
 })
 export class ChatHeaderComponent {
     faChevronLeft = faChevronLeft;
@@ -16,7 +16,8 @@ export class ChatHeaderComponent {
 
     constructor(
         private store: Store,
-        private storeService: StoreService) {}
+        private storeService: StoreService,
+    ) {}
 
     onBackClicked(): void {
         this.storeService.setLayoutSettings({ activeArea: ActiveArea.sidebar });

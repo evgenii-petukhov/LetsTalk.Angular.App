@@ -1,5 +1,10 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto } from 'src/app/api-client/api-client';
+import {
+    IChatDto,
+    IImagePreviewDto,
+    ILinkPreviewDto,
+    IMessageDto,
+} from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
 import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-settings.selectors';
 import { StoreService } from 'src/app/services/store.service';
@@ -14,7 +19,7 @@ import { SignalrHandlerService } from 'src/app/services/signalr-handler.service'
 @Component({
     selector: 'app-messenger',
     templateUrl: './messenger.component.html',
-    styleUrls: ['./messenger.component.scss']
+    styleUrls: ['./messenger.component.scss'],
 })
 export class MessengerComponent implements OnInit, OnDestroy {
     selectedChatId$ = this.store.select(selectSelectedChatId);
@@ -32,7 +37,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
         private store: Store,
         private storeService: StoreService,
         private signalrHandlerService: SignalrHandlerService,
-    ) { }
+    ) {}
 
     @HostListener('document:visibilitychange', ['$event'])
     onVisibilityChange(event: Event): void {
@@ -46,18 +51,21 @@ export class MessengerComponent implements OnInit, OnDestroy {
         combineLatest([
             this.store.select(selectChats),
             this.store.select(selectSelectedChat),
-            this.store.select(selectLayoutSettings)
-        ]).pipe(takeUntil(this.unsubscribe$)).subscribe(([chats, chat, layout]) => {
-            this.chats = chats;
-            this.selectedChat = chat;
-            this.isSidebarShown = layout.activeArea === ActiveArea.sidebar;
-            this.isChatShown = layout.activeArea === ActiveArea.chat;
-        });
+            this.store.select(selectLayoutSettings),
+        ])
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe(([chats, chat, layout]) => {
+                this.chats = chats;
+                this.selectedChat = chat;
+                this.isSidebarShown = layout.activeArea === ActiveArea.sidebar;
+                this.isChatShown = layout.activeArea === ActiveArea.chat;
+            });
 
         await this.signalrHandlerService.initHandlers(
             this.handleMessageNotification.bind(this),
             this.handleLinkPreviewNotification.bind(this),
-            this.handleImagePreviewNotification.bind(this));
+            this.handleImagePreviewNotification.bind(this),
+        );
     }
 
     ngOnDestroy(): void {
@@ -67,14 +75,25 @@ export class MessengerComponent implements OnInit, OnDestroy {
     }
 
     handleMessageNotification(dto: IMessageDto): void {
-        this.signalrHandlerService.handleMessageNotification(dto, this.selectedChat?.id, this.chats, this.isWindowActive);
+        this.signalrHandlerService.handleMessageNotification(
+            dto,
+            this.selectedChat?.id,
+            this.chats,
+            this.isWindowActive,
+        );
     }
 
     handleLinkPreviewNotification(dto: ILinkPreviewDto): void {
-        this.signalrHandlerService.handleLinkPreviewNotification(dto, this.selectedChat?.id);
+        this.signalrHandlerService.handleLinkPreviewNotification(
+            dto,
+            this.selectedChat?.id,
+        );
     }
 
     handleImagePreviewNotification(dto: IImagePreviewDto): void {
-        this.signalrHandlerService.handleImagePreviewNotification(dto, this.selectedChat?.id);
+        this.signalrHandlerService.handleImagePreviewNotification(
+            dto,
+            this.selectedChat?.id,
+        );
     }
 }

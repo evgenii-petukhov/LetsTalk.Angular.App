@@ -7,7 +7,13 @@ import { FileStorageService } from './file-storage.service';
 import { chatsActions } from '../state/chats/chats.actions';
 import { loggedInUserActions } from '../state/logged-in-user/logged-in-user.actions';
 import { imagesActions } from '../state/images/images.actions';
-import { IChatDto, IProfileDto, IMessageDto, IImagePreviewDto, ILinkPreviewDto } from '../api-client/api-client';
+import {
+    IChatDto,
+    IProfileDto,
+    IMessageDto,
+    IImagePreviewDto,
+    ILinkPreviewDto,
+} from '../api-client/api-client';
 import { Image } from '../models/image';
 import { accountsActions } from '../state/accounts/accounts.actions';
 import { messagesActions } from '../state/messages/messages.actions';
@@ -29,7 +35,7 @@ describe('StoreService', () => {
         imageId: 'imageId',
         isMine: true,
         text: 'test',
-        textHtml: '<p>test</p>'
+        textHtml: '<p>test</p>',
     };
 
     const account: IProfileDto = {
@@ -42,8 +48,15 @@ describe('StoreService', () => {
 
     beforeEach(() => {
         store = jasmine.createSpyObj('Store', ['dispatch', 'select']);
-        apiService = jasmine.createSpyObj('ApiService', ['markAsRead', 'getChats', 'getAccounts', 'getProfile']);
-        fileStorageService = jasmine.createSpyObj('FileStorageService', ['download']);
+        apiService = jasmine.createSpyObj('ApiService', [
+            'markAsRead',
+            'getChats',
+            'getAccounts',
+            'getProfile',
+        ]);
+        fileStorageService = jasmine.createSpyObj('FileStorageService', [
+            'download',
+        ]);
 
         TestBed.configureTestingModule({
             providers: [
@@ -57,22 +70,34 @@ describe('StoreService', () => {
         service = TestBed.inject(StoreService);
         store = TestBed.inject(Store) as jasmine.SpyObj<Store>;
         apiService = TestBed.inject(ApiService) as jasmine.SpyObj<ApiService>;
-        fileStorageService = TestBed.inject(FileStorageService) as jasmine.SpyObj<FileStorageService>;
+        fileStorageService = TestBed.inject(
+            FileStorageService,
+        ) as jasmine.SpyObj<FileStorageService>;
     });
 
     describe('markAllAsRead', () => {
         it('should mark all messages as read and update the unread count', async () => {
-            const chat: IChatDto = { id: '1', unreadCount: 2, lastMessageId: '123', lastMessageDate: 1234567890 };
+            const chat: IChatDto = {
+                id: '1',
+                unreadCount: 2,
+                lastMessageId: '123',
+                lastMessageDate: 1234567890,
+            };
 
             apiService.markAsRead.and.returnValue(Promise.resolve());
 
             await service.markAllAsRead(chat);
 
-            expect(apiService.markAsRead).toHaveBeenCalledWith(chat.id, chat.lastMessageId);
-            expect(store.dispatch).toHaveBeenCalledWith(chatsActions.setUnreadCount({
-                chatId: chat.id,
-                unreadCount: 0,
-            }));
+            expect(apiService.markAsRead).toHaveBeenCalledWith(
+                chat.id,
+                chat.lastMessageId,
+            );
+            expect(store.dispatch).toHaveBeenCalledWith(
+                chatsActions.setUnreadCount({
+                    chatId: chat.id,
+                    unreadCount: 0,
+                }),
+            );
         });
     });
 
@@ -84,7 +109,9 @@ describe('StoreService', () => {
             await service.initChatStorage(true);
 
             expect(apiService.getChats).toHaveBeenCalled();
-            expect(store.dispatch).toHaveBeenCalledWith(chatsActions.init({ chats: mockChats }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                chatsActions.init({ chats: mockChats }),
+            );
         });
 
         it('should initialize chat storage with store value if force is false', async () => {
@@ -105,7 +132,9 @@ describe('StoreService', () => {
             await service.initChatStorage(false);
 
             expect(apiService.getChats).toHaveBeenCalled();
-            expect(store.dispatch).toHaveBeenCalledWith(chatsActions.init({ chats: mockChats }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                chatsActions.init({ chats: mockChats }),
+            );
         });
     });
 
@@ -123,12 +152,16 @@ describe('StoreService', () => {
         it('should initialize account storage with API response if store is empty', async () => {
             const mockAccounts = [account] as IProfileDto[];
             store.select.and.returnValue(of(null));
-            apiService.getAccounts.and.returnValue(Promise.resolve(mockAccounts));
+            apiService.getAccounts.and.returnValue(
+                Promise.resolve(mockAccounts),
+            );
 
             await service.initAccountStorage();
 
             expect(apiService.getAccounts).toHaveBeenCalled();
-            expect(store.dispatch).toHaveBeenCalledWith(accountsActions.init({ accounts: mockAccounts }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                accountsActions.init({ accounts: mockAccounts }),
+            );
         });
     });
 
@@ -138,7 +171,9 @@ describe('StoreService', () => {
 
             service.initMessages(messages);
 
-            expect(store.dispatch).toHaveBeenCalledWith(messagesActions.init({ messageDtos: messages }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                messagesActions.init({ messageDtos: messages }),
+            );
         });
     });
 
@@ -148,7 +183,9 @@ describe('StoreService', () => {
 
             service.addMessages(messages);
 
-            expect(store.dispatch).toHaveBeenCalledWith(messagesActions.addMessages({ messageDtos: messages }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                messagesActions.addMessages({ messageDtos: messages }),
+            );
         });
     });
 
@@ -156,19 +193,23 @@ describe('StoreService', () => {
         it('should dispatch addMessage action', () => {
             service.addMessage(message);
 
-            expect(store.dispatch).toHaveBeenCalledWith(messagesActions.addMessage({ messageDto: message }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                messagesActions.addMessage({ messageDto: message }),
+            );
         });
     });
 
     describe('setLinkPreview', () => {
         it('should dispatch setLinkPreview action', () => {
             const linkPreview: ILinkPreviewDto = {
-                url: 'http://example.com'
+                url: 'http://example.com',
             };
 
             service.setLinkPreview(linkPreview);
 
-            expect(store.dispatch).toHaveBeenCalledWith(messagesActions.setLinkPreview({ linkPreviewDto: linkPreview }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                messagesActions.setLinkPreview({ linkPreviewDto: linkPreview }),
+            );
         });
     });
 
@@ -177,12 +218,16 @@ describe('StoreService', () => {
             const imagePreview: IImagePreviewDto = {
                 chatId: 'chatId',
                 width: 100,
-                height: 100
+                height: 100,
             };
 
             service.setImagePreview(imagePreview);
 
-            expect(store.dispatch).toHaveBeenCalledWith(messagesActions.setImagePreview({ imagePreviewDto: imagePreview }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                messagesActions.setImagePreview({
+                    imagePreviewDto: imagePreview,
+                }),
+            );
         });
     });
 
@@ -192,7 +237,9 @@ describe('StoreService', () => {
 
             service.incrementUnreadMessages(chatId);
 
-            expect(store.dispatch).toHaveBeenCalledWith(chatsActions.incrementUnread({ chatId }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                chatsActions.incrementUnread({ chatId }),
+            );
         });
     });
 
@@ -204,8 +251,12 @@ describe('StoreService', () => {
 
             service.setLastMessageInfo(chatId, date, id);
 
-            expect(store.dispatch).toHaveBeenCalledWith(chatsActions.setLastMessageDate({ chatId, date }));
-            expect(store.dispatch).toHaveBeenCalledWith(chatsActions.setLastMessageId({ chatId, id }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                chatsActions.setLastMessageDate({ chatId, date }),
+            );
+            expect(store.dispatch).toHaveBeenCalledWith(
+                chatsActions.setLastMessageId({ chatId, id }),
+            );
         });
     });
 
@@ -216,7 +267,9 @@ describe('StoreService', () => {
 
             service.updateChatId(oldId, newId);
 
-            expect(store.dispatch).toHaveBeenCalledWith(chatsActions.updateChatId({ chatId: oldId, newChatId: newId }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                chatsActions.updateChatId({ chatId: oldId, newChatId: newId }),
+            );
         });
     });
 
@@ -226,7 +279,9 @@ describe('StoreService', () => {
 
             service.addChat(chat);
 
-            expect(store.dispatch).toHaveBeenCalledWith(chatsActions.add({ chatDto: chat }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                chatsActions.add({ chatDto: chat }),
+            );
         });
     });
 
@@ -236,7 +291,9 @@ describe('StoreService', () => {
 
             service.setLayoutSettings(layoutSettings);
 
-            expect(store.dispatch).toHaveBeenCalledWith(layoutSettingsActions.init({ settings: layoutSettings }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                layoutSettingsActions.init({ settings: layoutSettings }),
+            );
         });
     });
 
@@ -258,14 +315,21 @@ describe('StoreService', () => {
 
             expect(user).toBe(account);
             expect(apiService.getProfile).toHaveBeenCalled();
-            expect(store.dispatch).toHaveBeenCalledWith(loggedInUserActions.init({ account }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                loggedInUserActions.init({ account }),
+            );
         });
     });
 
     describe('getImageContent', () => {
         it('should return image from store if exists', async () => {
             const imageId = '1';
-            const mockImage: Image = { imageId, content: 'url', width: 100, height: 100 };
+            const mockImage: Image = {
+                imageId,
+                content: 'url',
+                width: 100,
+                height: 100,
+            };
             store.select.and.returnValue(of([mockImage]));
 
             const image = await service.getImageContent(imageId);
@@ -276,14 +340,20 @@ describe('StoreService', () => {
 
         it('should download image if not in store', async () => {
             const imageId = '1';
-            const mockResponse = jasmine.createSpyObj('DownloadImageResponse', ['getContent', 'getWidth', 'getHeight']);
+            const mockResponse = jasmine.createSpyObj('DownloadImageResponse', [
+                'getContent',
+                'getWidth',
+                'getHeight',
+            ]);
             const mockContent = new Uint8Array([97, 98, 99]); // 'abc' in Uint8Array
             mockResponse.getContent.and.returnValue(mockContent);
             mockResponse.getWidth.and.returnValue(100);
             mockResponse.getHeight.and.returnValue(100);
 
             store.select.and.returnValue(of([]));
-            fileStorageService.download.and.returnValue(Promise.resolve(mockResponse));
+            fileStorageService.download.and.returnValue(
+                Promise.resolve(mockResponse),
+            );
             const imageUrl = 'data:image/png;base64,...';
             spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);
 
@@ -291,14 +361,16 @@ describe('StoreService', () => {
 
             expect(fileStorageService.download).toHaveBeenCalledWith(imageId);
 
-            expect(store.dispatch).toHaveBeenCalledWith(imagesActions.add({
-                image: {
-                    imageId,
-                    content: imageUrl,
-                    width: 100,
-                    height: 100,
-                }
-            }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                imagesActions.add({
+                    image: {
+                        imageId,
+                        content: imageUrl,
+                        width: 100,
+                        height: 100,
+                    },
+                }),
+            );
             expect(image.imageId).toBe(imageId);
             expect(image.content).toBe(imageUrl);
         });
@@ -308,7 +380,9 @@ describe('StoreService', () => {
         it('should dispatch set action', () => {
             service.setLoggedInUser(account);
 
-            expect(store.dispatch).toHaveBeenCalledWith(loggedInUserActions.set({ account }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                loggedInUserActions.set({ account }),
+            );
         });
     });
 
@@ -318,7 +392,9 @@ describe('StoreService', () => {
 
             service.setSelectedChatId(chatId);
 
-            expect(store.dispatch).toHaveBeenCalledWith(selectedChatIdActions.init({ chatId }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                selectedChatIdActions.init({ chatId }),
+            );
         });
     });
 
@@ -328,7 +404,9 @@ describe('StoreService', () => {
 
             service.setViewedImageId(imageId);
 
-            expect(store.dispatch).toHaveBeenCalledWith(viewedImageIdActions.init({ imageId }));
+            expect(store.dispatch).toHaveBeenCalledWith(
+                viewedImageIdActions.init({ imageId }),
+            );
         });
     });
 });

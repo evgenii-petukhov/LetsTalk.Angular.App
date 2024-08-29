@@ -12,8 +12,8 @@ describe('ErrorService', () => {
         TestBed.configureTestingModule({
             providers: [
                 ErrorService,
-                { provide: ToastrService, useValue: toastrService }
-            ]
+                { provide: ToastrService, useValue: toastrService },
+            ],
         });
 
         service = TestBed.inject(ErrorService);
@@ -28,9 +28,9 @@ describe('ErrorService', () => {
             response: JSON.stringify({
                 errors: {
                     field1: ['Error1', 'Error2'],
-                    field2: ['Error3']
-                }
-            })
+                    field2: ['Error3'],
+                },
+            }),
         };
 
         const defaultMessage = 'Default error message';
@@ -38,16 +38,22 @@ describe('ErrorService', () => {
         service.handleError(errorResponse, defaultMessage);
 
         const expectedMessage = 'Error1, Error2, Error3';
-        expect(toastrService.error).toHaveBeenCalledWith(expectedMessage, 'Error');
+        expect(toastrService.error).toHaveBeenCalledWith(
+            expectedMessage,
+            'Error',
+        );
     });
 
     it('should call toastr.error with default message if no errors present', () => {
         const errorResponse = {
-            response: JSON.stringify({})
+            response: JSON.stringify({}),
         };
 
         const defaultMessage = 'Default error message';
         service.handleError(errorResponse, defaultMessage);
-        expect(toastrService.error).toHaveBeenCalledWith(defaultMessage, 'Error');
+        expect(toastrService.error).toHaveBeenCalledWith(
+            defaultMessage,
+            'Error',
+        );
     });
 });

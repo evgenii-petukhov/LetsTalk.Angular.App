@@ -1,13 +1,15 @@
 <a href="#" *ngIf="chat" (click)="onChatSelected()">
-    <app-avatar class="user-photo"
-        [urlOptions]="[chat.imageId, chat.photoUrl]"></app-avatar>
+    <app-avatar
+        class="user-photo"
+        [urlOptions]="[chat.imageId, chat.photoUrl]"
+    ></app-avatar>
     <div class="user-details">
         <div class="user-name">
             {{ chat.chatName }}
         </div>
         <div class="unread-count" *ngIf="chat.unreadCount">
             <div class="unread-count-text">
-                {{chat.unreadCount}}
+                {{ chat.unreadCount }}
             </div>
         </div>
     </div>

@@ -25,12 +25,12 @@
             .login-buttons {
                 display: flex;
                 justify-content: center;
-    
+
                 button {
                     flex: 1 1;
                     margin: 0 10px 0 0;
                     max-width: 165px;
-    
+
                     &:last-child {
                         margin: 0;
                     }

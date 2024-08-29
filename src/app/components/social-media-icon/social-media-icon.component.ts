@@ -1,10 +1,14 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { faVk, faFacebook, IconDefinition } from '@fortawesome/free-brands-svg-icons';
+import {
+    faVk,
+    faFacebook,
+    IconDefinition,
+} from '@fortawesome/free-brands-svg-icons';
 import { AccountType } from 'src/app/enums/account-type';
 
 @Component({
     selector: 'app-social-media-icon',
-    templateUrl: './social-media-icon.component.html'
+    templateUrl: './social-media-icon.component.html',
 })
 export class SocialMediaIconComponent implements OnChanges {
     @Input() iconTypeId: number;

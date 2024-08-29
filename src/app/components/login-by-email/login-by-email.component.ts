@@ -12,10 +12,9 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
     styleUrl: './login-by-email.component.scss',
 })
 export class LoginByEmailComponent {
-
     form = this.fb.group({
         email: ['', [Validators.email, Validators.required]],
-        code: ['', [Validators.pattern('\\s*\\d{4}\\s*'), Validators.required]]
+        code: ['', [Validators.pattern('\\s*\\d{4}\\s*'), Validators.required]],
     });
 
     isCodeRequested = false;
@@ -28,20 +27,22 @@ export class LoginByEmailComponent {
         private fb: FormBuilder,
         private apiService: ApiService,
         private tokenStorage: TokenStorageService,
-        private errorService: ErrorService) { }
+        private errorService: ErrorService,
+    ) {}
 
     async onSubmit(): Promise<void> {
         this.isSubmitInProgress = true;
         try {
-            const loginResponseDto = await this.apiService.loginByEmail(this.form.value.email, Number(this.form.value.code));
+            const loginResponseDto = await this.apiService.loginByEmail(
+                this.form.value.email,
+                Number(this.form.value.code),
+            );
             this.tokenStorage.saveToken(loginResponseDto.token);
             this.tokenStorage.saveUser(loginResponseDto);
             await this.router.navigate(['chats']);
-        }
-        catch (e) {
+        } catch (e) {
             this.errorService.handleError(e, errorMessages.generateCode);
-        }
-        finally {
+        } finally {
             this.isSubmitInProgress = false;
         }
     }
@@ -53,12 +54,13 @@ export class LoginByEmailComponent {
     async onCodeRequested(): Promise<void> {
         this.isCodeRequestInProgress = true;
         try {
-            const data = await this.apiService.generateLoginCode(this.form.value.email);
+            const data = await this.apiService.generateLoginCode(
+                this.form.value.email,
+            );
             this.isCodeRequested = true;
             this.isCodeRequestInProgress = false;
             this.codeValidInSeconds = data.codeValidInSeconds;
-        }
-        catch (e) {
+        } catch (e) {
             this.errorService.handleError(e, errorMessages.generateCode);
             this.isCodeRequestInProgress = false;
         }

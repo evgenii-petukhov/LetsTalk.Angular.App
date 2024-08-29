@@ -1,5 +1,9 @@
 import { createActionGroup, props } from '@ngrx/store';
-import { IImagePreviewDto, ILinkPreviewDto, IMessageDto } from 'src/app/api-client/api-client';
+import {
+    IImagePreviewDto,
+    ILinkPreviewDto,
+    IMessageDto,
+} from 'src/app/api-client/api-client';
 
 export const messagesActions = createActionGroup({
     source: 'Messages',
@@ -8,6 +12,6 @@ export const messagesActions = createActionGroup({
         addMessages: props<{ messageDtos: readonly IMessageDto[] }>(),
         addMessage: props<{ messageDto: IMessageDto }>(),
         setLinkPreview: props<{ linkPreviewDto: ILinkPreviewDto }>(),
-        setImagePreview: props<{ imagePreviewDto: IImagePreviewDto }>()
-    }
+        setImagePreview: props<{ imagePreviewDto: IImagePreviewDto }>(),
+    },
 });

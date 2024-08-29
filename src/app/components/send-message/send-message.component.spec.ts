@@ -23,18 +23,39 @@ describe('SendMessageComponent', () => {
     let imageUploadService: jasmine.SpyObj<ImageUploadService>;
 
     const imageUrl = 'data:image/png;base64,...';
-    const mockFile = new File(['dummy content'], 'example.png', { type: 'image/png' });
+    const mockFile = new File(['dummy content'], 'example.png', {
+        type: 'image/png',
+    });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const event = { target: { files: [mockFile] } } as any;
 
     beforeEach(async () => {
         store = jasmine.createSpyObj('Store', ['select']);
-        store.select.and.returnValues(of('chatId1'), of({ id: 'chatId1', accountIds: ['accountId1'], isIndividual: true }));
-        apiService = jasmine.createSpyObj('ApiService', ['sendMessage', 'createIndividualChat']);
+        store.select.and.returnValues(
+            of('chatId1'),
+            of({
+                id: 'chatId1',
+                accountIds: ['accountId1'],
+                isIndividual: true,
+            }),
+        );
+        apiService = jasmine.createSpyObj('ApiService', [
+            'sendMessage',
+            'createIndividualChat',
+        ]);
         errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
-        storeService = jasmine.createSpyObj('StoreService', ['updateChatId', 'setSelectedChatId', 'addMessage', 'setLastMessageInfo']);
-        idGeneratorService = jasmine.createSpyObj('IdGeneratorService', ['isFake']);
-        imageUploadService = jasmine.createSpyObj('ImageUploadService', ['resizeAndUploadImage']);
+        storeService = jasmine.createSpyObj('StoreService', [
+            'updateChatId',
+            'setSelectedChatId',
+            'addMessage',
+            'setLastMessageInfo',
+        ]);
+        idGeneratorService = jasmine.createSpyObj('IdGeneratorService', [
+            'isFake',
+        ]);
+        imageUploadService = jasmine.createSpyObj('ImageUploadService', [
+            'resizeAndUploadImage',
+        ]);
 
         await TestBed.configureTestingModule({
             declarations: [SendMessageComponent],
@@ -46,7 +67,7 @@ describe('SendMessageComponent', () => {
                 { provide: StoreService, useValue: storeService },
                 { provide: IdGeneratorService, useValue: idGeneratorService },
                 { provide: ImageUploadService, useValue: imageUploadService },
-            ]
+            ],
         }).compileComponents();
 
         fixture = TestBed.createComponent(SendMessageComponent);
@@ -62,25 +83,34 @@ describe('SendMessageComponent', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         expect((component as any).chatId).toBe('chatId1');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        expect((component as any).chat).toEqual({ id: 'chatId1', accountIds: ['accountId1'], isIndividual: true });
+        expect((component as any).chat).toEqual({
+            id: 'chatId1',
+            accountIds: ['accountId1'],
+            isIndividual: true,
+        });
     });
 
     it('should send message and reset message field', async () => {
         component.message = 'Test message';
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (component as any).chat = {
-            isIndividual: true
+            isIndividual: true,
         };
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (component as any).chatId = 'chatId1';
         idGeneratorService.isFake.and.returnValue(false);
-        apiService.sendMessage.and.returnValue(Promise.resolve({ id: 'msgId1', created: Date.now() }));
+        apiService.sendMessage.and.returnValue(
+            Promise.resolve({ id: 'msgId1', created: Date.now() }),
+        );
 
         await component.send('Test message');
 
         expect(component.message).toBe('');
         expect(component.isSending).toBe(false);
-        expect(apiService.sendMessage).toHaveBeenCalledWith('chatId1', 'Test message');
+        expect(apiService.sendMessage).toHaveBeenCalledWith(
+            'chatId1',
+            'Test message',
+        );
         expect(idGeneratorService.isFake).toHaveBeenCalledWith('chatId1');
         expect(storeService.addMessage).toHaveBeenCalled();
     });
@@ -89,20 +119,34 @@ describe('SendMessageComponent', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (component as any).chat = {
             isIndividual: true,
-            accountIds: ['accountId1']
+            accountIds: ['accountId1'],
         };
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (component as any).chatId = 'chatId1';
         idGeneratorService.isFake.and.returnValue(true);
-        apiService.createIndividualChat.and.returnValue(Promise.resolve({ id: 'newChatId' }));
-        apiService.sendMessage.and.returnValue(Promise.resolve({ id: 'msgId1', created: Date.now() }));
+        apiService.createIndividualChat.and.returnValue(
+            Promise.resolve({ id: 'newChatId' }),
+        );
+        apiService.sendMessage.and.returnValue(
+            Promise.resolve({ id: 'msgId1', created: Date.now() }),
+        );
 
         await component.send('Test message');
 
-        expect(apiService.createIndividualChat).toHaveBeenCalledWith('accountId1');
-        expect(apiService.sendMessage).toHaveBeenCalledWith('newChatId', 'Test message');
-        expect(storeService.updateChatId).toHaveBeenCalledWith('chatId1', 'newChatId');
-        expect(storeService.setSelectedChatId).toHaveBeenCalledWith('newChatId');
+        expect(apiService.createIndividualChat).toHaveBeenCalledWith(
+            'accountId1',
+        );
+        expect(apiService.sendMessage).toHaveBeenCalledWith(
+            'newChatId',
+            'Test message',
+        );
+        expect(storeService.updateChatId).toHaveBeenCalledWith(
+            'chatId1',
+            'newChatId',
+        );
+        expect(storeService.setSelectedChatId).toHaveBeenCalledWith(
+            'newChatId',
+        );
         expect(idGeneratorService.isFake).toHaveBeenCalledWith('chatId1');
     });
 
@@ -112,28 +156,42 @@ describe('SendMessageComponent', () => {
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (component as any).chat = {
-            isIndividual: true
+            isIndividual: true,
         };
 
         await component.send('Test message');
 
         expect(component.message).toBe('');
         expect(component.isSending).toBe(false);
-        expect(errorService.handleError).toHaveBeenCalledWith(error, jasmine.any(String));
+        expect(errorService.handleError).toHaveBeenCalledWith(
+            error,
+            jasmine.any(String),
+        );
     });
 
     it('should handle image selection and upload', async () => {
-        const mockMessageDto = { id: 'msgId1', created: Date.now(), isMine: true };
+        const mockMessageDto = {
+            id: 'msgId1',
+            created: Date.now(),
+            isMine: true,
+        };
 
         spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);
         const mockUploadResponse = new UploadImageResponse();
         mockUploadResponse.setId('imageId');
-        imageUploadService.resizeAndUploadImage.and.returnValue(Promise.resolve(mockUploadResponse));
+        imageUploadService.resizeAndUploadImage.and.returnValue(
+            Promise.resolve(mockUploadResponse),
+        );
         apiService.sendMessage.and.returnValue(Promise.resolve(mockMessageDto));
 
         await component.onImageSelected(event);
 
-        expect(imageUploadService.resizeAndUploadImage).toHaveBeenCalledWith(imageUrl, jasmine.any(Number), jasmine.any(Number), jasmine.any(Number));
+        expect(imageUploadService.resizeAndUploadImage).toHaveBeenCalledWith(
+            imageUrl,
+            jasmine.any(Number),
+            jasmine.any(Number),
+            jasmine.any(Number),
+        );
         expect(apiService.sendMessage).toHaveBeenCalled();
         expect(storeService.addMessage).toHaveBeenCalledWith(mockMessageDto);
     });
@@ -146,19 +204,26 @@ describe('SendMessageComponent', () => {
 
         await component.onImageSelected(event);
 
-        expect(errorService.handleError).toHaveBeenCalledWith(error, jasmine.any(String));
+        expect(errorService.handleError).toHaveBeenCalledWith(
+            error,
+            jasmine.any(String),
+        );
     });
 
     it('should disable the send button when message is empty or isSending is true', () => {
         component.message = '';
         fixture.detectChanges();
-        let sendButton = fixture.debugElement.query(By.css('button[title="Send (Ctrl+Enter)"]'));
+        let sendButton = fixture.debugElement.query(
+            By.css('button[title="Send (Ctrl+Enter)"]'),
+        );
         expect(sendButton.nativeElement.disabled).toBeTrue();
 
         component.message = 'Test message';
         component.isSending = true;
         fixture.detectChanges();
-        sendButton = fixture.debugElement.query(By.css('button[title="Send (Ctrl+Enter)"]'));
+        sendButton = fixture.debugElement.query(
+            By.css('button[title="Send (Ctrl+Enter)"]'),
+        );
         expect(sendButton.nativeElement.disabled).toBeTrue();
     });
 });

@@ -10,17 +10,21 @@ describe('ImageUploadService', () => {
     let fileStorageService: jasmine.SpyObj<FileStorageService>;
 
     beforeEach(() => {
-        imageService = jasmine.createSpyObj('ImageService', ['resizeBase64Image']);
-        fileStorageService = jasmine.createSpyObj('FileStorageService', ['uploadImageAsBlob']);
+        imageService = jasmine.createSpyObj('ImageService', [
+            'resizeBase64Image',
+        ]);
+        fileStorageService = jasmine.createSpyObj('FileStorageService', [
+            'uploadImageAsBlob',
+        ]);
 
         TestBed.configureTestingModule({
             providers: [
                 ImageUploadService,
                 { provide: ImageService, useValue: imageService },
-                { provide: FileStorageService, useValue: fileStorageService }
-            ]
+                { provide: FileStorageService, useValue: fileStorageService },
+            ],
         });
-        
+
         service = TestBed.inject(ImageUploadService);
     });
 
@@ -43,13 +47,29 @@ describe('ImageUploadService', () => {
             uploadResponse.setImageFormat(1);
             uploadResponse.setSignature('signature');
 
-            imageService.resizeBase64Image.and.returnValue(Promise.resolve(blob));
-            fileStorageService.uploadImageAsBlob.and.returnValue(Promise.resolve(uploadResponse));
+            imageService.resizeBase64Image.and.returnValue(
+                Promise.resolve(blob),
+            );
+            fileStorageService.uploadImageAsBlob.and.returnValue(
+                Promise.resolve(uploadResponse),
+            );
 
-            const result = await service.resizeAndUploadImage(photoUrl, width, height, imageRole);
+            const result = await service.resizeAndUploadImage(
+                photoUrl,
+                width,
+                height,
+                imageRole,
+            );
 
-            expect(imageService.resizeBase64Image).toHaveBeenCalledWith(photoUrl, width, height);
-            expect(fileStorageService.uploadImageAsBlob).toHaveBeenCalledWith(blob, imageRole);
+            expect(imageService.resizeBase64Image).toHaveBeenCalledWith(
+                photoUrl,
+                width,
+                height,
+            );
+            expect(fileStorageService.uploadImageAsBlob).toHaveBeenCalledWith(
+                blob,
+                imageRole,
+            );
             expect(result).toEqual(uploadResponse);
         });
 
@@ -66,12 +86,22 @@ describe('ImageUploadService', () => {
             uploadResponse.setImageFormat(1);
             uploadResponse.setSignature('signature');
 
-            fileStorageService.uploadImageAsBlob.and.returnValue(Promise.resolve(uploadResponse));
+            fileStorageService.uploadImageAsBlob.and.returnValue(
+                Promise.resolve(uploadResponse),
+            );
 
-            const result = await service.resizeAndUploadImage(photoUrl, width, height, imageRole);
+            const result = await service.resizeAndUploadImage(
+                photoUrl,
+                width,
+                height,
+                imageRole,
+            );
 
             expect(imageService.resizeBase64Image).not.toHaveBeenCalled();
-            expect(fileStorageService.uploadImageAsBlob).toHaveBeenCalledWith(null, imageRole);
+            expect(fileStorageService.uploadImageAsBlob).toHaveBeenCalledWith(
+                null,
+                imageRole,
+            );
             expect(result).toEqual(uploadResponse);
         });
     });
@@ -83,11 +113,21 @@ describe('ImageUploadService', () => {
             const maxHeight = 100;
             const blob = new Blob();
 
-            imageService.resizeBase64Image.and.returnValue(Promise.resolve(blob));
+            imageService.resizeBase64Image.and.returnValue(
+                Promise.resolve(blob),
+            );
 
-            const result = await service['resizeAvatar'](photoUrl, maxWidth, maxHeight);
+            const result = await service['resizeAvatar'](
+                photoUrl,
+                maxWidth,
+                maxHeight,
+            );
 
-            expect(imageService.resizeBase64Image).toHaveBeenCalledWith(photoUrl, maxWidth, maxHeight);
+            expect(imageService.resizeBase64Image).toHaveBeenCalledWith(
+                photoUrl,
+                maxWidth,
+                maxHeight,
+            );
             expect(result).toEqual(blob);
         });
 

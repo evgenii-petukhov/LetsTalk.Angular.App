@@ -11,7 +11,7 @@ describe('VisibleOnlyPipe', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [VisibleOnlyPipe]
+            providers: [VisibleOnlyPipe],
         });
         pipe = TestBed.inject(VisibleOnlyPipe);
     });
@@ -24,7 +24,7 @@ describe('VisibleOnlyPipe', () => {
         const items = [
             { name: 'Alice', visible: true },
             { name: 'Bob', visible: false },
-            { name: 'Charlie', visible: true }
+            { name: 'Charlie', visible: true },
         ];
         const callback = (item: INameAndVisible) => item.visible;
 
@@ -32,14 +32,14 @@ describe('VisibleOnlyPipe', () => {
 
         expect(result).toEqual([
             { name: 'Alice', visible: true },
-            { name: 'Charlie', visible: true }
+            { name: 'Charlie', visible: true },
         ]);
     });
 
     it('should return an empty array if no items match the callback', () => {
         const items = [
             { name: 'Alice', visible: false },
-            { name: 'Bob', visible: false }
+            { name: 'Bob', visible: false },
         ];
         const callback = (item: INameAndVisible) => item.visible;
 
@@ -51,7 +51,7 @@ describe('VisibleOnlyPipe', () => {
     it('should return all items if all items match the callback', () => {
         const items = [
             { name: 'Alice', visible: true },
-            { name: 'Bob', visible: true }
+            { name: 'Bob', visible: true },
         ];
         const callback = (item: INameAndVisible) => item.visible;
 
@@ -72,7 +72,7 @@ describe('VisibleOnlyPipe', () => {
     it('should handle cases where the callback returns false for all items', () => {
         const items = [
             { name: 'Alice', visible: true },
-            { name: 'Bob', visible: true }
+            { name: 'Bob', visible: true },
         ];
         const callback = () => false;
 

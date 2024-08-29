@@ -14,22 +14,21 @@ import {
     CreateIndividualChatRequest,
     EmailLoginRequest,
     GenerateLoginCodeResponseDto,
-    GenerateLoginCodeRequest
+    GenerateLoginCodeRequest,
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
 })
 export class ApiService {
-
-    constructor(private client: ApiClient) { }
+    constructor(private client: ApiClient) {}
 
     loginByEmail(email: string, code: number): Promise<LoginResponseDto> {
         const request = new EmailLoginRequest({
             email: email,
             code: code,
-            antiSpamToken: Math.floor(new Date().getTime() / 1000)
+            antiSpamToken: Math.floor(new Date().getTime() / 1000),
         });
 
         return firstValueFrom(this.client.emailLogin(request));
@@ -44,39 +43,53 @@ export class ApiService {
     }
 
     getMessages(chatId: string, pageIndex: number): Promise<IMessageDto[]> {
-        return firstValueFrom(this.client.messageAll(chatId, !pageIndex ? undefined : pageIndex));
+        return firstValueFrom(
+            this.client.messageAll(chatId, !pageIndex ? undefined : pageIndex),
+        );
     }
 
     getProfile(): Promise<IProfileDto> {
         return firstValueFrom(this.client.profileGET());
     }
 
-    saveProfile(firstName: string, lastName: string, image?: UploadImageResponse): Promise<ProfileDto> {
+    saveProfile(
+        firstName: string,
+        lastName: string,
+        image?: UploadImageResponse,
+    ): Promise<ProfileDto> {
         const request = new UpdateProfileRequest({
             firstName,
             lastName,
-            image: image ? new ImageRequestModel({
-                id: image.getId(),
-                width: image.getWidth(),
-                height: image.getHeight(),
-                imageFormat: image.getImageFormat(),
-                signature: image.getSignature()
-            }) : null
+            image: image
+                ? new ImageRequestModel({
+                      id: image.getId(),
+                      width: image.getWidth(),
+                      height: image.getHeight(),
+                      imageFormat: image.getImageFormat(),
+                      signature: image.getSignature(),
+                  })
+                : null,
         });
         return firstValueFrom(this.client.profilePUT(request));
     }
 
-    async sendMessage(chatId: string, text?: string, image?: UploadImageResponse): Promise<IMessageDto> {
+    async sendMessage(
+        chatId: string,
+        text?: string,
+        image?: UploadImageResponse,
+    ): Promise<IMessageDto> {
         const request = new CreateMessageRequest({
             chatId,
             text,
-            image: image ? new ImageRequestModel({
-                id: image.getId(),
-                width: image.getWidth(),
-                height: image.getHeight(),
-                imageFormat: image.getImageFormat(),
-                signature: image.getSignature()
-            }) : null
+            image: image
+                ? new ImageRequestModel({
+                      id: image.getId(),
+                      width: image.getWidth(),
+                      height: image.getHeight(),
+                      imageFormat: image.getImageFormat(),
+                      signature: image.getSignature(),
+                  })
+                : null,
         });
 
         return firstValueFrom(this.client.message(request));
@@ -84,7 +97,7 @@ export class ApiService {
 
     async createIndividualChat(accountId: string): Promise<IChatDto> {
         const request = new CreateIndividualChatRequest({
-            accountId: accountId
+            accountId: accountId,
         });
 
         return firstValueFrom(this.client.chat(request));
@@ -97,7 +110,7 @@ export class ApiService {
     generateLoginCode(email: string): Promise<GenerateLoginCodeResponseDto> {
         const request = new GenerateLoginCodeRequest({
             email: email,
-            antiSpamToken: Math.floor(new Date().getTime() / 1000)
+            antiSpamToken: Math.floor(new Date().getTime() / 1000),
         });
 
         return firstValueFrom(this.client.generateLoginCode(request));

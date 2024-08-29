@@ -19,7 +19,7 @@ import { ImageUploadService } from 'src/app/services/image-upload.service';
 @Component({
     selector: 'app-profile',
     templateUrl: './profile.component.html',
-    styleUrls: ['./profile.component.scss']
+    styleUrls: ['./profile.component.scss'],
 })
 export class ProfileComponent implements OnInit, OnDestroy {
     account$ = this.store.select(selectLoggedInUser);
@@ -29,7 +29,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     form = this.fb.group({
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
-        photoUrl: [null]
+        photoUrl: [null],
     });
     faUpload = faUpload;
 
@@ -40,7 +40,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
         private apiService: ApiService,
         private store: Store,
         private imageUploadService: ImageUploadService,
-        private errorService: ErrorService) { }
+        private errorService: ErrorService,
+    ) {}
 
     async ngOnInit(): Promise<void> {
         const account = await this.storeService.getLoggedInUser();
@@ -48,7 +49,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.form.setValue({
             firstName: account.firstName,
             lastName: account.lastName,
-            photoUrl: null
+            photoUrl: null,
         });
         this.email = account.email;
     }
@@ -61,10 +62,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.isSending = true;
         const sizeLimits = environment.imageSettings.limits.avatar;
         try {
-            const response = await this.imageUploadService.resizeAndUploadImage(this.form.value.photoUrl, sizeLimits.width, sizeLimits.height, ImageRoles.AVATAR);
+            const response = await this.imageUploadService.resizeAndUploadImage(
+                this.form.value.photoUrl,
+                sizeLimits.width,
+                sizeLimits.height,
+                ImageRoles.AVATAR,
+            );
             await this.submitForm(response);
-        }
-        catch (e) {
+        } catch (e) {
             this.handleSubmitError(e, errorMessages.uploadImage);
         }
     }
@@ -80,7 +85,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             const buffer = await files[0].arrayBuffer();
             const base64 = URL.createObjectURL(new Blob([buffer]));
             this.form.patchValue({
-                photoUrl: base64
+                photoUrl: base64,
             });
         }
     }
@@ -88,12 +93,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private async submitForm(response: UploadImageResponse): Promise<void> {
         try {
             const profileDto = await this.apiService.saveProfile(
-                this.form.value.firstName, this.form.value.lastName, response);
+                this.form.value.firstName,
+                this.form.value.lastName,
+                response,
+            );
             this.storeService.setLoggedInUser(profileDto);
             await this.router.navigate(['chats']);
             this.isSending = false;
-        }
-        catch (e) {
+        } catch (e) {
             this.handleSubmitError(e, errorMessages.saveProfile);
         }
     }

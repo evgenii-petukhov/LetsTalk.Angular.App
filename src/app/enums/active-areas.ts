@@ -1,4 +1,4 @@
 export enum ActiveArea {
     sidebar = 0,
-    chat = 1
+    chat = 1,
 }

@@ -16,20 +16,28 @@ export class Message {
     imagePreview?: ImagePreview;
 
     constructor(...inits: Partial<Message | IMessageDto>[]) {
-        inits.filter(init => init).forEach(init => {
-            const linkPreview = this.linkPreview ?? init?.linkPreview;
-            const imagePreview = this.imagePreview ?? init?.imagePreview;
-            const created = this.created ?? init?.created;
-            Object.assign(this, init);
-            if (linkPreview) {
-                this.linkPreview = isOfType(linkPreview, LinkPreview) ? linkPreview : new LinkPreview(linkPreview);
-            }
-            if (imagePreview) {
-                this.imagePreview = isOfType(imagePreview, ImagePreview) ? imagePreview : new ImagePreview(imagePreview);
-            }
-            if (created) {
-                this.created = isOfType(created, Date) ? created as Date : getLocalDate(created as number);
-            }
-        });
+        inits
+            .filter((init) => init)
+            .forEach((init) => {
+                const linkPreview = this.linkPreview ?? init?.linkPreview;
+                const imagePreview = this.imagePreview ?? init?.imagePreview;
+                const created = this.created ?? init?.created;
+                Object.assign(this, init);
+                if (linkPreview) {
+                    this.linkPreview = isOfType(linkPreview, LinkPreview)
+                        ? linkPreview
+                        : new LinkPreview(linkPreview);
+                }
+                if (imagePreview) {
+                    this.imagePreview = isOfType(imagePreview, ImagePreview)
+                        ? imagePreview
+                        : new ImagePreview(imagePreview);
+                }
+                if (created) {
+                    this.created = isOfType(created, Date)
+                        ? (created as Date)
+                        : getLocalDate(created as number);
+                }
+            });
     }
 }

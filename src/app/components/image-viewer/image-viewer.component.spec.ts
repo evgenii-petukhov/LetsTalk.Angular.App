@@ -14,7 +14,10 @@ describe('ImageViewerComponent', () => {
     let unsubscribe$: Subject<void>;
 
     beforeEach(async () => {
-        storeService = jasmine.createSpyObj('StoreService', ['getImageContent', 'setViewedImageId']);
+        storeService = jasmine.createSpyObj('StoreService', [
+            'getImageContent',
+            'setViewedImageId',
+        ]);
         errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
 
         await TestBed.configureTestingModule({
@@ -24,7 +27,7 @@ describe('ImageViewerComponent', () => {
                 provideMockStore({}),
                 { provide: StoreService, useValue: storeService },
                 { provide: ErrorService, useValue: errorService },
-            ]
+            ],
         }).compileComponents();
 
         fixture = TestBed.createComponent(ImageViewerComponent);

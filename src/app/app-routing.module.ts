@@ -12,34 +12,34 @@ const routes: Routes = [
     {
         path: '',
         redirectTo: '/chats',
-        pathMatch: 'full'
+        pathMatch: 'full',
     },
     {
         path: 'auth',
-        component: AuthComponent
+        component: AuthComponent,
     },
     {
         path: 'login-by-email',
-        component: LoginByEmailComponent
+        component: LoginByEmailComponent,
     },
     {
         path: 'privacy-policy',
-        component: PrivacyPolicyComponent
+        component: PrivacyPolicyComponent,
     },
     {
         path: 'chats',
         component: MessengerComponent,
-        canActivate: [authGuard, profileGuard]
+        canActivate: [authGuard, profileGuard],
     },
     {
         path: 'profile',
         component: ProfileComponent,
-        canActivate: [authGuard]
-    }
+        canActivate: [authGuard],
+    },
 ];
 
 @NgModule({
     imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule]
+    exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

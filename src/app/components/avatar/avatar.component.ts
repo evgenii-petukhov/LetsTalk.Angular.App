@@ -17,11 +17,11 @@ export class AvatarComponent implements OnChanges {
     constructor(
         private storeService: StoreService,
         private errorService: ErrorService,
-    ) { }
+    ) {}
 
     async ngOnChanges(): Promise<void> {
         this.urlOptions = this.urlOptions ?? [];
-        this.urlOptions = this.urlOptions.filter(url => url);
+        this.urlOptions = this.urlOptions.filter((url) => url);
         if (this.urlOptions.length === 0) {
             this.setBackgroundImage(this.defaultPhotoUrl);
             return;
@@ -29,16 +29,23 @@ export class AvatarComponent implements OnChanges {
 
         switch (this.getTypeInfo(this.urlOptions[0])) {
             case ImageUrlType.url:
-                this.setBackgroundImage(this.urlOptions[0] as string, this.defaultPhotoUrl);
+                this.setBackgroundImage(
+                    this.urlOptions[0] as string,
+                    this.defaultPhotoUrl,
+                );
                 return;
             case ImageUrlType.imageId:
                 try {
-                    const image = await this.storeService.getImageContent(this.urlOptions[0] as string);
+                    const image = await this.storeService.getImageContent(
+                        this.urlOptions[0] as string,
+                    );
                     this.setBackgroundImage(image.content);
-                }
-                catch (e) {
+                } catch (e) {
                     this.setBackgroundImage(this.defaultPhotoUrl);
-                    this.errorService.handleError(e, errorMessages.downloadImage);
+                    this.errorService.handleError(
+                        e,
+                        errorMessages.downloadImage,
+                    );
                 }
                 return;
             default:
@@ -47,10 +54,13 @@ export class AvatarComponent implements OnChanges {
         }
     }
 
-    private getTypeInfo(value: (string | number)): ImageUrlType {
-        const stringValue = (value as string);
+    private getTypeInfo(value: string | number): ImageUrlType {
+        const stringValue = value as string;
 
-        if (stringValue.startsWith('http') || stringValue.startsWith('blob:https')) {
+        if (
+            stringValue.startsWith('http') ||
+            stringValue.startsWith('blob:https')
+        ) {
             return ImageUrlType.url;
         }
 
@@ -62,6 +72,6 @@ export class AvatarComponent implements OnChanges {
     }
 
     private setBackgroundImage(...urls: string[]) {
-        this.backgroundImage = urls.map(url => `url('${url}')`).join(', ');
+        this.backgroundImage = urls.map((url) => `url('${url}')`).join(', ');
     }
 }

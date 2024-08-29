@@ -6,7 +6,10 @@ import { ApiService } from 'src/app/services/api.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { InlineCountdownStubComponent } from '../inline-countdown/inline-countdown.component.stub';
-import { GenerateLoginCodeResponseDto, LoginResponseDto } from 'src/app/api-client/api-client';
+import {
+    GenerateLoginCodeResponseDto,
+    LoginResponseDto,
+} from 'src/app/api-client/api-client';
 
 describe('LoginByEmailComponent', () => {
     let component: LoginByEmailComponent;
@@ -17,26 +20,33 @@ describe('LoginByEmailComponent', () => {
     let router: jasmine.SpyObj<Router>;
 
     beforeEach(async () => {
-        apiService = jasmine.createSpyObj('ApiService', ['loginByEmail', 'generateLoginCode']);
-        apiService.loginByEmail.and.resolveTo(new LoginResponseDto({ token: 'fakeToken' }));
-        apiService.generateLoginCode.and.resolveTo(new GenerateLoginCodeResponseDto({ codeValidInSeconds: 60 }));
-        tokenStorageService = jasmine.createSpyObj('TokenStorageService', ['saveToken', 'saveUser']);
+        apiService = jasmine.createSpyObj('ApiService', [
+            'loginByEmail',
+            'generateLoginCode',
+        ]);
+        apiService.loginByEmail.and.resolveTo(
+            new LoginResponseDto({ token: 'fakeToken' }),
+        );
+        apiService.generateLoginCode.and.resolveTo(
+            new GenerateLoginCodeResponseDto({ codeValidInSeconds: 60 }),
+        );
+        tokenStorageService = jasmine.createSpyObj('TokenStorageService', [
+            'saveToken',
+            'saveUser',
+        ]);
         errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
         router = jasmine.createSpyObj('Router', ['navigate']);
 
         await TestBed.configureTestingModule({
-            declarations: [
-                LoginByEmailComponent,
-                InlineCountdownStubComponent
-            ],
+            declarations: [LoginByEmailComponent, InlineCountdownStubComponent],
             imports: [ReactiveFormsModule],
             providers: [
                 FormBuilder,
                 { provide: Router, useValue: router },
                 { provide: ApiService, useValue: apiService },
                 { provide: TokenStorageService, useValue: tokenStorageService },
-                { provide: ErrorService, useValue: errorService }
-            ]
+                { provide: ErrorService, useValue: errorService },
+            ],
         }).compileComponents();
     });
 
@@ -94,11 +104,15 @@ describe('LoginByEmailComponent', () => {
         // Assert
         expect(component.isSubmitInProgress).toBeFalse();
         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-        expect((component as any)['tokenStorage'].saveToken).toHaveBeenCalledWith('fakeToken');
+        expect(
+            (component as any)['tokenStorage'].saveToken,
+        ).toHaveBeenCalledWith('fakeToken');
         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         expect((component as any)['tokenStorage'].saveUser).toHaveBeenCalled();
         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-        expect((component as any)['router'].navigate).toHaveBeenCalledWith(['chats']);
+        expect((component as any)['router'].navigate).toHaveBeenCalledWith([
+            'chats',
+        ]);
     });
 
     it('should handle submit error correctly', () => {
@@ -116,7 +130,9 @@ describe('LoginByEmailComponent', () => {
 
         // Assert
         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-        expect((component as any)['router'].navigate).toHaveBeenCalledWith(['chats']);
+        expect((component as any)['router'].navigate).toHaveBeenCalledWith([
+            'chats',
+        ]);
     });
 
     it('should set isCodeRequested to false when timer expires', () => {
@@ -138,7 +154,9 @@ describe('LoginByEmailComponent', () => {
         fixture.detectChanges();
 
         // Assert
-        const countdownElement = fixture.nativeElement.querySelector('app-inline-countdown');
+        const countdownElement = fixture.nativeElement.querySelector(
+            'app-inline-countdown',
+        );
         expect(countdownElement).toBeTruthy();
     });
 });

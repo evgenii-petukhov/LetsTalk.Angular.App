@@ -6,10 +6,13 @@ import { ActiveArea } from 'src/app/enums/active-areas';
 
 export const initialState: ILayoutSettings = {
     activeArea: ActiveArea.sidebar,
-    sidebarState: SidebarState.chats
+    sidebarState: SidebarState.chats,
 };
 
 export const layoutSettingsReducer = createReducer(
     initialState,
-    on(layoutSettingsActions.init, (_state, { settings }) => ({ ..._state, ...settings }))
+    on(layoutSettingsActions.init, (_state, { settings }) => ({
+        ..._state,
+        ...settings,
+    })),
 );

@@ -5,4 +5,5 @@ import { selectSelectedChatId } from './selected-chat-id.selectors';
 export const selectSelectedChat = createSelector(
     selectChats,
     selectSelectedChatId,
-    (chats, chatId) => chats?.find(chat => chat.id === chatId));
+    (chats, chatId) => chats?.find((chat) => chat.id === chatId),
+);

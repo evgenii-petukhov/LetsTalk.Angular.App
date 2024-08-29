@@ -4,4 +4,4 @@ import { Component } from '@angular/core';
     selector: 'app-chat',
     template: '',
 })
-export class StubChatComponent { }
+export class StubChatComponent {}

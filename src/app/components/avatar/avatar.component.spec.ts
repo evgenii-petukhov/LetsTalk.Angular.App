@@ -10,7 +10,9 @@ describe('AvatarComponent', () => {
     let errorService: jasmine.SpyObj<ErrorService>;
 
     beforeEach(async () => {
-        storeService = jasmine.createSpyObj('StoreService', ['getImageContent']);
+        storeService = jasmine.createSpyObj('StoreService', [
+            'getImageContent',
+        ]);
         errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
 
         await TestBed.configureTestingModule({
@@ -18,7 +20,7 @@ describe('AvatarComponent', () => {
             providers: [
                 { provide: StoreService, useValue: storeService },
                 { provide: ErrorService, useValue: errorService },
-            ]
+            ],
         }).compileComponents();
     });
 
@@ -33,7 +35,9 @@ describe('AvatarComponent', () => {
         component.ngOnChanges();
         fixture.detectChanges();
 
-        expect(component.backgroundImage).toContain('url(\'images/empty-avatar.svg\')');
+        expect(component.backgroundImage).toContain(
+            "url('images/empty-avatar.svg')",
+        );
     });
 
     it('should display background image from URL', () => {
@@ -41,18 +45,28 @@ describe('AvatarComponent', () => {
         component.ngOnChanges();
         fixture.detectChanges();
 
-        expect(component.backgroundImage).toContain('url(\'http://example.com/image.jpg\')');
+        expect(component.backgroundImage).toContain(
+            "url('http://example.com/image.jpg')",
+        );
     });
 
     it('should display background image from image ID', async () => {
-        const mockImage = { content: 'data:image/jpeg;base64,...', width: 100, height: 100 };
-        storeService.getImageContent.and.returnValue(Promise.resolve(mockImage));
+        const mockImage = {
+            content: 'data:image/jpeg;base64,...',
+            width: 100,
+            height: 100,
+        };
+        storeService.getImageContent.and.returnValue(
+            Promise.resolve(mockImage),
+        );
 
         component.urlOptions = ['image-id'];
         await component.ngOnChanges();
         fixture.detectChanges();
 
-        expect(component.backgroundImage).toContain('url(\'data:image/jpeg;base64,...\')');
+        expect(component.backgroundImage).toContain(
+            "url('data:image/jpeg;base64,...')",
+        );
     });
 
     it('should display default background image if getImageContent fails', async () => {
@@ -62,6 +76,8 @@ describe('AvatarComponent', () => {
         await component.ngOnChanges();
         fixture.detectChanges();
 
-        expect(component.backgroundImage).toContain('url(\'images/empty-avatar.svg\')');
+        expect(component.backgroundImage).toContain(
+            "url('images/empty-avatar.svg')",
+        );
     });
 });

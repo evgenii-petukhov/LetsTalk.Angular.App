@@ -16,22 +16,28 @@ describe('SidebarComponent', () => {
     let fixture: ComponentFixture<SidebarComponent>;
     let store: MockStore;
     let storeService: jasmine.SpyObj<StoreService>;
-    let mockSelectLayoutSettings: MemoizedSelector<object, ILayoutSettings, DefaultProjectorFn<ILayoutSettings>>;
+    let mockSelectLayoutSettings: MemoizedSelector<
+        object,
+        ILayoutSettings,
+        DefaultProjectorFn<ILayoutSettings>
+    >;
 
     beforeEach(async () => {
-        storeService = jasmine.createSpyObj('StoreService', ['setLayoutSettings']);
+        storeService = jasmine.createSpyObj('StoreService', [
+            'setLayoutSettings',
+        ]);
         await TestBed.configureTestingModule({
             declarations: [
                 SidebarComponent,
                 LoggedInUserStubComponent,
                 ChatListStubComponent,
-                AccountListStubComponent
+                AccountListStubComponent,
             ],
             imports: [FontAwesomeModule],
             providers: [
                 provideMockStore({}),
-                { provide: StoreService, useValue: storeService }
-            ]
+                { provide: StoreService, useValue: storeService },
+            ],
         }).compileComponents();
     });
 
@@ -40,8 +46,11 @@ describe('SidebarComponent', () => {
         component = fixture.componentInstance;
         store = TestBed.inject(Store) as MockStore;
 
-        mockSelectLayoutSettings = store.overrideSelector(selectLayoutSettings, null);
-        
+        mockSelectLayoutSettings = store.overrideSelector(
+            selectLayoutSettings,
+            null,
+        );
+
         fixture.detectChanges();
     });
 
@@ -50,7 +59,9 @@ describe('SidebarComponent', () => {
     });
 
     it('should show chat list when sidebarState is chats', () => {
-        mockSelectLayoutSettings.setResult({ sidebarState: SidebarState.chats });
+        mockSelectLayoutSettings.setResult({
+            sidebarState: SidebarState.chats,
+        });
 
         store.refreshState();
         fixture.detectChanges();
@@ -58,15 +69,19 @@ describe('SidebarComponent', () => {
         expect(component.isChatListShown).toBeTrue();
         expect(component.isAccountListShown).toBeFalse();
 
-        const chatListElement = fixture.nativeElement.querySelector('app-chat-list');
-        const accountListElement = fixture.nativeElement.querySelector('app-account-list');
+        const chatListElement =
+            fixture.nativeElement.querySelector('app-chat-list');
+        const accountListElement =
+            fixture.nativeElement.querySelector('app-account-list');
 
         expect(chatListElement).toBeTruthy();
         expect(accountListElement).toBeFalsy();
     });
 
     it('should show account list when sidebarState is accounts', () => {
-        mockSelectLayoutSettings.setResult({ sidebarState: SidebarState.accounts });
+        mockSelectLayoutSettings.setResult({
+            sidebarState: SidebarState.accounts,
+        });
 
         store.refreshState();
         fixture.detectChanges();
@@ -74,8 +89,10 @@ describe('SidebarComponent', () => {
         expect(component.isChatListShown).toBeFalse();
         expect(component.isAccountListShown).toBeTrue();
 
-        const chatListElement = fixture.nativeElement.querySelector('app-chat-list');
-        const accountListElement = fixture.nativeElement.querySelector('app-account-list');
+        const chatListElement =
+            fixture.nativeElement.querySelector('app-chat-list');
+        const accountListElement =
+            fixture.nativeElement.querySelector('app-account-list');
 
         expect(chatListElement).toBeFalsy();
         expect(accountListElement).toBeTruthy();
@@ -84,13 +101,17 @@ describe('SidebarComponent', () => {
     it('should call setLayoutSettings with accounts when switchToAccountList is called', () => {
         component.switchToAccountList();
 
-        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({ sidebarState: SidebarState.accounts });
+        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({
+            sidebarState: SidebarState.accounts,
+        });
     });
 
     it('should call setLayoutSettings with chats when onBackButtonClicked is called', () => {
         component.onBackButtonClicked();
 
-        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({ sidebarState: SidebarState.chats });
+        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({
+            sidebarState: SidebarState.chats,
+        });
     });
 
     it('should unsubscribe on component destruction', () => {

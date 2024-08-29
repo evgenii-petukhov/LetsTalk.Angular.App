@@ -4,7 +4,7 @@ import { IProfileDto } from 'src/app/api-client/api-client';
 export const loggedInUserActions = createActionGroup({
     source: 'LoggedInUser',
     events: {
-        init: props<{account: IProfileDto}>(),
-        set: props<{account: IProfileDto}>(),
-    }
+        init: props<{ account: IProfileDto }>(),
+        set: props<{ account: IProfileDto }>(),
+    },
 });

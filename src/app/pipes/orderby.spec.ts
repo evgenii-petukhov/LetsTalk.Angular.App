@@ -10,8 +10,8 @@ interface IPerson {
 describe('OrderByPipe', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [OrderByPipe]
-        }); 
+            providers: [OrderByPipe],
+        });
     });
 
     it('should be created', () => {
@@ -24,7 +24,7 @@ describe('OrderByPipe', () => {
             const array = [
                 { name: 'Charlie', age: 30 },
                 { name: 'Alice', age: 25 },
-                { name: 'Bob', age: 30 }
+                { name: 'Bob', age: 30 },
             ];
             const sortBy: Many<ListIteratee<IPerson>> = ['age', 'name'];
             const order: Many<'asc' | 'desc'> = ['desc', 'asc'];
@@ -35,7 +35,7 @@ describe('OrderByPipe', () => {
             expect(result).toEqual([
                 { name: 'Bob', age: 30 },
                 { name: 'Charlie', age: 30 },
-                { name: 'Alice', age: 25 }
+                { name: 'Alice', age: 25 },
             ]);
         });
 
@@ -43,7 +43,7 @@ describe('OrderByPipe', () => {
             const array = [
                 { name: 'Charlie', age: 30 },
                 { name: 'Alice', age: 25 },
-                { name: 'Bob', age: 28 }
+                { name: 'Bob', age: 28 },
             ];
             const sortBy: Many<ListIteratee<IPerson>> = ['age'];
             const order: Many<'asc'> = 'asc';
@@ -54,7 +54,7 @@ describe('OrderByPipe', () => {
             expect(result).toEqual([
                 { name: 'Alice', age: 25 },
                 { name: 'Bob', age: 28 },
-                { name: 'Charlie', age: 30 }
+                { name: 'Charlie', age: 30 },
             ]);
         });
 
@@ -62,7 +62,7 @@ describe('OrderByPipe', () => {
             const array = [
                 { name: 'Charlie', age: 30 },
                 { name: 'Alice', age: 25 },
-                { name: 'Bob', age: 28 }
+                { name: 'Bob', age: 28 },
             ];
             const sortBy: Many<ListIteratee<IPerson>> = ['age'];
             const order: Many<'desc'> = 'desc';
@@ -73,7 +73,7 @@ describe('OrderByPipe', () => {
             expect(result).toEqual([
                 { name: 'Charlie', age: 30 },
                 { name: 'Bob', age: 28 },
-                { name: 'Alice', age: 25 }
+                { name: 'Alice', age: 25 },
             ]);
         });
 
@@ -90,7 +90,9 @@ describe('OrderByPipe', () => {
 
         it('should handle arrays with no items to sort', () => {
             const array = [1, 2, 3];
-            const sortBy: Many<ListIteratee<number>> = [(value: number) => value];
+            const sortBy: Many<ListIteratee<number>> = [
+                (value: number) => value,
+            ];
             const order: Many<'desc'> = 'desc';
 
             const pipe = TestBed.inject(OrderByPipe);
