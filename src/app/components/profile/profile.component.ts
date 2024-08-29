@@ -41,7 +41,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         private store: Store,
         private imageUploadService: ImageUploadService,
         private errorService: ErrorService,
-    ) {}
+    ) { }
 
     async ngOnInit(): Promise<void> {
         const account = await this.storeService.getLoggedInUser();
@@ -62,13 +62,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.isSending = true;
         const sizeLimits = environment.imageSettings.limits.avatar;
         try {
-            const response = await this.imageUploadService.resizeAndUploadImage(
+            const image = this.form.value.photoUrl ? await this.imageUploadService.resizeAndUploadImage(
                 this.form.value.photoUrl,
                 sizeLimits.width,
                 sizeLimits.height,
                 ImageRoles.AVATAR,
-            );
-            await this.submitForm(response);
+            ) : null;
+            await this.submitForm(image);
         } catch (e) {
             this.handleSubmitError(e, errorMessages.uploadImage);
         }
@@ -90,12 +90,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
     }
 
-    private async submitForm(response: UploadImageResponse): Promise<void> {
+    private async submitForm(image: UploadImageResponse): Promise<void> {
         try {
             const profileDto = await this.apiService.saveProfile(
                 this.form.value.firstName,
                 this.form.value.lastName,
-                response,
+                image,
             );
             this.storeService.setLoggedInUser(profileDto);
             await this.router.navigate(['chats']);

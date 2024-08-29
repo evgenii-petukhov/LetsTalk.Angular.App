@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ChatDto, IAccountDto, IChatDto } from 'src/app/api-client/api-client';
-import { Subject, takeUntil } from 'rxjs';
+import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { StoreService } from 'src/app/services/store.service';
 import { SidebarState } from 'src/app/enums/sidebar-state';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
@@ -14,8 +14,7 @@ import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
     styleUrls: ['./account-list.component.scss'],
 })
 export class AccountListComponent implements OnInit, OnDestroy {
-    accounts$ = this.store.select(selectAccounts);
-
+    accounts: readonly IAccountDto[] = [];
     private unsubscribe$: Subject<void> = new Subject<void>();
     private chats: readonly IChatDto[] = [];
 
@@ -23,16 +22,18 @@ export class AccountListComponent implements OnInit, OnDestroy {
         private store: Store,
         private storeService: StoreService,
         private idGeneratorService: IdGeneratorService,
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         this.storeService.initAccountStorage();
 
-        this.store
-            .select(selectChats)
-            .pipe(takeUntil(this.unsubscribe$))
-            .subscribe((chats) => {
+        combineLatest([
+            this.store.select(selectChats),
+            this.store.select(selectAccounts)
+        ]).pipe(takeUntil(this.unsubscribe$))
+            .subscribe(([chats, accounts]) => {
                 this.chats = chats;
+                this.accounts = accounts;
             });
     }
 
