@@ -10,20 +10,18 @@ describe('ImageUploadService', () => {
     let fileStorageService: jasmine.SpyObj<FileStorageService>;
 
     beforeEach(() => {
-        const imageServiceSpy = jasmine.createSpyObj('ImageService', ['resizeBase64Image']);
-        const fileStorageServiceSpy = jasmine.createSpyObj('FileStorageService', ['uploadImageAsBlob']);
+        imageService = jasmine.createSpyObj('ImageService', ['resizeBase64Image']);
+        fileStorageService = jasmine.createSpyObj('FileStorageService', ['uploadImageAsBlob']);
 
         TestBed.configureTestingModule({
             providers: [
                 ImageUploadService,
-                { provide: ImageService, useValue: imageServiceSpy },
-                { provide: FileStorageService, useValue: fileStorageServiceSpy }
+                { provide: ImageService, useValue: imageService },
+                { provide: FileStorageService, useValue: fileStorageService }
             ]
         });
         
         service = TestBed.inject(ImageUploadService);
-        imageService = TestBed.inject(ImageService) as jasmine.SpyObj<ImageService>;
-        fileStorageService = TestBed.inject(FileStorageService) as jasmine.SpyObj<FileStorageService>;
     });
 
     it('should be created', () => {

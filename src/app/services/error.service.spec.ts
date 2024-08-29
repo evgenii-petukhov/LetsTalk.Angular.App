@@ -1,22 +1,22 @@
 import { TestBed } from '@angular/core/testing';
 import { ErrorService } from './error.service';
 import { ToastrService } from 'ngx-toastr';
-import { MockToastrService } from './mocks/toastr.service';
 
 describe('ErrorService', () => {
     let service: ErrorService;
-    let toastrService: MockToastrService;
+    let toastrService: jasmine.SpyObj<ToastrService>;
 
     beforeEach(() => {
+        toastrService = jasmine.createSpyObj('ToastrService', ['error']);
+
         TestBed.configureTestingModule({
             providers: [
                 ErrorService,
-                { provide: ToastrService, useClass: MockToastrService }
+                { provide: ToastrService, useValue: toastrService }
             ]
         });
 
         service = TestBed.inject(ErrorService);
-        toastrService = TestBed.inject(ToastrService) as unknown as MockToastrService;
     });
 
     it('should be created', () => {
@@ -35,12 +35,10 @@ describe('ErrorService', () => {
 
         const defaultMessage = 'Default error message';
 
-        const toastrSpy = spyOn(toastrService, 'error');
-
         service.handleError(errorResponse, defaultMessage);
 
         const expectedMessage = 'Error1, Error2, Error3';
-        expect(toastrSpy).toHaveBeenCalledWith(expectedMessage, 'Error');
+        expect(toastrService.error).toHaveBeenCalledWith(expectedMessage, 'Error');
     });
 
     it('should call toastr.error with default message if no errors present', () => {
@@ -49,8 +47,7 @@ describe('ErrorService', () => {
         };
 
         const defaultMessage = 'Default error message';
-        const toastrSpy = spyOn(toastrService, 'error');
         service.handleError(errorResponse, defaultMessage);
-        expect(toastrSpy).toHaveBeenCalledWith(defaultMessage, 'Error');
+        expect(toastrService.error).toHaveBeenCalledWith(defaultMessage, 'Error');
     });
 });

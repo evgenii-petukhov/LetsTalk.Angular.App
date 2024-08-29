@@ -112,7 +112,6 @@
             "codeCoverageExclude": [
               "src/app/api-client/**",
               "src/app/protos/**",
-              "src/app/services/mocks/**",
               "src/app/components/**/*.stub.ts"
             ]
           }

@@ -41,16 +41,16 @@ describe('StoreService', () => {
     };
 
     beforeEach(() => {
-        const storeSpy = jasmine.createSpyObj('Store', ['dispatch', 'select']);
-        const apiServiceSpy = jasmine.createSpyObj('ApiService', ['markAsRead', 'getChats', 'getAccounts', 'getProfile']);
-        const fileStorageServiceSpy = jasmine.createSpyObj('FileStorageService', ['download']);
+        store = jasmine.createSpyObj('Store', ['dispatch', 'select']);
+        apiService = jasmine.createSpyObj('ApiService', ['markAsRead', 'getChats', 'getAccounts', 'getProfile']);
+        fileStorageService = jasmine.createSpyObj('FileStorageService', ['download']);
 
         TestBed.configureTestingModule({
             providers: [
                 StoreService,
-                { provide: Store, useValue: storeSpy },
-                { provide: ApiService, useValue: apiServiceSpy },
-                { provide: FileStorageService, useValue: fileStorageServiceSpy },
+                { provide: Store, useValue: store },
+                { provide: ApiService, useValue: apiService },
+                { provide: FileStorageService, useValue: fileStorageService },
             ],
         });
 
