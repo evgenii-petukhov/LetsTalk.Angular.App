@@ -1,22 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ImageViewerComponent } from './image-viewer.component';
-import { Store, StoreModule } from '@ngrx/store';
-import { of, Subject } from 'rxjs';
+import { StoreModule } from '@ngrx/store';
+import { Subject } from 'rxjs';
 import { StoreService } from 'src/app/services/store.service';
 import { ErrorService } from 'src/app/services/error.service';
+import { provideMockStore } from '@ngrx/store/testing';
 
 describe('ImageViewerComponent', () => {
     let component: ImageViewerComponent;
     let fixture: ComponentFixture<ImageViewerComponent>;
-    let store: jasmine.SpyObj<Store>;
     let storeService: jasmine.SpyObj<StoreService>;
     let errorService: jasmine.SpyObj<ErrorService>;
     let unsubscribe$: Subject<void>;
 
     beforeEach(async () => {
-        store = jasmine.createSpyObj('Store', ['select']);
-        store.select.and.returnValue(of(null));
-
         storeService = jasmine.createSpyObj('StoreService', ['getImageContent', 'setViewedImageId']);
         errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
 
@@ -24,6 +21,7 @@ describe('ImageViewerComponent', () => {
             declarations: [ImageViewerComponent],
             imports: [StoreModule.forRoot({})],
             providers: [
+                provideMockStore({}),
                 { provide: StoreService, useValue: storeService },
                 { provide: ErrorService, useValue: errorService },
             ]
