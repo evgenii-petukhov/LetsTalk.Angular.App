@@ -5,7 +5,14 @@ import { IImagePreviewDto, ILinkPreviewDto, IMessageDto } from '../api-client/ap
 import { ConstantRetryPolicy } from './constant-retry-policy';
 import { TokenStorageService } from './token-storage.service';
 
-type TypeNames = 'MessageDto' | 'LinkPreviewDto' | 'ImagePreviewDto';
+type TypeDtoMap = {
+    MessageDto: IMessageDto;
+    LinkPreviewDto: ILinkPreviewDto;
+    ImagePreviewDto: IImagePreviewDto;
+};
+
+type TypeNames = keyof TypeDtoMap;
+type TypeDto = TypeDtoMap[TypeNames];
 
 @Injectable({
     providedIn: 'root'
@@ -24,7 +31,9 @@ export class SignalrService {
     private isInitialized = false;
     private notificationEventName = 'SendNotificationAsync';
     private connectionTimerId: number;
-    private handlerMapping: Record<TypeNames, <T extends IMessageDto | ILinkPreviewDto | IImagePreviewDto>(dto: T) => void>;
+    private handlerMapping: {
+        [K in TypeNames]: (dto: TypeDtoMap[K]) => void;
+    };
 
     constructor(private tokenStorageService: TokenStorageService) { }
 
@@ -71,7 +80,7 @@ export class SignalrService {
             await this.hubConnectionBuilder.start();
             this.isInitialized = true;
             window.clearInterval(this.connectionTimerId);
-            this.hubConnectionBuilder.on(this.notificationEventName, (dto: any, typeName: TypeNames) => {
+            this.hubConnectionBuilder.on(this.notificationEventName, (dto: TypeDto, typeName: TypeNames) => {
                 this.handlerMapping[typeName]?.(dto);
             });
             await this.authorize();

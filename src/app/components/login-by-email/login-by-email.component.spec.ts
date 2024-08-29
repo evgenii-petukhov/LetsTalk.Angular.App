@@ -6,30 +6,24 @@ import { ApiService } from 'src/app/services/api.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { TokenStorageService } from 'src/app/services/token-storage.service';
 import { InlineCountdownStubComponent } from '../inline-countdown/inline-countdown.component.stub';
-
-class MockRouter {
-    navigate = jasmine.createSpy('navigate');
-}
-
-class MockApiService {
-    loginByEmail = jasmine.createSpy('loginByEmail').and.returnValue(Promise.resolve({ token: 'fakeToken' }));
-    generateLoginCode = jasmine.createSpy('generateLoginCode').and.returnValue(Promise.resolve({ codeValidInSeconds: 60 }));
-}
-
-class MockTokenStorageService {
-    saveToken = jasmine.createSpy('saveToken');
-    saveUser = jasmine.createSpy('saveUser');
-}
-
-class MockErrorService {
-    handleError = jasmine.createSpy('handleError');
-}
+import { GenerateLoginCodeResponseDto, LoginResponseDto } from 'src/app/api-client/api-client';
 
 describe('LoginByEmailComponent', () => {
     let component: LoginByEmailComponent;
     let fixture: ComponentFixture<LoginByEmailComponent>;
+    let apiService: jasmine.SpyObj<ApiService>;
+    let tokenStorageService: jasmine.SpyObj<TokenStorageService>;
+    let errorService: jasmine.SpyObj<ErrorService>;
+    let router: jasmine.SpyObj<Router>;
 
     beforeEach(async () => {
+        apiService = jasmine.createSpyObj('ApiService', ['loginByEmail', 'generateLoginCode']);
+        apiService.loginByEmail.and.resolveTo(new LoginResponseDto({ token: 'fakeToken' }));
+        apiService.generateLoginCode.and.resolveTo(new GenerateLoginCodeResponseDto({ codeValidInSeconds: 60 }));
+        tokenStorageService = jasmine.createSpyObj('TokenStorageService', ['saveToken', 'saveUser']);
+        errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
+        router = jasmine.createSpyObj('Router', ['navigate']);
+
         await TestBed.configureTestingModule({
             declarations: [
                 LoginByEmailComponent,
@@ -38,10 +32,10 @@ describe('LoginByEmailComponent', () => {
             imports: [ReactiveFormsModule],
             providers: [
                 FormBuilder,
-                { provide: Router, useClass: MockRouter },
-                { provide: ApiService, useClass: MockApiService },
-                { provide: TokenStorageService, useClass: MockTokenStorageService },
-                { provide: ErrorService, useClass: MockErrorService }
+                { provide: Router, useValue: router },
+                { provide: ApiService, useValue: apiService },
+                { provide: TokenStorageService, useValue: tokenStorageService },
+                { provide: ErrorService, useValue: errorService }
             ]
         }).compileComponents();
     });
@@ -85,23 +79,29 @@ describe('LoginByEmailComponent', () => {
     });
 
     it('should handle code request error correctly', () => {
-        const apiService = TestBed.inject(ApiService) as jasmine.SpyObj<ApiService>;
         apiService.generateLoginCode.and.throwError(new Error('error'));
         component.onCodeRequested();
         expect(component.isCodeRequestInProgress).toBeFalse();
     });
 
     it('should call onSubmit and handle response correctly', async () => {
+        // Arrange
         component.form.setValue({ email: 'test@example.com', code: '1234' });
+
+        // Act
         await component.onSubmit();
+
+        // Assert
         expect(component.isSubmitInProgress).toBeFalse();
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         expect((component as any)['tokenStorage'].saveToken).toHaveBeenCalledWith('fakeToken');
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         expect((component as any)['tokenStorage'].saveUser).toHaveBeenCalled();
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         expect((component as any)['router'].navigate).toHaveBeenCalledWith(['chats']);
     });
 
     it('should handle submit error correctly', () => {
-        const apiService = TestBed.inject(ApiService) as jasmine.SpyObj<ApiService>;
         apiService.loginByEmail.and.throwError(new Error('error'));
         component.form.setValue({ email: 'test@example.com', code: '1234' });
         component.onSubmit();
@@ -109,20 +109,35 @@ describe('LoginByEmailComponent', () => {
     });
 
     it('should navigate to chats on back button click', () => {
+        // Arrange
+
+        // Act
         component.onBack();
+
+        // Assert
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         expect((component as any)['router'].navigate).toHaveBeenCalledWith(['chats']);
     });
 
     it('should set isCodeRequested to false when timer expires', () => {
+        // Arrange
+
+        // Act
         component.onTimerExpired();
+
+        // Assert
         expect(component.isCodeRequested).toBeFalse();
     });
 
     it('should display the countdown timer if code is requested and valid in seconds is greater than 0', () => {
+        // Arrange
+
+        // Act
         component.isCodeRequested = true;
         component.codeValidInSeconds = 60;
         fixture.detectChanges();
 
+        // Assert
         const countdownElement = fixture.nativeElement.querySelector('app-inline-countdown');
         expect(countdownElement).toBeTruthy();
     });

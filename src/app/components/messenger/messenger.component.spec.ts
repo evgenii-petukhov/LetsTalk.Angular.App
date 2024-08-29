@@ -68,10 +68,13 @@ describe('MessengerComponent', () => {
     });
 
     it('should handle visibility change event', () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (component as any)['selectedChat'] = { id: 'chatId' } as IChatDto;
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         component.onVisibilityChange({ target: document } as any);
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         expect(storeService.markAllAsRead).toHaveBeenCalledWith((component as any)['selectedChat']);
     });
 

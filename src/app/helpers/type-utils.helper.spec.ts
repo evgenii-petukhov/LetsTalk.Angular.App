@@ -34,6 +34,7 @@ describe('isOfType', () => {
         const exampleInstance = new ExampleClass();
         const notAConstructor = 123;
         
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         expect(isOfType(exampleInstance, notAConstructor as any)).toBeFalse();
     });
 });

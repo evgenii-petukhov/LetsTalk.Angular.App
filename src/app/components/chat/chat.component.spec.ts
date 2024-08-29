@@ -54,19 +54,27 @@ describe('ChatComponent', () => {
     });
 
     it('should load more messages when scrolled to the top', async () => {
+        // Arrange
+        apiService.getMessages.and.returnValue(Promise.resolve([]));
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+        const loadMessagesSpy = spyOn<any>(component, 'loadMessages').and.callThrough();
+
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+        (component as any)['isMessageListLoaded'] = true;
         component.scrollFrame = {
             nativeElement: {
                 scrollTop: 0
             }
         } as ElementRef;
-        (component as any)['isMessageListLoaded'] = true;
-        apiService.getMessages.and.returnValue(Promise.resolve([]));
 
-        const loadMessagesSpy = spyOn<any>(component, 'loadMessages').and.callThrough();
-
+        // Act
         await component.onScroll();
+
+        // Assert
         expect(loadMessagesSpy).toHaveBeenCalled();
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         expect((component as any)['pageIndex']).toBe(0);
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         expect((component as any)['scrollCounter']).toBe(1);
     });
 });

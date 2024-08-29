@@ -1,8 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { VisibleOnlyPipe } from './visibleOnly';
 
+interface INameAndVisible {
+    name: string;
+    visible: boolean;
+}
+
 describe('VisibleOnlyPipe', () => {
-    let pipe: VisibleOnlyPipe<any>;
+    let pipe: VisibleOnlyPipe<INameAndVisible>;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -21,7 +26,7 @@ describe('VisibleOnlyPipe', () => {
             { name: 'Bob', visible: false },
             { name: 'Charlie', visible: true }
         ];
-        const callback = (item: any) => item.visible;
+        const callback = (item: INameAndVisible) => item.visible;
 
         const result = pipe.transform(items, callback);
 
@@ -36,7 +41,7 @@ describe('VisibleOnlyPipe', () => {
             { name: 'Alice', visible: false },
             { name: 'Bob', visible: false }
         ];
-        const callback = (item: any) => item.visible;
+        const callback = (item: INameAndVisible) => item.visible;
 
         const result = pipe.transform(items, callback);
 
@@ -48,7 +53,7 @@ describe('VisibleOnlyPipe', () => {
             { name: 'Alice', visible: true },
             { name: 'Bob', visible: true }
         ];
-        const callback = (item: any) => item.visible;
+        const callback = (item: INameAndVisible) => item.visible;
 
         const result = pipe.transform(items, callback);
 
@@ -56,8 +61,8 @@ describe('VisibleOnlyPipe', () => {
     });
 
     it('should return an empty array if the input array is empty', () => {
-        const items: any[] = [];
-        const callback = (item: any) => item.visible;
+        const items: INameAndVisible[] = [];
+        const callback = (item: INameAndVisible) => item.visible;
 
         const result = pipe.transform(items, callback);
 

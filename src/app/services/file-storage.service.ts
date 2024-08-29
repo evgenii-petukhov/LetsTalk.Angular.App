@@ -13,6 +13,7 @@ export class FileStorageService {
 
     constructor(
         private tokenStorageService: TokenStorageService,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         @Inject(GRPC_INTERCEPTORS) interceptors: any[]) {
         this.fileUploadService = new FileUploadGrpcEndpointClient(environment.services.fileStorage.url, {}, { 'unaryInterceptors': interceptors });
     }

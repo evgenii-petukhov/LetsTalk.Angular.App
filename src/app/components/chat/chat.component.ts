@@ -23,8 +23,9 @@ import { IdGeneratorService } from 'src/app/services/id-generator.service';
     styleUrls: ['./chat.component.scss'],
 })
 export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
-    //https://pumpingco.de/blog/automatic-scrolling-only-if-a-user-already-scrolled-the-bottom-of-a-page-in-angular/
+    // https://pumpingco.de/blog/automatic-scrolling-only-if-a-user-already-scrolled-the-bottom-of-a-page-in-angular/
     @ViewChild('scrollFrame', { static: false }) scrollFrame: ElementRef;
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     @ViewChildren('scrollItem') itemElements: QueryList<any>;
     messages$ = this.store.select(selectMessages);
     private scrollContainer: HTMLDivElement;

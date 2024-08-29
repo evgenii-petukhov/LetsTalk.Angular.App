@@ -2,17 +2,20 @@ import { TestBed } from '@angular/core/testing';
 import { ListIteratee, Many } from 'lodash-es';
 import { OrderByPipe } from './orderby';
 
-describe('OrderByPipe', () => {
-    let pipe: OrderByPipe<any>;
+interface IPerson {
+    name: string;
+    age: number;
+}
 
+describe('OrderByPipe', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [OrderByPipe]
-        });
-        pipe = TestBed.inject(OrderByPipe);
+        }); 
     });
 
     it('should be created', () => {
+        const pipe = TestBed.inject(OrderByPipe);
         expect(pipe).toBeTruthy();
     });
 
@@ -23,9 +26,10 @@ describe('OrderByPipe', () => {
                 { name: 'Alice', age: 25 },
                 { name: 'Bob', age: 30 }
             ];
-            const sortBy: Many<ListIteratee<any>> = ['age', 'name'];
+            const sortBy: Many<ListIteratee<IPerson>> = ['age', 'name'];
             const order: Many<'asc' | 'desc'> = ['desc', 'asc'];
 
+            const pipe = TestBed.inject(OrderByPipe);
             const result = pipe.transform(array, sortBy, order);
 
             expect(result).toEqual([
@@ -41,9 +45,10 @@ describe('OrderByPipe', () => {
                 { name: 'Alice', age: 25 },
                 { name: 'Bob', age: 28 }
             ];
-            const sortBy: Many<ListIteratee<any>> = ['age'];
+            const sortBy: Many<ListIteratee<IPerson>> = ['age'];
             const order: Many<'asc'> = 'asc';
 
+            const pipe = TestBed.inject(OrderByPipe);
             const result = pipe.transform(array, sortBy, order);
 
             expect(result).toEqual([
@@ -59,9 +64,10 @@ describe('OrderByPipe', () => {
                 { name: 'Alice', age: 25 },
                 { name: 'Bob', age: 28 }
             ];
-            const sortBy: Many<ListIteratee<any>> = ['age'];
+            const sortBy: Many<ListIteratee<IPerson>> = ['age'];
             const order: Many<'desc'> = 'desc';
 
+            const pipe = TestBed.inject(OrderByPipe);
             const result = pipe.transform(array, sortBy, order);
 
             expect(result).toEqual([
@@ -72,10 +78,11 @@ describe('OrderByPipe', () => {
         });
 
         it('should handle empty arrays', () => {
-            const array: any[] = [];
-            const sortBy: Many<ListIteratee<any>> = ['age'];
+            const array: IPerson[] = [];
+            const sortBy: Many<ListIteratee<IPerson>> = ['age'];
             const order: Many<'asc'> = 'asc';
 
+            const pipe = TestBed.inject(OrderByPipe);
             const result = pipe.transform(array, sortBy, order);
 
             expect(result).toEqual([]);
@@ -83,9 +90,10 @@ describe('OrderByPipe', () => {
 
         it('should handle arrays with no items to sort', () => {
             const array = [1, 2, 3];
-            const sortBy: Many<ListIteratee<any>> = [value => value];
+            const sortBy: Many<ListIteratee<number>> = [(value: number) => value];
             const order: Many<'desc'> = 'desc';
 
+            const pipe = TestBed.inject(OrderByPipe);
             const result = pipe.transform(array, sortBy, order);
 
             expect(result).toEqual([3, 2, 1]);

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { required, validate } from 'src/app/decorators/required.decorator';
-import { IChatDto } from 'src/app/api-client/api-client';
+import { IChatDto, IMessageDto } from 'src/app/api-client/api-client';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -110,7 +110,7 @@ export class SendMessageComponent implements OnInit {
         this.addMessageToStore(messageDto);
     }
 
-    private addMessageToStore(messageDto: any): void {
+    private addMessageToStore(messageDto: IMessageDto): void {
         messageDto.isMine = true;
         this.storeService.addMessage(messageDto);
         this.storeService.setLastMessageInfo(this.chatId, messageDto.created, messageDto.id);

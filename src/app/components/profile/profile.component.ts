@@ -98,6 +98,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private handleSubmitError(e: any, defaultMessage: string) {
         this.errorService.handleError(e, defaultMessage);
         this.isSending = false;

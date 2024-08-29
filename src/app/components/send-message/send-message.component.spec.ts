@@ -22,6 +22,11 @@ describe('SendMessageComponent', () => {
     let idGeneratorService: jasmine.SpyObj<IdGeneratorService>;
     let imageUploadService: jasmine.SpyObj<ImageUploadService>;
 
+    const imageUrl = 'data:image/png;base64,...';
+    const mockFile = new File(['dummy content'], 'example.png', { type: 'image/png' });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const event = { target: { files: [mockFile] } } as any;
+
     beforeEach(async () => {
         store = jasmine.createSpyObj('Store', ['select']);
         store.select.and.returnValues(of('chatId1'), of({ id: 'chatId1', accountIds: ['accountId1'], isIndividual: true }));
@@ -54,16 +59,20 @@ describe('SendMessageComponent', () => {
 
     it('should initialize chat and chatId on ngOnInit', () => {
         component.ngOnInit();
-        expect(component['chatId']).toBe('chatId1');
-        expect(component['chat']).toEqual({ id: 'chatId1', accountIds: ['accountId1'], isIndividual: true });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        expect((component as any).chatId).toBe('chatId1');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        expect((component as any).chat).toEqual({ id: 'chatId1', accountIds: ['accountId1'], isIndividual: true });
     });
 
     it('should send message and reset message field', async () => {
         component.message = 'Test message';
-        (component as any)['chat'] = {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (component as any).chat = {
             isIndividual: true
         };
-        (component as any)['chatId'] = 'chatId1';
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (component as any).chatId = 'chatId1';
         idGeneratorService.isFake.and.returnValue(false);
         apiService.sendMessage.and.returnValue(Promise.resolve({ id: 'msgId1', created: Date.now() }));
 
@@ -77,11 +86,13 @@ describe('SendMessageComponent', () => {
     });
 
     it('should create individual chat if necessary before sending message', async () => {
-        (component as any)['chat'] = {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (component as any).chat = {
             isIndividual: true,
             accountIds: ['accountId1']
         };
-        (component as any)['chatId'] = 'chatId1';
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (component as any).chatId = 'chatId1';
         idGeneratorService.isFake.and.returnValue(true);
         apiService.createIndividualChat.and.returnValue(Promise.resolve({ id: 'newChatId' }));
         apiService.sendMessage.and.returnValue(Promise.resolve({ id: 'msgId1', created: Date.now() }));
@@ -99,7 +110,8 @@ describe('SendMessageComponent', () => {
         const error = new Error('Send message failed');
         apiService.sendMessage.and.throwError(error);
 
-        (component as any)['chat'] = {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (component as any).chat = {
             isIndividual: true
         };
 
@@ -111,9 +123,6 @@ describe('SendMessageComponent', () => {
     });
 
     it('should handle image selection and upload', async () => {
-        const mockFile = new File(['dummy content'], 'example.png', { type: 'image/png' });
-        const event = { target: { files: [mockFile] } } as any;
-        const imageUrl = 'data:image/png;base64,...';
         const mockMessageDto = { id: 'msgId1', created: Date.now(), isMine: true };
 
         spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);
@@ -130,9 +139,6 @@ describe('SendMessageComponent', () => {
     });
 
     it('should handle errors during image upload', async () => {
-        const mockFile = new File(['dummy content'], 'example.png', { type: 'image/png' });
-        const event = { target: { files: [mockFile] } } as any;
-        const imageUrl = 'data:image/png;base64,...';
         const error = new Error('Upload failed');
 
         spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);

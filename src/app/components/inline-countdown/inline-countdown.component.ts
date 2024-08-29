@@ -2,8 +2,7 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 
 @Component({
     selector: 'app-inline-countdown',
-    templateUrl: './inline-countdown.component.html',
-    styleUrl: './inline-countdown.component.scss'
+    templateUrl: './inline-countdown.component.html'
 })
 export class InlineCountdownComponent implements OnInit, OnDestroy {
     @Input() startValue: number;

@@ -81,6 +81,7 @@ describe('ProfileComponent', () => {
 
     it('should handle avatar selection and set the photoUrl in the form', async () => {
         const mockFile = new File([''], 'avatar.png', { type: 'image/png' });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const event = { target: { files: [mockFile] } } as any;
         spyOn(mockFile, 'arrayBuffer').and.returnValue(Promise.resolve(new ArrayBuffer(8)));
 
