@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -103,13 +104,11 @@ describe('LoginByEmailComponent', () => {
 
         // Assert
         expect(component.isSubmitInProgress).toBeFalse();
-        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         expect(
             (component as any)['tokenStorage'].saveToken,
         ).toHaveBeenCalledWith('fakeToken');
-        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         expect((component as any)['tokenStorage'].saveUser).toHaveBeenCalled();
-        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+
         expect((component as any)['router'].navigate).toHaveBeenCalledWith([
             'chats',
         ]);
@@ -129,7 +128,6 @@ describe('LoginByEmailComponent', () => {
         component.onBack();
 
         // Assert
-        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         expect((component as any)['router'].navigate).toHaveBeenCalledWith([
             'chats',
         ]);

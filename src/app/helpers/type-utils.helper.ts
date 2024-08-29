@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const isOfType = <T extends new (...args: any[]) => any>(
     obj: any,
     type: T,
