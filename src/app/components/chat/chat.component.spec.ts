@@ -68,8 +68,7 @@ describe('ChatComponent', () => {
             'loadMessages',
         ).and.callThrough();
 
-        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-        (component as any)['isMessageListLoaded'] = true;
+        component['isMessageListLoaded'] = true;
         component.scrollFrame = {
             nativeElement: {
                 scrollTop: 0,
@@ -81,9 +80,7 @@ describe('ChatComponent', () => {
 
         // Assert
         expect(loadMessagesSpy).toHaveBeenCalled();
-        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-        expect((component as any)['pageIndex']).toBe(0);
-        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-        expect((component as any)['scrollCounter']).toBe(1);
+        expect(component['pageIndex']).toBe(0);
+        expect(component['scrollCounter']).toBe(1);
     });
 });

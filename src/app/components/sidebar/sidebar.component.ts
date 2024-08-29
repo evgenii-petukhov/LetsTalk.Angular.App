@@ -15,20 +15,17 @@ export class SidebarComponent implements OnInit, OnDestroy {
     faCirclePlus = faCirclePlus;
     isChatListShown = true;
     isAccountListShown = false;
-    layout$ = this.store.select(selectLayoutSettings);
-
     private unsubscribe$: Subject<void> = new Subject<void>();
 
     constructor(
         private store: Store,
         private storeService: StoreService,
-    ) {}
+    ) { }
 
     ngOnInit(): void {
-        this.layout$.pipe(takeUntil(this.unsubscribe$)).subscribe((layout) => {
+        this.store.select(selectLayoutSettings).pipe(takeUntil(this.unsubscribe$)).subscribe((layout) => {
             this.isChatListShown = layout.sidebarState === SidebarState.chats;
-            this.isAccountListShown =
-                layout.sidebarState === SidebarState.accounts;
+            this.isAccountListShown = layout.sidebarState === SidebarState.accounts;
         });
     }
 

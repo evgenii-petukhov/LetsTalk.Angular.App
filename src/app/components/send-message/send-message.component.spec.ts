@@ -80,10 +80,8 @@ describe('SendMessageComponent', () => {
 
     it('should initialize chat and chatId on ngOnInit', () => {
         component.ngOnInit();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        expect((component as any).chatId).toBe('chatId1');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        expect((component as any).chat).toEqual({
+        expect(component['chatId']).toBe('chatId1');
+        expect(component['chat']).toEqual({
             id: 'chatId1',
             accountIds: ['accountId1'],
             isIndividual: true,
@@ -92,12 +90,10 @@ describe('SendMessageComponent', () => {
 
     it('should send message and reset message field', async () => {
         component.message = 'Test message';
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (component as any).chat = {
+        component['chat'] = {
             isIndividual: true,
         };
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (component as any).chatId = 'chatId1';
+        component['chatId'] = 'chatId1';
         idGeneratorService.isFake.and.returnValue(false);
         apiService.sendMessage.and.returnValue(
             Promise.resolve({ id: 'msgId1', created: Date.now() }),
@@ -116,13 +112,11 @@ describe('SendMessageComponent', () => {
     });
 
     it('should create individual chat if necessary before sending message', async () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (component as any).chat = {
+        component['chat'] = {
             isIndividual: true,
             accountIds: ['accountId1'],
         };
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (component as any).chatId = 'chatId1';
+        component['chatId'] = 'chatId1';
         idGeneratorService.isFake.and.returnValue(true);
         apiService.createIndividualChat.and.returnValue(
             Promise.resolve({ id: 'newChatId' }),
@@ -154,8 +148,7 @@ describe('SendMessageComponent', () => {
         const error = new Error('Send message failed');
         apiService.sendMessage.and.throwError(error);
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (component as any).chat = {
+        component['chat'] = {
             isIndividual: true,
         };
 

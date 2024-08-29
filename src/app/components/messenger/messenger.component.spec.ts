@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MessengerComponent } from './messenger.component';
 import { SignalrHandlerService } from 'src/app/services/signalr-handler.service';
@@ -94,12 +93,13 @@ describe('MessengerComponent', () => {
     });
 
     it('should handle visibility change event', () => {
-        (component as any)['selectedChat'] = { id: 'chatId' } as IChatDto;
+        component['selectedChat'] = { id: 'chatId' } as IChatDto;
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         component.onVisibilityChange({ target: document } as any);
 
         expect(storeService.markAllAsRead).toHaveBeenCalledWith(
-            (component as any)['selectedChat'],
+            component['selectedChat'],
         );
     });
 
