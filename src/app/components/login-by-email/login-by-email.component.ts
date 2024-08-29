@@ -67,4 +67,10 @@ export class LoginByEmailComponent {
     onTimerExpired(): void {
         this.isCodeRequested = false;
     }
+
+    onCodeChange(): void {
+        if (this.form.valid) {
+            this.onSubmit();
+        }
+    }
 }
