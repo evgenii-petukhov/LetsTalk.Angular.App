@@ -14,16 +14,14 @@ import { VisibleOnlyPipe } from 'src/app/pipes/visibleOnly';
 describe('ChatComponent', () => {
     let component: ChatComponent;
     let fixture: ComponentFixture<ChatComponent>;
-    let store: any;
-    let apiService: any;
-    let storeService: any;
-    let idGeneratorService: any;
+    let apiService: jasmine.SpyObj<ApiService>;
+    let store: jasmine.SpyObj<Store>;
+    let storeService: jasmine.SpyObj<StoreService>;
+    let idGeneratorService: jasmine.SpyObj<IdGeneratorService>;
 
     beforeEach(async () => {
-        store = {
-            select: jasmine.createSpy().and.returnValue(of([]))
-        };
-
+        store = jasmine.createSpyObj('Store', ['select']);
+        store.select.and.returnValue(of([]));
         apiService = jasmine.createSpyObj('ApiService', ['getMessages']);
         storeService = jasmine.createSpyObj('StoreService', ['initMessages', 'addMessages', 'setLastMessageInfo']);
         idGeneratorService = jasmine.createSpyObj('IdGeneratorService', ['isFake']);
@@ -65,7 +63,7 @@ describe('ChatComponent', () => {
         apiService.getMessages.and.returnValue(Promise.resolve([]));
 
         const loadMessagesSpy = spyOn<any>(component, 'loadMessages').and.callThrough();
-    
+
         await component.onScroll();
         expect(loadMessagesSpy).toHaveBeenCalled();
         expect((component as any)['pageIndex']).toBe(0);

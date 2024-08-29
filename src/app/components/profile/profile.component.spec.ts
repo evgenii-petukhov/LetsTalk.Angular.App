@@ -24,6 +24,11 @@ describe('ProfileComponent', () => {
 
     beforeEach(async () => {
         storeService = jasmine.createSpyObj('StoreService', ['getLoggedInUser', 'setLoggedInUser']);
+        storeService.getLoggedInUser.and.returnValue(Promise.resolve({
+            firstName: 'John',
+            lastName: 'Doe',
+            email: 'john.doe@example.com'
+        } as IProfileDto));
         apiService = jasmine.createSpyObj('ApiService', ['saveProfile']);
         router = jasmine.createSpyObj('Router', ['navigate']);
         imageUploadService = jasmine.createSpyObj('ImageUploadService', ['resizeAndUploadImage']);
@@ -48,11 +53,6 @@ describe('ProfileComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(ProfileComponent);
         component = fixture.componentInstance;
-        storeService.getLoggedInUser.and.returnValue(Promise.resolve({
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'john.doe@example.com'
-        } as IProfileDto));
         fixture.detectChanges();
     });
 

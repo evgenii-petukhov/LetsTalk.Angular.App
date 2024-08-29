@@ -15,38 +15,37 @@ import { UploadImageResponse } from 'src/app/protos/file_upload_pb';
 describe('SendMessageComponent', () => {
     let component: SendMessageComponent;
     let fixture: ComponentFixture<SendMessageComponent>;
-    let mockStore: jasmine.SpyObj<Store>;
-    let mockApiService: jasmine.SpyObj<ApiService>;
-    let mockErrorService: jasmine.SpyObj<ErrorService>;
-    let mockStoreService: jasmine.SpyObj<StoreService>;
-    let mockIdGeneratorService: jasmine.SpyObj<IdGeneratorService>;
-    let mockImageUploadService: jasmine.SpyObj<ImageUploadService>;
+    let store: jasmine.SpyObj<Store>;
+    let apiService: jasmine.SpyObj<ApiService>;
+    let errorService: jasmine.SpyObj<ErrorService>;
+    let storeService: jasmine.SpyObj<StoreService>;
+    let idGeneratorService: jasmine.SpyObj<IdGeneratorService>;
+    let imageUploadService: jasmine.SpyObj<ImageUploadService>;
 
     beforeEach(async () => {
-        mockStore = jasmine.createSpyObj('Store', ['select']);
-        mockApiService = jasmine.createSpyObj('ApiService', ['sendMessage', 'createIndividualChat']);
-        mockErrorService = jasmine.createSpyObj('ErrorService', ['handleError']);
-        mockStoreService = jasmine.createSpyObj('StoreService', ['updateChatId', 'setSelectedChatId', 'addMessage', 'setLastMessageInfo']);
-        mockIdGeneratorService = jasmine.createSpyObj('IdGeneratorService', ['isFake']);
-        mockImageUploadService = jasmine.createSpyObj('ImageUploadService', ['resizeAndUploadImage']);
+        store = jasmine.createSpyObj('Store', ['select']);
+        store.select.and.returnValues(of('chatId1'), of({ id: 'chatId1', accountIds: ['accountId1'], isIndividual: true }));
+        apiService = jasmine.createSpyObj('ApiService', ['sendMessage', 'createIndividualChat']);
+        errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
+        storeService = jasmine.createSpyObj('StoreService', ['updateChatId', 'setSelectedChatId', 'addMessage', 'setLastMessageInfo']);
+        idGeneratorService = jasmine.createSpyObj('IdGeneratorService', ['isFake']);
+        imageUploadService = jasmine.createSpyObj('ImageUploadService', ['resizeAndUploadImage']);
 
         await TestBed.configureTestingModule({
             declarations: [SendMessageComponent],
             imports: [FormsModule, FontAwesomeModule],
             providers: [
-                { provide: Store, useValue: mockStore },
-                { provide: ApiService, useValue: mockApiService },
-                { provide: ErrorService, useValue: mockErrorService },
-                { provide: StoreService, useValue: mockStoreService },
-                { provide: IdGeneratorService, useValue: mockIdGeneratorService },
-                { provide: ImageUploadService, useValue: mockImageUploadService },
+                { provide: Store, useValue: store },
+                { provide: ApiService, useValue: apiService },
+                { provide: ErrorService, useValue: errorService },
+                { provide: StoreService, useValue: storeService },
+                { provide: IdGeneratorService, useValue: idGeneratorService },
+                { provide: ImageUploadService, useValue: imageUploadService },
             ]
         }).compileComponents();
 
         fixture = TestBed.createComponent(SendMessageComponent);
         component = fixture.componentInstance;
-
-        mockStore.select.and.returnValues(of('chatId1'), of({ id: 'chatId1', accountIds: ['accountId1'], isIndividual: true }));
     });
 
     it('should create', () => {
@@ -65,16 +64,16 @@ describe('SendMessageComponent', () => {
             isIndividual: true
         };
         (component as any)['chatId'] = 'chatId1';
-        mockIdGeneratorService.isFake.and.returnValue(false);
-        mockApiService.sendMessage.and.returnValue(Promise.resolve({ id: 'msgId1', created: Date.now() }));
+        idGeneratorService.isFake.and.returnValue(false);
+        apiService.sendMessage.and.returnValue(Promise.resolve({ id: 'msgId1', created: Date.now() }));
 
         await component.send('Test message');
 
         expect(component.message).toBe('');
         expect(component.isSending).toBe(false);
-        expect(mockApiService.sendMessage).toHaveBeenCalledWith('chatId1', 'Test message');
-        expect(mockIdGeneratorService.isFake).toHaveBeenCalledWith('chatId1');
-        expect(mockStoreService.addMessage).toHaveBeenCalled();
+        expect(apiService.sendMessage).toHaveBeenCalledWith('chatId1', 'Test message');
+        expect(idGeneratorService.isFake).toHaveBeenCalledWith('chatId1');
+        expect(storeService.addMessage).toHaveBeenCalled();
     });
 
     it('should create individual chat if necessary before sending message', async () => {
@@ -83,22 +82,22 @@ describe('SendMessageComponent', () => {
             accountIds: ['accountId1']
         };
         (component as any)['chatId'] = 'chatId1';
-        mockIdGeneratorService.isFake.and.returnValue(true);
-        mockApiService.createIndividualChat.and.returnValue(Promise.resolve({ id: 'newChatId' }));
-        mockApiService.sendMessage.and.returnValue(Promise.resolve({ id: 'msgId1', created: Date.now() }));
+        idGeneratorService.isFake.and.returnValue(true);
+        apiService.createIndividualChat.and.returnValue(Promise.resolve({ id: 'newChatId' }));
+        apiService.sendMessage.and.returnValue(Promise.resolve({ id: 'msgId1', created: Date.now() }));
 
         await component.send('Test message');
 
-        expect(mockApiService.createIndividualChat).toHaveBeenCalledWith('accountId1');
-        expect(mockApiService.sendMessage).toHaveBeenCalledWith('newChatId', 'Test message');
-        expect(mockStoreService.updateChatId).toHaveBeenCalledWith('chatId1', 'newChatId');
-        expect(mockStoreService.setSelectedChatId).toHaveBeenCalledWith('newChatId');
-        expect(mockIdGeneratorService.isFake).toHaveBeenCalledWith('chatId1');
+        expect(apiService.createIndividualChat).toHaveBeenCalledWith('accountId1');
+        expect(apiService.sendMessage).toHaveBeenCalledWith('newChatId', 'Test message');
+        expect(storeService.updateChatId).toHaveBeenCalledWith('chatId1', 'newChatId');
+        expect(storeService.setSelectedChatId).toHaveBeenCalledWith('newChatId');
+        expect(idGeneratorService.isFake).toHaveBeenCalledWith('chatId1');
     });
 
     it('should handle errors during message sending', async () => {
         const error = new Error('Send message failed');
-        mockApiService.sendMessage.and.throwError(error);
+        apiService.sendMessage.and.throwError(error);
 
         (component as any)['chat'] = {
             isIndividual: true
@@ -108,7 +107,7 @@ describe('SendMessageComponent', () => {
 
         expect(component.message).toBe('');
         expect(component.isSending).toBe(false);
-        expect(mockErrorService.handleError).toHaveBeenCalledWith(error, jasmine.any(String));
+        expect(errorService.handleError).toHaveBeenCalledWith(error, jasmine.any(String));
     });
 
     it('should handle image selection and upload', async () => {
@@ -120,14 +119,14 @@ describe('SendMessageComponent', () => {
         spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);
         const mockUploadResponse = new UploadImageResponse();
         mockUploadResponse.setId('imageId');
-        mockImageUploadService.resizeAndUploadImage.and.returnValue(Promise.resolve(mockUploadResponse));
-        mockApiService.sendMessage.and.returnValue(Promise.resolve(mockMessageDto));
+        imageUploadService.resizeAndUploadImage.and.returnValue(Promise.resolve(mockUploadResponse));
+        apiService.sendMessage.and.returnValue(Promise.resolve(mockMessageDto));
 
         await component.onImageSelected(event);
 
-        expect(mockImageUploadService.resizeAndUploadImage).toHaveBeenCalledWith(imageUrl, jasmine.any(Number), jasmine.any(Number), jasmine.any(Number));
-        expect(mockApiService.sendMessage).toHaveBeenCalled();
-        expect(mockStoreService.addMessage).toHaveBeenCalledWith(mockMessageDto);
+        expect(imageUploadService.resizeAndUploadImage).toHaveBeenCalledWith(imageUrl, jasmine.any(Number), jasmine.any(Number), jasmine.any(Number));
+        expect(apiService.sendMessage).toHaveBeenCalled();
+        expect(storeService.addMessage).toHaveBeenCalledWith(mockMessageDto);
     });
 
     it('should handle errors during image upload', async () => {
@@ -137,11 +136,11 @@ describe('SendMessageComponent', () => {
         const error = new Error('Upload failed');
 
         spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);
-        mockImageUploadService.resizeAndUploadImage.and.throwError(error);
+        imageUploadService.resizeAndUploadImage.and.throwError(error);
 
         await component.onImageSelected(event);
 
-        expect(mockErrorService.handleError).toHaveBeenCalledWith(error, jasmine.any(String));
+        expect(errorService.handleError).toHaveBeenCalledWith(error, jasmine.any(String));
     });
 
     it('should disable the send button when message is empty or isSending is true', () => {

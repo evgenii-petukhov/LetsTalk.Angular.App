@@ -10,21 +10,20 @@ describe('ImageComponent', () => {
     let component: ImageComponent;
     let fixture: ComponentFixture<ImageComponent>;
     let storeService: jasmine.SpyObj<StoreService>;
+    let errorService: jasmine.SpyObj<ErrorService>;
 
     beforeEach(waitForAsync(() => {
-        const storeServiceSpy = jasmine.createSpyObj('StoreService', ['getImageContent', 'setViewedImageId']);
-        const errorServiceSpy = jasmine.createSpyObj('ErrorService', ['handleError']);
+        storeService = jasmine.createSpyObj('StoreService', ['getImageContent', 'setViewedImageId']);
+        errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
 
         TestBed.configureTestingModule({
             declarations: [ImageComponent],
             providers: [
-                { provide: StoreService, useValue: storeServiceSpy },
-                { provide: ErrorService, useValue: errorServiceSpy },
+                { provide: StoreService, useValue: storeService },
+                { provide: ErrorService, useValue: errorService },
                 ChangeDetectorRef
             ]
         }).compileComponents();
-
-        storeService = TestBed.inject(StoreService) as jasmine.SpyObj<StoreService>;
     }));
 
     beforeEach(() => {

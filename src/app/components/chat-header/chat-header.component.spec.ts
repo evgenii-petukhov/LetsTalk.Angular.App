@@ -14,12 +14,14 @@ describe('ChatHeaderComponent', () => {
     let fixture: ComponentFixture<ChatHeaderComponent>;
     let store: jasmine.SpyObj<Store>;
     let storeService: jasmine.SpyObj<StoreService>;
-    const mockChat$ = of({ chatName: 'Chat A', imageId: 'img1', photoUrl: 'url1' });
 
     beforeEach(async () => {
         store = jasmine.createSpyObj('Store', ['select']);
-        store.select.and.returnValue(mockChat$);
-
+        store.select.and.returnValue(of({
+            chatName: 'Chat A',
+            imageId: 'img1',
+            photoUrl: 'url1'
+        }));
         storeService = jasmine.createSpyObj('StoreService', ['setLayoutSettings', 'setSelectedChatId']);
 
         await TestBed.configureTestingModule({
@@ -33,8 +35,7 @@ describe('ChatHeaderComponent', () => {
                 { provide: StoreService, useValue: storeService }
             ],
             imports: [FontAwesomeModule]
-        })
-            .compileComponents();
+        }).compileComponents();
     });
 
     beforeEach(() => {

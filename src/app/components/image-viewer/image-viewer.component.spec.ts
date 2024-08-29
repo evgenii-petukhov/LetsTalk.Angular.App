@@ -8,28 +8,30 @@ import { ErrorService } from 'src/app/services/error.service';
 describe('ImageViewerComponent', () => {
     let component: ImageViewerComponent;
     let fixture: ComponentFixture<ImageViewerComponent>;
-    let store: Store;
+    let store: jasmine.SpyObj<Store>;
     let storeService: jasmine.SpyObj<StoreService>;
+    let errorService: jasmine.SpyObj<ErrorService>;
     let unsubscribe$: Subject<void>;
 
     beforeEach(async () => {
+        store = jasmine.createSpyObj('Store', ['select']);
+        store.select.and.returnValue(of(null));
+
         storeService = jasmine.createSpyObj('StoreService', ['getImageContent', 'setViewedImageId']);
-        const errorServiceSpy = jasmine.createSpyObj('ErrorService', ['handleError']);
+        errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
 
         await TestBed.configureTestingModule({
             declarations: [ImageViewerComponent],
             imports: [StoreModule.forRoot({})],
             providers: [
                 { provide: StoreService, useValue: storeService },
-                { provide: ErrorService, useValue: errorServiceSpy },
+                { provide: ErrorService, useValue: errorService },
             ]
         }).compileComponents();
 
         fixture = TestBed.createComponent(ImageViewerComponent);
         component = fixture.componentInstance;
-        store = TestBed.inject(Store);
         unsubscribe$ = component['unsubscribe$'];
-        spyOn(store, 'select').and.returnValue(of(null));
         fixture.detectChanges();
     });
 

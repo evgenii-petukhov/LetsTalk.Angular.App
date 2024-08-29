@@ -7,20 +7,19 @@ describe('AvatarComponent', () => {
     let component: AvatarComponent;
     let fixture: ComponentFixture<AvatarComponent>;
     let storeService: jasmine.SpyObj<StoreService>;
+    let errorService: jasmine.SpyObj<ErrorService>;
 
     beforeEach(async () => {
-        const storeServiceSpy = jasmine.createSpyObj('StoreService', ['getImageContent']);
-        const errorServiceSpy = jasmine.createSpyObj('ErrorService', ['handleError']);
+        storeService = jasmine.createSpyObj('StoreService', ['getImageContent']);
+        errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
 
         await TestBed.configureTestingModule({
             declarations: [AvatarComponent],
             providers: [
-                { provide: StoreService, useValue: storeServiceSpy },
-                { provide: ErrorService, useValue: errorServiceSpy },
+                { provide: StoreService, useValue: storeService },
+                { provide: ErrorService, useValue: errorService },
             ]
         }).compileComponents();
-
-        storeService = TestBed.inject(StoreService) as jasmine.SpyObj<StoreService>;
     });
 
     beforeEach(() => {
