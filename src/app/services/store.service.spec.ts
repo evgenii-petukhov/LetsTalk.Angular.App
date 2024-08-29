@@ -11,7 +11,7 @@ import { IChatDto, IProfileDto, IMessageDto, IImagePreviewDto, ILinkPreviewDto }
 import { Image } from '../models/image';
 import { accountsActions } from '../state/accounts/accounts.actions';
 import { messagesActions } from '../state/messages/messages.actions';
-import { ILayoutSettngs } from '../models/layout-settings';
+import { ILayoutSettings } from '../models/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
 import { selectedChatIdActions } from '../state/selected-chat/selected-chat-id.actions';
 import { viewedImageIdActions } from '../state/viewed-image-id/viewed-image-id.actions';
@@ -232,7 +232,7 @@ describe('StoreService', () => {
 
     describe('setLayoutSettings', () => {
         it('should dispatch set action', () => {
-            const layoutSettings: ILayoutSettngs = {};
+            const layoutSettings: ILayoutSettings = {};
 
             service.setLayoutSettings(layoutSettings);
 

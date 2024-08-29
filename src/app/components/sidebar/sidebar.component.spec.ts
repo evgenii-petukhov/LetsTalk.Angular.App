@@ -6,7 +6,7 @@ import { StoreService } from 'src/app/services/store.service';
 import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-settings.selectors';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { ILayoutSettngs } from 'src/app/models/layout-settings';
+import { ILayoutSettings } from 'src/app/models/layout-settings';
 import { AccountListStubComponent } from '../account-list/account-list.stub';
 import { ChatListStubComponent } from '../chat-list/chat-list.stub';
 import { LoggedInUserStubComponent } from '../logged-in-user/logged-in-user.stub';
@@ -16,7 +16,7 @@ describe('SidebarComponent', () => {
     let fixture: ComponentFixture<SidebarComponent>;
     let store: MockStore;
     let storeService: jasmine.SpyObj<StoreService>;
-    let mockSelectLayoutSettings: MemoizedSelector<object, ILayoutSettngs, DefaultProjectorFn<ILayoutSettngs>>;
+    let mockSelectLayoutSettings: MemoizedSelector<object, ILayoutSettings, DefaultProjectorFn<ILayoutSettings>>;
 
     beforeEach(async () => {
         storeService = jasmine.createSpyObj('StoreService', ['setLayoutSettings']);
@@ -82,7 +82,7 @@ describe('SidebarComponent', () => {
     });
 
     it('should call setLayoutSettings with accounts when switchToAccountList is called', () => {
-        component.switchToAcccountList();
+        component.switchToAccountList();
 
         expect(storeService.setLayoutSettings).toHaveBeenCalledWith({ sidebarState: SidebarState.accounts });
     });

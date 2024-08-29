@@ -35,7 +35,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
         this.unsubscribe$.complete();
     }
 
-    switchToAcccountList(): void {
+    switchToAccountList(): void {
         this.storeService.setLayoutSettings({ sidebarState: SidebarState.accounts });
     }
 

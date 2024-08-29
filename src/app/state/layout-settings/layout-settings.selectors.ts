@@ -1,4 +1,4 @@
 import { createFeatureSelector } from '@ngrx/store';
-import { ILayoutSettngs } from '../../models/layout-settings';
+import { ILayoutSettings } from '../../models/layout-settings';
 
-export const selectLayoutSettings = createFeatureSelector<ILayoutSettngs>('layoutSettings');
+export const selectLayoutSettings = createFeatureSelector<ILayoutSettings>('layoutSettings');

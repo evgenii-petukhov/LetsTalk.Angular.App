@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { IChatDto, IImagePreviewDto, ILinkPreviewDto, IMessageDto, IProfileDto } from '../api-client/api-client';
 import { chatsActions } from '../state/chats/chats.actions';
-import { ILayoutSettngs } from '../models/layout-settings';
+import { ILayoutSettings } from '../models/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
 import { loggedInUserActions } from '../state/logged-in-user/logged-in-user.actions';
 import { messagesActions } from '../state/messages/messages.actions';
@@ -101,7 +101,7 @@ export class StoreService {
         this.store.dispatch(chatsActions.add({ chatDto }));
     }
 
-    setLayoutSettings(settings: ILayoutSettngs): void {
+    setLayoutSettings(settings: ILayoutSettings): void {
         this.store.dispatch(layoutSettingsActions.init({ settings }));
     }
 
