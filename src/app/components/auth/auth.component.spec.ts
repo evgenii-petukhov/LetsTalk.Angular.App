@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthComponent } from './auth.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RouterTestingModule } from '@angular/router/testing';
-import { By } from '@angular/platform-browser';
 import { SocialMediaIconStubComponent } from '../social-media-icon/social-media-icon.component.stub';
 
 describe('AuthComponent', () => {
@@ -25,25 +24,17 @@ describe('AuthComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should have a link to the privacy policy with correct routerLink', () => {
-        const privacyLink = fixture.debugElement
-            .queryAll(By.css('a'))
-            .find((de) =>
-                de.nativeElement.textContent.includes('privacy policy'),
-            );
-        expect(privacyLink).toBeTruthy();
-        expect(privacyLink.attributes['ng-reflect-router-link']).toEqual(
-            '/privacy-policy',
-        );
-    });
+    it('should render the Email and Privacy policy links with correct URLs', () => {
+        // Arrange
+        const privacyLink = fixture.nativeElement.querySelector('.login-privacy-policy a');
+        const emailLink = fixture.nativeElement.querySelector('a.btn-outline-primary');
 
-    it('should have a link to email login with correct routerLink', () => {
-        const emailLink = fixture.debugElement
-            .queryAll(By.css('a.btn-outline-primary'))
-            .find((de) => de.nativeElement.textContent.includes('Email'));
+        // Act
+
+        // Assert
+        expect(privacyLink).toBeTruthy();
+        expect(privacyLink.attributes['ng-reflect-router-link'].value).toEqual('/privacy-policy');
         expect(emailLink).toBeTruthy();
-        expect(emailLink.attributes['ng-reflect-router-link']).toEqual(
-            '/login-by-email',
-        );
+        expect(emailLink.attributes['ng-reflect-router-link'].value).toEqual('/login-by-email');
     });
 });

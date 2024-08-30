@@ -59,68 +59,95 @@ describe('SidebarComponent', () => {
     });
 
     it('should show chat list when sidebarState is chats', () => {
+        // Arrange
         mockSelectLayoutSettings.setResult({
             sidebarState: SidebarState.chats,
         });
 
+        // Act
         store.refreshState();
         fixture.detectChanges();
 
+        // Assert
         expect(component.isChatListShown).toBeTrue();
         expect(component.isAccountListShown).toBeFalse();
 
-        const chatListElement =
-            fixture.nativeElement.querySelector('app-chat-list');
-        const accountListElement =
-            fixture.nativeElement.querySelector('app-account-list');
-
-        expect(chatListElement).toBeTruthy();
-        expect(accountListElement).toBeFalsy();
+        expect(getChatListElement()).toBeTruthy();
+        expect(getNewChatButtonElement()).toBeTruthy();
+        expect(getFontAwesomeIconElement()).toBeTruthy();
+        expect(getAccountListElement()).toBeFalsy();
     });
 
     it('should show account list when sidebarState is accounts', () => {
+        // Arrange
         mockSelectLayoutSettings.setResult({
             sidebarState: SidebarState.accounts,
         });
 
+        // Act
         store.refreshState();
         fixture.detectChanges();
 
+        // Assert
         expect(component.isChatListShown).toBeFalse();
         expect(component.isAccountListShown).toBeTrue();
 
-        const chatListElement =
-            fixture.nativeElement.querySelector('app-chat-list');
-        const accountListElement =
-            fixture.nativeElement.querySelector('app-account-list');
-
-        expect(chatListElement).toBeFalsy();
-        expect(accountListElement).toBeTruthy();
+        expect(getChatListElement()).toBeFalsy();
+        expect(getNewChatButtonElement()).toBeFalsy();
+        expect(getFontAwesomeIconElement()).toBeFalsy();
+        expect(getAccountListElement()).toBeTruthy();
     });
 
     it('should call setLayoutSettings with accounts when switchToAccountList is called', () => {
+        // Arrange
+
+        // Act
         component.switchToAccountList();
 
+        // Assert
         expect(storeService.setLayoutSettings).toHaveBeenCalledWith({
             sidebarState: SidebarState.accounts,
         });
     });
 
     it('should call setLayoutSettings with chats when onBackButtonClicked is called', () => {
+        // Arrange
+
+        // Act
         component.onBackButtonClicked();
 
+        // Assert
         expect(storeService.setLayoutSettings).toHaveBeenCalledWith({
             sidebarState: SidebarState.chats,
         });
     });
 
     it('should unsubscribe on component destruction', () => {
+        // Arrange
         spyOn(component['unsubscribe$'], 'next');
         spyOn(component['unsubscribe$'], 'complete');
 
+        // Act
         component.ngOnDestroy();
 
+        // Assert
         expect(component['unsubscribe$'].next).toHaveBeenCalled();
         expect(component['unsubscribe$'].complete).toHaveBeenCalled();
     });
+
+    function getChatListElement() {
+        return fixture.nativeElement.querySelector('app-chat-list');
+    }
+
+    function getNewChatButtonElement() {
+        return fixture.nativeElement.querySelector('.new-chat-button');
+    }
+
+    function getFontAwesomeIconElement() {
+        return getNewChatButtonElement()?.querySelector('fa-icon');
+    }
+
+    function getAccountListElement() {
+        return fixture.nativeElement.querySelector('app-account-list');
+    }
 });
