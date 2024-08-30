@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
-import { Store } from '@ngrx/store';
+import { DefaultProjectorFn, MemoizedSelector, Store } from '@ngrx/store';
 import { ChatHeaderComponent } from './chat-header.component';
 import { StoreService } from 'src/app/services/store.service';
 import { ActiveArea } from 'src/app/enums/active-areas';
@@ -8,12 +7,20 @@ import { OrderByPipe } from 'src/app/pipes/orderby';
 import { AvatarStubComponent } from '../avatar/avatar.stub';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { By } from '@angular/platform-browser';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { IChatDto } from 'src/app/api-client/api-client';
+import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 
 describe('ChatHeaderComponent', () => {
     let component: ChatHeaderComponent;
     let fixture: ComponentFixture<ChatHeaderComponent>;
-    let store: jasmine.SpyObj<Store>;
+    let store: MockStore;
     let storeService: jasmine.SpyObj<StoreService>;
+    let mockSelectSelectedChat: MemoizedSelector<
+        object,
+        IChatDto,
+        DefaultProjectorFn<IChatDto>
+    >;
 
     const mockChat = {
         chatName: 'Chat1',
@@ -21,11 +28,13 @@ describe('ChatHeaderComponent', () => {
         photoUrl: 'url1',
     };
 
+    const mockChat2 = {
+        chatName: 'Chat2',
+        imageId: 'img2',
+        photoUrl: 'url2',
+    };
+
     beforeEach(async () => {
-        store = jasmine.createSpyObj('Store', ['select']);
-        store.select.and.returnValue(
-            of(mockChat),
-        );
         storeService = jasmine.createSpyObj('StoreService', [
             'setLayoutSettings',
             'setSelectedChatId',
@@ -38,7 +47,7 @@ describe('ChatHeaderComponent', () => {
                 OrderByPipe,
             ],
             providers: [
-                { provide: Store, useValue: store },
+                provideMockStore({}),
                 { provide: StoreService, useValue: storeService },
             ],
             imports: [FontAwesomeModule],
@@ -48,6 +57,11 @@ describe('ChatHeaderComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(ChatHeaderComponent);
         component = fixture.componentInstance;
+        store = TestBed.inject(Store) as MockStore;
+        mockSelectSelectedChat = store.overrideSelector(
+            selectSelectedChat,
+            null,
+        );
         fixture.detectChanges();
     });
 
@@ -66,21 +80,41 @@ describe('ChatHeaderComponent', () => {
 
     it('should display the chat name and pass correct urlOptions to app-avatar', () => {
         // Arrange
-        const userNameElement = fixture.nativeElement.querySelector('.user-name');
-        expect(userNameElement).toBeTruthy();
-        expect(userNameElement.textContent).toContain(mockChat.chatName);
-
-        const avatarComponent = fixture.debugElement.query(
-            By.directive(AvatarStubComponent),
-        );
+        mockSelectSelectedChat.setResult(mockChat);
 
         // Act
+        store.refreshState();
+        fixture.detectChanges();
+
+        expect(getUserNameElement().textContent).toContain(mockChat.chatName);
 
         // Assert
-        expect(avatarComponent).toBeTruthy();
-        expect(avatarComponent.componentInstance.urlOptions).toEqual([
+        expect(getAvatarElement().componentInstance.urlOptions).toEqual([
             mockChat.imageId,
             mockChat.photoUrl,
         ]);
+
+        // Arrange
+        mockSelectSelectedChat.setResult(mockChat2);
+
+        // Act
+        store.refreshState();
+        fixture.detectChanges();
+
+        expect(getUserNameElement().textContent).toContain(mockChat2.chatName);
+
+        // Assert
+        expect(getAvatarElement().componentInstance.urlOptions).toEqual([
+            mockChat2.imageId,
+            mockChat2.photoUrl,
+        ]);
     });
+
+    function getAvatarElement() {
+        return fixture.debugElement.query(By.directive(AvatarStubComponent));
+    }
+
+    function getUserNameElement() {
+        return fixture.nativeElement.querySelector('.user-name');
+    }
 });
