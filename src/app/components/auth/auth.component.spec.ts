@@ -26,15 +26,23 @@ describe('AuthComponent', () => {
 
     it('should render the Email and Privacy policy links with correct URLs', () => {
         // Arrange
-        const privacyLink = fixture.nativeElement.querySelector('.login-privacy-policy a');
-        const emailLink = fixture.nativeElement.querySelector('a.btn-outline-primary');
+        const privacyLink = fixture.nativeElement.querySelector(
+            '.login-privacy-policy a',
+        );
+        const emailLink = fixture.nativeElement.querySelector(
+            'a.btn-outline-primary',
+        );
 
         // Act
 
         // Assert
         expect(privacyLink).toBeTruthy();
-        expect(privacyLink.attributes['ng-reflect-router-link'].value).toEqual('/privacy-policy');
+        expect(privacyLink.attributes['ng-reflect-router-link'].value).toEqual(
+            '/privacy-policy',
+        );
         expect(emailLink).toBeTruthy();
-        expect(emailLink.attributes['ng-reflect-router-link'].value).toEqual('/login-by-email');
+        expect(emailLink.attributes['ng-reflect-router-link'].value).toEqual(
+            '/login-by-email',
+        );
     });
 });

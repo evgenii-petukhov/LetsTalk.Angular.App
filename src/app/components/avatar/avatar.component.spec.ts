@@ -2,12 +2,22 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AvatarComponent } from './avatar.component';
 import { StoreService } from 'src/app/services/store.service';
 import { ErrorService } from 'src/app/services/error.service';
+import { errorMessages } from 'src/app/constants/errors';
 
 describe('AvatarComponent', () => {
     let component: AvatarComponent;
     let fixture: ComponentFixture<AvatarComponent>;
     let storeService: jasmine.SpyObj<StoreService>;
     let errorService: jasmine.SpyObj<ErrorService>;
+
+    const imageId = 'image-id';
+    const url = 'http://example.com/image.jpg';
+    const defaultUrl = 'images/empty-avatar.svg';
+    const mockImage = {
+        content: 'data:image/jpeg;base64,...',
+        width: 100,
+        height: 100,
+    };
 
     beforeEach(async () => {
         storeService = jasmine.createSpyObj('StoreService', [
@@ -30,54 +40,114 @@ describe('AvatarComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should display default background image if no URL options are provided', () => {
-        component.urlOptions = [];
-        component.ngOnChanges();
-        fixture.detectChanges();
+    [
+        { value: undefined, text: 'undefined' },
+        { value: null, text: 'null' },
+        { value: [], text: 'empty array' },
+    ].forEach(({ value, text }) => {
+        it(`should display default background image if urlOptions is ${text}`, () => {
+            // Arrange
 
-        expect(component.backgroundImage).toContain(
-            "url('images/empty-avatar.svg')",
-        );
+            // Act
+            component.urlOptions = value;
+            component.ngOnChanges();
+            fixture.detectChanges();
+
+            // Assert
+            expect(component.backgroundImage).toBe(`url('${defaultUrl}')`);
+            expect(storeService.getImageContent).not.toHaveBeenCalled();
+            expect(errorService.handleError).not.toHaveBeenCalled();
+        });
     });
 
     it('should display background image from URL', () => {
-        component.urlOptions = ['http://example.com/image.jpg'];
+        // Arrange
+
+        // Act
+        component.urlOptions = [url];
         component.ngOnChanges();
         fixture.detectChanges();
 
-        expect(component.backgroundImage).toContain(
-            "url('http://example.com/image.jpg')",
+        // Assert
+        expect(component.backgroundImage).toBe(
+            `url('${url}'), url('${defaultUrl}')`,
         );
+        expect(storeService.getImageContent).not.toHaveBeenCalled();
+        expect(errorService.handleError).not.toHaveBeenCalled();
     });
 
     it('should display background image from image ID', async () => {
-        const mockImage = {
-            content: 'data:image/jpeg;base64,...',
-            width: 100,
-            height: 100,
-        };
+        // Arrange
         storeService.getImageContent.and.returnValue(
             Promise.resolve(mockImage),
         );
 
-        component.urlOptions = ['image-id'];
+        // Act
+        component.urlOptions = [imageId];
         await component.ngOnChanges();
         fixture.detectChanges();
 
+        // Assert
         expect(component.backgroundImage).toContain(
-            "url('data:image/jpeg;base64,...')",
+            `url('${mockImage.content}')`,
         );
+        expect(storeService.getImageContent).toHaveBeenCalledWith(imageId);
+        expect(errorService.handleError).not.toHaveBeenCalled();
+    });
+
+    it('should display background image from URL and image ID', async () => {
+        // Arrange
+        storeService.getImageContent.and.returnValue(
+            Promise.resolve(mockImage),
+        );
+
+        // Act
+        component.urlOptions = [url, imageId];
+        await component.ngOnChanges();
+        fixture.detectChanges();
+
+        // Assert
+        expect(component.backgroundImage).toBe(
+            `url('${url}'), url('${defaultUrl}')`,
+        );
+        expect(storeService.getImageContent).not.toHaveBeenCalled();
+        expect(errorService.handleError).not.toHaveBeenCalled();
+    });
+
+    it('should display background image from image ID and URL', async () => {
+        // Arrange
+        storeService.getImageContent.and.returnValue(
+            Promise.resolve(mockImage),
+        );
+
+        // Act
+        component.urlOptions = [imageId, url];
+        await component.ngOnChanges();
+        fixture.detectChanges();
+
+        // Assert
+        expect(component.backgroundImage).toBe(`url('${mockImage.content}')`);
+        expect(storeService.getImageContent).toHaveBeenCalledWith(imageId);
+        expect(errorService.handleError).not.toHaveBeenCalled();
     });
 
     it('should display default background image if getImageContent fails', async () => {
-        storeService.getImageContent.and.throwError(new Error('error'));
+        // Arrange
+        const imageId = 'image-id';
+        const error = new Error('error');
+        storeService.getImageContent.and.throwError(error);
 
-        component.urlOptions = ['image-id'];
+        // Act
+        component.urlOptions = [imageId];
         await component.ngOnChanges();
         fixture.detectChanges();
 
-        expect(component.backgroundImage).toContain(
-            "url('images/empty-avatar.svg')",
+        // Assert
+        expect(component.backgroundImage).toBe(`url('${defaultUrl}')`);
+        expect(storeService.getImageContent).toHaveBeenCalledWith(imageId);
+        expect(errorService.handleError).toHaveBeenCalledWith(
+            error,
+            errorMessages.downloadImage,
         );
     });
 });
