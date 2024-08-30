@@ -8,6 +8,14 @@ describe('AccountListItemComponent', () => {
     let component: AccountListItemComponent;
     let fixture: ComponentFixture<AccountListItemComponent>;
 
+    const account = {
+        id: '1',
+        firstName: 'John',
+        lastName: 'Doe',
+        imageId: 'image1',
+        photoUrl: 'https://example.com/photo.jpg',
+    } as IAccountDto;
+
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [AccountListItemComponent, AvatarStubComponent],
@@ -17,23 +25,28 @@ describe('AccountListItemComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(AccountListItemComponent);
         component = fixture.componentInstance;
-        component.account = {
-            id: '1',
-            firstName: 'John',
-            lastName: 'Doe',
-            imageId: 'image1',
-            photoUrl: 'https://example.com/photo.jpg',
-        } as IAccountDto;
         fixture.detectChanges();
     });
 
     it('should render the avatar component with correct url options', () => {
+        // Arrange
+
+        // Act
+        component.account = account;
+        fixture.detectChanges();
+
         const avatarComponent = fixture.debugElement.query(
             By.directive(AvatarStubComponent),
         ).componentInstance as AvatarStubComponent;
         expect(avatarComponent.urlOptions).toEqual([
-            'image1',
-            'https://example.com/photo.jpg',
+            account.imageId,
+            account.photoUrl,
         ]);
+
+        // Assert
+        const userName = fixture.nativeElement.querySelector('.user-name');
+        expect(userName.textContent).toContain(
+            `${account.firstName} ${account.lastName}`,
+        );
     });
 });
