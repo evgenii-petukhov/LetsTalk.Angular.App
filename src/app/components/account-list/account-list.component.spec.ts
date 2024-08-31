@@ -139,7 +139,7 @@ describe('AccountListComponent', () => {
 
     it('should create a new chat and call setSelectedChatId when onAccountSelected is called with a new account', async () => {
         // Arrange
-        const newChatId = 42;
+        const newChatId = -1;
         mockSelectAccounts.setResult([account1]);
         mockSelectChats.setResult([]);
         idGeneratorService.getNextFakeId.and.returnValue(newChatId);

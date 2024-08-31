@@ -5,6 +5,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class VisibleOnlyPipe<T> implements PipeTransform {
     transform(items: T[], callback: (item: T) => boolean): T[] {
-        return items.filter((item) => callback(item));
+        return items?.filter((item) => callback(item));
     }
 }

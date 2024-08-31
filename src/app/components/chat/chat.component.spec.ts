@@ -82,7 +82,7 @@ describe('ChatComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should not render any messages when message list is empty', fakeAsync(() => {
+    it('should not render any messages when chatId is real and message list is empty', fakeAsync(() => {
         // Arrange
         const chatId = 'chatId';
         const messageDtos = [];
@@ -111,7 +111,7 @@ describe('ChatComponent', () => {
         flush();
     }));
 
-    it('should render messages when message list is not empty', fakeAsync(async () => {
+    it('should render messages when chatId is real and message list is not empty', fakeAsync(async () => {
         // Arrange
         const chatId = 'chatId';
         const messageDtos: IMessageDto[] = [
@@ -169,6 +169,25 @@ describe('ChatComponent', () => {
         expect(storeService.addMessages).toHaveBeenCalledTimes(2);
         expect(storeService.setLastMessageInfo).toHaveBeenCalledTimes(1);
 
+        flush();
+    }));
+
+    it('should not render any messages when chatId is fake', fakeAsync(() => {
+        // Arrange
+        const chatId = '-1';
+        mockSelectSelectedChatId.setResult(chatId);
+        idGeneratorService.isFake.and.returnValue(true);
+
+        // Act
+        store.refreshState();
+        fixture.detectChanges();
+
+        tick();
+
+        // Assert
+        expect(apiService.getMessages).not.toHaveBeenCalled();
+        expect(storeService.addMessages).not.toHaveBeenCalled();
+        expect(storeService.setLastMessageInfo).not.toHaveBeenCalled();
         flush();
     }));
 });

@@ -80,4 +80,23 @@ describe('VisibleOnlyPipe', () => {
 
         expect(result).toEqual([]);
     });
+
+    [
+        {
+            value: undefined,
+            text: 'undefined',
+        },
+        {
+            value: null,
+            text: 'null',
+        },
+    ].forEach(({ value, text }) => {
+        it(`should not throw error if the input is ${text}`, () => {
+            const callback = (item: INameAndVisible) => item.visible;
+
+            const result = pipe.transform(value, callback);
+
+            expect(result).toEqual(undefined);
+        });
+    });
 });
