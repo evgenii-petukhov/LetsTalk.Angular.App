@@ -175,7 +175,7 @@ describe('SendMessageComponent', () => {
         imageUploadService.resizeAndUploadImage.and.returnValue(
             Promise.resolve(mockUploadResponse),
         );
-        apiService.sendMessage.and.returnValue(Promise.resolve(mockMessageDto));
+        apiService.sendMessage.and.resolveTo(mockMessageDto);
 
         await component.onImageSelected(event);
 

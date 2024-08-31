@@ -117,7 +117,7 @@ describe('ProfileComponent', () => {
         imageUploadService.resizeAndUploadImage.and.returnValue(
             Promise.resolve(mockUploadResponse),
         );
-        apiService.saveProfile.and.returnValue(Promise.resolve(mockProfileDto));
+        apiService.saveProfile.and.resolveTo(mockProfileDto);
 
         await component.onSubmit();
 

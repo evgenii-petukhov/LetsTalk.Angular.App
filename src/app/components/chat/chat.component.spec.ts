@@ -61,7 +61,7 @@ describe('ChatComponent', () => {
 
     it('should load more messages when scrolled to the top', async () => {
         // Arrange
-        apiService.getMessages.and.returnValue(Promise.resolve([]));
+        apiService.getMessages.and.resolveTo([]);
         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         const loadMessagesSpy = spyOn<any>(
             component,

@@ -84,7 +84,7 @@ describe('StoreService', () => {
                 lastMessageDate: 1234567890,
             };
 
-            apiService.markAsRead.and.returnValue(Promise.resolve());
+            apiService.markAsRead.and.resolveTo();
 
             await service.markAllAsRead(chat);
 
@@ -104,7 +104,7 @@ describe('StoreService', () => {
     describe('initChatStorage', () => {
         it('should initialize chat storage with API response if force is true', async () => {
             const mockChats = [{ id: '1' }] as IChatDto[];
-            apiService.getChats.and.returnValue(Promise.resolve(mockChats));
+            apiService.getChats.and.resolveTo(mockChats);
 
             await service.initChatStorage(true);
 
@@ -127,7 +127,7 @@ describe('StoreService', () => {
         it('should initialize chat storage with API response if store is empty and force is false', async () => {
             const mockChats = [{ id: '1' }] as IChatDto[];
             store.select.and.returnValue(of(null));
-            apiService.getChats.and.returnValue(Promise.resolve(mockChats));
+            apiService.getChats.and.resolveTo(mockChats);
 
             await service.initChatStorage(false);
 
@@ -309,7 +309,7 @@ describe('StoreService', () => {
 
         it('should fetch logged in user from API if not in store', async () => {
             store.select.and.returnValue(of(null));
-            apiService.getProfile.and.returnValue(Promise.resolve(account));
+            apiService.getProfile.and.resolveTo(account);
 
             const user = await service.getLoggedInUser();
 
