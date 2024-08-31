@@ -44,6 +44,7 @@ describe('AvatarComponent', () => {
         { value: undefined, text: 'undefined' },
         { value: null, text: 'null' },
         { value: [], text: 'empty array' },
+        { value: [''], text: 'array of empty string' },
     ].forEach(({ value, text }) => {
         it(`should display default background image if urlOptions is ${text}`, async () => {
             // Arrange
