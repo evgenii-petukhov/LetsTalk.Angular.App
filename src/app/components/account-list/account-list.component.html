@@ -2,7 +2,7 @@
     <ul>
         <li *ngFor="
                 let account of accounts
-                    | orderBy: ['chatName'] : ['asc']
+                    | orderBy: ['firstName', 'lastName'] : ['asc', 'asc']
             ">
             <app-account-list-item [account]="account" (accountSelected)="onAccountSelected($event)">
             </app-account-list-item>

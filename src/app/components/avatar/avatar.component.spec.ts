@@ -37,7 +37,6 @@ describe('AvatarComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(AvatarComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
     });
 
     [

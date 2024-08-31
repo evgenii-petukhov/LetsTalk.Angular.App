@@ -25,7 +25,6 @@ describe('AccountListItemComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(AccountListItemComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
     });
 
     it('should render the avatar component with correct url options', () => {

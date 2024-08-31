@@ -29,30 +29,30 @@ describe('AccountListComponent', () => {
         DefaultProjectorFn<readonly IAccountDto[]>
     >;
 
-    const account1 = {
+    const account1: IAccountDto = {
         id: '1',
         firstName: 'John',
         lastName: 'Doe',
         accountTypeId: 1,
         imageId: 'img1',
-    } as IAccountDto;
+    };
 
-    const account2 = {
-        id: '1',
-        firstName: 'John',
-        lastName: 'Doe',
+    const account2: IAccountDto = {
+        id: '2',
+        firstName: 'Neil',
+        lastName: 'Johnston',
         accountTypeId: 1,
-        photoUrl: 'url1',
-    } as IAccountDto;
+        photoUrl: 'url2',
+    };
 
-    const chat1 = {
+    const chat1: IChatDto = {
         id: 'chat1',
         accountIds: [account1.id, account2.id],
         accountTypeId: 1,
-        chatName: 'John Doe',
-        imageId: 'img1',
+        chatName: 'Neil Johnston',
+        photoUrl: 'url2',
         isIndividual: true,
-    } as IChatDto;
+    };
 
     beforeEach(async () => {
         storeService = jasmine.createSpyObj('StoreService', [
@@ -87,16 +87,23 @@ describe('AccountListComponent', () => {
         store = TestBed.inject(Store) as MockStore;
         mockSelectChats = store.overrideSelector(selectChats, null);
         mockSelectAccounts = store.overrideSelector(selectAccounts, null);
-        fixture.detectChanges();
     });
 
     it('should create', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should render two AccountListItemComponent instances with expected parameters', () => {
+    it('should render AccountListItemComponent sorted by firstName, then bby lastName', () => {
         // Arrange
-        mockSelectAccounts.setResult([account1, account2]);
+        const account3: IAccountDto = {
+            firstName: 'Bob',
+            lastName: 'Pettit',
+        };
+        const account4: IAccountDto = {
+            firstName: 'George',
+            lastName: 'Gevin',
+        };
+        mockSelectAccounts.setResult([account1, account2, account3, account4]);
 
         // Act
         store.refreshState();
@@ -109,9 +116,11 @@ describe('AccountListComponent', () => {
             .queryAll(By.directive(AccountListItemStubComponent))
             .map((element) => element.componentInstance);
 
-        expect(accountListItems.length).toBe(2);
-        expect(accountListItems[0].account).toBe(account1);
-        expect(accountListItems[1].account).toBe(account2);
+        expect(accountListItems.length).toBe(4);
+        expect(accountListItems[0].account).toBe(account3);
+        expect(accountListItems[1].account).toBe(account4);
+        expect(accountListItems[2].account).toBe(account1);
+        expect(accountListItems[3].account).toBe(account2);
     });
 
     it('should call setSelectedChatId and markAllAsRead when onAccountSelected is called with an existing chat', async () => {
