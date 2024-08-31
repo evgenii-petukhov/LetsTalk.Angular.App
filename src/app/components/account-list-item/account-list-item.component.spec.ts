@@ -49,4 +49,34 @@ describe('AccountListItemComponent', () => {
             `${account.firstName} ${account.lastName}`,
         );
     });
+
+    it('should emit an event when onAccountSelected is called', () => {
+        // Arrange
+        spyOn(component.accountSelected, 'emit');
+
+        // Act
+        component.account = account;
+        fixture.detectChanges();
+
+        component.onAccountSelected();
+
+        // Assert
+        expect(component.accountSelected.emit).toHaveBeenCalledWith(account);
+    });
+
+    it('should emit an event when link element is clicked', () => {
+        // Arrange
+        spyOn(component.accountSelected, 'emit');
+
+        // Act
+        component.account = account;
+        fixture.detectChanges();
+
+        fixture.debugElement
+            .query(By.css('a'))
+            .triggerEventHandler('click', null);
+
+        // Assert
+        expect(component.accountSelected.emit).toHaveBeenCalledWith(account);
+    });
 });

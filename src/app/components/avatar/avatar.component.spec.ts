@@ -45,12 +45,12 @@ describe('AvatarComponent', () => {
         { value: null, text: 'null' },
         { value: [], text: 'empty array' },
     ].forEach(({ value, text }) => {
-        it(`should display default background image if urlOptions is ${text}`, () => {
+        it(`should display default background image if urlOptions is ${text}`, async () => {
             // Arrange
 
             // Act
             component.urlOptions = value;
-            component.ngOnChanges();
+            await component.ngOnChanges();
             fixture.detectChanges();
 
             // Assert
@@ -60,12 +60,12 @@ describe('AvatarComponent', () => {
         });
     });
 
-    it('should display background image from URL', () => {
+    it('should display background image from URL', async () => {
         // Arrange
 
         // Act
         component.urlOptions = [url];
-        component.ngOnChanges();
+        await component.ngOnChanges();
         fixture.detectChanges();
 
         // Assert
