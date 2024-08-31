@@ -1,57 +1,60 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AccountListComponent } from './account-list.component';
-import { Store } from '@ngrx/store';
-import { of } from 'rxjs';
+import { DefaultProjectorFn, MemoizedSelector, Store } from '@ngrx/store';
 import { By } from '@angular/platform-browser';
 import { OrderByPipe } from 'src/app/pipes/orderby';
 import { StoreService } from 'src/app/services/store.service';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
+import { IAccountDto, IChatDto } from 'src/app/api-client/api-client';
+import { AccountListItemStubComponent } from '../account-list-item/account-list-item.component.stub';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { selectChats } from 'src/app/state/chats/chats.selector';
 import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
-import { IAccountDto, IChatDto } from 'src/app/api-client/api-client';
 import { SidebarState } from 'src/app/enums/sidebar-state';
-import { AccountListItemStubComponent } from '../account-list-item/account-list-item.component.stub';
 
 describe('AccountListComponent', () => {
     let component: AccountListComponent;
     let fixture: ComponentFixture<AccountListComponent>;
-    let store: jasmine.SpyObj<Store>;
+    let store: MockStore;
     let storeService: jasmine.SpyObj<StoreService>;
     let idGeneratorService: jasmine.SpyObj<IdGeneratorService>;
+    let mockSelectChats: MemoizedSelector<
+        object,
+        readonly IChatDto[],
+        DefaultProjectorFn<readonly IChatDto[]>
+    >;
+    let mockSelectAccounts: MemoizedSelector<
+        object,
+        readonly IAccountDto[],
+        DefaultProjectorFn<readonly IAccountDto[]>
+    >;
 
-    const mockAccounts$ = of([
-        {
-            id: '1',
-            firstName: 'John',
-            lastName: 'Doe',
-            accountTypeId: 1,
-            imageId: 'img1',
-            photoUrl: 'url1',
-        } as IAccountDto,
-    ]);
-    const mockChats$ = of([
-        {
-            id: '1',
-            isIndividual: true,
-            accountIds: ['1'],
-            chatName: 'John Doe',
-            imageId: 'img1',
-            photoUrl: 'url1',
-            unreadCount: 0,
-        } as IChatDto,
-    ]);
+    const account1 = {
+        id: '1',
+        firstName: 'John',
+        lastName: 'Doe',
+        accountTypeId: 1,
+        imageId: 'img1',
+    } as IAccountDto;
+
+    const account2 = {
+        id: '1',
+        firstName: 'John',
+        lastName: 'Doe',
+        accountTypeId: 1,
+        photoUrl: 'url1',
+    } as IAccountDto;
+
+    const chat1 = {
+        id: 'chat1',
+        accountIds: [account1.id, account2.id],
+        accountTypeId: 1,
+        chatName: 'John Doe',
+        imageId: 'img1',
+        isIndividual: true,
+    } as IChatDto;
 
     beforeEach(async () => {
-        store = jasmine.createSpyObj('Store', ['select']);
-        store.select.and.callFake((selector) => {
-            if (selector === selectAccounts) {
-                return mockAccounts$;
-            } else if (selector === selectChats) {
-                return mockChats$;
-            }
-            return of([]);
-        });
-
         storeService = jasmine.createSpyObj('StoreService', [
             'initAccountStorage',
             'setSelectedChatId',
@@ -71,7 +74,7 @@ describe('AccountListComponent', () => {
                 OrderByPipe,
             ],
             providers: [
-                { provide: Store, useValue: store },
+                provideMockStore({}),
                 { provide: StoreService, useValue: storeService },
                 { provide: IdGeneratorService, useValue: idGeneratorService },
             ],
@@ -81,6 +84,9 @@ describe('AccountListComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(AccountListComponent);
         component = fixture.componentInstance;
+        store = TestBed.inject(Store) as MockStore;
+        mockSelectChats = store.overrideSelector(selectChats, null);
+        mockSelectAccounts = store.overrideSelector(selectAccounts, null);
         fixture.detectChanges();
     });
 
@@ -89,69 +95,74 @@ describe('AccountListComponent', () => {
     });
 
     it('should call initAccountStorage on ngOnInit', () => {
+        // Arrange
+
+        // Act
         component.ngOnInit();
+
+        // Assert
         expect(storeService.initAccountStorage).toHaveBeenCalled();
     });
 
-    it('should call setSelectedChatId and markAllAsRead when onAccountSelected is called with an existing chat', () => {
-        const mockAccount: IAccountDto = {
-            id: '1',
-            firstName: 'John',
-            lastName: 'Doe',
-            accountTypeId: 1,
-            imageId: 'img1',
-            photoUrl: 'url1',
-        };
-        component.onAccountSelected(mockAccount);
+    it('should render two AccountListItemComponent instances with expected parameters', () => {
+        // Arrange
+        mockSelectAccounts.setResult([account1, account2]);
 
-        expect(storeService.setSelectedChatId).toHaveBeenCalledWith('1');
-        expect(storeService.markAllAsRead).toHaveBeenCalledWith({
-            id: '1',
-            isIndividual: true,
-            accountIds: ['1'],
-            chatName: 'John Doe',
-            imageId: 'img1',
-            photoUrl: 'url1',
-            unreadCount: 0,
-        });
+        // Act
+        store.refreshState();
+        fixture.detectChanges();
+
+        // Assert
+        const accountListItems = fixture.debugElement
+            .queryAll(By.directive(AccountListItemStubComponent))
+            .map((element) => element.componentInstance);
+
+        expect(accountListItems.length).toBe(2);
+        expect(accountListItems[0].account).toBe(account1);
+        expect(accountListItems[1].account).toBe(account2);
     });
 
-    it('should create a new chat and call setSelectedChatId when onAccountSelected is called with a new account', () => {
-        const mockAccount: IAccountDto = {
-            id: '2',
-            firstName: 'Jane',
-            lastName: 'Smith',
-            accountTypeId: 2,
-            imageId: 'img2',
-            photoUrl: 'url2',
-        };
-        component.onAccountSelected(mockAccount);
+    it('should call setSelectedChatId and markAllAsRead when onAccountSelected is called with an existing chat', async () => {
+        // Arrange
+        mockSelectAccounts.setResult([account1]);
+        mockSelectChats.setResult([chat1]);
 
-        expect(storeService.addChat).toHaveBeenCalled();
-        expect(storeService.setSelectedChatId).toHaveBeenCalled();
-    });
+        // Act
+        store.refreshState();
+        fixture.detectChanges();
+        await component.onAccountSelected(account1);
 
-    it('should call setLayoutSettings with sidebarState.chats on onAccountSelected', () => {
-        const mockAccount: IAccountDto = {
-            id: '1',
-            firstName: 'John',
-            lastName: 'Doe',
-            accountTypeId: 1,
-            imageId: 'img1',
-            photoUrl: 'url1',
-        };
-        component.onAccountSelected(mockAccount);
-
+        // Assert
+        expect(storeService.setSelectedChatId).toHaveBeenCalledWith(chat1.id);
+        expect(storeService.markAllAsRead).toHaveBeenCalledWith(chat1);
+        expect(idGeneratorService.getNextFakeId).not.toHaveBeenCalled();
+        expect(storeService.addChat).not.toHaveBeenCalled();
         expect(storeService.setLayoutSettings).toHaveBeenCalledWith({
             sidebarState: SidebarState.chats,
         });
     });
 
-    it('should display account list items', () => {
+    it('should create a new chat and call setSelectedChatId when onAccountSelected is called with a new account', async () => {
+        // Arrange
+        const newChatId = 42;
+        mockSelectAccounts.setResult([account1]);
+        mockSelectChats.setResult([]);
+        idGeneratorService.getNextFakeId.and.returnValue(newChatId);
+
+        // Act
+        store.refreshState();
         fixture.detectChanges();
-        const accountListItem = fixture.debugElement.query(
-            By.directive(AccountListItemStubComponent),
+        await component.onAccountSelected(account1);
+
+        // Assert
+        expect(storeService.markAllAsRead).not.toHaveBeenCalled();
+        expect(idGeneratorService.getNextFakeId).toHaveBeenCalled();
+        expect(storeService.addChat).toHaveBeenCalled();
+        expect(storeService.setSelectedChatId).toHaveBeenCalledWith(
+            newChatId.toString(),
         );
-        expect(accountListItem).toBeTruthy();
+        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({
+            sidebarState: SidebarState.chats,
+        });
     });
 });

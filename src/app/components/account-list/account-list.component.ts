@@ -22,19 +22,20 @@ export class AccountListComponent implements OnInit, OnDestroy {
         private store: Store,
         private storeService: StoreService,
         private idGeneratorService: IdGeneratorService,
-    ) { }
+    ) {}
 
     ngOnInit(): void {
-        this.storeService.initAccountStorage();
-
         combineLatest([
             this.store.select(selectChats),
-            this.store.select(selectAccounts)
-        ]).pipe(takeUntil(this.unsubscribe$))
+            this.store.select(selectAccounts),
+        ])
+            .pipe(takeUntil(this.unsubscribe$))
             .subscribe(([chats, accounts]) => {
                 this.chats = chats;
                 this.accounts = accounts;
             });
+
+        this.storeService.initAccountStorage();
     }
 
     ngOnDestroy(): void {
@@ -42,13 +43,13 @@ export class AccountListComponent implements OnInit, OnDestroy {
         this.unsubscribe$.complete();
     }
 
-    onAccountSelected(account: IAccountDto): void {
+    async onAccountSelected(account: IAccountDto): Promise<void> {
         const chat = this.chats.find(
             (chat) => chat.isIndividual && chat.accountIds[0] === account.id,
         );
         if (chat) {
             this.storeService.setSelectedChatId(chat.id);
-            this.storeService.markAllAsRead(chat);
+            await this.storeService.markAllAsRead(chat);
         } else {
             const chatDto = new ChatDto({
                 id: this.idGeneratorService.getNextFakeId().toString(),
