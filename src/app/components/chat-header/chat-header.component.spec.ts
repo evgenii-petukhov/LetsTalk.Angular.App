@@ -72,10 +72,10 @@ describe('ChatHeaderComponent', () => {
         component.onBackClicked();
 
         // Assert
-        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({
+        expect(storeService.setLayoutSettings).toHaveBeenCalledOnceWith({
             activeArea: ActiveArea.sidebar,
         });
-        expect(storeService.setSelectedChatId).toHaveBeenCalledWith(null);
+        expect(storeService.setSelectedChatId).toHaveBeenCalledOnceWith(null);
     });
 
     it('should display the chat name and pass correct urlOptions to app-avatar', () => {

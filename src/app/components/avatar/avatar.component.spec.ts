@@ -56,8 +56,8 @@ describe('AvatarComponent', () => {
 
             // Assert
             expect(component.backgroundImage).toBe(`url('${defaultUrl}')`);
-            expect(storeService.getImageContent).not.toHaveBeenCalled();
-            expect(errorService.handleError).not.toHaveBeenCalled();
+            expect(storeService.getImageContent).not.toHaveBeenCalledTimes(1);
+            expect(errorService.handleError).not.toHaveBeenCalledTimes(1);
         });
     });
 
@@ -73,8 +73,8 @@ describe('AvatarComponent', () => {
         expect(component.backgroundImage).toBe(
             `url('${url}'), url('${defaultUrl}')`,
         );
-        expect(storeService.getImageContent).not.toHaveBeenCalled();
-        expect(errorService.handleError).not.toHaveBeenCalled();
+        expect(storeService.getImageContent).not.toHaveBeenCalledTimes(1);
+        expect(errorService.handleError).not.toHaveBeenCalledTimes(1);
     });
 
     it('should display background image from image ID', async () => {
@@ -92,8 +92,8 @@ describe('AvatarComponent', () => {
         expect(component.backgroundImage).toContain(
             `url('${mockImage.content}')`,
         );
-        expect(storeService.getImageContent).toHaveBeenCalledWith(imageId);
-        expect(errorService.handleError).not.toHaveBeenCalled();
+        expect(storeService.getImageContent).toHaveBeenCalledOnceWith(imageId);
+        expect(errorService.handleError).not.toHaveBeenCalledTimes(1);
     });
 
     it('should display background image from URL and image ID', async () => {
@@ -111,8 +111,8 @@ describe('AvatarComponent', () => {
         expect(component.backgroundImage).toBe(
             `url('${url}'), url('${defaultUrl}')`,
         );
-        expect(storeService.getImageContent).not.toHaveBeenCalled();
-        expect(errorService.handleError).not.toHaveBeenCalled();
+        expect(storeService.getImageContent).not.toHaveBeenCalledTimes(1);
+        expect(errorService.handleError).not.toHaveBeenCalledTimes(1);
     });
 
     it('should display background image from image ID and URL', async () => {
@@ -128,8 +128,8 @@ describe('AvatarComponent', () => {
 
         // Assert
         expect(component.backgroundImage).toBe(`url('${mockImage.content}')`);
-        expect(storeService.getImageContent).toHaveBeenCalledWith(imageId);
-        expect(errorService.handleError).not.toHaveBeenCalled();
+        expect(storeService.getImageContent).toHaveBeenCalledOnceWith(imageId);
+        expect(errorService.handleError).not.toHaveBeenCalledTimes(1);
     });
 
     it('should display default background image if getImageContent fails', async () => {
@@ -145,8 +145,8 @@ describe('AvatarComponent', () => {
 
         // Assert
         expect(component.backgroundImage).toBe(`url('${defaultUrl}')`);
-        expect(storeService.getImageContent).toHaveBeenCalledWith(imageId);
-        expect(errorService.handleError).toHaveBeenCalledWith(
+        expect(storeService.getImageContent).toHaveBeenCalledOnceWith(imageId);
+        expect(errorService.handleError).toHaveBeenCalledOnceWith(
             error,
             errorMessages.downloadImage,
         );

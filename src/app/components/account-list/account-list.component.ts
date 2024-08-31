@@ -24,7 +24,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
         private idGeneratorService: IdGeneratorService,
     ) {}
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
         combineLatest([
             this.store.select(selectChats),
             this.store.select(selectAccounts),
@@ -35,7 +35,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
                 this.accounts = accounts;
             });
 
-        this.storeService.initAccountStorage();
+        await this.storeService.initAccountStorage();
     }
 
     ngOnDestroy(): void {

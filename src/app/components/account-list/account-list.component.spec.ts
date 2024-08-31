@@ -94,16 +94,6 @@ describe('AccountListComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should call initAccountStorage on ngOnInit', () => {
-        // Arrange
-
-        // Act
-        component.ngOnInit();
-
-        // Assert
-        expect(storeService.initAccountStorage).toHaveBeenCalled();
-    });
-
     it('should render two AccountListItemComponent instances with expected parameters', () => {
         // Arrange
         mockSelectAccounts.setResult([account1, account2]);
@@ -113,6 +103,8 @@ describe('AccountListComponent', () => {
         fixture.detectChanges();
 
         // Assert
+        expect(storeService.initAccountStorage).toHaveBeenCalledTimes(1);
+
         const accountListItems = fixture.debugElement
             .queryAll(By.directive(AccountListItemStubComponent))
             .map((element) => element.componentInstance);
@@ -133,11 +125,14 @@ describe('AccountListComponent', () => {
         await component.onAccountSelected(account1);
 
         // Assert
-        expect(storeService.setSelectedChatId).toHaveBeenCalledWith(chat1.id);
-        expect(storeService.markAllAsRead).toHaveBeenCalledWith(chat1);
-        expect(idGeneratorService.getNextFakeId).not.toHaveBeenCalled();
-        expect(storeService.addChat).not.toHaveBeenCalled();
-        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({
+        expect(storeService.initAccountStorage).toHaveBeenCalledTimes(1);
+        expect(storeService.setSelectedChatId).toHaveBeenCalledOnceWith(
+            chat1.id,
+        );
+        expect(storeService.markAllAsRead).toHaveBeenCalledOnceWith(chat1);
+        expect(idGeneratorService.getNextFakeId).not.toHaveBeenCalledTimes(1);
+        expect(storeService.addChat).not.toHaveBeenCalledTimes(1);
+        expect(storeService.setLayoutSettings).toHaveBeenCalledOnceWith({
             sidebarState: SidebarState.chats,
         });
     });
@@ -155,13 +150,14 @@ describe('AccountListComponent', () => {
         await component.onAccountSelected(account1);
 
         // Assert
-        expect(storeService.markAllAsRead).not.toHaveBeenCalled();
-        expect(idGeneratorService.getNextFakeId).toHaveBeenCalled();
-        expect(storeService.addChat).toHaveBeenCalled();
-        expect(storeService.setSelectedChatId).toHaveBeenCalledWith(
+        expect(storeService.initAccountStorage).toHaveBeenCalledTimes(1);
+        expect(storeService.markAllAsRead).not.toHaveBeenCalledTimes(1);
+        expect(idGeneratorService.getNextFakeId).toHaveBeenCalledTimes(1);
+        expect(storeService.addChat).toHaveBeenCalledTimes(1);
+        expect(storeService.setSelectedChatId).toHaveBeenCalledOnceWith(
             newChatId.toString(),
         );
-        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({
+        expect(storeService.setLayoutSettings).toHaveBeenCalledOnceWith({
             sidebarState: SidebarState.chats,
         });
     });

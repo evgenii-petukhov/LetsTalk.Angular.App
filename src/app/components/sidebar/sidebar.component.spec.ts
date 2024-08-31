@@ -105,7 +105,7 @@ describe('SidebarComponent', () => {
         component.switchToAccountList();
 
         // Assert
-        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({
+        expect(storeService.setLayoutSettings).toHaveBeenCalledOnceWith({
             sidebarState: SidebarState.accounts,
         });
     });
@@ -117,7 +117,7 @@ describe('SidebarComponent', () => {
         component.onBackButtonClicked();
 
         // Assert
-        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({
+        expect(storeService.setLayoutSettings).toHaveBeenCalledOnceWith({
             sidebarState: SidebarState.chats,
         });
     });
@@ -131,8 +131,8 @@ describe('SidebarComponent', () => {
         component.ngOnDestroy();
 
         // Assert
-        expect(component['unsubscribe$'].next).toHaveBeenCalled();
-        expect(component['unsubscribe$'].complete).toHaveBeenCalled();
+        expect(component['unsubscribe$'].next).toHaveBeenCalledTimes(1);
+        expect(component['unsubscribe$'].complete).toHaveBeenCalledTimes(1);
     });
 
     function getChatListElement() {

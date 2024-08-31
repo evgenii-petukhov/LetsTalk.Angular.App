@@ -27,7 +27,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('scrollFrame', { static: false }) scrollFrame: ElementRef;
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     @ViewChildren('scrollItem') itemElements: QueryList<any>;
-    messages$ = this.store.select(selectMessages);
+    messages: readonly Message[] = [];
     private scrollContainer: HTMLDivElement;
     private chatId: string;
     private unsubscribe$: Subject<void> = new Subject<void>();
@@ -55,6 +55,13 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.scrollCounter = 0;
                 this.isMessageListLoaded = false;
                 await this.loadMessages();
+            });
+
+        this.store
+            .select(selectMessages)
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe(async (messages) => {
+                this.messages = messages;
             });
     }
 

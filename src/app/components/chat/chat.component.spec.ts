@@ -1,27 +1,45 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+    ComponentFixture,
+    fakeAsync,
+    flush,
+    TestBed,
+    tick,
+} from '@angular/core/testing';
 import { ChatComponent } from './chat.component';
-import { Store } from '@ngrx/store';
-import { of } from 'rxjs';
+import { DefaultProjectorFn, MemoizedSelector, Store } from '@ngrx/store';
 import { ApiService } from '../../services/api.service';
 import { StoreService } from 'src/app/services/store.service';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
-import { ElementRef } from '@angular/core';
 import { ChatHeaderStubComponent } from '../chat-header/chat-header.component.stub';
 import { MessageStubComponent } from '../message/message.component.stub';
 import { SendMessageStubComponent } from '../send-message/send-message.component.stub';
 import { VisibleOnlyPipe } from 'src/app/pipes/visibleOnly';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
+import { Message } from 'src/app/models/message';
+import { selectMessages } from 'src/app/state/messages/messages.selector';
+import { By } from '@angular/platform-browser';
+import { IMessageDto } from 'src/app/api-client/api-client';
 
 describe('ChatComponent', () => {
     let component: ChatComponent;
     let fixture: ComponentFixture<ChatComponent>;
     let apiService: jasmine.SpyObj<ApiService>;
-    let store: jasmine.SpyObj<Store>;
+    let store: MockStore;
     let storeService: jasmine.SpyObj<StoreService>;
     let idGeneratorService: jasmine.SpyObj<IdGeneratorService>;
+    let mockSelectSelectedChatId: MemoizedSelector<
+        object,
+        string,
+        DefaultProjectorFn<string>
+    >;
+    let mockSelectMessages: MemoizedSelector<
+        object,
+        readonly Message[],
+        DefaultProjectorFn<readonly Message[]>
+    >;
 
     beforeEach(async () => {
-        store = jasmine.createSpyObj('Store', ['select']);
-        store.select.and.returnValue(of([]));
         apiService = jasmine.createSpyObj('ApiService', ['getMessages']);
         storeService = jasmine.createSpyObj('StoreService', [
             'initMessages',
@@ -41,7 +59,7 @@ describe('ChatComponent', () => {
                 VisibleOnlyPipe,
             ],
             providers: [
-                { provide: Store, useValue: store },
+                provideMockStore({}),
                 { provide: ApiService, useValue: apiService },
                 { provide: StoreService, useValue: storeService },
                 { provide: IdGeneratorService, useValue: idGeneratorService },
@@ -52,35 +70,105 @@ describe('ChatComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(ChatComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
+        store = TestBed.inject(Store) as MockStore;
+        mockSelectMessages = store.overrideSelector(selectMessages, null);
+        mockSelectSelectedChatId = store.overrideSelector(
+            selectSelectedChatId,
+            null,
+        );
     });
 
     it('should create', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should load more messages when scrolled to the top', async () => {
+    it('should not render any messages when message list is empty', fakeAsync(() => {
         // Arrange
-        apiService.getMessages.and.resolveTo([]);
-        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-        const loadMessagesSpy = spyOn<any>(
-            component,
-            'loadMessages',
-        ).and.callThrough();
+        const chatId = 'chatId';
+        const messageDtos = [];
+        mockSelectSelectedChatId.setResult(chatId);
+        mockSelectMessages.setResult(messageDtos);
+        apiService.getMessages.and.resolveTo(messageDtos);
 
-        component['isMessageListLoaded'] = true;
-        component.scrollFrame = {
-            nativeElement: {
-                scrollTop: 0,
+        // Act
+        store.refreshState();
+        fixture.detectChanges();
+
+        tick();
+
+        // Assert
+        expect(apiService.getMessages).toHaveBeenCalledOnceWith(chatId, 0);
+        expect(storeService.addMessages).toHaveBeenCalledOnceWith(messageDtos);
+        expect(storeService.setLastMessageInfo).toHaveBeenCalledOnceWith(
+            chatId,
+            0,
+            '',
+        );
+        const messages = fixture.debugElement.queryAll(
+            By.directive(MessageStubComponent),
+        );
+        expect(messages.length).toBe(0);
+        flush();
+    }));
+
+    it('should render messages when message list is not empty', fakeAsync(async () => {
+        // Arrange
+        const chatId = 'chatId';
+        const messageDtos: IMessageDto[] = [
+            {
+                chatId: chatId,
+                id: 'message1',
+                text: 'Hi',
+                textHtml: '<p>Hi</p>',
+                created: 1725020117,
             },
-        } as ElementRef;
+            {
+                chatId: chatId,
+                id: 'message2',
+                text: 'Bye',
+                textHtml: '<p>Bye</p>',
+                created: 1725113717,
+            },
+        ];
+        mockSelectSelectedChatId.setResult(chatId);
+        mockSelectMessages.setResult([]);
+        apiService.getMessages.and.resolveTo(messageDtos);
+
+        // Act
+        store.refreshState();
+        fixture.detectChanges();
+
+        tick();
+
+        // Assert
+        expect(apiService.getMessages).toHaveBeenCalledOnceWith(chatId, 0);
+        expect(storeService.addMessages).toHaveBeenCalledOnceWith(messageDtos);
+        expect(storeService.setLastMessageInfo).toHaveBeenCalledOnceWith(
+            chatId,
+            1725113717,
+            'message2',
+        );
+
+        // Act
+        const messages = messageDtos.map((message) => new Message(message));
+        mockSelectMessages.setResult(messages);
+        store.refreshState();
+        fixture.detectChanges();
+
+        // Assert
+        const messageElements = fixture.debugElement
+            .queryAll(By.directive(MessageStubComponent))
+            .map((element) => element.componentInstance);
+        expect(messageElements.length).toBe(2);
+        expect(messageElements[0].message).toBe(messages[0]);
+        expect(messageElements[1].message).toBe(messages[1]);
 
         // Act
         await component.onScroll();
+        expect(apiService.getMessages).toHaveBeenCalledWith(chatId, 1);
+        expect(storeService.addMessages).toHaveBeenCalledTimes(2);
+        expect(storeService.setLastMessageInfo).toHaveBeenCalledTimes(1);
 
-        // Assert
-        expect(loadMessagesSpy).toHaveBeenCalled();
-        expect(component['pageIndex']).toBe(0);
-        expect(component['scrollCounter']).toBe(1);
-    });
+        flush();
+    }));
 });

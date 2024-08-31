@@ -61,7 +61,9 @@ describe('AccountListItemComponent', () => {
         component.onAccountSelected();
 
         // Assert
-        expect(component.accountSelected.emit).toHaveBeenCalledWith(account);
+        expect(component.accountSelected.emit).toHaveBeenCalledOnceWith(
+            account,
+        );
     });
 
     it('should emit an event when link element is clicked', () => {
@@ -77,6 +79,8 @@ describe('AccountListItemComponent', () => {
             .triggerEventHandler('click', null);
 
         // Assert
-        expect(component.accountSelected.emit).toHaveBeenCalledWith(account);
+        expect(component.accountSelected.emit).toHaveBeenCalledOnceWith(
+            account,
+        );
     });
 });
