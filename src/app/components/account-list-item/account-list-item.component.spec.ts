@@ -51,7 +51,7 @@ describe('AccountListItemComponent', () => {
         const userDetailsComponent = fixture.debugElement.query(
             By.directive(UserDetailsStubComponent),
         ).componentInstance as UserDetailsStubComponent;
-        expect(userDetailsComponent.userName).toEqual(
+        expect(userDetailsComponent.value).toEqual(
             `${account.firstName} ${account.lastName}`,
         );
     });

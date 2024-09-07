@@ -3,6 +3,8 @@ import { ChatListItemComponent } from './chat-list-item.component';
 import { IChatDto } from 'src/app/api-client/api-client';
 import { AvatarStubComponent } from '../avatar/avatar.stub';
 import { UserDetailsStubComponent } from '../user-details/user-details.component.stub';
+import { UnreadCountStubComponent } from '../unread-count/unread-count.component.stub';
+import { By } from '@angular/platform-browser';
 
 describe('ChatListItemComponent', () => {
     let component: ChatListItemComponent;
@@ -14,6 +16,7 @@ describe('ChatListItemComponent', () => {
                 ChatListItemComponent,
                 AvatarStubComponent,
                 UserDetailsStubComponent,
+                UnreadCountStubComponent,
             ],
         }).compileComponents();
     });
@@ -60,15 +63,15 @@ describe('ChatListItemComponent', () => {
         component.chat = chat;
         fixture.detectChanges();
 
-        const nameElement = fixture.nativeElement.querySelector('.user-name');
-        expect(nameElement.textContent).toContain(chat.chatName);
+        const userDetailsComponent = fixture.debugElement.query(
+            By.directive(UserDetailsStubComponent),
+        ).componentInstance as UserDetailsStubComponent;
+        expect(userDetailsComponent.value).toEqual(chat.chatName);
 
-        const unreadCountElement =
-            fixture.nativeElement.querySelector('.unread-count');
-        expect(unreadCountElement).toBeTruthy();
-        expect(
-            unreadCountElement.querySelector('.unread-count-text').textContent,
-        ).toContain(chat.unreadCount.toString());
+        const unreadCountComponent = fixture.debugElement.query(
+            By.directive(UnreadCountStubComponent),
+        ).componentInstance as UnreadCountStubComponent;
+        expect(unreadCountComponent.value).toEqual(chat.unreadCount);
     });
 
     it('should not display unread count if unreadCount is not present', () => {

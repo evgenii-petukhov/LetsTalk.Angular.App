@@ -5,6 +5,5 @@ import { Component, Input } from '@angular/core';
     template: '<div></div>',
 })
 export class UserDetailsStubComponent {
-    @Input() userName: string;
-    @Input() unreadCount: number;
+    @Input() value: string;
 }

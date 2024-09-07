@@ -2,4 +2,4 @@
     <fa-icon [icon]="faChevronLeft" [title]="'Back'"></fa-icon>
 </button>
 <app-avatar *ngIf="chat" class="user-photo" [urlOptions]="[chat.imageId, chat.photoUrl]"></app-avatar>
-<app-user-details [userName]="chat?.chatName"></app-user-details>
+<app-user-details [value]="chat?.chatName"></app-user-details>

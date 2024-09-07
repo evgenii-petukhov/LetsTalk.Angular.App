@@ -6,5 +6,5 @@ import { Component, Input } from '@angular/core';
     styleUrl: './user-details.component.scss',
 })
 export class UserDetailsComponent {
-    @Input() userName: string;
+    @Input() value: string;
 }

@@ -88,7 +88,7 @@ describe('ChatHeaderComponent', () => {
         store.refreshState();
         fixture.detectChanges();
 
-        expect(getUserNameElement().userName).toContain(mockChat.chatName);
+        expect(getUserNameElement().value).toContain(mockChat.chatName);
 
         // Assert
         expect(getAvatarElement().componentInstance.urlOptions).toEqual([
@@ -103,7 +103,7 @@ describe('ChatHeaderComponent', () => {
         store.refreshState();
         fixture.detectChanges();
 
-        expect(getUserNameElement().userName).toContain(mockChat2.chatName);
+        expect(getUserNameElement().value).toContain(mockChat2.chatName);
 
         // Assert
         expect(getAvatarElement().componentInstance.urlOptions).toEqual([

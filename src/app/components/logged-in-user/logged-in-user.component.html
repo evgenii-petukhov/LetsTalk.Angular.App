@@ -8,7 +8,7 @@
                 class="user-photo">
             </app-avatar>
         </a>
-        <app-user-details [userName]="isNavigationActive ? 'Select contact' : 'You'"></app-user-details>
+        <app-user-details [value]="isNavigationActive ? 'Select contact' : 'You'"></app-user-details>
         <a href="#" class="icon" (click)="logout()" title="Log out" *ngIf="!isNavigationActive">
             <fa-icon [icon]="faRightFromBracket"></fa-icon>
         </a>
