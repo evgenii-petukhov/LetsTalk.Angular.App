@@ -7,5 +7,4 @@ import { Component, Input } from '@angular/core';
 })
 export class UserDetailsComponent {
     @Input() userName: string;
-    @Input() unreadCount: number;
 }
