@@ -6,9 +6,9 @@ import {
     OnInit,
     Output,
 } from '@angular/core';
-import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { StoreService } from 'src/app/services/store.service';
 import { IProfileDto } from 'src/app/api-client/api-client';
+import { SidebarState } from 'src/app/enums/sidebar-state';
 
 @Component({
     selector: 'app-logged-in-user',
@@ -16,7 +16,6 @@ import { IProfileDto } from 'src/app/api-client/api-client';
     styleUrls: ['./logged-in-user.component.scss'],
 })
 export class LoggedInUserComponent implements OnInit {
-    faRightFromBracket = faRightFromBracket;
     account: IProfileDto;
     @Output() backButtonClicked = new EventEmitter();
     @Input()
@@ -29,14 +28,16 @@ export class LoggedInUserComponent implements OnInit {
         this.account = await this.storeService.getLoggedInUser();
     }
 
-    logout(): boolean {
+    onLogoutButtonClicked(): boolean {
         window.localStorage.clear();
         window.location.reload();
         return false;
     }
 
     onBackButtonClicked(): boolean {
-        this.backButtonClicked.emit();
+        this.storeService.setLayoutSettings({
+            sidebarState: SidebarState.chats,
+        });
         return false;
     }
 }

@@ -20,13 +20,18 @@ export class SidebarComponent implements OnInit, OnDestroy {
     constructor(
         private store: Store,
         private storeService: StoreService,
-    ) { }
+    ) {}
 
     ngOnInit(): void {
-        this.store.select(selectLayoutSettings).pipe(takeUntil(this.unsubscribe$)).subscribe((layout) => {
-            this.isChatListShown = layout.sidebarState === SidebarState.chats;
-            this.isAccountListShown = layout.sidebarState === SidebarState.accounts;
-        });
+        this.store
+            .select(selectLayoutSettings)
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe((layout) => {
+                this.isChatListShown =
+                    layout.sidebarState === SidebarState.chats;
+                this.isAccountListShown =
+                    layout.sidebarState === SidebarState.accounts;
+            });
     }
 
     ngOnDestroy(): void {
@@ -37,12 +42,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
     switchToAccountList(): void {
         this.storeService.setLayoutSettings({
             sidebarState: SidebarState.accounts,
-        });
-    }
-
-    onBackButtonClicked(): void {
-        this.storeService.setLayoutSettings({
-            sidebarState: SidebarState.chats,
         });
     }
 }

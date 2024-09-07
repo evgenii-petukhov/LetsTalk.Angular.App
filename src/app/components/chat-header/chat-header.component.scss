@@ -14,26 +14,13 @@
         padding: 10px 10px 10px 0;
     }
 
-    ::ng-deep .back {
+    app-back-button {
         padding: 0 10px;
         display: none;
 
         @include media-breakpoint-down(lg) {
-            display: block;
+            display: flex;
             padding: 0 10px 0 15px;
-        }
-    }
-
-    .back {
-        flex: 0 1 auto;
-        background: none;
-        border: none;
-        font-size: 20px;
-        padding: 0 10px 0 15px;
-        height: $avatar-size-desktop;
-
-        @include media-breakpoint-down(sm) {
-            height: $avatar-size-mobile;
         }
     }
 

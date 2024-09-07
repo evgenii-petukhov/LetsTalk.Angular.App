@@ -1,13 +1,6 @@
-<button
-    class="new-chat-button"
-    (click)="switchToAccountList()"
-    *ngIf="isChatListShown"
->
+<button class="new-chat-button" (click)="switchToAccountList()" *ngIf="isChatListShown">
     <fa-icon [icon]="faCirclePlus" [title]="'New chat'"></fa-icon>
 </button>
-<app-logged-in-user
-    [isNavigationActive]="isAccountListShown && 'active'"
-    (backButtonClicked)="onBackButtonClicked()"
-></app-logged-in-user>
+<app-logged-in-user [isNavigationActive]="isAccountListShown && 'active'"></app-logged-in-user>
 <app-chat-list *ngIf="isChatListShown"></app-chat-list>
 <app-account-list *ngIf="isAccountListShown"></app-account-list>

@@ -5,8 +5,6 @@
             <app-avatar [urlOptions]="account && [account.imageId, account.photoUrl]"></app-avatar>
         </a>
         <app-user-details [value]="isNavigationActive ? 'Select contact' : 'You'"></app-user-details>
-        <a href="#" class="icon" (click)="logout()" title="Log out" *ngIf="!isNavigationActive">
-            <fa-icon [icon]="faRightFromBracket"></fa-icon>
-        </a>
+        <app-logout-button (click)="onLogoutButtonClicked()" *ngIf="!isNavigationActive"></app-logout-button>
     </div>
 </div>
