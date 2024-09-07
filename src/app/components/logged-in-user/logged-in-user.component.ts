@@ -1,11 +1,4 @@
-import {
-    Component,
-    EventEmitter,
-    HostBinding,
-    Input,
-    OnInit,
-    Output,
-} from '@angular/core';
+import { Component, HostBinding, Input, OnInit } from '@angular/core';
 import { StoreService } from 'src/app/services/store.service';
 import { IProfileDto } from 'src/app/api-client/api-client';
 import { SidebarState } from 'src/app/enums/sidebar-state';
@@ -17,7 +10,6 @@ import { SidebarState } from 'src/app/enums/sidebar-state';
 })
 export class LoggedInUserComponent implements OnInit {
     account: IProfileDto;
-    @Output() backButtonClicked = new EventEmitter();
     @Input()
     @HostBinding('class.navigation-active')
     isNavigationActive: boolean = false;

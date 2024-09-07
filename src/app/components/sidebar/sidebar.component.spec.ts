@@ -110,18 +110,6 @@ describe('SidebarComponent', () => {
         });
     });
 
-    it('should call setLayoutSettings with chats when onBackButtonClicked is called', () => {
-        // Arrange
-
-        // Act
-        component.onBackButtonClicked();
-
-        // Assert
-        expect(storeService.setLayoutSettings).toHaveBeenCalledOnceWith({
-            sidebarState: SidebarState.chats,
-        });
-    });
-
     it('should unsubscribe on component destruction', () => {
         // Arrange
         spyOn(component['unsubscribe$'], 'next');
