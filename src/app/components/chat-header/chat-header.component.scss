@@ -1,5 +1,4 @@
 @import "bootstrap/scss/bootstrap";
-@import "../shared/extend/user-details";
 @import "../shared/mixins/user-photo";
 
 :host {
@@ -31,13 +30,5 @@
 
     .user-photo {
         @include user-photo(42px);
-    }
-
-    .user-details {
-        @extend %user-details;
-
-        .user-name {
-            text-shadow: 0 1px 1px #fff;
-        }
     }
 }

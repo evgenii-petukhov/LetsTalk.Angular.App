@@ -3,6 +3,7 @@ import { AccountListItemComponent } from './account-list-item.component';
 import { IAccountDto } from 'src/app/api-client/api-client';
 import { By } from '@angular/platform-browser';
 import { AvatarStubComponent } from '../avatar/avatar.stub';
+import { UserDetailsStubComponent } from '../user-details/user-details.component.stub';
 
 describe('AccountListItemComponent', () => {
     let component: AccountListItemComponent;
@@ -18,7 +19,11 @@ describe('AccountListItemComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [AccountListItemComponent, AvatarStubComponent],
+            declarations: [
+                AccountListItemComponent,
+                AvatarStubComponent,
+                UserDetailsStubComponent,
+            ],
         }).compileComponents();
     });
 
@@ -27,13 +32,14 @@ describe('AccountListItemComponent', () => {
         component = fixture.componentInstance;
     });
 
-    it('should render the avatar component with correct url options', () => {
+    it('should render the AvatarComponent and UserDetailsComponent with correct values', () => {
         // Arrange
 
         // Act
         component.account = account;
         fixture.detectChanges();
 
+        // Assert
         const avatarComponent = fixture.debugElement.query(
             By.directive(AvatarStubComponent),
         ).componentInstance as AvatarStubComponent;
@@ -42,9 +48,10 @@ describe('AccountListItemComponent', () => {
             account.photoUrl,
         ]);
 
-        // Assert
-        const userName = fixture.nativeElement.querySelector('.user-name');
-        expect(userName.textContent).toContain(
+        const userDetailsComponent = fixture.debugElement.query(
+            By.directive(UserDetailsStubComponent),
+        ).componentInstance as UserDetailsStubComponent;
+        expect(userDetailsComponent.value).toEqual(
             `${account.firstName} ${account.lastName}`,
         );
     });

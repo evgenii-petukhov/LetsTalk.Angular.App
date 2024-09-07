@@ -2,6 +2,6 @@ import { Component } from '@angular/core';
 
 @Component({
     selector: 'app-sidebar',
-    template: '<p>Mock Sidebar</p>',
+    template: '<div></div>',
 })
 export class StubSidebarComponent {}

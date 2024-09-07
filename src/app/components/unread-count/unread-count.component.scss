@@ -1,0 +1,31 @@
+@import "bootstrap/scss/bootstrap";
+
+:host {
+    display: flex;
+
+    .unread-count {
+        width: 24px;
+        height: 24px;
+        background: #ffd356;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        @include media-breakpoint-down(sm) {
+            width: 36px;
+            height: 36px;
+        }
+
+        .unread-count-text {
+            flex: 0 1 auto;
+            font-size: 13px;
+            line-height: 13px;
+
+            @include media-breakpoint-down(sm) {
+                font-size: 16px;
+                line-height: 16px;
+            }
+        }
+    }
+}

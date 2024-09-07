@@ -1,37 +1,16 @@
 <div class="logged-in-user-container">
     <div class="logged-in-user-inner-container">
-        <button
-            class="back"
-            (click)="onBackButtonClicked()"
-            *ngIf="isNavigationActive"
-        >
+        <button class="back" (click)="onBackButtonClicked()" *ngIf="isNavigationActive">
             <fa-icon [icon]="faChevronLeft" [title]="'Back'"></fa-icon>
         </button>
-        <a
-            [routerLink]="['/profile']"
-            title="Edit profile"
-            *ngIf="!isNavigationActive"
-        >
-            <app-avatar
-                class="user-photo"
-                [urlOptions]="account && [account.imageId, account.photoUrl]"
-                class="user-photo"
-            >
+        <a [routerLink]="['/profile']" title="Edit profile" *ngIf="!isNavigationActive">
+            <app-avatar class="user-photo" [urlOptions]="account && [account.imageId, account.photoUrl]"
+                class="user-photo">
             </app-avatar>
         </a>
-        <div class="user-details">
-            <div class="user-name">
-                {{ isNavigationActive ? "Select contact" : "You" }}
-            </div>
-            <a
-                href="#"
-                class="icon"
-                (click)="logout()"
-                title="Log out"
-                *ngIf="!isNavigationActive"
-            >
-                <fa-icon [icon]="faRightFromBracket"></fa-icon>
-            </a>
-        </div>
+        <app-user-details [value]="isNavigationActive ? 'Select contact' : 'You'"></app-user-details>
+        <a href="#" class="icon" (click)="logout()" title="Log out" *ngIf="!isNavigationActive">
+            <fa-icon [icon]="faRightFromBracket"></fa-icon>
+        </a>
     </div>
 </div>

@@ -39,6 +39,8 @@ import { AccountListItemComponent } from './components/account-list-item/account
 import { LoginByEmailComponent } from './components/login-by-email/login-by-email.component';
 import { InlineCountdownComponent } from './components/inline-countdown/inline-countdown.component';
 import { SendMessageComponent } from './components/send-message/send-message.component';
+import { UserDetailsComponent } from './components/user-details/user-details.component';
+import { UnreadCountComponent } from './components/unread-count/unread-count.component';
 
 @NgModule({
     declarations: [
@@ -65,6 +67,8 @@ import { SendMessageComponent } from './components/send-message/send-message.com
         LoginByEmailComponent,
         InlineCountdownComponent,
         SendMessageComponent,
+        UserDetailsComponent,
+        UnreadCountComponent,
     ],
     imports: [
         BrowserModule,
