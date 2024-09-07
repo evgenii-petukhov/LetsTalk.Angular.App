@@ -20,6 +20,7 @@ import { Message } from 'src/app/models/message';
 import { selectMessages } from 'src/app/state/messages/messages.selector';
 import { By } from '@angular/platform-browser';
 import { IMessageDto } from 'src/app/api-client/api-client';
+import { OrderByPipe } from 'src/app/pipes/orderby';
 
 describe('ChatComponent', () => {
     let component: ChatComponent;
@@ -57,6 +58,7 @@ describe('ChatComponent', () => {
                 MessageStubComponent,
                 SendMessageStubComponent,
                 VisibleOnlyPipe,
+                OrderByPipe,
             ],
             providers: [
                 provideMockStore({}),
