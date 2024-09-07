@@ -31,6 +31,76 @@ describe('ChatListItemComponent', () => {
         expect(component).toBeTruthy();
     });
 
+    it('should render the AvatarComponent, UserDetailsComponent, and UnreadCountComponent with correct values', () => {
+        // Arrange
+        const chat: IChatDto = {
+            id: 'chat-id',
+            chatName: 'Chat Name',
+            unreadCount: 5,
+            photoUrl: 'photo-url',
+            imageId: 'image-id',
+        };
+
+        // Act
+        component.chat = chat;
+        fixture.detectChanges();
+
+        // Assert
+        const avatarComponent = fixture.debugElement.query(
+            By.directive(AvatarStubComponent),
+        ).componentInstance as AvatarStubComponent;
+        expect(avatarComponent.urlOptions).toEqual([
+            chat.imageId,
+            chat.photoUrl,
+        ]);
+
+        const userDetailsComponent = fixture.debugElement.query(
+            By.directive(UserDetailsStubComponent),
+        ).componentInstance as UserDetailsStubComponent;
+        expect(userDetailsComponent.value).toEqual(`${chat.chatName}`);
+
+        const unreadCountComponent = fixture.debugElement.query(
+            By.directive(UnreadCountStubComponent),
+        ).componentInstance as UnreadCountStubComponent;
+        expect(unreadCountComponent.value.toString()).toEqual(
+            `${chat.unreadCount}`,
+        );
+    });
+
+    it('should not render the UnreadCountComponent if unreadCount is zero', () => {
+        // Arrange
+        const chat: IChatDto = {
+            id: 'chat-id',
+            chatName: 'Chat Name',
+            unreadCount: 0,
+            photoUrl: 'photo-url',
+            imageId: 'image-id',
+        };
+
+        // Act
+        component.chat = chat;
+        fixture.detectChanges();
+
+        // Assert
+        const avatarComponent = fixture.debugElement.query(
+            By.directive(AvatarStubComponent),
+        ).componentInstance as AvatarStubComponent;
+        expect(avatarComponent.urlOptions).toEqual([
+            chat.imageId,
+            chat.photoUrl,
+        ]);
+
+        const userDetailsComponent = fixture.debugElement.query(
+            By.directive(UserDetailsStubComponent),
+        ).componentInstance as UserDetailsStubComponent;
+        expect(userDetailsComponent.value).toEqual(`${chat.chatName}`);
+
+        const unreadCountComponent = fixture.debugElement.query(
+            By.directive(UnreadCountStubComponent),
+        );
+        expect(unreadCountComponent).toBeNull();
+    });
+
     it('should emit chatSelected event when chat is clicked', () => {
         const chat: IChatDto = {
             id: 'chat-id',
@@ -51,7 +121,8 @@ describe('ChatListItemComponent', () => {
         expect(component.chatSelected.emit).toHaveBeenCalledWith(chat);
     });
 
-    it('should display the chat name and unread count', () => {
+    it('should emit an event when onChatSelected is called', () => {
+        // Arrange
         const chat: IChatDto = {
             id: 'chat-id',
             chatName: 'Chat Name',
@@ -59,35 +130,38 @@ describe('ChatListItemComponent', () => {
             photoUrl: 'photo-url',
             imageId: 'image-id',
         };
+        spyOn(component.chatSelected, 'emit');
 
+        // Act
         component.chat = chat;
         fixture.detectChanges();
 
-        const userDetailsComponent = fixture.debugElement.query(
-            By.directive(UserDetailsStubComponent),
-        ).componentInstance as UserDetailsStubComponent;
-        expect(userDetailsComponent.value).toEqual(chat.chatName);
+        component.onChatSelected();
 
-        const unreadCountComponent = fixture.debugElement.query(
-            By.directive(UnreadCountStubComponent),
-        ).componentInstance as UnreadCountStubComponent;
-        expect(unreadCountComponent.value).toEqual(chat.unreadCount);
+        // Assert
+        expect(component.chatSelected.emit).toHaveBeenCalledOnceWith(chat);
     });
 
-    it('should not display unread count if unreadCount is not present', () => {
+    it('should emit an event when link element is clicked', () => {
+        // Arrange
         const chat: IChatDto = {
             id: 'chat-id',
             chatName: 'Chat Name',
-            unreadCount: 0,
+            unreadCount: 5,
             photoUrl: 'photo-url',
             imageId: 'image-id',
         };
+        spyOn(component.chatSelected, 'emit');
 
+        // Act
         component.chat = chat;
         fixture.detectChanges();
 
-        const unreadCountElement =
-            fixture.nativeElement.querySelector('.unread-count');
-        expect(unreadCountElement).toBeFalsy();
+        fixture.debugElement
+            .query(By.css('a'))
+            .triggerEventHandler('click', null);
+
+        // Assert
+        expect(component.chatSelected.emit).toHaveBeenCalledOnceWith(chat);
     });
 });

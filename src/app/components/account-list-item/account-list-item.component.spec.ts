@@ -32,13 +32,14 @@ describe('AccountListItemComponent', () => {
         component = fixture.componentInstance;
     });
 
-    it('should render the avatar component with correct url options', () => {
+    it('should render the AvatarComponent and UserDetailsComponent with correct values', () => {
         // Arrange
 
         // Act
         component.account = account;
         fixture.detectChanges();
 
+        // Assert
         const avatarComponent = fixture.debugElement.query(
             By.directive(AvatarStubComponent),
         ).componentInstance as AvatarStubComponent;
@@ -47,7 +48,6 @@ describe('AccountListItemComponent', () => {
             account.photoUrl,
         ]);
 
-        // Assert
         const userDetailsComponent = fixture.debugElement.query(
             By.directive(UserDetailsStubComponent),
         ).componentInstance as UserDetailsStubComponent;
