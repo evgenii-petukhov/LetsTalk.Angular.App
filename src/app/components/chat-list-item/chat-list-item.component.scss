@@ -1,5 +1,5 @@
 @import "bootstrap/scss/bootstrap";
-@import "../shared/mixins/user-photo";
+@import "../shared/mixins/avatar-styles";
 
 a {
     display: flex;
@@ -12,7 +12,11 @@ a {
         padding: 8px 10px;
     }
 
-    .user-photo {
-        @include user-photo;
+    app-avatar {
+        @include avatar-styles;
+    }
+
+    app-user-details {
+        padding: 0 0 0 10px;
     }
 }

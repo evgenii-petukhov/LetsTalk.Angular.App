@@ -6,10 +6,7 @@ import {
     OnInit,
     Output,
 } from '@angular/core';
-import {
-    faRightFromBracket,
-    faChevronLeft,
-} from '@fortawesome/free-solid-svg-icons';
+import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { StoreService } from 'src/app/services/store.service';
 import { IProfileDto } from 'src/app/api-client/api-client';
 
@@ -20,7 +17,6 @@ import { IProfileDto } from 'src/app/api-client/api-client';
 })
 export class LoggedInUserComponent implements OnInit {
     faRightFromBracket = faRightFromBracket;
-    faChevronLeft = faChevronLeft;
     account: IProfileDto;
     @Output() backButtonClicked = new EventEmitter();
     @Input()

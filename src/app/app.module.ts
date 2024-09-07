@@ -41,6 +41,7 @@ import { InlineCountdownComponent } from './components/inline-countdown/inline-c
 import { SendMessageComponent } from './components/send-message/send-message.component';
 import { UserDetailsComponent } from './components/user-details/user-details.component';
 import { UnreadCountComponent } from './components/unread-count/unread-count.component';
+import { BackButtonComponent } from './components/back-button/back-button.component';
 
 @NgModule({
     declarations: [
@@ -69,6 +70,7 @@ import { UnreadCountComponent } from './components/unread-count/unread-count.com
         SendMessageComponent,
         UserDetailsComponent,
         UnreadCountComponent,
+        BackButtonComponent,
     ],
     imports: [
         BrowserModule,

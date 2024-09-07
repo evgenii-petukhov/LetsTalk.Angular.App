@@ -1,5 +1,3 @@
-<button class="back" (click)="onBackClicked()">
-    <fa-icon [icon]="faChevronLeft" [title]="'Back'"></fa-icon>
-</button>
-<app-avatar *ngIf="chat" class="user-photo" [urlOptions]="[chat.imageId, chat.photoUrl]"></app-avatar>
+<app-back-button (click)="onBackClicked()"></app-back-button>
+<app-avatar *ngIf="chat" [urlOptions]="[chat.imageId, chat.photoUrl]"></app-avatar>
 <app-user-details [value]="chat?.chatName"></app-user-details>

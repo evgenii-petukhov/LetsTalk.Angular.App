@@ -1,7 +1,7 @@
 @import "bootstrap/scss/bootstrap";
 @import "../variables";
 
-@mixin user-photo($size: $avatar-size-mobile) {
+@mixin avatar-styles($size: $avatar-size-mobile) {
     flex: 0 1 $avatar-size-desktop;
     min-width: $avatar-size-desktop;
     height: $avatar-size-desktop;

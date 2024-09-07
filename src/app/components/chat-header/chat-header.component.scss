@@ -1,5 +1,5 @@
 @import "bootstrap/scss/bootstrap";
-@import "../shared/mixins/user-photo";
+@import "../shared/mixins/avatar-styles";
 
 :host {
     display: flex;
@@ -14,11 +14,7 @@
         padding: 10px 10px 10px 0;
     }
 
-    .back {
-        flex: 0 1 auto;
-        background: none;
-        border: none;
-        font-size: 20px;
+    ::ng-deep .back {
         padding: 0 10px;
         display: none;
 
@@ -28,7 +24,24 @@
         }
     }
 
-    .user-photo {
-        @include user-photo(42px);
+    .back {
+        flex: 0 1 auto;
+        background: none;
+        border: none;
+        font-size: 20px;
+        padding: 0 10px 0 15px;
+        height: $avatar-size-desktop;
+
+        @include media-breakpoint-down(sm) {
+            height: $avatar-size-mobile;
+        }
+    }
+
+    app-avatar {
+        @include avatar-styles(42px);
+    }
+
+    app-user-details {
+        padding: 0 0 0 10px;
     }
 }

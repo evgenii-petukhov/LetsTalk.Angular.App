@@ -1,0 +1,10 @@
+:host {
+    display: flex;
+
+    .back {
+        flex: 0 1 auto;
+        background: none;
+        border: none;
+        font-size: 20px;
+    }
+}
