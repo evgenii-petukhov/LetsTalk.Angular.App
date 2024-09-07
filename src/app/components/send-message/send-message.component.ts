@@ -84,11 +84,10 @@ export class SendMessageComponent implements OnInit {
                     response,
                 );
                 this.addMessageToStore(messageDto);
-                eventTarget.value = null;
             } catch (e) {
-                eventTarget.value = null;
                 this.errorService.handleError(e, errorMessages.uploadImage);
             } finally {
+                eventTarget.value = null;
                 URL.revokeObjectURL(base64);
             }
         }
