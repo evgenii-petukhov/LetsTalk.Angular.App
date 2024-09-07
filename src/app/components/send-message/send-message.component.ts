@@ -12,7 +12,6 @@ import { errorMessages } from 'src/app/constants/errors';
 import { ErrorService } from 'src/app/services/error.service';
 import { environment } from 'src/environments/environment';
 import { ImageRoles } from 'src/app/protos/file_upload_pb';
-import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { ImageUploadService } from 'src/app/services/image-upload.service';
 
@@ -24,7 +23,6 @@ import { ImageUploadService } from 'src/app/services/image-upload.service';
 export class SendMessageComponent implements OnInit {
     message = '';
     isSending = false;
-    faPaperPlane = faPaperPlane;
     faCamera = faCamera;
     private chat: IChatDto;
     private chatId: string;

@@ -8,10 +8,9 @@ import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 })
 export class BackButtonComponent {
     faChevronLeft = faChevronLeft;
-    @Output() click = new EventEmitter<void>();
+    @Output() buttonClick = new EventEmitter();
 
-    onButtonClicked(): boolean {
-        this.click.emit();
-        return false;
+    onButtonClicked(): void {
+        this.buttonClick.emit();
     }
 }

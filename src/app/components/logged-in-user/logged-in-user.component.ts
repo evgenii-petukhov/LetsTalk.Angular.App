@@ -20,16 +20,14 @@ export class LoggedInUserComponent implements OnInit {
         this.account = await this.storeService.getLoggedInUser();
     }
 
-    onLogoutButtonClicked(): boolean {
+    onLogoutButtonClicked(): void {
         window.localStorage.clear();
         window.location.reload();
-        return false;
     }
 
-    onBackButtonClicked(): boolean {
+    onBackButtonClicked(): void {
         this.storeService.setLayoutSettings({
             sidebarState: SidebarState.chats,
         });
-        return false;
     }
 }

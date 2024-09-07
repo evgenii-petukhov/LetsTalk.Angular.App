@@ -43,6 +43,7 @@ import { UserDetailsComponent } from './components/user-details/user-details.com
 import { UnreadCountComponent } from './components/unread-count/unread-count.component';
 import { BackButtonComponent } from './components/back-button/back-button.component';
 import { LogoutButtonComponent } from './components/logout-button/logout-button.component';
+import { SendMessageButtonComponent } from './components/send-message-button/send-message-button.component';
 
 @NgModule({
     declarations: [
@@ -73,6 +74,7 @@ import { LogoutButtonComponent } from './components/logout-button/logout-button.
         UnreadCountComponent,
         BackButtonComponent,
         LogoutButtonComponent,
+        SendMessageButtonComponent,
     ],
     imports: [
         BrowserModule,
