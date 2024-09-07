@@ -12,7 +12,6 @@ import { errorMessages } from 'src/app/constants/errors';
 import { ErrorService } from 'src/app/services/error.service';
 import { environment } from 'src/environments/environment';
 import { ImageRoles } from 'src/app/protos/file_upload_pb';
-import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { ImageUploadService } from 'src/app/services/image-upload.service';
 
 @Component({
@@ -23,7 +22,6 @@ import { ImageUploadService } from 'src/app/services/image-upload.service';
 export class SendMessageComponent implements OnInit {
     message = '';
     isSending = false;
-    faCamera = faCamera;
     private chat: IChatDto;
     private chatId: string;
     private unsubscribe$: Subject<void> = new Subject<void>();
@@ -62,32 +60,26 @@ export class SendMessageComponent implements OnInit {
         }
     }
 
-    async onImageSelected(event: Event): Promise<void> {
-        const eventTarget = event.target as HTMLInputElement;
-        if (eventTarget.files && eventTarget.files.length) {
-            const buffer = await eventTarget.files[0].arrayBuffer();
-            const base64 = URL.createObjectURL(new Blob([buffer]));
-            const sizeLimits = environment.imageSettings.limits;
-            try {
-                const response =
-                    await this.imageUploadService.resizeAndUploadImage(
-                        base64 as string,
-                        sizeLimits.picture.width,
-                        sizeLimits.picture.height,
-                        ImageRoles.MESSAGE,
-                    );
-                const messageDto = await this.apiService.sendMessage(
-                    this.chatId,
-                    undefined,
-                    response,
-                );
-                this.addMessageToStore(messageDto);
-            } catch (e) {
-                this.errorService.handleError(e, errorMessages.uploadImage);
-            } finally {
-                eventTarget.value = null;
-                URL.revokeObjectURL(base64);
-            }
+    async onImageBufferReady(buffer: ArrayBuffer): Promise<void> {
+        const base64 = URL.createObjectURL(new Blob([buffer]));
+        const sizeLimits = environment.imageSettings.limits;
+        try {
+            const response = await this.imageUploadService.resizeAndUploadImage(
+                base64 as string,
+                sizeLimits.picture.width,
+                sizeLimits.picture.height,
+                ImageRoles.MESSAGE,
+            );
+            const messageDto = await this.apiService.sendMessage(
+                this.chatId,
+                undefined,
+                response,
+            );
+            this.addMessageToStore(messageDto);
+        } catch (e) {
+            this.errorService.handleError(e, errorMessages.uploadImage);
+        } finally {
+            URL.revokeObjectURL(base64);
         }
     }
 

@@ -44,6 +44,7 @@ import { UnreadCountComponent } from './components/unread-count/unread-count.com
 import { BackButtonComponent } from './components/back-button/back-button.component';
 import { LogoutButtonComponent } from './components/logout-button/logout-button.component';
 import { SendMessageButtonComponent } from './components/send-message-button/send-message-button.component';
+import { SelectImageButtonComponent } from './components/select-image-button/select-image-button.component';
 
 @NgModule({
     declarations: [
@@ -75,6 +76,7 @@ import { SendMessageButtonComponent } from './components/send-message-button/sen
         BackButtonComponent,
         LogoutButtonComponent,
         SendMessageButtonComponent,
+        SelectImageButtonComponent,
     ],
     imports: [
         BrowserModule,
