@@ -1,0 +1,9 @@
+<div class="user-details">
+    <div class="user-name">{{userName}}</div>
+    <ng-content></ng-content>
+    <div class="unread-count" *ngIf="unreadCount">
+        <div class="unread-count-text">
+            {{ unreadCount }}
+        </div>
+    </div>
+</div>

@@ -10,6 +10,7 @@ import { By } from '@angular/platform-browser';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { IChatDto } from 'src/app/api-client/api-client';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
+import { UserDetailsStubComponent } from '../user-details/user-details.component.stub';
 
 describe('ChatHeaderComponent', () => {
     let component: ChatHeaderComponent;
@@ -44,6 +45,7 @@ describe('ChatHeaderComponent', () => {
             declarations: [
                 ChatHeaderComponent,
                 AvatarStubComponent,
+                UserDetailsStubComponent,
                 OrderByPipe,
             ],
             providers: [
@@ -86,7 +88,7 @@ describe('ChatHeaderComponent', () => {
         store.refreshState();
         fixture.detectChanges();
 
-        expect(getUserNameElement().textContent).toContain(mockChat.chatName);
+        expect(getUserNameElement().userName).toContain(mockChat.chatName);
 
         // Assert
         expect(getAvatarElement().componentInstance.urlOptions).toEqual([
@@ -101,7 +103,7 @@ describe('ChatHeaderComponent', () => {
         store.refreshState();
         fixture.detectChanges();
 
-        expect(getUserNameElement().textContent).toContain(mockChat2.chatName);
+        expect(getUserNameElement().userName).toContain(mockChat2.chatName);
 
         // Assert
         expect(getAvatarElement().componentInstance.urlOptions).toEqual([
@@ -115,6 +117,8 @@ describe('ChatHeaderComponent', () => {
     }
 
     function getUserNameElement() {
-        return fixture.nativeElement.querySelector('.user-name');
+        return fixture.debugElement.query(
+            By.directive(UserDetailsStubComponent),
+        ).componentInstance as UserDetailsStubComponent;
     }
 });

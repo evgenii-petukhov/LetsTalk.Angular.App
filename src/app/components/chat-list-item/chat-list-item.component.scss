@@ -1,5 +1,4 @@
 @import "bootstrap/scss/bootstrap";
-@import "../shared/extend/user-details";
 @import "../shared/mixins/user-photo";
 
 a {
@@ -14,40 +13,5 @@ a {
 
     .user-photo {
         @include user-photo;
-    }
-
-    .user-details {
-        @extend %user-details;
-
-        @include media-breakpoint-down(sm) {
-            padding: 0 0 0 16px;
-        }
-
-        .unread-count {
-            margin: 0 10px 0 0;
-            width: 24px;
-            height: 24px;
-            background: #ffd356;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            @include media-breakpoint-down(sm) {
-                width: 36px;
-                height: 36px;
-            }
-
-            .unread-count-text {
-                flex: 0 1 auto;
-                font-size: 13px;
-                line-height: 13px;
-
-                @include media-breakpoint-down(sm) {
-                    font-size: 16px;
-                    line-height: 16px;
-                }
-            }
-        }
     }
 }

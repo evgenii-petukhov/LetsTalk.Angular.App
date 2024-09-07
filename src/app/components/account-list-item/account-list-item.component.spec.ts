@@ -3,6 +3,7 @@ import { AccountListItemComponent } from './account-list-item.component';
 import { IAccountDto } from 'src/app/api-client/api-client';
 import { By } from '@angular/platform-browser';
 import { AvatarStubComponent } from '../avatar/avatar.stub';
+import { UserDetailsStubComponent } from '../user-details/user-details.component.stub';
 
 describe('AccountListItemComponent', () => {
     let component: AccountListItemComponent;
@@ -18,7 +19,11 @@ describe('AccountListItemComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [AccountListItemComponent, AvatarStubComponent],
+            declarations: [
+                AccountListItemComponent,
+                AvatarStubComponent,
+                UserDetailsStubComponent,
+            ],
         }).compileComponents();
     });
 
@@ -43,8 +48,10 @@ describe('AccountListItemComponent', () => {
         ]);
 
         // Assert
-        const userName = fixture.nativeElement.querySelector('.user-name');
-        expect(userName.textContent).toContain(
+        const userDetailsComponent = fixture.debugElement.query(
+            By.directive(UserDetailsStubComponent),
+        ).componentInstance as UserDetailsStubComponent;
+        expect(userDetailsComponent.userName).toEqual(
             `${account.firstName} ${account.lastName}`,
         );
     });

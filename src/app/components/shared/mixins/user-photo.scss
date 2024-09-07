@@ -1,9 +1,10 @@
 @import "bootstrap/scss/bootstrap";
+@import "../variables";
 
-@mixin user-photo($size: 56px) {
-    flex: 0 1 40px;
-    min-width: 40px;
-    height: 40px;
+@mixin user-photo($size: $avatar-size-mobile) {
+    flex: 0 1 $avatar-size-desktop;
+    min-width: $avatar-size-desktop;
+    height: $avatar-size-desktop;
 
     @include media-breakpoint-down(sm) {
         flex: 0 1 $size;

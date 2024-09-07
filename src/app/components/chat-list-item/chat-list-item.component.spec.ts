@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChatListItemComponent } from './chat-list-item.component';
 import { IChatDto } from 'src/app/api-client/api-client';
 import { AvatarStubComponent } from '../avatar/avatar.stub';
+import { UserDetailsStubComponent } from '../user-details/user-details.component.stub';
 
 describe('ChatListItemComponent', () => {
     let component: ChatListItemComponent;
@@ -9,7 +10,11 @@ describe('ChatListItemComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [ChatListItemComponent, AvatarStubComponent],
+            declarations: [
+                ChatListItemComponent,
+                AvatarStubComponent,
+                UserDetailsStubComponent,
+            ],
         }).compileComponents();
     });
 
