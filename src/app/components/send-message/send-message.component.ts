@@ -11,7 +11,7 @@ import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-
 import { errorMessages } from 'src/app/constants/errors';
 import { ErrorService } from 'src/app/services/error.service';
 import { environment } from 'src/environments/environment';
-import { ImageRoles } from 'src/app/protos/file_upload_pb';
+import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { ImageUploadService } from 'src/app/services/image-upload.service';
 
 @Component({
@@ -48,7 +48,7 @@ export class SendMessageComponent implements OnInit {
     }
 
     @validate
-    async send(@required message: string): Promise<void> {
+    async onSendMessage(@required message: string): Promise<void> {
         this.message = '';
         this.isSending = true;
         try {
@@ -64,30 +64,28 @@ export class SendMessageComponent implements OnInit {
         const base64 = URL.createObjectURL(new Blob([buffer]));
         const sizeLimits = environment.imageSettings.limits;
         try {
-            const response = await this.imageUploadService.resizeAndUploadImage(
+            const image = await this.imageUploadService.resizeAndUploadImage(
                 base64 as string,
                 sizeLimits.picture.width,
                 sizeLimits.picture.height,
                 ImageRoles.MESSAGE,
             );
-            const messageDto = await this.apiService.sendMessage(
-                this.chatId,
-                undefined,
-                response,
-            );
-            this.addMessageToStore(messageDto);
+            await this.processSendMessage(undefined, image);
         } catch (e) {
-            this.errorService.handleError(e, errorMessages.uploadImage);
+            this.errorService.handleError(e, errorMessages.sendMessage);
         } finally {
             URL.revokeObjectURL(base64);
         }
     }
 
-    private async processSendMessage(message: string): Promise<void> {
+    private async processSendMessage(
+        message: string,
+        image?: UploadImageResponse,
+    ): Promise<void> {
         if (this.shouldCreateIndividualChat()) {
-            await this.handleIndividualChatCreation(message);
+            await this.handleIndividualChatCreation(message, image);
         } else {
-            await this.handleMessageSending(message);
+            await this.handleMessageSending(message, image);
         }
     }
 
@@ -98,19 +96,26 @@ export class SendMessageComponent implements OnInit {
         );
     }
 
-    private async handleIndividualChatCreation(message: string): Promise<void> {
+    private async handleIndividualChatCreation(
+        message: string,
+        image: UploadImageResponse,
+    ): Promise<void> {
         const chatDto = await this.apiService.createIndividualChat(
             this.chat.accountIds[0],
         );
-        await this.apiService.sendMessage(chatDto.id, message);
+        await this.apiService.sendMessage(chatDto.id, message, image);
         this.storeService.updateChatId(this.chatId, chatDto.id);
         this.storeService.setSelectedChatId(chatDto.id);
     }
 
-    private async handleMessageSending(message: string): Promise<void> {
+    private async handleMessageSending(
+        message: string,
+        image: UploadImageResponse,
+    ): Promise<void> {
         const messageDto = await this.apiService.sendMessage(
             this.chatId,
             message,
+            image,
         );
         this.addMessageToStore(messageDto);
     }
