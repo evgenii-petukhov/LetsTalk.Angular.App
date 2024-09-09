@@ -8,13 +8,12 @@ import { faCamera } from '@fortawesome/free-solid-svg-icons';
 })
 export class SelectImageButtonComponent {
     faCamera = faCamera;
-    @Output() imageBufferReady = new EventEmitter<ArrayBuffer>();
+    @Output() imageBlobReady = new EventEmitter<Blob>();
 
-    async onImageSelected(event: Event): Promise<void> {
+    onImageSelected(event: Event): void {
         const eventTarget = event.target as HTMLInputElement;
         if (eventTarget.files && eventTarget.files.length) {
-            const buffer = await eventTarget.files[0].arrayBuffer();
-            this.imageBufferReady.emit(buffer);
+            this.imageBlobReady.emit(eventTarget.files[0]);
         }
         eventTarget.value = null;
     }

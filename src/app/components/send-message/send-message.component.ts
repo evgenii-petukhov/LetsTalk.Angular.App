@@ -2,12 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { required, validate } from 'src/app/decorators/required.decorator';
 import { IChatDto, IMessageDto } from 'src/app/api-client/api-client';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
-import { combineLatest, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
 import { ApiService } from 'src/app/services/api.service';
 import { StoreService } from 'src/app/services/store.service';
-import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { errorMessages } from 'src/app/constants/errors';
 import { ErrorService } from 'src/app/services/error.service';
 import { environment } from 'src/environments/environment';
@@ -23,7 +22,6 @@ export class SendMessageComponent implements OnInit {
     message = '';
     isSending = false;
     private chat: IChatDto;
-    private chatId: string;
     private unsubscribe$: Subject<void> = new Subject<void>();
 
     constructor(
@@ -36,13 +34,9 @@ export class SendMessageComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        combineLatest([
-            this.store.select(selectSelectedChatId),
-            this.store.select(selectSelectedChat),
-        ])
+        this.store.select(selectSelectedChat)
             .pipe(takeUntil(this.unsubscribe$))
-            .subscribe(([chatId, chat]) => {
-                this.chatId = chatId;
+            .subscribe((chat) => {
                 this.chat = chat;
             });
     }
@@ -52,7 +46,7 @@ export class SendMessageComponent implements OnInit {
         this.message = '';
         this.isSending = true;
         try {
-            await this.processSendMessage(message);
+            await this.processSendMessage(this.chat, message);
         } catch (e) {
             this.errorService.handleError(e, errorMessages.sendMessage);
         } finally {
@@ -60,7 +54,9 @@ export class SendMessageComponent implements OnInit {
         }
     }
 
-    async onImageBufferReady(buffer: ArrayBuffer): Promise<void> {
+    async onImageBlobReady(blob: Blob): Promise<void> {
+        const chat = this.chat;
+        const buffer = await blob.arrayBuffer();
         const base64 = URL.createObjectURL(new Blob([buffer]));
         const sizeLimits = environment.imageSettings.limits;
         try {
@@ -70,7 +66,7 @@ export class SendMessageComponent implements OnInit {
                 sizeLimits.picture.height,
                 ImageRoles.MESSAGE,
             );
-            await this.processSendMessage(undefined, image);
+            await this.processSendMessage(chat, undefined, image);
         } catch (e) {
             this.errorService.handleError(e, errorMessages.sendMessage);
         } finally {
@@ -79,52 +75,58 @@ export class SendMessageComponent implements OnInit {
     }
 
     private async processSendMessage(
+        chat: IChatDto,
         message: string,
         image?: UploadImageResponse,
     ): Promise<void> {
-        if (this.shouldCreateIndividualChat()) {
-            await this.handleIndividualChatCreation(message, image);
+        if (this.shouldCreateIndividualChat(chat)) {
+            await this.handleIndividualChatCreation(
+                chat.id,
+                chat.accountIds[0],
+                message,
+                image,
+            );
         } else {
-            await this.handleMessageSending(message, image);
+            await this.handleMessageSending(chat.id, message, image);
         }
     }
 
-    private shouldCreateIndividualChat(): boolean {
-        return (
-            this.chat.isIndividual &&
-            this.idGeneratorService.isFake(this.chatId)
-        );
+    private shouldCreateIndividualChat(chat: IChatDto): boolean {
+        return chat.isIndividual && this.idGeneratorService.isFake(chat.id);
     }
 
     private async handleIndividualChatCreation(
+        chatId: string,
+        accountId: string,
         message: string,
         image: UploadImageResponse,
     ): Promise<void> {
-        const chatDto = await this.apiService.createIndividualChat(
-            this.chat.accountIds[0],
-        );
+        const chatDto = await this.apiService.createIndividualChat(accountId);
         await this.apiService.sendMessage(chatDto.id, message, image);
-        this.storeService.updateChatId(this.chatId, chatDto.id);
+        this.storeService.updateChatId(chatId, chatDto.id);
         this.storeService.setSelectedChatId(chatDto.id);
     }
 
     private async handleMessageSending(
+        chatId: string,
         message: string,
         image: UploadImageResponse,
     ): Promise<void> {
         const messageDto = await this.apiService.sendMessage(
-            this.chatId,
+            chatId,
             message,
             image,
         );
-        this.addMessageToStore(messageDto);
+        if (chatId === this.chat.id) {
+            this.addMessageToStore(chatId, messageDto);
+        }
     }
 
-    private addMessageToStore(messageDto: IMessageDto): void {
+    private addMessageToStore(chatId: string, messageDto: IMessageDto): void {
         messageDto.isMine = true;
         this.storeService.addMessage(messageDto);
         this.storeService.setLastMessageInfo(
-            this.chatId,
+            chatId,
             messageDto.created,
             messageDto.id,
         );

@@ -189,7 +189,7 @@ describe('SendMessageComponent', () => {
         );
         expect(apiService.sendMessage).toHaveBeenCalled();
         expect(storeService.addMessage).toHaveBeenCalledWith(mockMessageDto);
-    });*/
+    });
 
     it('should handle errors during image upload', async () => {
         const error = new Error('Upload failed');
@@ -205,7 +205,7 @@ describe('SendMessageComponent', () => {
         );
     });
 
-    /*it('should disable the send button when message is empty or isSending is true', () => {
+    it('should disable the send button when message is empty or isSending is true', () => {
         component.message = '';
         fixture.detectChanges();
         let sendButton = fixture.debugElement.query(
