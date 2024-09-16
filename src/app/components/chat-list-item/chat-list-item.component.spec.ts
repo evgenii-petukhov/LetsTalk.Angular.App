@@ -24,7 +24,6 @@ describe('ChatListItemComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(ChatListItemComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
     });
 
     it('should create the component', () => {

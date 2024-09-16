@@ -32,7 +32,6 @@ describe('ImageComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(ImageComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
     });
 
     it('should create', () => {

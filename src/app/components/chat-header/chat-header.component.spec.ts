@@ -64,7 +64,6 @@ describe('ChatHeaderComponent', () => {
             selectSelectedChat,
             null,
         );
-        fixture.detectChanges();
     });
 
     it('should call setLayoutSettings and setSelectedChatId on back button click', () => {
