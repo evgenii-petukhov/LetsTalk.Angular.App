@@ -12,12 +12,9 @@ describe('BackButtonComponent', () => {
             declarations: [BackButtonComponent],
             imports: [FontAwesomeModule],
         }).compileComponents();
-    });
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(BackButtonComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
     });
 
     it('should create', () => {
@@ -28,6 +25,7 @@ describe('BackButtonComponent', () => {
         // Arrange
 
         // Act
+        fixture.detectChanges();
 
         // Assert
         const icon = fixture.debugElement.query(By.css('fa-icon'));

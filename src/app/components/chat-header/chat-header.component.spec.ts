@@ -54,9 +54,7 @@ describe('ChatHeaderComponent', () => {
             ],
             imports: [FontAwesomeModule],
         }).compileComponents();
-    });
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(ChatHeaderComponent);
         component = fixture.componentInstance;
         store = TestBed.inject(Store) as MockStore;

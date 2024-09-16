@@ -25,9 +25,7 @@ describe('AccountListItemComponent', () => {
                 UserDetailsStubComponent,
             ],
         }).compileComponents();
-    });
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(AccountListItemComponent);
         component = fixture.componentInstance;
     });

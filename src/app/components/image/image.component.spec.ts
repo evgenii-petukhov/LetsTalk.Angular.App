@@ -27,12 +27,10 @@ describe('ImageComponent', () => {
                 ChangeDetectorRef,
             ],
         }).compileComponents();
-    }));
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(ImageComponent);
         component = fixture.componentInstance;
-    });
+    }));
 
     it('should create', () => {
         expect(component).toBeTruthy();

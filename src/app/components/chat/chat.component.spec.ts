@@ -67,9 +67,7 @@ describe('ChatComponent', () => {
                 { provide: IdGeneratorService, useValue: idGeneratorService },
             ],
         }).compileComponents();
-    });
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(ChatComponent);
         component = fixture.componentInstance;
         store = TestBed.inject(Store) as MockStore;

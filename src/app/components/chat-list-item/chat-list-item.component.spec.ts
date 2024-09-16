@@ -19,9 +19,7 @@ describe('ChatListItemComponent', () => {
                 UnreadCountStubComponent,
             ],
         }).compileComponents();
-    });
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(ChatListItemComponent);
         component = fixture.componentInstance;
     });

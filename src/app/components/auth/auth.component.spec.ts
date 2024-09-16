@@ -17,7 +17,6 @@ describe('AuthComponent', () => {
 
         fixture = TestBed.createComponent(AuthComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
     });
 
     it('should create', () => {
@@ -34,6 +33,7 @@ describe('AuthComponent', () => {
         );
 
         // Act
+        fixture.detectChanges();
 
         // Assert
         expect(privacyLink).toBeTruthy();

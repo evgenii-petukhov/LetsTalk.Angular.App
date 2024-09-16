@@ -79,9 +79,7 @@ describe('AccountListComponent', () => {
                 { provide: IdGeneratorService, useValue: idGeneratorService },
             ],
         }).compileComponents();
-    });
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(AccountListComponent);
         component = fixture.componentInstance;
         store = TestBed.inject(Store) as MockStore;

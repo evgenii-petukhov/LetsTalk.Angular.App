@@ -32,9 +32,7 @@ describe('AvatarComponent', () => {
                 { provide: ErrorService, useValue: errorService },
             ],
         }).compileComponents();
-    });
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(AvatarComponent);
         component = fixture.componentInstance;
     });
