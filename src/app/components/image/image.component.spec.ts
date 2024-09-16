@@ -40,6 +40,7 @@ describe('ImageComponent', () => {
     });
 
     it('should set size based on imagePreview input', () => {
+        // Arrange
         component.imagePreview = {
             id: 'image1',
             width: 200,
@@ -51,8 +52,10 @@ describe('ImageComponent', () => {
             height: 100,
         };
 
+        // Act
         component.ngOnInit();
 
+        // Assert
         const expectedScale = Math.min(
             component.sizeLimit.width / component.imagePreview.width!,
             component.sizeLimit.height / component.imagePreview.height!,
@@ -65,15 +68,16 @@ describe('ImageComponent', () => {
     });
 
     it('should handle unknown image size', () => {
+        // Arrange
         const imagePreview: ImagePreview = {
             id: '1',
-            width: undefined,
-            height: undefined,
         };
         component.imagePreview = imagePreview;
 
+        // Act
         component.ngOnInit();
 
+        // Assert
         expect(component.isSizeUnknown).toBeTrue();
         expect(component.width).toBe(
             environment.imageSettings.limits.picturePreview.width,
@@ -84,6 +88,7 @@ describe('ImageComponent', () => {
     });
 
     it('should load image content on init if imagePreview is provided', async () => {
+        // Arrange
         const imagePreview: ImagePreview = { id: '1', width: 100, height: 200 };
         const imageContent = 'data:image/png;base64,someBase64Data';
         storeService.getImageContent.and.returnValue(
@@ -91,11 +96,13 @@ describe('ImageComponent', () => {
         );
 
         component.imagePreview = imagePreview;
-        component.ngOnInit();
 
+        // Act
+        component.ngOnInit();
         await fixture.whenStable();
         fixture.detectChanges();
 
+        // Assert
         expect(storeService.getImageContent).toHaveBeenCalledWith(
             imagePreview.id,
         );
@@ -104,32 +111,36 @@ describe('ImageComponent', () => {
     });
 
     it('should set viewed image id on openImageViewer', () => {
+        // Arrange
         const event = new PointerEvent('click');
         spyOn(event, 'preventDefault');
-
         component.imageId = '1';
+
+        // Act
         component.openImageViewer(event);
 
+        // Assert
         expect(event.preventDefault).toHaveBeenCalled();
         expect(storeService.setViewedImageId).toHaveBeenCalledWith('1');
     });
 
     it('should not load image content if imagePreview is not provided', () => {
-        component.imagePreview = undefined;
-
         component.ngOnInit();
 
         expect(storeService.getImageContent).not.toHaveBeenCalled();
     });
 
     it('should set scaled size if image dimensions exceed the limit', () => {
+        // Arrange
         const sizeLimit = { width: 100, height: 100 };
         component.sizeLimit = sizeLimit;
 
         component.imagePreview = new ImagePreview({ width: 200, height: 300 });
 
+        // Act
         component.ngOnInit();
 
+        // Assert
         const expectedScale = Math.min(
             sizeLimit.width / 200,
             sizeLimit.height / 300,
