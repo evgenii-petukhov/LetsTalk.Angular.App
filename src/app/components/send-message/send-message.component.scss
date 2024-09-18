@@ -28,5 +28,13 @@
     .button-container {
         flex: 0 1 auto;
         display: flex;
+
+        app-select-image-button {
+            margin-left: 4px;
+        }
+
+        app-send-message-button {
+            margin-right: 2px;
+        }
     }
 }
