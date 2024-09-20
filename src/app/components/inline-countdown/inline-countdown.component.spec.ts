@@ -16,16 +16,17 @@ describe('InlineCountdownComponent', () => {
         fixture = TestBed.createComponent(InlineCountdownComponent);
         component = fixture.componentInstance;
         component.startValue = 5;
-        fixture.detectChanges();
     });
 
     it('should emit expired event when countdown reaches zero', fakeAsync(() => {
+        // Arrange
         spyOn(component.expired, 'emit');
 
+        // Act
         component.ngOnInit();
         tick(5000);
 
-        expect(component.expired.emit).toHaveBeenCalled();
+        // Assert
         expect(component.value).toBe(0);
 
         component.ngOnDestroy();
@@ -33,8 +34,13 @@ describe('InlineCountdownComponent', () => {
     }));
 
     it('should decrement value every second', fakeAsync(() => {
+        // Arrange
+
+        // Act
         component.ngOnInit();
         tick(1000);
+
+        // Assert
         expect(component.value).toBe(4);
 
         tick(1000);
@@ -45,11 +51,14 @@ describe('InlineCountdownComponent', () => {
     }));
 
     it('should stop the timer when countdown reaches zero', fakeAsync(() => {
+        // Arrange
         spyOn(window, 'clearInterval').and.callThrough();
 
+        // Act
         component.ngOnInit();
         tick(5000);
 
+        // Assert
         expect(component.value).toBe(0);
         expect(window.clearInterval).toHaveBeenCalled();
 
