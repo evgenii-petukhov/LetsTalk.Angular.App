@@ -40,17 +40,21 @@ export class ImageComponent implements OnInit {
 
         this.setSize(this.imagePreview.width, this.imagePreview.height);
 
-        try {
-            const image = await this.storeService.getImageContent(
-                this.imagePreview.id,
-            );
-            this.url = image.content;
-            this.setSize(image.width, image.height);
-            this.isLoading = false;
-            this.cdr.detectChanges();
-        } catch (e) {
-            this.errorService.handleError(e, errorMessages.downloadImage);
+        if (this.imagePreview.id) {
+            try {
+                const image = await this.storeService.getImageContent(
+                    this.imagePreview.id,
+                );
+                if (image) {
+                    this.url = image.content;
+                    this.setSize(image.width, image.height);
+                }
+            } catch (e) {
+                this.errorService.handleError(e, errorMessages.downloadImage);
+            }
         }
+        this.isLoading = false;
+        this.cdr.detectChanges();
     }
 
     openImageViewer(e: PointerEvent): void {

@@ -7,6 +7,8 @@ describe('SelectImageButtonComponent', () => {
     let component: SelectImageButtonComponent;
     let fixture: ComponentFixture<SelectImageButtonComponent>;
 
+    const file = new Blob(['dummy image content'], { type: 'image/png' });
+
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [SelectImageButtonComponent],
@@ -41,17 +43,10 @@ describe('SelectImageButtonComponent', () => {
             By.css('input[type="file"]'),
         ).nativeElement;
 
-        const file = new Blob(['dummy image content'], { type: 'image/png' });
-        const fileList = {
-            0: file,
-            length: 1,
-            item: () => file,
-        };
-
         const event = new Event('change');
         Object.defineProperty(event, 'target', {
             writable: false,
-            value: { files: fileList },
+            value: { files: [file] },
         });
 
         // Act
@@ -68,17 +63,10 @@ describe('SelectImageButtonComponent', () => {
             By.css('input[type="file"]'),
         ).nativeElement;
 
-        const file = new Blob(['dummy image content'], { type: 'image/png' });
-        const fileList = {
-            0: file,
-            length: 1,
-            item: () => file,
-        };
-
         const event = new Event('change');
         Object.defineProperty(event, 'target', {
             writable: false,
-            value: { files: fileList },
+            value: { files: [file] },
         });
 
         // Act
