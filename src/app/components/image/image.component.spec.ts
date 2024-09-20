@@ -125,7 +125,7 @@ describe('ImageComponent', () => {
         component.imagePreview.width = 100;
 
         const error = new Error('Sample error');
-        storeService.getImageContent.and.throwError(error);
+        storeService.getImageContent.and.rejectWith(error);
 
         // Act
         await component.ngOnInit();

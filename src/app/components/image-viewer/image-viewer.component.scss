@@ -1,13 +1,17 @@
 @import "bootstrap/scss/bootstrap";
 
 :host {
-    display: flex;
+    display: none;
     flex-direction: column;
     position: absolute;
     inset: 0;
     background: rgb(0 0 0 / 40%);
     z-index: 2;
     padding: 40px;
+
+    &.visible {
+        display: flex;
+    }
 
     @include media-breakpoint-down(md) {
         padding: 20px;

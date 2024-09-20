@@ -1,17 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ImageViewerComponent } from './image-viewer.component';
-import { StoreModule } from '@ngrx/store';
-import { Subject } from 'rxjs';
 import { StoreService } from 'src/app/services/store.service';
 import { ErrorService } from 'src/app/services/error.service';
-import { provideMockStore } from '@ngrx/store/testing';
+import { By } from '@angular/platform-browser';
+import { errorMessages } from 'src/app/constants/errors';
 
 describe('ImageViewerComponent', () => {
     let component: ImageViewerComponent;
     let fixture: ComponentFixture<ImageViewerComponent>;
     let storeService: jasmine.SpyObj<StoreService>;
     let errorService: jasmine.SpyObj<ErrorService>;
-    let unsubscribe$: Subject<void>;
 
     beforeEach(async () => {
         storeService = jasmine.createSpyObj('StoreService', [
@@ -22,53 +20,87 @@ describe('ImageViewerComponent', () => {
 
         await TestBed.configureTestingModule({
             declarations: [ImageViewerComponent],
-            imports: [StoreModule.forRoot({})],
             providers: [
-                provideMockStore({}),
                 { provide: StoreService, useValue: storeService },
                 { provide: ErrorService, useValue: errorService },
             ],
         }).compileComponents();
+    });
 
+    beforeEach(() => {
         fixture = TestBed.createComponent(ImageViewerComponent);
         component = fixture.componentInstance;
-        unsubscribe$ = component['unsubscribe$'];
-        fixture.detectChanges();
     });
 
-    afterEach(() => {
-        unsubscribe$.next();
-        unsubscribe$.complete();
-    });
-
-    it('should create', () => {
+    it('should create the component', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should set background image correctly', () => {
-        const urls = ['url1', 'url2'];
-        component['setBackgroundImage'](...urls);
-        expect(component.backgroundImage).toBe(`url('url1'), url('url2')`);
+    it('should call getImageContent and display the image when imageId is provided', async () => {
+        // Arrange
+        component.imageId = 'test-image-id';
+        storeService.getImageContent.and.resolveTo({ content: 'image-url' });
+
+        // Act
+        await component.ngOnChanges();
+        fixture.detectChanges();
+
+        // Assert
+        expect(component.backgroundImage).toBe("url('image-url')");
+        expect(component.isVisible).toBeTrue();
+
+        const imageView = fixture.debugElement.query(By.css('.image-view'));
+        expect(imageView.styles['background-image']).toBe('url("image-url")');
+
+        expect(storeService.getImageContent).toHaveBeenCalledWith(
+            'test-image-id',
+        );
+        expect(errorService.handleError).not.toHaveBeenCalled();
     });
 
-    it('should clear the viewed image ID on close', () => {
-        component.close();
-        expect(storeService.setViewedImageId).toHaveBeenCalledWith(null);
+    it('should handle error and close when getImageContent fails', async () => {
+        // Arrange
+        const error = new Error('Sample error');
+        storeService.getImageContent.and.rejectWith(error);
+        component.imageId = 'test-image-id';
+
+        // Act
+        await component.ngOnChanges();
+
+        // Assert
+        expect(component.isVisible).toBeFalse();
+        expect(storeService.getImageContent).toHaveBeenCalledWith(
+            'test-image-id',
+        );
+        expect(storeService.setViewedImageId).not.toHaveBeenCalled();
+        expect(errorService.handleError).toHaveBeenCalledWith(
+            error,
+            errorMessages.downloadImage,
+        );
     });
 
-    it('should unsubscribe on destroy', () => {
-        spyOn(unsubscribe$, 'next').and.callThrough();
-        spyOn(unsubscribe$, 'complete').and.callThrough();
+    it('should hide the image is undefined', async () => {
+        // Arrange
 
-        component.ngOnDestroy();
+        // Act
+        await component.ngOnChanges();
 
-        expect(unsubscribe$.next).toHaveBeenCalled();
-        expect(unsubscribe$.complete).toHaveBeenCalled();
-    });
-
-    it('should not call getImageContent when imageId is null', () => {
-        component.ngOnInit();
-
+        // Assert
+        expect(component.isVisible).toBeFalse();
         expect(storeService.getImageContent).not.toHaveBeenCalled();
+        expect(storeService.setViewedImageId).not.toHaveBeenCalled();
+        expect(errorService.handleError).not.toHaveBeenCalled();
+    });
+
+    it('should hide the image when close is called', () => {
+        // Arrange
+
+        // Act
+        component.close();
+
+        // Assert
+        expect(component.isVisible).toBeFalse();
+        expect(storeService.setViewedImageId).toHaveBeenCalledWith(null);
+        expect(errorService.handleError).not.toHaveBeenCalled();
     });
 });

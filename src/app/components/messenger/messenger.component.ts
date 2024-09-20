@@ -23,7 +23,7 @@ import { SignalrHandlerService } from 'src/app/services/signalr-handler.service'
 })
 export class MessengerComponent implements OnInit, OnDestroy {
     selectedChatId$ = this.store.select(selectSelectedChatId);
-    selectedViewedImageId$ = this.store.select(selectViewedImageId);
+    selectedViewedImageId: string;
     isSidebarShown = true;
     isChatShown = false;
     selectedChatId: string;
@@ -52,13 +52,15 @@ export class MessengerComponent implements OnInit, OnDestroy {
             this.store.select(selectChats),
             this.store.select(selectSelectedChat),
             this.store.select(selectLayoutSettings),
+            this.store.select(selectViewedImageId),
         ])
             .pipe(takeUntil(this.unsubscribe$))
-            .subscribe(([chats, chat, layout]) => {
+            .subscribe(([chats, chat, layout, imageId]) => {
                 this.chats = chats;
                 this.selectedChat = chat;
                 this.isSidebarShown = layout.activeArea === ActiveArea.sidebar;
                 this.isChatShown = layout.activeArea === ActiveArea.chat;
+                this.selectedViewedImageId = imageId;
             });
 
         await this.signalrHandlerService.initHandlers(
