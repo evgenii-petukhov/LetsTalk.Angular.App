@@ -10,7 +10,8 @@ export class LogoutButtonComponent {
     faRightFromBracket = faRightFromBracket;
     @Output() buttonClick = new EventEmitter();
 
-    onButtonClicked(): void {
+    onButtonClicked(): boolean {
         this.buttonClick.emit();
+        return false;
     }
 }
