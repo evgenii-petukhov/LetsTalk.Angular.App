@@ -3,7 +3,7 @@ import { IAccountDto } from 'src/app/api-client/api-client';
 
 @Component({
     selector: 'app-account-list-item',
-    template: '',
+    template: '<div></div>',
 })
 export class AccountListItemStubComponent {
     @Input() account!: IAccountDto;

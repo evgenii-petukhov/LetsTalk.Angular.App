@@ -7,9 +7,9 @@ import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-setti
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { ILayoutSettings } from 'src/app/models/layout-settings';
-import { AccountListStubComponent } from '../account-list/account-list.stub';
-import { ChatListStubComponent } from '../chat-list/chat-list.stub';
-import { LoggedInUserStubComponent } from '../logged-in-user/logged-in-user.stub';
+import { AccountListStubComponent } from '../account-list/account-list.component.stub';
+import { ChatListStubComponent } from '../chat-list/chat-list.component.stub';
+import { LoggedInUserStubComponent } from '../logged-in-user/logged-in-user.component.stub';
 
 describe('SidebarComponent', () => {
     let component: SidebarComponent;
