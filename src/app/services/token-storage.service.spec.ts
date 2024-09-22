@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { TokenStorageService } from './token-storage.service';
-import { LoginResponseDto } from '../api-client/api-client';
 
 describe('TokenStorageService', () => {
     let service: TokenStorageService;
@@ -10,7 +9,6 @@ describe('TokenStorageService', () => {
         localStorageSpy = jasmine.createSpyObj('Storage', [
             'getItem',
             'setItem',
-            'removeItem',
         ]);
 
         spyOnProperty(window, 'localStorage').and.returnValue(localStorageSpy);
@@ -31,31 +29,9 @@ describe('TokenStorageService', () => {
 
             service.saveToken(token);
 
-            expect(localStorageSpy.removeItem).toHaveBeenCalledWith(
-                'auth-token',
-            );
             expect(localStorageSpy.setItem).toHaveBeenCalledWith(
                 'auth-token',
                 token,
-            );
-        });
-    });
-
-    describe('saveUser', () => {
-        it('should save the user to localStorage', () => {
-            const user = new LoginResponseDto();
-            user.token = 'sample-token';
-            user.success = true;
-            const userJson = JSON.stringify(user);
-
-            service.saveUser(user);
-
-            expect(localStorageSpy.removeItem).toHaveBeenCalledWith(
-                'auth-user',
-            );
-            expect(localStorageSpy.setItem).toHaveBeenCalledWith(
-                'auth-user',
-                userJson,
             );
         });
     });

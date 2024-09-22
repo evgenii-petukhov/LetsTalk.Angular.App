@@ -32,7 +32,6 @@ describe('LoginByEmailComponent', () => {
         );
         tokenStorageService = jasmine.createSpyObj('TokenStorageService', [
             'saveToken',
-            'saveUser',
         ]);
         errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
         router = jasmine.createSpyObj('Router', ['navigate']);
@@ -48,12 +47,9 @@ describe('LoginByEmailComponent', () => {
                 { provide: ErrorService, useValue: errorService },
             ],
         }).compileComponents();
-    });
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(LoginByEmailComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
     });
 
     it('should create the component', () => {
@@ -61,36 +57,69 @@ describe('LoginByEmailComponent', () => {
     });
 
     it('should have a form with email and code controls', () => {
+        // Arrange
+
+        // Act
+
+        // Assert
         expect(component.form.contains('email')).toBeTrue();
         expect(component.form.contains('code')).toBeTrue();
     });
 
     it('should make the email control required and validate email format', () => {
+        // Arrange
         const emailControl = component.form.get('email');
+
+        // Act
         emailControl.setValue('');
+
+        // Assert
         expect(emailControl.valid).toBeFalse();
+
+        // Act
         emailControl.setValue('test@example.com');
+
+        // Assert
         expect(emailControl.valid).toBeTrue();
     });
 
     it('should make the code control required and validate code format', () => {
+        // Arrange
         const codeControl = component.form.get('code');
+
+        // Act
         codeControl.setValue('');
+
+        // Assert
         expect(codeControl.valid).toBeFalse();
+
+        // Act
         codeControl.setValue('1234');
+
+        // Assert
         expect(codeControl.valid).toBeTrue();
     });
 
     it('should call onCodeRequested and handle response correctly', async () => {
+        // Arrange
+
+        // Act
         await component.onCodeRequested();
+
+        // Assert
         expect(component.isCodeRequested).toBeTrue();
         expect(component.isCodeRequestInProgress).toBeFalse();
         expect(component.codeValidInSeconds).toBe(60);
     });
 
     it('should handle code request error correctly', () => {
+        // Arrange
         apiService.generateLoginCode.and.throwError(new Error('error'));
+
+        // Act
         component.onCodeRequested();
+
+        // Assert
         expect(component.isCodeRequestInProgress).toBeFalse();
     });
 
@@ -103,14 +132,8 @@ describe('LoginByEmailComponent', () => {
 
         // Assert
         expect(component.isSubmitInProgress).toBeFalse();
-        expect(
-            component['tokenStorage'].saveToken,
-        ).toHaveBeenCalledWith('fakeToken');
-        expect(component['tokenStorage'].saveUser).toHaveBeenCalled();
-
-        expect(component['router'].navigate).toHaveBeenCalledWith([
-            'chats',
-        ]);
+        expect(tokenStorageService.saveToken).toHaveBeenCalledWith('fakeToken');
+        expect(router.navigate).toHaveBeenCalledWith(['chats']);
     });
 
     it('should handle submit error correctly', () => {
@@ -127,9 +150,7 @@ describe('LoginByEmailComponent', () => {
         component.onBack();
 
         // Assert
-        expect(component['router'].navigate).toHaveBeenCalledWith([
-            'chats',
-        ]);
+        expect(router.navigate).toHaveBeenCalledWith(['chats']);
     });
 
     it('should set isCodeRequested to false when timer expires', () => {
@@ -155,5 +176,35 @@ describe('LoginByEmailComponent', () => {
             'app-inline-countdown',
         );
         expect(countdownElement).toBeTruthy();
+    });
+
+    it('should call onSubmit when the code is valid and form is valid', () => {
+        // Arrange
+        spyOn(component, 'onSubmit');
+        component.form.get('email').setValue('test@example.com');
+        component.form.get('code').setValue('1234');
+
+        // Act
+        component.onCodeChange();
+
+        // Assert
+        expect(component.onSubmit).toHaveBeenCalled();
+    });
+
+    it('should call onSubmit when valid code is entered and form is valid (input event raised)', () => {
+        // Arrange
+        spyOn(component, 'onSubmit');
+        component.isCodeRequested = true;
+        component.form.get('email').setValue('test@example.com');
+        fixture.detectChanges();
+
+        const codeInput = fixture.nativeElement.querySelector('#code');
+
+        // Act
+        codeInput.value = '1234';
+        codeInput.dispatchEvent(new Event('input'));
+
+        // Assert
+        expect(component.onSubmit).toHaveBeenCalled();
     });
 });

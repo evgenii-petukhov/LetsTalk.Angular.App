@@ -38,7 +38,6 @@ export class LoginByEmailComponent {
                 Number(this.form.value.code),
             );
             this.tokenStorage.saveToken(loginResponseDto.token);
-            this.tokenStorage.saveUser(loginResponseDto);
             await this.router.navigate(['chats']);
         } catch (e) {
             this.errorService.handleError(e, errorMessages.generateCode);
