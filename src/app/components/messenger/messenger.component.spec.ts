@@ -13,9 +13,6 @@ import {
 import { ActiveArea } from 'src/app/enums/active-areas';
 import { selectChats } from 'src/app/state/chats/chats.selector';
 import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-settings.selectors';
-import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
-import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
-import { selectViewedImageId } from 'src/app/state/viewed-image-id/viewed-image-id.selectors';
 import { StubChatComponent } from '../chat/chat.component.stub';
 import { StubImageViewerComponent } from '../image-viewer/image-viewer.component.stub';
 import { StubSidebarComponent } from '../sidebar/sidebar.component.stub';
@@ -57,29 +54,18 @@ describe('MessengerComponent', () => {
                 { provide: Store, useValue: store },
             ],
         }).compileComponents();
-    });
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(MessengerComponent);
         component = fixture.componentInstance;
 
         store.select.and.callFake((selector) => {
             if (selector === selectChats) {
                 return of([]);
-            } else if (selector === selectSelectedChat) {
-                return of(null);
             } else if (selector === selectLayoutSettings) {
                 return of({ activeArea: ActiveArea.sidebar });
-            } else if (
-                selector === selectSelectedChatId ||
-                selector === selectViewedImageId
-            ) {
-                return of(null);
             }
             return of(null);
         });
-
-        fixture.detectChanges();
     });
 
     it('should create', () => {
@@ -87,51 +73,76 @@ describe('MessengerComponent', () => {
     });
 
     it('should initialize chat storage and SignalR handlers on ngOnInit', async () => {
+        // Arrange
+
+        // Act
         await component.ngOnInit();
-        expect(storeService.initChatStorage).toHaveBeenCalled();
-        expect(signalrHandlerService.initHandlers).toHaveBeenCalled();
+
+        // Assert
+        expect(storeService.initChatStorage).toHaveBeenCalledTimes(1);
+        expect(signalrHandlerService.initHandlers).toHaveBeenCalledTimes(1);
     });
 
     it('should handle visibility change event', () => {
+        // Arrange
         component['selectedChat'] = { id: 'chatId' } as IChatDto;
 
+        // Act
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         component.onVisibilityChange({ target: document } as any);
 
-        expect(storeService.markAllAsRead).toHaveBeenCalledWith(
+        // Assert
+        expect(storeService.markAllAsRead).toHaveBeenCalledOnceWith(
             component['selectedChat'],
         );
     });
 
     it('should call removeHandlers on ngOnDestroy', () => {
+        // Arrange
+
+        // Act
         component.ngOnDestroy();
-        expect(signalrHandlerService.removeHandlers).toHaveBeenCalled();
+
+        // Assert
+        expect(signalrHandlerService.removeHandlers).toHaveBeenCalledTimes(1);
     });
 
     it('should handle message notification', () => {
+        // Arrange
         const messageDto = { chatId: 'chatId', isMine: false } as IMessageDto;
+
+        // Act
         component.handleMessageNotification(messageDto);
 
+        // Assert
         expect(
             signalrHandlerService.handleMessageNotification,
-        ).toHaveBeenCalledWith(messageDto, undefined, [], true);
+        ).toHaveBeenCalledOnceWith(messageDto, undefined, [], true);
     });
 
     it('should handle link preview notification', () => {
+        // Arrange
         const linkPreviewDto = { chatId: 'chatId' } as ILinkPreviewDto;
+
+        // Act
         component.handleLinkPreviewNotification(linkPreviewDto);
 
+        // Assert
         expect(
             signalrHandlerService.handleLinkPreviewNotification,
-        ).toHaveBeenCalledWith(linkPreviewDto, undefined);
+        ).toHaveBeenCalledOnceWith(linkPreviewDto, undefined);
     });
 
     it('should handle image preview notification', () => {
+        // Arrange
         const imagePreviewDto = { chatId: 'chatId' } as IImagePreviewDto;
+
+        // Act
         component.handleImagePreviewNotification(imagePreviewDto);
 
+        // Assert
         expect(
             signalrHandlerService.handleImagePreviewNotification,
-        ).toHaveBeenCalledWith(imagePreviewDto, undefined);
+        ).toHaveBeenCalledOnceWith(imagePreviewDto, undefined);
     });
 });
