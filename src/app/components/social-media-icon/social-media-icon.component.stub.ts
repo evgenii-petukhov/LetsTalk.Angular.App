@@ -1,9 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
     selector: 'app-social-media-icon',
     template: '<div></div>',
 })
-export class SocialMediaIconStubComponent {
-    @Input() iconTypeId: number;
-}
+export class SocialMediaIconStubComponent {}

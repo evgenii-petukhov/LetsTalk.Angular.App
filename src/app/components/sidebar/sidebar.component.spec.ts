@@ -39,9 +39,7 @@ describe('SidebarComponent', () => {
                 { provide: StoreService, useValue: storeService },
             ],
         }).compileComponents();
-    });
 
-    beforeEach(() => {
         fixture = TestBed.createComponent(SidebarComponent);
         component = fixture.componentInstance;
         store = TestBed.inject(Store) as MockStore;
@@ -50,8 +48,6 @@ describe('SidebarComponent', () => {
             selectLayoutSettings,
             null,
         );
-
-        fixture.detectChanges();
     });
 
     it('should create', () => {

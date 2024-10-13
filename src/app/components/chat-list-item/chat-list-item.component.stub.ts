@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { IChatDto } from 'src/app/api-client/api-client';
 
 @Component({
@@ -7,5 +7,4 @@ import { IChatDto } from 'src/app/api-client/api-client';
 })
 export class ChatListItemStubComponent {
     @Input() chat: IChatDto;
-    @Output() chatSelected = new EventEmitter<IChatDto>();
 }
