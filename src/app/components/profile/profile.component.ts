@@ -41,7 +41,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         private store: Store,
         private imageUploadService: ImageUploadService,
         private errorService: ErrorService,
-    ) { }
+    ) {}
 
     async ngOnInit(): Promise<void> {
         const account = await this.storeService.getLoggedInUser();
@@ -62,12 +62,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.isSending = true;
         const sizeLimits = environment.imageSettings.limits.avatar;
         try {
-            const image = this.form.value.photoUrl ? await this.imageUploadService.resizeAndUploadImage(
-                this.form.value.photoUrl,
-                sizeLimits.width,
-                sizeLimits.height,
-                ImageRoles.AVATAR,
-            ) : null;
+            const image = this.form.value.photoUrl
+                ? await this.imageUploadService.resizeAndUploadImage(
+                      this.form.value.photoUrl,
+                      sizeLimits.width,
+                      sizeLimits.height,
+                      ImageRoles.AVATAR,
+                  )
+                : null;
             await this.submitForm(image);
         } catch (e) {
             this.handleSubmitError(e, errorMessages.uploadImage);
