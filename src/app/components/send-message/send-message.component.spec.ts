@@ -161,4 +161,68 @@ describe('SendMessageComponent', () => {
         );
         expect(component.isSending).toBeFalse();
     });
+
+    it('should create an individual chat if needed and send a message', async () => {
+        // Arrange
+        const individualChat = { ...mockChat, isIndividual: true };
+        mockSelectSelectedChat.setResult(individualChat);
+        idGeneratorService.isFake.and.returnValue(true);
+        const createdChat = { ...individualChat, id: 'real-chat-id' };
+        apiService.createIndividualChat.and.returnValue(
+            Promise.resolve(createdChat),
+        );
+        apiService.sendMessage.and.returnValue(Promise.resolve({}));
+
+        // Act
+        store.refreshState();
+        fixture.detectChanges();
+        await component.onSendMessage('Hello');
+
+        // Assert
+        expect(apiService.createIndividualChat).toHaveBeenCalledWith(
+            mockChat.accountIds[0],
+        );
+        expect(storeService.updateChatId).toHaveBeenCalledWith(
+            mockChat.id,
+            createdChat.id,
+        );
+        expect(apiService.sendMessage).toHaveBeenCalledWith(
+            createdChat.id,
+            'Hello',
+            undefined,
+        );
+    });
+
+    it('should revoke object URL after image upload', async () => {
+        // Arrange
+        const revokeObjectURLSpy = spyOn(URL, 'revokeObjectURL');
+        mockSelectSelectedChat.setResult(mockChat);
+        const blob = new Blob(['image-data']);
+        const mockImageResponse = new UploadImageResponse();
+        imageUploadService.resizeAndUploadImage.and.returnValue(
+            Promise.resolve(mockImageResponse),
+        );
+        apiService.sendMessage.and.returnValue(Promise.resolve({}));
+
+        // Act
+        store.refreshState();
+        fixture.detectChanges();
+        await component.onImageBlobReady(blob);
+
+        // Assert
+        expect(revokeObjectURLSpy).toHaveBeenCalled();
+    });
+
+    it('should unsubscribe from store on destroy', () => {
+        // Arrange
+        const unsubscribeSpy = spyOn(component['unsubscribe$'], 'next');
+        const completeSpy = spyOn(component['unsubscribe$'], 'complete');
+
+        // Act
+        component.ngOnDestroy();
+
+        // Assert
+        expect(unsubscribeSpy).toHaveBeenCalled();
+        expect(completeSpy).toHaveBeenCalled();
+    });
 });

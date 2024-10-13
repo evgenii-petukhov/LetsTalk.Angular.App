@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { required, validate } from 'src/app/decorators/required.decorator';
 import { IChatDto, IMessageDto } from 'src/app/api-client/api-client';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
@@ -18,7 +18,7 @@ import { ImageUploadService } from 'src/app/services/image-upload.service';
     templateUrl: './send-message.component.html',
     styleUrl: './send-message.component.scss',
 })
-export class SendMessageComponent implements OnInit {
+export class SendMessageComponent implements OnInit, OnDestroy {
     message = '';
     isSending = false;
     private chat: IChatDto;
@@ -34,11 +34,17 @@ export class SendMessageComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.store.select(selectSelectedChat)
+        this.store
+            .select(selectSelectedChat)
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe((chat) => {
                 this.chat = chat;
             });
+    }
+
+    ngOnDestroy(): void {
+        this.unsubscribe$.next();
+        this.unsubscribe$.complete();
     }
 
     @validate
