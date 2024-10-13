@@ -14,7 +14,7 @@ import { IdGeneratorService } from 'src/app/services/id-generator.service';
 import { ImageUploadService } from 'src/app/services/image-upload.service';
 import { UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
-import { IChatDto } from 'src/app/api-client/api-client';
+import { IChatDto, IMessageDto } from 'src/app/api-client/api-client';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { SendMessageButtonStubComponent } from '../send-message-button/send-message-button.component.stub';
 import { SelectImageButtonStubComponent } from '../select-image-button/select-image-button.component.stub';
@@ -102,7 +102,11 @@ describe('SendMessageComponent', () => {
         mockSelectSelectedChat.setResult(mockChat);
         const message = 'Hello, world!';
         component.message = message;
-        apiService.sendMessage.and.returnValue(Promise.resolve({}));
+        const messageDto = {
+            created: 1728849011,
+            id: '234',
+        } as IMessageDto;
+        apiService.sendMessage.and.resolveTo(messageDto);
 
         // Act
         store.refreshState();
@@ -115,6 +119,14 @@ describe('SendMessageComponent', () => {
             message,
             undefined,
         );
+        expect(storeService.addMessage).toHaveBeenCalledOnceWith(messageDto);
+        expect(storeService.setLastMessageInfo).toHaveBeenCalledOnceWith(
+            mockChat.id,
+            messageDto.created,
+            messageDto.id,
+        );
+        expect(errorService.handleError).not.toHaveBeenCalled();
+        expect(apiService.createIndividualChat).not.toHaveBeenCalled();
         expect(component.message).toBe('');
         expect(component.isSending).toBeFalse();
     });
@@ -124,10 +136,16 @@ describe('SendMessageComponent', () => {
         mockSelectSelectedChat.setResult(mockChat);
         const blob = new Blob(['image-data']);
         const mockImageResponse = new UploadImageResponse();
-        imageUploadService.resizeAndUploadImage.and.returnValue(
-            Promise.resolve(mockImageResponse),
+        imageUploadService.resizeAndUploadImage.and.resolveTo(
+            mockImageResponse,
         );
-        apiService.sendMessage.and.returnValue(Promise.resolve({}));
+        const messageDto = {
+            created: 1728849011,
+            id: '234',
+        } as IMessageDto;
+        apiService.sendMessage.and.resolveTo(messageDto);
+
+        const revokeObjectURLSpy = spyOn(URL, 'revokeObjectURL');
 
         // Act
         store.refreshState();
@@ -141,13 +159,23 @@ describe('SendMessageComponent', () => {
             undefined,
             mockImageResponse,
         );
+        expect(storeService.addMessage).toHaveBeenCalledOnceWith(messageDto);
+        expect(storeService.setLastMessageInfo).toHaveBeenCalledOnceWith(
+            mockChat.id,
+            messageDto.created,
+            messageDto.id,
+        );
+        expect(apiService.createIndividualChat).not.toHaveBeenCalled();
+        expect(errorService.handleError).not.toHaveBeenCalled();
+        expect(apiService.createIndividualChat).not.toHaveBeenCalled();
+        expect(revokeObjectURLSpy).toHaveBeenCalled();
     });
 
     it('should handle errors during message sending', async () => {
         // Arrange
         mockSelectSelectedChat.setResult(mockChat);
         const error = new Error('Test Error');
-        apiService.sendMessage.and.returnValue(Promise.reject(error));
+        apiService.sendMessage.and.throwError(error);
 
         // Act
         store.refreshState();
@@ -155,10 +183,13 @@ describe('SendMessageComponent', () => {
         await component.onSendMessage('test');
 
         // Assert
-        expect(errorService.handleError).toHaveBeenCalledWith(
+        expect(errorService.handleError).toHaveBeenCalledOnceWith(
             error,
             jasmine.any(String),
         );
+        expect(storeService.addMessage).not.toHaveBeenCalled();
+        expect(storeService.setLastMessageInfo).not.toHaveBeenCalled();
+        expect(apiService.createIndividualChat).not.toHaveBeenCalled();
         expect(component.isSending).toBeFalse();
     });
 
@@ -167,11 +198,15 @@ describe('SendMessageComponent', () => {
         const individualChat = { ...mockChat, isIndividual: true };
         mockSelectSelectedChat.setResult(individualChat);
         idGeneratorService.isFake.and.returnValue(true);
+
         const createdChat = { ...individualChat, id: 'real-chat-id' };
-        apiService.createIndividualChat.and.returnValue(
-            Promise.resolve(createdChat),
-        );
-        apiService.sendMessage.and.returnValue(Promise.resolve({}));
+        apiService.createIndividualChat.and.resolveTo(createdChat);
+
+        const messageDto = {
+            created: 1728849011,
+            id: '234',
+        } as IMessageDto;
+        apiService.sendMessage.and.resolveTo(messageDto);
 
         // Act
         store.refreshState();
@@ -186,31 +221,17 @@ describe('SendMessageComponent', () => {
             mockChat.id,
             createdChat.id,
         );
+        expect(storeService.setSelectedChatId).toHaveBeenCalledWith(
+            createdChat.id,
+        );
         expect(apiService.sendMessage).toHaveBeenCalledWith(
             createdChat.id,
             'Hello',
             undefined,
         );
-    });
-
-    it('should revoke object URL after image upload', async () => {
-        // Arrange
-        const revokeObjectURLSpy = spyOn(URL, 'revokeObjectURL');
-        mockSelectSelectedChat.setResult(mockChat);
-        const blob = new Blob(['image-data']);
-        const mockImageResponse = new UploadImageResponse();
-        imageUploadService.resizeAndUploadImage.and.returnValue(
-            Promise.resolve(mockImageResponse),
-        );
-        apiService.sendMessage.and.returnValue(Promise.resolve({}));
-
-        // Act
-        store.refreshState();
-        fixture.detectChanges();
-        await component.onImageBlobReady(blob);
-
-        // Assert
-        expect(revokeObjectURLSpy).toHaveBeenCalled();
+        expect(errorService.handleError).not.toHaveBeenCalled();
+        expect(storeService.addMessage).not.toHaveBeenCalled();
+        expect(storeService.setLastMessageInfo).not.toHaveBeenCalled();
     });
 
     it('should unsubscribe from store on destroy', () => {

@@ -47,12 +47,8 @@ describe('ImageUploadService', () => {
             uploadResponse.setImageFormat(1);
             uploadResponse.setSignature('signature');
 
-            imageService.resizeBase64Image.and.returnValue(
-                Promise.resolve(blob),
-            );
-            fileStorageService.uploadImageAsBlob.and.returnValue(
-                Promise.resolve(uploadResponse),
-            );
+            imageService.resizeBase64Image.and.resolveTo(blob);
+            fileStorageService.uploadImageAsBlob.and.resolveTo(uploadResponse);
 
             const result = await service.resizeAndUploadImage(
                 photoUrl,
@@ -86,9 +82,7 @@ describe('ImageUploadService', () => {
             uploadResponse.setImageFormat(1);
             uploadResponse.setSignature('signature');
 
-            fileStorageService.uploadImageAsBlob.and.returnValue(
-                Promise.resolve(uploadResponse),
-            );
+            fileStorageService.uploadImageAsBlob.and.resolveTo(uploadResponse);
 
             const result = await service.resizeAndUploadImage(
                 photoUrl,
@@ -113,9 +107,7 @@ describe('ImageUploadService', () => {
             const maxHeight = 100;
             const blob = new Blob();
 
-            imageService.resizeBase64Image.and.returnValue(
-                Promise.resolve(blob),
-            );
+            imageService.resizeBase64Image.and.resolveTo(blob);
 
             const result = await service['resizeAvatar'](
                 photoUrl,

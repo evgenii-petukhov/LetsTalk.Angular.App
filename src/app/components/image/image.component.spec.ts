@@ -99,9 +99,11 @@ describe('ImageComponent', () => {
     it('should load image content on init if imagePreview is provided', async () => {
         // Arrange
         const imageContent = 'data:image/png;base64,someBase64Data';
-        storeService.getImageContent.and.returnValue(
-            Promise.resolve({ content: imageContent, width: 200, height: 200 }),
-        );
+        storeService.getImageContent.and.resolveTo({
+            content: imageContent,
+            width: 200,
+            height: 200,
+        });
 
         component.imagePreview = imagePreview;
         component.imagePreview.width = 100;

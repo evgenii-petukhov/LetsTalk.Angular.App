@@ -152,9 +152,7 @@ describe('StoreService', () => {
         it('should initialize account storage with API response if store is empty', async () => {
             const mockAccounts = [account] as IProfileDto[];
             store.select.and.returnValue(of(null));
-            apiService.getAccounts.and.returnValue(
-                Promise.resolve(mockAccounts),
-            );
+            apiService.getAccounts.and.resolveTo(mockAccounts);
 
             await service.initAccountStorage();
 
@@ -351,9 +349,7 @@ describe('StoreService', () => {
             mockResponse.getHeight.and.returnValue(100);
 
             store.select.and.returnValue(of([]));
-            fileStorageService.download.and.returnValue(
-                Promise.resolve(mockResponse),
-            );
+            fileStorageService.download.and.resolveTo(mockResponse);
             const imageUrl = 'data:image/png;base64,...';
             spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);
 

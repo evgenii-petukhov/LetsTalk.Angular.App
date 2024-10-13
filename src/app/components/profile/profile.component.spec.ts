@@ -63,7 +63,7 @@ describe('ProfileComponent', () => {
             lastName: 'Doe',
             email: 'john.doe@example.com',
         };
-        storeService.getLoggedInUser.and.returnValue(Promise.resolve(account));
+        storeService.getLoggedInUser.and.resolveTo(account);
 
         // Act
         await component.ngOnInit();
@@ -91,9 +91,7 @@ describe('ProfileComponent', () => {
         // Arrange
         const file = new File([''], 'avatar.png', { type: 'image/png' });
 
-        spyOn(file, 'arrayBuffer').and.returnValue(
-            Promise.resolve(new ArrayBuffer(8)),
-        );
+        spyOn(file, 'arrayBuffer').and.resolveTo(new ArrayBuffer(8));
 
         // Act
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -76,9 +76,7 @@ describe('AvatarComponent', () => {
 
     it('should display background image from image ID', async () => {
         // Arrange
-        storeService.getImageContent.and.returnValue(
-            Promise.resolve(mockImage),
-        );
+        storeService.getImageContent.and.resolveTo(mockImage);
 
         // Act
         component.urlOptions = [imageId];
@@ -95,9 +93,7 @@ describe('AvatarComponent', () => {
 
     it('should display background image from URL and image ID', async () => {
         // Arrange
-        storeService.getImageContent.and.returnValue(
-            Promise.resolve(mockImage),
-        );
+        storeService.getImageContent.and.resolveTo(mockImage);
 
         // Act
         component.urlOptions = [url, imageId];
@@ -114,9 +110,7 @@ describe('AvatarComponent', () => {
 
     it('should display background image from image ID and URL', async () => {
         // Arrange
-        storeService.getImageContent.and.returnValue(
-            Promise.resolve(mockImage),
-        );
+        storeService.getImageContent.and.resolveTo(mockImage);
 
         // Act
         component.urlOptions = [imageId, url];
