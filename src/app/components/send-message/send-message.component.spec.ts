@@ -18,6 +18,7 @@ import { IChatDto, IMessageDto } from 'src/app/api-client/api-client';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { SendMessageButtonStubComponent } from '../send-message-button/send-message-button.component.stub';
 import { SelectImageButtonStubComponent } from '../select-image-button/select-image-button.component.stub';
+import { errorMessages } from 'src/app/constants/errors';
 
 describe('SendMessageComponent', () => {
     let component: SendMessageComponent;
@@ -185,7 +186,7 @@ describe('SendMessageComponent', () => {
         // Assert
         expect(errorService.handleError).toHaveBeenCalledOnceWith(
             error,
-            jasmine.any(String),
+            errorMessages.sendMessage,
         );
         expect(storeService.addMessage).not.toHaveBeenCalled();
         expect(storeService.setLastMessageInfo).not.toHaveBeenCalled();
