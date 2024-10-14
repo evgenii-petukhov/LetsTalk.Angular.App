@@ -51,20 +51,11 @@ describe('SignalrHandlerService', () => {
         });
 
         service = TestBed.inject(SignalrHandlerService);
-        apiService = TestBed.inject(ApiService) as jasmine.SpyObj<ApiService>;
-        storeService = TestBed.inject(
-            StoreService,
-        ) as jasmine.SpyObj<StoreService>;
-        signalrService = TestBed.inject(
-            SignalrService,
-        ) as jasmine.SpyObj<SignalrService>;
-        browserNotificationService = TestBed.inject(
-            BrowserNotificationService,
-        ) as jasmine.SpyObj<BrowserNotificationService>;
     });
 
     describe('initHandlers', () => {
         it('should initialize SignalR handlers', async () => {
+            // Arrange
             const handleMessageNotification = jasmine.createSpy(
                 'handleMessageNotification',
             );
@@ -75,12 +66,14 @@ describe('SignalrHandlerService', () => {
                 'handleImagePreviewNotification',
             );
 
+            // Act
             await service.initHandlers(
                 handleMessageNotification,
                 handleLinkPreviewNotification,
                 handleImagePreviewNotification,
             );
 
+            // Assert
             expect(signalrService.init).toHaveBeenCalledWith(
                 handleMessageNotification,
                 handleLinkPreviewNotification,
@@ -91,88 +84,140 @@ describe('SignalrHandlerService', () => {
 
     describe('removeHandlers', () => {
         it('should remove SignalR handlers', () => {
+            // Arrange
+
+            // Act
             service.removeHandlers();
 
+            // Assert
             expect(signalrService.removeHandlers).toHaveBeenCalled();
         });
     });
 
     describe('handleMessageNotification', () => {
-        let messageDto: IMessageDto;
-        let selectedChatId: string;
-        let chats: IChatDto[];
-        let isWindowActive: boolean;
+        const messageDto = {
+            id: '1',
+            chatId: 'chatId',
+            text: 'message',
+            created: 1728867957,
+            isMine: false,
+        } as IMessageDto;
 
-        beforeEach(() => {
-            messageDto = {
-                id: '1',
-                chatId: 'chatId',
-                text: 'message',
-                created: Date.now(),
-                isMine: false,
-            } as IMessageDto;
-            selectedChatId = 'chatId';
-            chats = [
-                { id: 'chatId', chatName: 'Chat 1', unreadCount: 0 },
-            ] as IChatDto[];
-            isWindowActive = false;
-        });
+        const chats = [
+            { id: 'chatId', chatName: 'Chat 1', unreadCount: 0 },
+        ] as IChatDto[];
 
         it('should set last message info and add message if chatId matches selectedChatId', async () => {
+            // Arrange
+
+            // Act
             await service.handleMessageNotification(
                 messageDto,
-                selectedChatId,
+                'chatId',
                 chats,
-                isWindowActive,
+                false,
             );
 
-            expect(storeService.setLastMessageInfo).toHaveBeenCalledWith(
+            // Assert
+            expect(storeService.setLastMessageInfo).toHaveBeenCalledOnceWith(
                 messageDto.chatId,
                 messageDto.created,
                 messageDto.id,
             );
-            expect(storeService.addMessage).toHaveBeenCalledWith(messageDto);
+            expect(storeService.addMessage).toHaveBeenCalledOnceWith(
+                messageDto,
+            );
+            expect(apiService.markAsRead).not.toHaveBeenCalled();
+            expect(
+                storeService.incrementUnreadMessages,
+            ).toHaveBeenCalledOnceWith('chatId');
+            expect(
+                browserNotificationService.showNotification,
+            ).toHaveBeenCalledOnceWith('Chat 1', 'message', false);
+            expect(storeService.initChatStorage).not.toHaveBeenCalled();
         });
 
         it('should not mark message as read if it is mine', async () => {
-            messageDto.isMine = true;
+            // Arrange
+            const mockMessageDto = {
+                ...messageDto,
+                isMine: true,
+            };
 
+            // Act
             await service.handleMessageNotification(
-                messageDto,
-                selectedChatId,
+                mockMessageDto,
+                'chatId',
                 chats,
-                isWindowActive,
+                false,
             );
 
+            // Assert
+            expect(storeService.setLastMessageInfo).toHaveBeenCalledOnceWith(
+                mockMessageDto.chatId,
+                mockMessageDto.created,
+                mockMessageDto.id,
+            );
+            expect(storeService.addMessage).toHaveBeenCalledOnceWith(
+                mockMessageDto,
+            );
             expect(apiService.markAsRead).not.toHaveBeenCalled();
+            expect(storeService.incrementUnreadMessages).not.toHaveBeenCalled();
+            expect(
+                browserNotificationService.showNotification,
+            ).not.toHaveBeenCalled();
+            expect(storeService.initChatStorage).not.toHaveBeenCalled();
         });
 
         it('should mark message as read if window is active and chatId matches selectedChatId', async () => {
-            isWindowActive = true;
+            // Arrange
 
+            // Act
             await service.handleMessageNotification(
                 messageDto,
-                selectedChatId,
+                'chatId',
                 chats,
-                isWindowActive,
+                true,
             );
 
+            // Assert
+            expect(storeService.setLastMessageInfo).toHaveBeenCalledOnceWith(
+                messageDto.chatId,
+                messageDto.created,
+                messageDto.id,
+            );
+            expect(storeService.addMessage).toHaveBeenCalledOnceWith(
+                messageDto,
+            );
             expect(apiService.markAsRead).toHaveBeenCalledWith(
                 messageDto.chatId,
                 messageDto.id,
             );
+            expect(storeService.incrementUnreadMessages).not.toHaveBeenCalled();
+            expect(
+                browserNotificationService.showNotification,
+            ).not.toHaveBeenCalled();
+            expect(storeService.initChatStorage).not.toHaveBeenCalled();
         });
 
         it('should increment unread messages and show notification if chatId does not match selectedChatId', async () => {
-            selectedChatId = 'otherChatId';
+            // Arrange
 
+            // Act
             await service.handleMessageNotification(
                 messageDto,
-                selectedChatId,
+                'otherChatId',
                 chats,
-                isWindowActive,
+                false,
             );
 
+            // Assert
+            expect(storeService.setLastMessageInfo).toHaveBeenCalledOnceWith(
+                messageDto.chatId,
+                messageDto.created,
+                messageDto.id,
+            );
+            expect(storeService.addMessage).not.toHaveBeenCalled();
             expect(storeService.incrementUnreadMessages).toHaveBeenCalledWith(
                 messageDto.chatId,
             );
@@ -181,88 +226,116 @@ describe('SignalrHandlerService', () => {
             ).toHaveBeenCalledWith(
                 chats[0].chatName,
                 messageDto.imageId ? 'Image' : messageDto.text,
-                isWindowActive,
+                false,
             );
+            expect(storeService.initChatStorage).not.toHaveBeenCalled();
         });
 
         it('should initialize chat storage if chat is not found', async () => {
-            chats = [];
+            // Arrange
 
+            // Act
             await service.handleMessageNotification(
                 messageDto,
-                selectedChatId,
-                chats,
-                isWindowActive,
+                'chatId',
+                [],
+                false,
             );
 
+            // Assert
+            expect(storeService.setLastMessageInfo).toHaveBeenCalledOnceWith(
+                messageDto.chatId,
+                messageDto.created,
+                messageDto.id,
+            );
+            expect(storeService.addMessage).toHaveBeenCalledOnceWith(
+                messageDto,
+            );
+            expect(apiService.markAsRead).not.toHaveBeenCalled();
+            expect(storeService.incrementUnreadMessages).not.toHaveBeenCalled();
+            expect(
+                browserNotificationService.showNotification,
+            ).not.toHaveBeenCalled();
             expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
         });
     });
 
     describe('handleLinkPreviewNotification', () => {
         it('should set link preview if chatId matches selectedChatId', () => {
+            // Arrange
             const linkPreviewDto: ILinkPreviewDto = {
                 chatId: 'chatId',
                 url: 'http://example.com',
             } as ILinkPreviewDto;
             const selectedChatId = 'chatId';
 
+            // Act
             service.handleLinkPreviewNotification(
                 linkPreviewDto,
                 selectedChatId,
             );
 
+            // Assert
             expect(storeService.setLinkPreview).toHaveBeenCalledWith(
                 linkPreviewDto,
             );
         });
 
         it('should not set link preview if chatId does not match selectedChatId', () => {
+            // Arrange
             const linkPreviewDto: ILinkPreviewDto = {
                 chatId: 'chatId',
                 url: 'http://example.com',
             } as ILinkPreviewDto;
             const selectedChatId = 'otherChatId';
 
+            // Act
             service.handleLinkPreviewNotification(
                 linkPreviewDto,
                 selectedChatId,
             );
 
+            // Assert
             expect(storeService.setLinkPreview).not.toHaveBeenCalled();
         });
     });
 
     describe('handleImagePreviewNotification', () => {
         it('should set image preview if chatId matches selectedChatId', () => {
+            // Arrange
             const imagePreviewDto: IImagePreviewDto = {
                 chatId: 'chatId',
                 imageId: '1',
             } as IImagePreviewDto;
             const selectedChatId = 'chatId';
 
+            // Act
             service.handleImagePreviewNotification(
                 imagePreviewDto,
                 selectedChatId,
             );
 
+            // Assert
             expect(storeService.setImagePreview).toHaveBeenCalledWith(
                 imagePreviewDto,
             );
         });
 
         it('should not set image preview if chatId does not match selectedChatId', () => {
+            // Arrange
             const imagePreviewDto: IImagePreviewDto = {
                 chatId: 'chatId',
                 imageId: '1',
             } as IImagePreviewDto;
             const selectedChatId = 'otherChatId';
 
+            // Act
             service.handleImagePreviewNotification(
                 imagePreviewDto,
                 selectedChatId,
             );
 
+            // Assert
             expect(storeService.setImagePreview).not.toHaveBeenCalled();
         });
     });

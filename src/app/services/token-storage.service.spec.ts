@@ -25,10 +25,13 @@ describe('TokenStorageService', () => {
 
     describe('saveToken', () => {
         it('should save the token to localStorage', () => {
+            // Arrange
             const token = 'sample-token';
 
+            // Act
             service.saveToken(token);
 
+            // Assert
             expect(localStorageSpy.setItem).toHaveBeenCalledWith(
                 'auth-token',
                 token,
@@ -38,11 +41,14 @@ describe('TokenStorageService', () => {
 
     describe('getToken', () => {
         it('should return the token from localStorage', () => {
+            // Arrange
             const token = 'sample-token';
             localStorageSpy.getItem.and.returnValue(token);
 
+            // Act
             const result = service.getToken();
 
+            // Assert
             expect(localStorageSpy.getItem).toHaveBeenCalledWith('auth-token');
             expect(result).toBe(token);
         });
@@ -50,18 +56,24 @@ describe('TokenStorageService', () => {
 
     describe('isLoggedIn', () => {
         it('should return true if a token exists', () => {
+            // Arrange
             localStorageSpy.getItem.and.returnValue('sample-token');
 
+            // Act
             const result = service.isLoggedIn();
 
+            // Assert
             expect(result).toBeTrue();
         });
 
         it('should return false if no token exists', () => {
+            // Arrange
             localStorageSpy.getItem.and.returnValue(null);
 
+            // Act
             const result = service.isLoggedIn();
 
+            // Assert
             expect(result).toBeFalse();
         });
     });

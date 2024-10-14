@@ -34,6 +34,7 @@ describe('ImageUploadService', () => {
 
     describe('resizeAndUploadImage', () => {
         it('should resize image and upload', async () => {
+            // Arrange
             const photoUrl = 'data:image/png;base64,...';
             const width = 100;
             const height = 100;
@@ -50,6 +51,7 @@ describe('ImageUploadService', () => {
             imageService.resizeBase64Image.and.resolveTo(blob);
             fileStorageService.uploadImageAsBlob.and.resolveTo(uploadResponse);
 
+            // Act
             const result = await service.resizeAndUploadImage(
                 photoUrl,
                 width,
@@ -57,19 +59,20 @@ describe('ImageUploadService', () => {
                 imageRole,
             );
 
-            expect(imageService.resizeBase64Image).toHaveBeenCalledWith(
+            // Assert
+            expect(imageService.resizeBase64Image).toHaveBeenCalledOnceWith(
                 photoUrl,
                 width,
                 height,
             );
-            expect(fileStorageService.uploadImageAsBlob).toHaveBeenCalledWith(
-                blob,
-                imageRole,
-            );
+            expect(
+                fileStorageService.uploadImageAsBlob,
+            ).toHaveBeenCalledOnceWith(blob, imageRole);
             expect(result).toEqual(uploadResponse);
         });
 
         it('should handle empty photoUrl', async () => {
+            // Arrange
             const photoUrl = '';
             const width = 100;
             const height = 100;
@@ -84,6 +87,7 @@ describe('ImageUploadService', () => {
 
             fileStorageService.uploadImageAsBlob.and.resolveTo(uploadResponse);
 
+            // Act
             const result = await service.resizeAndUploadImage(
                 photoUrl,
                 width,
@@ -91,41 +95,12 @@ describe('ImageUploadService', () => {
                 imageRole,
             );
 
+            // Assert
             expect(imageService.resizeBase64Image).not.toHaveBeenCalled();
-            expect(fileStorageService.uploadImageAsBlob).toHaveBeenCalledWith(
-                null,
-                imageRole,
-            );
+            expect(
+                fileStorageService.uploadImageAsBlob,
+            ).toHaveBeenCalledOnceWith(null, imageRole);
             expect(result).toEqual(uploadResponse);
-        });
-    });
-
-    describe('resizeAvatar', () => {
-        it('should call imageService.resizeBase64Image with correct parameters', async () => {
-            const photoUrl = 'data:image/png;base64,...';
-            const maxWidth = 100;
-            const maxHeight = 100;
-            const blob = new Blob();
-
-            imageService.resizeBase64Image.and.resolveTo(blob);
-
-            const result = await service['resizeAvatar'](
-                photoUrl,
-                maxWidth,
-                maxHeight,
-            );
-
-            expect(imageService.resizeBase64Image).toHaveBeenCalledWith(
-                photoUrl,
-                maxWidth,
-                maxHeight,
-            );
-            expect(result).toEqual(blob);
-        });
-
-        it('should return null if photoUrl is empty', async () => {
-            const result = await service['resizeAvatar']('', 100, 100);
-            expect(result).toBeNull();
         });
     });
 });

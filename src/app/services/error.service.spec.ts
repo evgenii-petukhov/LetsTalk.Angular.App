@@ -24,6 +24,7 @@ describe('ErrorService', () => {
     });
 
     it('should call toastr.error with comma-separated error messages', () => {
+        // Arrange
         const errorResponse = {
             response: JSON.stringify({
                 errors: {
@@ -35,23 +36,30 @@ describe('ErrorService', () => {
 
         const defaultMessage = 'Default error message';
 
+        // Act
         service.handleError(errorResponse, defaultMessage);
 
+        // Assert
         const expectedMessage = 'Error1, Error2, Error3';
-        expect(toastrService.error).toHaveBeenCalledWith(
+        expect(toastrService.error).toHaveBeenCalledOnceWith(
             expectedMessage,
             'Error',
         );
     });
 
     it('should call toastr.error with default message if no errors present', () => {
+        // Arrange
         const errorResponse = {
             response: JSON.stringify({}),
         };
 
         const defaultMessage = 'Default error message';
+
+        // Act
         service.handleError(errorResponse, defaultMessage);
-        expect(toastrService.error).toHaveBeenCalledWith(
+
+        // Assert
+        expect(toastrService.error).toHaveBeenCalledOnceWith(
             defaultMessage,
             'Error',
         );
