@@ -34,7 +34,7 @@ describe('SignalrHandlerService', () => {
         ]);
         browserNotificationService = jasmine.createSpyObj(
             'BrowserNotificationService',
-            ['showNotification'],
+            ['init', 'showNotification'],
         );
 
         TestBed.configureTestingModule({
@@ -79,6 +79,7 @@ describe('SignalrHandlerService', () => {
                 handleLinkPreviewNotification,
                 handleImagePreviewNotification,
             );
+            expect(browserNotificationService.init).toHaveBeenCalledTimes(1);
         });
     });
 

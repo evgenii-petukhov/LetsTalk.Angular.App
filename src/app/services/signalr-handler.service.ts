@@ -30,6 +30,7 @@ export class SignalrHandlerService {
             imagePreviewDto: IImagePreviewDto,
         ) => void,
     ): Promise<void> {
+        await this.browserNotificationService.init();
         await this.signalrService.init(
             handleMessageNotification,
             handleLinkPreviewNotification,

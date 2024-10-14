@@ -7,16 +7,20 @@ import { ToastrService } from 'ngx-toastr';
 export class BrowserNotificationService {
     private isServiceWorkerRegistered = false;
 
-    constructor(private toastr: ToastrService) {
-        navigator.serviceWorker
-            .register('notification_sw.js')
-            .then(() => {
-                this.isServiceWorkerRegistered = true;
-                console.log('serviceWorker success');
-            })
-            .catch(() => {
-                console.log('serviceWorker error');
-            });
+    constructor(private toastr: ToastrService) {}
+
+    async init() {
+        if (this.isServiceWorkerRegistered) {
+            return;
+        }
+
+        try {
+            await navigator.serviceWorker.register('notification_sw.js');
+            this.isServiceWorkerRegistered = true;
+            console.log('serviceWorker success');
+        } catch {
+            console.log('serviceWorker error');
+        }
     }
 
     async showNotification(
