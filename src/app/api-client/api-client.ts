@@ -88,62 +88,6 @@ export class ApiClient {
      * @param body (optional) 
      * @return Success
      */
-    login(body: LoginRequest | undefined): Observable<LoginResponseDto> {
-        let url_ = this.baseUrl + "/api/Authentication/login";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processLogin(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processLogin(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<LoginResponseDto>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<LoginResponseDto>;
-        }));
-    }
-
-    protected processLogin(response: HttpResponseBase): Observable<LoginResponseDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = LoginResponseDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf(null as any);
-    }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
     emailLogin(body: EmailLoginRequest | undefined): Observable<LoginResponseDto> {
         let url_ = this.baseUrl + "/api/Authentication/email-login";
         url_ = url_.replace(/[?&]$/, "");
@@ -527,6 +471,110 @@ export class ApiClient {
     }
 
     protected processMarkAsRead(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    setLinkPreview(body: SetLinkPreviewRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Message/SetLinkPreview";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetLinkPreview(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetLinkPreview(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processSetLinkPreview(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    setImagePreview(body: SetImagePreviewRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Message/SetImagePreview";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetImagePreview(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetImagePreview(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processSetImagePreview(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1181,50 +1229,6 @@ export interface ILinkPreviewDto {
     url?: string | undefined;
 }
 
-export class LoginRequest implements ILoginRequest {
-    provider?: string | undefined;
-    id?: string | undefined;
-    authToken?: string | undefined;
-
-    constructor(data?: ILoginRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.provider = _data["provider"];
-            this.id = _data["id"];
-            this.authToken = _data["authToken"];
-        }
-    }
-
-    static fromJS(data: any): LoginRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new LoginRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["provider"] = this.provider;
-        data["id"] = this.id;
-        data["authToken"] = this.authToken;
-        return data;
-    }
-}
-
-export interface ILoginRequest {
-    provider?: string | undefined;
-    id?: string | undefined;
-    authToken?: string | undefined;
-}
-
 export class LoginResponseDto implements ILoginResponseDto {
     success?: boolean;
     token?: string | undefined;
@@ -1387,6 +1391,122 @@ export interface IProfileDto {
     lastName?: string | undefined;
     email?: string | undefined;
     imageId?: string | undefined;
+}
+
+export class SetImagePreviewRequest implements ISetImagePreviewRequest {
+    messageId?: string | undefined;
+    chatId?: string | undefined;
+    filename?: string | undefined;
+    imageFormat?: number;
+    width?: number;
+    height?: number;
+    signature?: string | undefined;
+
+    constructor(data?: ISetImagePreviewRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.messageId = _data["messageId"];
+            this.chatId = _data["chatId"];
+            this.filename = _data["filename"];
+            this.imageFormat = _data["imageFormat"];
+            this.width = _data["width"];
+            this.height = _data["height"];
+            this.signature = _data["signature"];
+        }
+    }
+
+    static fromJS(data: any): SetImagePreviewRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new SetImagePreviewRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["messageId"] = this.messageId;
+        data["chatId"] = this.chatId;
+        data["filename"] = this.filename;
+        data["imageFormat"] = this.imageFormat;
+        data["width"] = this.width;
+        data["height"] = this.height;
+        data["signature"] = this.signature;
+        return data;
+    }
+}
+
+export interface ISetImagePreviewRequest {
+    messageId?: string | undefined;
+    chatId?: string | undefined;
+    filename?: string | undefined;
+    imageFormat?: number;
+    width?: number;
+    height?: number;
+    signature?: string | undefined;
+}
+
+export class SetLinkPreviewRequest implements ISetLinkPreviewRequest {
+    messageId?: string | undefined;
+    chatId?: string | undefined;
+    url?: string | undefined;
+    title?: string | undefined;
+    imageUrl?: string | undefined;
+    signature?: string | undefined;
+
+    constructor(data?: ISetLinkPreviewRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.messageId = _data["messageId"];
+            this.chatId = _data["chatId"];
+            this.url = _data["url"];
+            this.title = _data["title"];
+            this.imageUrl = _data["imageUrl"];
+            this.signature = _data["signature"];
+        }
+    }
+
+    static fromJS(data: any): SetLinkPreviewRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new SetLinkPreviewRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["messageId"] = this.messageId;
+        data["chatId"] = this.chatId;
+        data["url"] = this.url;
+        data["title"] = this.title;
+        data["imageUrl"] = this.imageUrl;
+        data["signature"] = this.signature;
+        return data;
+    }
+}
+
+export interface ISetLinkPreviewRequest {
+    messageId?: string | undefined;
+    chatId?: string | undefined;
+    url?: string | undefined;
+    title?: string | undefined;
+    imageUrl?: string | undefined;
+    signature?: string | undefined;
 }
 
 export class UpdateProfileRequest implements IUpdateProfileRequest {
