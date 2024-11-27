@@ -10,68 +10,59 @@ import { StoreService } from 'src/app/services/store.service';
     styleUrls: ['./avatar.component.scss'],
 })
 export class AvatarComponent implements OnChanges {
-    @Input() urlOptions: (string | number)[];
-    backgroundImage: string;
-    private defaultPhotoUrl = 'images/empty-avatar.svg';
+    @Input() urlOptions: (string | number)[] | null = null;
+    backgroundImage: string = '';
+    private readonly defaultPhotoUrl = 'images/empty-avatar.svg';
 
     constructor(
         private storeService: StoreService,
         private errorService: ErrorService,
     ) {}
 
-    async ngOnChanges(): Promise<void> {
-        this.urlOptions = this.urlOptions ?? [];
-        this.urlOptions = this.urlOptions.filter((url) => url);
-        if (this.urlOptions.length === 0) {
+    ngOnChanges(): void {
+        this.processUrlOptions();
+    }
+
+    private async processUrlOptions(): Promise<void> {
+        const urlOptions = this.urlOptions?.filter((url) => !!url) ?? [];
+
+        if (urlOptions.length === 0) {
             this.setBackgroundImage(this.defaultPhotoUrl);
             return;
         }
 
-        switch (this.getTypeInfo(this.urlOptions[0])) {
-            case ImageUrlType.url:
-                this.setBackgroundImage(
-                    this.urlOptions[0] as string,
-                    this.defaultPhotoUrl,
-                );
-                return;
-            case ImageUrlType.imageId:
-                try {
-                    const image = await this.storeService.getImageContent(
-                        this.urlOptions[0] as string,
-                    );
-                    this.setBackgroundImage(image.content);
-                } catch (e) {
-                    this.setBackgroundImage(this.defaultPhotoUrl);
-                    this.errorService.handleError(
-                        e,
-                        errorMessages.downloadImage,
-                    );
-                }
-                return;
-            default:
-                this.setBackgroundImage(this.defaultPhotoUrl);
-                return;
+        const primaryUrl = urlOptions[0];
+        const type = this.getTypeInfo(primaryUrl);
+
+        if (type === ImageUrlType.url) {
+            this.setBackgroundImage(primaryUrl as string, this.defaultPhotoUrl);
+        } else if (type === ImageUrlType.imageId) {
+            await this.loadImageFromStore(primaryUrl as string);
+        } else {
+            this.setBackgroundImage(this.defaultPhotoUrl);
+        }
+    }
+
+    private async loadImageFromStore(imageId: string): Promise<void> {
+        try {
+            const image = await this.storeService.getImageContent(imageId);
+            this.setBackgroundImage(image.content);
+        } catch (error) {
+            this.setBackgroundImage(this.defaultPhotoUrl);
+            this.errorService.handleError(error, errorMessages.downloadImage);
         }
     }
 
     private getTypeInfo(value: string | number): ImageUrlType {
-        const stringValue = value as string;
-
-        if (
-            stringValue.startsWith('http') ||
-            stringValue.startsWith('blob:https')
-        ) {
-            return ImageUrlType.url;
+        if (typeof value === 'string') {
+            return value.startsWith('http') || value.startsWith('blob:https')
+                ? ImageUrlType.url
+                : ImageUrlType.imageId;
         }
-
-        if (stringValue) {
-            return ImageUrlType.imageId;
-        }
-
         return ImageUrlType.unknown;
     }
 
-    private setBackgroundImage(...urls: string[]) {
+    private setBackgroundImage(...urls: string[]): void {
         this.backgroundImage = urls.map((url) => `url('${url}')`).join(', ');
     }
 }
