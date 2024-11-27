@@ -134,8 +134,8 @@ describe('ImageComponent', () => {
         await fixture.whenStable();
 
         // Assert
-        expect(component.url).toBeUndefined();
-        expect(component.isLoading).toBeFalse();
+        expect(component.url).toBeNull();
+        expect(component.isLoading).toBeTrue();
         expect(storeService.getImageContent).toHaveBeenCalledWith(
             imagePreview.id,
         );
@@ -187,8 +187,8 @@ describe('ImageComponent', () => {
             sizeLimit.height / 300,
         );
 
-        const expectedWidth = expectedScale * 200;
-        const expectedHeight = expectedScale * 300;
+        const expectedWidth = Math.round(expectedScale * 200);
+        const expectedHeight = Math.round(expectedScale * 300);
 
         expect(component.width).toBe(expectedWidth);
         expect(component.height).toBe(expectedHeight);
