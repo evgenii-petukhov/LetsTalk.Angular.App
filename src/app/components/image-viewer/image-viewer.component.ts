@@ -20,25 +20,31 @@ export class ImageViewerComponent implements OnChanges {
 
     async ngOnChanges(): Promise<void> {
         if (!this.imageId) {
-            this.isVisible = false;
+            this.resetViewer();
             return;
         }
 
-        try {
-            const image = await this.storeService.getImageContent(this.imageId);
-            this.setBackgroundImage(image.content);
-            this.isVisible = true;
-        } catch (e) {
-            this.errorService.handleError(e, errorMessages.downloadImage);
-        }
+        await this.loadImage(this.imageId);
     }
 
     close() {
         this.storeService.setViewedImageId(null);
-        this.isVisible = false;
+        this.resetViewer();
     }
 
-    private setBackgroundImage(...urls: string[]) {
-        this.backgroundImage = urls.map((url) => `url('${url}')`).join(', ');
+    private async loadImage(imageId: string): Promise<void> {
+        try {
+            const image = await this.storeService.getImageContent(imageId);
+            this.backgroundImage = `url('${image.content}')`;
+            this.isVisible = true;
+        } catch (error) {
+            this.errorService.handleError(error, errorMessages.downloadImage);
+            this.resetViewer();
+        }
+    }
+
+    private resetViewer(): void {
+        this.backgroundImage = '';
+        this.isVisible = false;
     }
 }
