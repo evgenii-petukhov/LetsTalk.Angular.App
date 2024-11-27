@@ -20,7 +20,6 @@ import { MessageComponent } from './components/message/message.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoggedInUserComponent } from './components/logged-in-user/logged-in-user.component';
-import { SocialMediaIconComponent } from './components/social-media-icon/social-media-icon.component';
 import { ChatHeaderComponent } from './components/chat-header/chat-header.component';
 import { StoreModule } from '@ngrx/store';
 import { storeConfig } from './state/store-config';
@@ -59,7 +58,6 @@ import { SelectImageButtonComponent } from './components/select-image-button/sel
         AccountListItemComponent,
         MessageComponent,
         LoggedInUserComponent,
-        SocialMediaIconComponent,
         ChatHeaderComponent,
         SidebarComponent,
         OrderByPipe,
