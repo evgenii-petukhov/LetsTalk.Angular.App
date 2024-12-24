@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthComponent } from './auth.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SocialMediaIconStubComponent } from '../social-media-icon/social-media-icon.component.stub';
 
 describe('AuthComponent', () => {
     let component: AuthComponent;
@@ -10,7 +9,7 @@ describe('AuthComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [AuthComponent, SocialMediaIconStubComponent],
+            declarations: [AuthComponent],
             imports: [FontAwesomeModule, RouterTestingModule],
             providers: [],
         }).compileComponents();

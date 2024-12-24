@@ -1,10 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    Input,
-    OnInit,
-} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { errorMessages } from 'src/app/constants/errors';
 import { ImagePreview } from 'src/app/models/imagePreview';
 import { ErrorService } from 'src/app/services/error.service';
@@ -15,7 +9,6 @@ import { environment } from 'src/environments/environment';
     selector: 'app-image',
     templateUrl: './image.component.html',
     styleUrls: ['./image.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImageComponent implements OnInit {
     @Input() imagePreview: ImagePreview;
@@ -30,51 +23,52 @@ export class ImageComponent implements OnInit {
     constructor(
         private storeService: StoreService,
         private errorService: ErrorService,
-        private cdr: ChangeDetectorRef,
     ) {}
 
     async ngOnInit(): Promise<void> {
-        if (!this.imagePreview) {
-            return;
-        }
+        try {
+            if (!this.imagePreview) {
+                return;
+            }
 
-        this.setSize(this.imagePreview.width, this.imagePreview.height);
+            this.setSize(this.imagePreview.width, this.imagePreview.height);
 
-        if (this.imagePreview.id) {
-            try {
+            if (this.imagePreview.id) {
                 const image = await this.storeService.getImageContent(
                     this.imagePreview.id,
                 );
                 if (image) {
                     this.url = image.content;
                     this.setSize(image.width, image.height);
+                    this.isLoading = false;
                 }
-            } catch (e) {
-                this.errorService.handleError(e, errorMessages.downloadImage);
             }
+        } catch (e) {
+            this.errorService.handleError(e, errorMessages.downloadImage);
+            this.url = null;
         }
-        this.isLoading = false;
-        this.cdr.detectChanges();
     }
 
     openImageViewer(e: PointerEvent): void {
         e.preventDefault();
-        this.storeService.setViewedImageId(this.imageId);
+        if (this.imageId) {
+            this.storeService.setViewedImageId(this.imageId);
+        }
     }
 
     private setSize(width: number, height: number): void {
-        this.isSizeUnknown = !width || !height;
-
-        if (this.isSizeUnknown) {
+        if (!width || !height) {
+            this.isSizeUnknown = true;
             return;
         }
 
-        const scaleX =
-            width > this.sizeLimit.width ? this.sizeLimit.width / width : 1;
-        const scaleY =
-            height > this.sizeLimit.height ? this.sizeLimit.height / height : 1;
-        const scale = Math.min(scaleX, scaleY);
-        this.width = scale * width;
-        this.height = scale * height;
+        this.isSizeUnknown = false;
+        const scale = Math.min(
+            this.sizeLimit.width / width,
+            this.sizeLimit.height / height,
+            1,
+        );
+        this.width = Math.round(scale * width);
+        this.height = Math.round(scale * height);
     }
 }
