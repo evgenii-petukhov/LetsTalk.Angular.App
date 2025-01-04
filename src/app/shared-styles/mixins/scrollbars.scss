@@ -23,7 +23,10 @@
         background: $background-color;
     }
 
-    // Standard version (Firefox only for now)
-    scrollbar-width: thin;
-    scrollbar-color: $foreground-color $background-color;
+    // Browsers without `::-webkit-scrollbar-*` support
+    // https://syntackle.com/blog/changes-to-scrollbar-styling-in-chrome-121/
+    @supports not selector(::-webkit-scrollbar) {
+        scrollbar-width: thin;
+        scrollbar-color: $foreground-color $background-color;
+    }
 }
