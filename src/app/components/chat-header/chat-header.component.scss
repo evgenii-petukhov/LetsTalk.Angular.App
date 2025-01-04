@@ -1,5 +1,5 @@
-@import "bootstrap/scss/bootstrap";
-@import "../../shared-styles/mixins/avatar-styles";
+@use "bootstrap/scss/bootstrap" as *;
+@use "../../shared-styles/mixins/avatar-styles" as *;
 
 :host {
     display: flex;

@@ -1,4 +1,4 @@
-@import "../../shared-styles/extend/center-container";
+@use "../../shared-styles/extend/center-container" as *;
 
 :host {
     @extend %fullscreen;

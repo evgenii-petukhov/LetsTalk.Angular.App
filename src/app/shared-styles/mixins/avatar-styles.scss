@@ -1,5 +1,5 @@
-@import "bootstrap/scss/bootstrap";
-@import "../variables";
+@use "bootstrap/scss/bootstrap" as *;
+@use "../variables" as *;
 
 @mixin avatar-styles($size: $avatar-size-mobile) {
     flex: 0 1 $avatar-size-desktop;

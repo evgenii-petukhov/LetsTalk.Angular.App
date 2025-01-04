@@ -1,5 +1,4 @@
-@import "bootstrap/scss/bootstrap";
-@import "../../shared-styles/mixins/scrollbars";
+@use "../../shared-styles/mixins/scrollbars" as *;
 
 .send-message-container {
     display: flex;
