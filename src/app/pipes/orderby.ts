@@ -3,6 +3,7 @@ import { List, ListIteratee, Many, orderBy } from 'lodash-es';
 
 @Pipe({
     name: 'orderBy',
+    standalone: false,
 })
 export class OrderByPipe<T> implements PipeTransform {
     transform(

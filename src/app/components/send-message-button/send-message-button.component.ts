@@ -5,6 +5,7 @@ import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
     selector: 'app-send-message-button',
     templateUrl: './send-message-button.component.html',
     styleUrl: './send-message-button.component.scss',
+    standalone: false,
 })
 export class SendMessageButtonComponent {
     faPaperPlane = faPaperPlane;

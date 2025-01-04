@@ -21,6 +21,7 @@ import { IdGeneratorService } from 'src/app/services/id-generator.service';
     selector: 'app-chat',
     templateUrl: './chat.component.html',
     styleUrls: ['./chat.component.scss'],
+    standalone: false,
 })
 export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     // https://pumpingco.de/blog/automatic-scrolling-only-if-a-user-already-scrolled-the-bottom-of-a-page-in-angular/

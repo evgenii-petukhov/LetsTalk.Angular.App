@@ -9,6 +9,7 @@ import { environment } from 'src/environments/environment';
     selector: 'app-image',
     templateUrl: './image.component.html',
     styleUrls: ['./image.component.scss'],
+    standalone: false,
 })
 export class ImageComponent implements OnInit {
     @Input() imagePreview: ImagePreview;

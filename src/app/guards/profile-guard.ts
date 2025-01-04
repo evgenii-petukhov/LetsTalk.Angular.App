@@ -19,7 +19,7 @@ export const profileGuard = async (next: ActivatedRouteSnapshot) => {
             window.localStorage.clear();
             return createUrlTreeFromSnapshot(next, ['/', 'auth']);
         }
-    } catch (e) {
+    } catch {
         window.localStorage.clear();
         return createUrlTreeFromSnapshot(next, ['/', 'auth']);
     }

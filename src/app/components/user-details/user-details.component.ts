@@ -4,6 +4,7 @@ import { Component, Input } from '@angular/core';
     selector: 'app-user-details',
     templateUrl: './user-details.component.html',
     styleUrl: './user-details.component.scss',
+    standalone: false,
 })
 export class UserDetailsComponent {
     @Input() value: string;

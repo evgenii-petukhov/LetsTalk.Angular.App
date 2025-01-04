@@ -25,6 +25,7 @@
                 flex: 0 1 auto;
                 flex-direction: column;
 
+                /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
                 ::ng-deep p {
                     margin: 0;
                 }

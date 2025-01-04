@@ -7,6 +7,7 @@ import { StoreService } from 'src/app/services/store.service';
     selector: 'app-image-viewer',
     templateUrl: './image-viewer.component.html',
     styleUrls: ['./image-viewer.component.scss'],
+    standalone: false,
 })
 export class ImageViewerComponent implements OnChanges {
     backgroundImage: string;

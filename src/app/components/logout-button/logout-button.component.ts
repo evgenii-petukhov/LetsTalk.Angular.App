@@ -5,6 +5,7 @@ import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
     selector: 'app-logout-button',
     templateUrl: './logout-button.component.html',
     styleUrl: './logout-button.component.scss',
+    standalone: false,
 })
 export class LogoutButtonComponent {
     faRightFromBracket = faRightFromBracket;

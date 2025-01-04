@@ -12,6 +12,7 @@ import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
     selector: 'app-account-list',
     templateUrl: './account-list.component.html',
     styleUrls: ['./account-list.component.scss'],
+    standalone: false,
 })
 export class AccountListComponent implements OnInit, OnDestroy {
     accounts: readonly IAccountDto[] = [];

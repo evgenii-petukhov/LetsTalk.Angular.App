@@ -8,6 +8,7 @@ import { StoreService } from 'src/app/services/store.service';
     selector: 'app-avatar',
     templateUrl: './avatar.component.html',
     styleUrls: ['./avatar.component.scss'],
+    standalone: false,
 })
 export class AvatarComponent implements OnChanges {
     @Input() urlOptions: (string | number)[] | null = null;

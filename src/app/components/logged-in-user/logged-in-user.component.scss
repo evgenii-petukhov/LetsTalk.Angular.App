@@ -11,26 +11,6 @@
         rgb(255 211 86 / 100%) 100%
     );
 
-    &.navigation-active {
-        background: rgb(0 0 0 / 10%);
-
-        .logged-in-user-container {
-            .logged-in-user-inner-container {
-                padding-left: 0;
-
-                app-user-details {
-                    padding: 0;
-                }
-            }
-        }
-    }
-
-    @include media-breakpoint-down(lg) {
-        box-shadow: 0 0 5px 3px rgb(0 0 0 / 20%);
-    }
-
-    /* gradient colors: #ffc523, #ffd356 */
-
     .logged-in-user-container {
         .logged-in-user-inner-container {
             display: flex;
@@ -53,5 +33,23 @@
                 padding: 0 0 0 10px;
             }
         }
+    }
+
+    &.navigation-active {
+        background: rgb(0 0 0 / 10%);
+
+        .logged-in-user-container {
+            .logged-in-user-inner-container {
+                padding-left: 0;
+
+                app-user-details {
+                    padding: 0;
+                }
+            }
+        }
+    }
+
+    @include media-breakpoint-down(lg) {
+        box-shadow: 0 0 5px 3px rgb(0 0 0 / 20%);
     }
 }
