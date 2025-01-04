@@ -1,5 +1,5 @@
-@import "bootstrap/scss/bootstrap";
-@import "../../shared-styles/extend/center-container";
+@use "bootstrap/scss/bootstrap" as *;
+@use "../../shared-styles/extend/center-container" as *;
 
 :host {
     @extend %fullscreen;

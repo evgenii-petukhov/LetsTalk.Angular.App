@@ -5,6 +5,7 @@ import { Message } from 'src/app/models/message';
     selector: 'app-message',
     templateUrl: './message.component.html',
     styleUrls: ['./message.component.scss'],
+    standalone: false,
 })
 export class MessageComponent {
     @Input() message: Message;

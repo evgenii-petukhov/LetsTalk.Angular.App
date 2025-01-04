@@ -5,6 +5,7 @@ import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
     selector: 'app-back-button',
     templateUrl: './back-button.component.html',
     styleUrl: './back-button.component.scss',
+    standalone: false,
 })
 export class BackButtonComponent {
     faChevronLeft = faChevronLeft;

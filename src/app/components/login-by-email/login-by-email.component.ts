@@ -10,6 +10,7 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
     selector: 'app-login-by-email',
     templateUrl: './login-by-email.component.html',
     styleUrl: './login-by-email.component.scss',
+    standalone: false,
 })
 export class LoginByEmailComponent {
     form = this.fb.group({

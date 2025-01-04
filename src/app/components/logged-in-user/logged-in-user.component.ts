@@ -7,6 +7,7 @@ import { SidebarState } from 'src/app/enums/sidebar-state';
     selector: 'app-logged-in-user',
     templateUrl: './logged-in-user.component.html',
     styleUrls: ['./logged-in-user.component.scss'],
+    standalone: false,
 })
 export class LoggedInUserComponent implements OnInit {
     account: IProfileDto;

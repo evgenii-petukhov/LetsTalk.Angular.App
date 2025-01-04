@@ -5,6 +5,7 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
     selector: 'app-auth',
     templateUrl: './auth.component.html',
     styleUrls: ['./auth.component.scss'],
+    standalone: false,
 })
 export class AuthComponent {
     faEnvelope = faEnvelope;

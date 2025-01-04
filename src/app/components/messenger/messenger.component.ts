@@ -20,6 +20,7 @@ import { SignalrHandlerService } from 'src/app/services/signalr-handler.service'
     selector: 'app-messenger',
     templateUrl: './messenger.component.html',
     styleUrls: ['./messenger.component.scss'],
+    standalone: false,
 })
 export class MessengerComponent implements OnInit, OnDestroy {
     selectedChatId$ = this.store.select(selectSelectedChatId);

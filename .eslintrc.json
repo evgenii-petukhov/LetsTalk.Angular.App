@@ -1,6 +1,11 @@
 {
     "root": true,
-    "ignorePatterns": ["projects/**/*", "src/app/protos", "src/environments"],
+    "ignorePatterns": [
+        "projects/**/*",
+        "src/app/protos",
+        "src/environments",
+        "src/app/api-client"
+    ],
     "overrides": [
         {
             "files": ["*.ts"],
@@ -31,6 +36,7 @@
                         "style": "kebab-case"
                     }
                 ],
+                "@angular-eslint/prefer-standalone": "off",
                 "deprecation/deprecation": "warn"
             },
             "plugins": ["deprecation"]

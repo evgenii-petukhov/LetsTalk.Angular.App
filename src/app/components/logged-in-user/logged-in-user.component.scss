@@ -1,6 +1,6 @@
-@import "bootstrap/scss/bootstrap";
-@import "../../shared-styles/mixins/avatar-styles";
-@import "../../shared-styles/variables";
+@use "bootstrap/scss/bootstrap" as *;
+@use "../../shared-styles/mixins/avatar-styles" as *;
+@use "../../shared-styles/variables" as *;
 
 :host {
     color: #000;
@@ -10,26 +10,6 @@
         rgb(255 197 35 / 100%) 0%,
         rgb(255 211 86 / 100%) 100%
     );
-
-    &.navigation-active {
-        background: rgb(0 0 0 / 10%);
-
-        .logged-in-user-container {
-            .logged-in-user-inner-container {
-                padding-left: 0;
-
-                app-user-details {
-                    padding: 0;
-                }
-            }
-        }
-    }
-
-    @include media-breakpoint-down(lg) {
-        box-shadow: 0 0 5px 3px rgb(0 0 0 / 20%);
-    }
-
-    /* gradient colors: #ffc523, #ffd356 */
 
     .logged-in-user-container {
         .logged-in-user-inner-container {
@@ -53,5 +33,23 @@
                 padding: 0 0 0 10px;
             }
         }
+    }
+
+    &.navigation-active {
+        background: rgb(0 0 0 / 10%);
+
+        .logged-in-user-container {
+            .logged-in-user-inner-container {
+                padding-left: 0;
+
+                app-user-details {
+                    padding: 0;
+                }
+            }
+        }
+    }
+
+    @include media-breakpoint-down(lg) {
+        box-shadow: 0 0 5px 3px rgb(0 0 0 / 20%);
     }
 }

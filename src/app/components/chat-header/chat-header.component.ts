@@ -10,6 +10,7 @@ import { Subject, takeUntil } from 'rxjs';
     selector: 'app-chat-header',
     templateUrl: './chat-header.component.html',
     styleUrls: ['./chat-header.component.scss'],
+    standalone: false,
 })
 export class ChatHeaderComponent implements OnInit, OnDestroy {
     chat: IChatDto;

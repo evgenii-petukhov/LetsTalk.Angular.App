@@ -1,4 +1,4 @@
-@import "../../shared-styles/mixins/scrollbars";
+@use "../../shared-styles/mixins/scrollbars" as *;
 
 :host {
     overflow-y: auto;

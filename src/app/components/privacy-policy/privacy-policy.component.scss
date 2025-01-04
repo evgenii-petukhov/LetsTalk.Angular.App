@@ -1,5 +1,5 @@
-@import "bootstrap/scss/bootstrap";
-@import "../../shared-styles/mixins/scrollbars";
+@use "bootstrap/scss/bootstrap" as *;
+@use "../../shared-styles/mixins/scrollbars" as *;
 
 :host {
     flex: 1 1 auto;

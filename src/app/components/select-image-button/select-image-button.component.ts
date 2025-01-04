@@ -5,6 +5,7 @@ import { faCamera } from '@fortawesome/free-solid-svg-icons';
     selector: 'app-select-image-button',
     templateUrl: './select-image-button.component.html',
     styleUrl: './select-image-button.component.scss',
+    standalone: false,
 })
 export class SelectImageButtonComponent {
     faCamera = faCamera;

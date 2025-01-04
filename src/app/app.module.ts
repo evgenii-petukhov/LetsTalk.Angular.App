@@ -1,4 +1,7 @@
-import { HttpClientModule } from '@angular/common/http';
+import {
+    provideHttpClient,
+    withInterceptorsFromDi,
+} from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -80,7 +83,6 @@ import { SelectImageButtonComponent } from './components/select-image-button/sel
         BrowserModule,
         AppRoutingModule,
         NgbModule,
-        HttpClientModule,
         FontAwesomeModule,
         FormsModule,
         BrowserAnimationsModule,
@@ -93,6 +95,7 @@ import { SelectImageButtonComponent } from './components/select-image-button/sel
         httpLogInterceptorProvider,
         grpcLogInterceptorProvider,
         apiClientProvider,
+        provideHttpClient(withInterceptorsFromDi()),
         {
             provide: API_BASE_URL,
             useFactory: () => environment.services.api.url,

@@ -1,4 +1,4 @@
-@import "../../shared-styles/extend/center-container";
+@use "../../shared-styles/extend/center-container" as *;
 
 :host {
     @extend %fullscreen;
@@ -31,7 +31,7 @@
                             margin: 0;
                         }
 
-                        ::ng-deep fa-icon {
+                        fa-icon {
                             margin: 0 5px 0 0;
                         }
                     }

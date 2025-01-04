@@ -17,6 +17,7 @@ import { ImageUploadService } from 'src/app/services/image-upload.service';
     selector: 'app-send-message',
     templateUrl: './send-message.component.html',
     styleUrl: './send-message.component.scss',
+    standalone: false,
 })
 export class SendMessageComponent implements OnInit, OnDestroy {
     message = '';

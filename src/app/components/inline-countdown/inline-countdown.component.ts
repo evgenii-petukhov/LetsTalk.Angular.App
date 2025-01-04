@@ -10,6 +10,7 @@ import {
 @Component({
     selector: 'app-inline-countdown',
     templateUrl: './inline-countdown.component.html',
+    standalone: false,
 })
 export class InlineCountdownComponent implements OnInit, OnDestroy {
     @Input() startValue: number;
