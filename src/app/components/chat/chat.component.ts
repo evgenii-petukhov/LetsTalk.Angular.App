@@ -85,7 +85,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     isMessageVisible(message: Message): boolean {
-        return !!message.text || !!message.imageId;
+        return !!message.text || !!message.image;
     }
 
     async onScroll(): Promise<void> {

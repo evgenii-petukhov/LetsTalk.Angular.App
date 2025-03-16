@@ -1,5 +1,5 @@
 import { createFeatureSelector } from '@ngrx/store';
-import { ImageKey } from 'src/app/models/image-key';
+import { IImageDto } from 'src/app/api-client/api-client';
 
 export const selectViewedImageKey =
-    createFeatureSelector<ImageKey>('viewedImageKey');
+    createFeatureSelector<IImageDto>('viewedImageKey');

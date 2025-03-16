@@ -36,13 +36,10 @@
             [innerHTML]="message.textHtml"
             *ngIf="message.textHtml"
         ></div>
-        <div class="content" *ngIf="message.imageId">
+        <div class="content" *ngIf="message.image">
             <app-image
                 [imagePreview]="message.imagePreview"
-                [imageKey]="{
-                    imageId: message.imageId,
-                    fileStorageTypeId: message.fileStorageTypeId,
-                }"
+                [imageKey]="message.image"
             ></app-image>
         </div>
         <div

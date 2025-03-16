@@ -1081,6 +1081,46 @@ export interface IGenerateLoginCodeResponseDto {
     codeValidInSeconds?: number;
 }
 
+export class ImageDto implements IImageDto {
+    id?: string | undefined;
+    fileStorageTypeId?: number;
+
+    constructor(data?: IImageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.fileStorageTypeId = _data["fileStorageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): ImageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["fileStorageTypeId"] = this.fileStorageTypeId;
+        return data;
+    }
+}
+
+export interface IImageDto {
+    id?: string | undefined;
+    fileStorageTypeId?: number;
+}
+
 export class ImagePreviewDto implements IImagePreviewDto {
     messageId?: string | undefined;
     id?: string | undefined;
@@ -1293,9 +1333,8 @@ export class MessageDto implements IMessageDto {
     isMine?: boolean | undefined;
     created?: number;
     linkPreview?: LinkPreviewDto;
-    imageId?: string | undefined;
+    image?: ImageDto;
     imagePreview?: ImagePreviewDto;
-    fileStorageTypeId?: number;
 
     constructor(data?: IMessageDto) {
         if (data) {
@@ -1315,9 +1354,8 @@ export class MessageDto implements IMessageDto {
             this.isMine = _data["isMine"];
             this.created = _data["created"];
             this.linkPreview = _data["linkPreview"] ? LinkPreviewDto.fromJS(_data["linkPreview"]) : <any>undefined;
-            this.imageId = _data["imageId"];
+            this.image = _data["image"] ? ImageDto.fromJS(_data["image"]) : <any>undefined;
             this.imagePreview = _data["imagePreview"] ? ImagePreviewDto.fromJS(_data["imagePreview"]) : <any>undefined;
-            this.fileStorageTypeId = _data["fileStorageTypeId"];
         }
     }
 
@@ -1337,9 +1375,8 @@ export class MessageDto implements IMessageDto {
         data["isMine"] = this.isMine;
         data["created"] = this.created;
         data["linkPreview"] = this.linkPreview ? this.linkPreview.toJSON() : <any>undefined;
-        data["imageId"] = this.imageId;
+        data["image"] = this.image ? this.image.toJSON() : <any>undefined;
         data["imagePreview"] = this.imagePreview ? this.imagePreview.toJSON() : <any>undefined;
-        data["fileStorageTypeId"] = this.fileStorageTypeId;
         return data;
     }
 }
@@ -1352,9 +1389,8 @@ export interface IMessageDto {
     isMine?: boolean | undefined;
     created?: number;
     linkPreview?: LinkPreviewDto;
-    imageId?: string | undefined;
+    image?: ImageDto;
     imagePreview?: ImagePreviewDto;
-    fileStorageTypeId?: number;
 }
 
 export class ProfileDto implements IProfileDto {

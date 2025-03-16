@@ -1,6 +1,6 @@
 import { accountsReducer } from './accounts/accounts.reducer';
 import { chatsReducer } from './chats/chats.reducer';
-import { imagesReducer } from './images/images.reducer';
+import { imageCacheReducer } from './image-cache/image-cache.reducer';
 import { layoutSettingsReducer } from './layout-settings/layout-settings.reducer';
 import { loggedInUserReducer } from './logged-in-user/logged-in-user.reducer';
 import { messagesReducer } from './messages/messages.reducer';
@@ -14,6 +14,6 @@ export const storeConfig = {
     accounts: accountsReducer,
     loggedInUser: loggedInUserReducer,
     layoutSettings: layoutSettingsReducer,
-    images: imagesReducer,
+    imageCache: imageCacheReducer,
     viewedImageKey: viewedImageKeyReducer,
 };

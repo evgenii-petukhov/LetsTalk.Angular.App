@@ -1,6 +1,6 @@
 import { Component, HostBinding, Input, OnChanges } from '@angular/core';
+import { IImageDto } from 'src/app/api-client/api-client';
 import { errorMessages } from 'src/app/constants/errors';
-import { ImageKey } from 'src/app/models/image-key';
 import { ErrorService } from 'src/app/services/error.service';
 import { StoreService } from 'src/app/services/store.service';
 
@@ -12,7 +12,7 @@ import { StoreService } from 'src/app/services/store.service';
 })
 export class ImageViewerComponent implements OnChanges {
     backgroundImage: string;
-    @Input() imageKey: ImageKey;
+    @Input() imageKey: IImageDto;
     @HostBinding('class.visible') isVisible: boolean = false;
 
     constructor(
@@ -21,7 +21,7 @@ export class ImageViewerComponent implements OnChanges {
     ) {}
 
     async ngOnChanges(): Promise<void> {
-        if (!this.imageKey?.imageId) {
+        if (!this.imageKey) {
             this.resetViewer();
             return;
         }

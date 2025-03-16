@@ -1,6 +1,7 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import {
     IChatDto,
+    IImageDto,
     IImagePreviewDto,
     ILinkPreviewDto,
     IMessageDto,
@@ -15,7 +16,6 @@ import { ActiveArea } from 'src/app/enums/active-areas';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { selectChats } from 'src/app/state/chats/chats.selector';
 import { SignalrHandlerService } from 'src/app/services/signalr-handler.service';
-import { ImageKey } from 'src/app/models/image-key';
 
 @Component({
     selector: 'app-messenger',
@@ -25,7 +25,7 @@ import { ImageKey } from 'src/app/models/image-key';
 })
 export class MessengerComponent implements OnInit, OnDestroy {
     selectedChatId$ = this.store.select(selectSelectedChatId);
-    viewedImageKey: ImageKey;
+    viewedImageKey: IImageDto;
     isSidebarShown = true;
     isChatShown = false;
     selectedChatId: string;

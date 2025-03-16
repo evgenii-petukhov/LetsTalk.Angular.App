@@ -11,7 +11,7 @@ export const messagesReducer = createReducer(
     ),
     on(messagesActions.addMessage, (_state, { messageDto }) => {
         const existing = _state.find((m) => m.id === messageDto.id);
-        return !!existing?.text || !!existing?.imageId
+        return !!existing?.text || !!existing?.image
             ? _state
             : [
                   ..._state.filter((m) => m.id !== messageDto.id),

@@ -6,7 +6,7 @@ import { ApiService } from './api.service';
 import { FileStorageService } from './file-storage.service';
 import { chatsActions } from '../state/chats/chats.actions';
 import { loggedInUserActions } from '../state/logged-in-user/logged-in-user.actions';
-import { imagesActions } from '../state/images/images.actions';
+import { imagesActions } from '../state/image-cache/image-cache.actions';
 import {
     IChatDto,
     IProfileDto,
@@ -14,7 +14,7 @@ import {
     IImagePreviewDto,
     ILinkPreviewDto,
 } from '../api-client/api-client';
-import { Image } from '../models/image';
+import { ImageCacheEntry } from '../models/image-cache-entry';
 import { accountsActions } from '../state/accounts/accounts.actions';
 import { messagesActions } from '../state/messages/messages.actions';
 import { ILayoutSettings } from '../models/layout-settings';
@@ -322,7 +322,7 @@ describe('StoreService', () => {
     describe('getImageContent', () => {
         it('should return image from store if exists', async () => {
             const imageId = '1';
-            const mockImage: Image = {
+            const mockImage: ImageCacheEntry = {
                 imageId,
                 content: 'url',
                 width: 100,

@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges } from '@angular/core';
+import { IImageDto } from 'src/app/api-client/api-client';
 import { errorMessages } from 'src/app/constants/errors';
 import { ImageUrlType } from 'src/app/enums/image-url-type';
-import { ImageKey } from 'src/app/models/image-key';
 import { ErrorService } from 'src/app/services/error.service';
 import { StoreService } from 'src/app/services/store.service';
 
@@ -41,7 +41,7 @@ export class AvatarComponent implements OnChanges {
             this.setBackgroundImage(primaryUrl as string, this.defaultPhotoUrl);
         } else if (type === ImageUrlType.imageId) {
             await this.loadImageFromStore({
-                imageId: primaryUrl as string,
+                id: primaryUrl as string,
                 fileStorageTypeId: this.fileStorageTypeId,
             });
         } else {
@@ -49,7 +49,7 @@ export class AvatarComponent implements OnChanges {
         }
     }
 
-    private async loadImageFromStore(imageKey: ImageKey): Promise<void> {
+    private async loadImageFromStore(imageKey: IImageDto): Promise<void> {
         try {
             const image = await this.storeService.getImageContent(imageKey);
             this.setBackgroundImage(image.content);
