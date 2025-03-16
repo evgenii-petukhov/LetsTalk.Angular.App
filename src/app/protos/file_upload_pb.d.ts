@@ -39,6 +39,9 @@ export class UploadImageResponse extends jspb.Message {
   getImageFormat(): number;
   setImageFormat(value: number): UploadImageResponse;
 
+  getFileStorageTypeId(): number;
+  setFileStorageTypeId(value: number): UploadImageResponse;
+
   getSignature(): string;
   setSignature(value: string): UploadImageResponse;
 
@@ -56,6 +59,7 @@ export namespace UploadImageResponse {
     width: number,
     height: number,
     imageFormat: number,
+    fileStorageTypeId: number,
     signature: string,
   }
 }
@@ -63,6 +67,9 @@ export namespace UploadImageResponse {
 export class DownloadImageRequest extends jspb.Message {
   getImageId(): string;
   setImageId(value: string): DownloadImageRequest;
+
+  getFileStorageTypeId(): number;
+  setFileStorageTypeId(value: number): DownloadImageRequest;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): DownloadImageRequest.AsObject;
@@ -75,6 +82,7 @@ export class DownloadImageRequest extends jspb.Message {
 export namespace DownloadImageRequest {
   export type AsObject = {
     imageId: string,
+    fileStorageTypeId: number,
   }
 }
 

@@ -1,3 +1,4 @@
 <app-back-button (buttonClick)="onBackClicked()"></app-back-button>
-<app-avatar *ngIf="chat" [urlOptions]="[chat.imageId, chat.photoUrl]"></app-avatar>
+<app-avatar *ngIf="chat" [urlOptions]="[chat.imageId, chat.photoUrl]"
+    [fileStorageTypeId]="chat.fileStorageTypeId"></app-avatar>
 <app-user-details [value]="chat?.chatName"></app-user-details>

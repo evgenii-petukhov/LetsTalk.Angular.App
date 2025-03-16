@@ -708,6 +708,7 @@ export class AccountDto implements IAccountDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     imageId?: string | undefined;
+    fileStorageTypeId?: number;
 
     constructor(data?: IAccountDto) {
         if (data) {
@@ -726,6 +727,7 @@ export class AccountDto implements IAccountDto {
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
             this.imageId = _data["imageId"];
+            this.fileStorageTypeId = _data["fileStorageTypeId"];
         }
     }
 
@@ -744,6 +746,7 @@ export class AccountDto implements IAccountDto {
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["imageId"] = this.imageId;
+        data["fileStorageTypeId"] = this.fileStorageTypeId;
         return data;
     }
 }
@@ -755,6 +758,7 @@ export interface IAccountDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     imageId?: string | undefined;
+    fileStorageTypeId?: number;
 }
 
 export class ChatDto implements IChatDto {
@@ -766,6 +770,7 @@ export class ChatDto implements IChatDto {
     lastMessageDate?: number;
     lastMessageId?: string | undefined;
     imageId?: string | undefined;
+    fileStorageTypeId?: number;
     isIndividual?: boolean;
     accountIds?: string[] | undefined;
 
@@ -788,6 +793,7 @@ export class ChatDto implements IChatDto {
             this.lastMessageDate = _data["lastMessageDate"];
             this.lastMessageId = _data["lastMessageId"];
             this.imageId = _data["imageId"];
+            this.fileStorageTypeId = _data["fileStorageTypeId"];
             this.isIndividual = _data["isIndividual"];
             if (Array.isArray(_data["accountIds"])) {
                 this.accountIds = [] as any;
@@ -814,6 +820,7 @@ export class ChatDto implements IChatDto {
         data["lastMessageDate"] = this.lastMessageDate;
         data["lastMessageId"] = this.lastMessageId;
         data["imageId"] = this.imageId;
+        data["fileStorageTypeId"] = this.fileStorageTypeId;
         data["isIndividual"] = this.isIndividual;
         if (Array.isArray(this.accountIds)) {
             data["accountIds"] = [];
@@ -833,6 +840,7 @@ export interface IChatDto {
     lastMessageDate?: number;
     lastMessageId?: string | undefined;
     imageId?: string | undefined;
+    fileStorageTypeId?: number;
     isIndividual?: boolean;
     accountIds?: string[] | undefined;
 }
@@ -1079,6 +1087,7 @@ export class ImagePreviewDto implements IImagePreviewDto {
     chatId?: string | undefined;
     width?: number | undefined;
     height?: number | undefined;
+    fileStorageTypeId?: number;
 
     constructor(data?: IImagePreviewDto) {
         if (data) {
@@ -1096,6 +1105,7 @@ export class ImagePreviewDto implements IImagePreviewDto {
             this.chatId = _data["chatId"];
             this.width = _data["width"];
             this.height = _data["height"];
+            this.fileStorageTypeId = _data["fileStorageTypeId"];
         }
     }
 
@@ -1113,6 +1123,7 @@ export class ImagePreviewDto implements IImagePreviewDto {
         data["chatId"] = this.chatId;
         data["width"] = this.width;
         data["height"] = this.height;
+        data["fileStorageTypeId"] = this.fileStorageTypeId;
         return data;
     }
 }
@@ -1123,6 +1134,7 @@ export interface IImagePreviewDto {
     chatId?: string | undefined;
     width?: number | undefined;
     height?: number | undefined;
+    fileStorageTypeId?: number;
 }
 
 export class ImageRequestModel implements IImageRequestModel {
@@ -1130,6 +1142,7 @@ export class ImageRequestModel implements IImageRequestModel {
     width?: number;
     height?: number;
     imageFormat?: number;
+    fileStorageTypeId?: number;
     signature?: string | undefined;
 
     constructor(data?: IImageRequestModel) {
@@ -1147,6 +1160,7 @@ export class ImageRequestModel implements IImageRequestModel {
             this.width = _data["width"];
             this.height = _data["height"];
             this.imageFormat = _data["imageFormat"];
+            this.fileStorageTypeId = _data["fileStorageTypeId"];
             this.signature = _data["signature"];
         }
     }
@@ -1164,6 +1178,7 @@ export class ImageRequestModel implements IImageRequestModel {
         data["width"] = this.width;
         data["height"] = this.height;
         data["imageFormat"] = this.imageFormat;
+        data["fileStorageTypeId"] = this.fileStorageTypeId;
         data["signature"] = this.signature;
         return data;
     }
@@ -1174,6 +1189,7 @@ export interface IImageRequestModel {
     width?: number;
     height?: number;
     imageFormat?: number;
+    fileStorageTypeId?: number;
     signature?: string | undefined;
 }
 
@@ -1279,6 +1295,7 @@ export class MessageDto implements IMessageDto {
     linkPreview?: LinkPreviewDto;
     imageId?: string | undefined;
     imagePreview?: ImagePreviewDto;
+    fileStorageTypeId?: number;
 
     constructor(data?: IMessageDto) {
         if (data) {
@@ -1300,6 +1317,7 @@ export class MessageDto implements IMessageDto {
             this.linkPreview = _data["linkPreview"] ? LinkPreviewDto.fromJS(_data["linkPreview"]) : <any>undefined;
             this.imageId = _data["imageId"];
             this.imagePreview = _data["imagePreview"] ? ImagePreviewDto.fromJS(_data["imagePreview"]) : <any>undefined;
+            this.fileStorageTypeId = _data["fileStorageTypeId"];
         }
     }
 
@@ -1321,6 +1339,7 @@ export class MessageDto implements IMessageDto {
         data["linkPreview"] = this.linkPreview ? this.linkPreview.toJSON() : <any>undefined;
         data["imageId"] = this.imageId;
         data["imagePreview"] = this.imagePreview ? this.imagePreview.toJSON() : <any>undefined;
+        data["fileStorageTypeId"] = this.fileStorageTypeId;
         return data;
     }
 }
@@ -1335,6 +1354,7 @@ export interface IMessageDto {
     linkPreview?: LinkPreviewDto;
     imageId?: string | undefined;
     imagePreview?: ImagePreviewDto;
+    fileStorageTypeId?: number;
 }
 
 export class ProfileDto implements IProfileDto {
@@ -1344,6 +1364,7 @@ export class ProfileDto implements IProfileDto {
     lastName?: string | undefined;
     email?: string | undefined;
     imageId?: string | undefined;
+    fileStorageTypeId?: number;
 
     constructor(data?: IProfileDto) {
         if (data) {
@@ -1362,6 +1383,7 @@ export class ProfileDto implements IProfileDto {
             this.lastName = _data["lastName"];
             this.email = _data["email"];
             this.imageId = _data["imageId"];
+            this.fileStorageTypeId = _data["fileStorageTypeId"];
         }
     }
 
@@ -1380,6 +1402,7 @@ export class ProfileDto implements IProfileDto {
         data["lastName"] = this.lastName;
         data["email"] = this.email;
         data["imageId"] = this.imageId;
+        data["fileStorageTypeId"] = this.fileStorageTypeId;
         return data;
     }
 }
@@ -1391,6 +1414,7 @@ export interface IProfileDto {
     lastName?: string | undefined;
     email?: string | undefined;
     imageId?: string | undefined;
+    fileStorageTypeId?: number;
 }
 
 export class SetImagePreviewRequest implements ISetImagePreviewRequest {
@@ -1400,6 +1424,7 @@ export class SetImagePreviewRequest implements ISetImagePreviewRequest {
     imageFormat?: number;
     width?: number;
     height?: number;
+    fileStorageTypeId?: number;
     signature?: string | undefined;
 
     constructor(data?: ISetImagePreviewRequest) {
@@ -1419,6 +1444,7 @@ export class SetImagePreviewRequest implements ISetImagePreviewRequest {
             this.imageFormat = _data["imageFormat"];
             this.width = _data["width"];
             this.height = _data["height"];
+            this.fileStorageTypeId = _data["fileStorageTypeId"];
             this.signature = _data["signature"];
         }
     }
@@ -1438,6 +1464,7 @@ export class SetImagePreviewRequest implements ISetImagePreviewRequest {
         data["imageFormat"] = this.imageFormat;
         data["width"] = this.width;
         data["height"] = this.height;
+        data["fileStorageTypeId"] = this.fileStorageTypeId;
         data["signature"] = this.signature;
         return data;
     }
@@ -1450,6 +1477,7 @@ export interface ISetImagePreviewRequest {
     imageFormat?: number;
     width?: number;
     height?: number;
+    fileStorageTypeId?: number;
     signature?: string | undefined;
 }
 

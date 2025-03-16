@@ -66,6 +66,7 @@ export class ApiService {
                       width: image.getWidth(),
                       height: image.getHeight(),
                       imageFormat: image.getImageFormat(),
+                      fileStorageTypeId: image.getFileStorageTypeId(),
                       signature: image.getSignature(),
                   })
                 : null,
@@ -87,6 +88,7 @@ export class ApiService {
                       width: image.getWidth(),
                       height: image.getHeight(),
                       imageFormat: image.getImageFormat(),
+                      fileStorageTypeId: image.getFileStorageTypeId(),
                       signature: image.getSignature(),
                   })
                 : null,

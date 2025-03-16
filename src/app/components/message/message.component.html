@@ -39,7 +39,10 @@
         <div class="content" *ngIf="message.imageId">
             <app-image
                 [imagePreview]="message.imagePreview"
-                [imageId]="message.imageId"
+                [imageKey]="{
+                    imageId: message.imageId,
+                    fileStorageTypeId: message.fileStorageTypeId,
+                }"
             ></app-image>
         </div>
         <div

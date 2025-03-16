@@ -1,4 +1,4 @@
-<app-image-viewer [imageId]="selectedViewedImageId"></app-image-viewer>
+<app-image-viewer [imageKey]="viewedImageKey"></app-image-viewer>
 <app-sidebar [ngClass]="isSidebarShown && 'active'"></app-sidebar>
 <app-chat *ngIf="selectedChatId$ | async" [ngClass]="isChatShown && 'active'">
 </app-chat>

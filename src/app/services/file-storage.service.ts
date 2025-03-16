@@ -10,6 +10,7 @@ import {
 import { environment } from '../../environments/environment';
 import { TokenStorageService } from './token-storage.service';
 import { GRPC_INTERCEPTORS } from '@ngx-grpc/core';
+import { ImageKey } from '../models/image-key';
 
 @Injectable({
     providedIn: 'root',
@@ -49,9 +50,10 @@ export class FileStorageService {
         });
     }
 
-    download(imageId: string): Promise<DownloadImageResponse> {
+    download(imageKey: ImageKey): Promise<DownloadImageResponse> {
         const request = new DownloadImageRequest();
-        request.setImageId(imageId);
+        request.setImageId(imageKey.imageId);
+        request.setFileStorageTypeId(imageKey.fileStorageTypeId);
         return this.fileUploadService.downloadImageAsync(request, {
             authorization: this.tokenStorageService.getToken(),
         });

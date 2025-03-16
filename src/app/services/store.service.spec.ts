@@ -20,7 +20,7 @@ import { messagesActions } from '../state/messages/messages.actions';
 import { ILayoutSettings } from '../models/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
 import { selectedChatIdActions } from '../state/selected-chat/selected-chat-id.actions';
-import { viewedImageIdActions } from '../state/viewed-image-id/viewed-image-id.actions';
+import { viewedImageKeyActions } from '../state/viewed-image-key/viewed-image-key.actions';
 
 describe('StoreService', () => {
     let service: StoreService;
@@ -394,14 +394,14 @@ describe('StoreService', () => {
         });
     });
 
-    describe('setViewedImageId', () => {
+    describe('setViewedImageKey', () => {
         it('should dispatch set action', () => {
             const imageId = '1';
 
-            service.setViewedImageId(imageId);
+            service.setViewedImageKey(imageId);
 
             expect(store.dispatch).toHaveBeenCalledWith(
-                viewedImageIdActions.init({ imageId }),
+                viewedImageKeyActions.init({ imageId }),
             );
         });
     });

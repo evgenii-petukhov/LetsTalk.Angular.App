@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { errorMessages } from 'src/app/constants/errors';
+import { ImageKey } from 'src/app/models/image-key';
 import { ImagePreview } from 'src/app/models/imagePreview';
 import { ErrorService } from 'src/app/services/error.service';
 import { StoreService } from 'src/app/services/store.service';
@@ -13,7 +14,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ImageComponent implements OnInit {
     @Input() imagePreview: ImagePreview;
-    @Input() imageId: string;
+    @Input() imageKey: ImageKey;
     url: string;
     isLoading = true;
     isSizeUnknown = false;
@@ -35,9 +36,10 @@ export class ImageComponent implements OnInit {
             this.setSize(this.imagePreview.width, this.imagePreview.height);
 
             if (this.imagePreview.id) {
-                const image = await this.storeService.getImageContent(
-                    this.imagePreview.id,
-                );
+                const image = await this.storeService.getImageContent({
+                    imageId: this.imagePreview.id,
+                    fileStorageTypeId: this.imagePreview.fileStorageTypeId,
+                });
                 if (image) {
                     this.url = image.content;
                     this.setSize(image.width, image.height);
@@ -52,8 +54,8 @@ export class ImageComponent implements OnInit {
 
     openImageViewer(e: PointerEvent): void {
         e.preventDefault();
-        if (this.imageId) {
-            this.storeService.setViewedImageId(this.imageId);
+        if (this.imageKey?.imageId) {
+            this.storeService.setViewedImageKey(this.imageKey);
         }
     }
 

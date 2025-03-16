@@ -14,6 +14,7 @@ export class Message {
     linkPreview?: LinkPreview;
     imageId?: number | undefined;
     imagePreview?: ImagePreview;
+    fileStorageTypeId?: number;
 
     constructor(...inits: Partial<Message | IMessageDto>[]) {
         inits
