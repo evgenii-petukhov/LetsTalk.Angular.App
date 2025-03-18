@@ -4,10 +4,18 @@ import { Message } from 'src/app/models/message';
 import { ImagePreview } from 'src/app/models/imagePreview';
 import { By } from '@angular/platform-browser';
 import { ImageStubComponent } from '../image/image.component.stub';
+import { IImageDto, ImageDto } from 'src/app/api-client/api-client';
 
 describe('MessageComponent', () => {
     let component: MessageComponent;
     let fixture: ComponentFixture<MessageComponent>;
+
+    const imageKey: IImageDto = {
+        id: 'image-id',
+        fileStorageTypeId: 1,
+    };
+
+    const image = new ImageDto(imageKey);
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -153,10 +161,10 @@ describe('MessageComponent', () => {
         expect(contentElement.innerHTML).toContain('<b>Bold Text</b>');
     });
 
-    it('should display image when message.imageId is provided', () => {
+    it('should display image when message.image is provided', () => {
         // Arrange
         component.message = new Message({
-            imageId: 1,
+            image: image,
             imagePreview: new ImagePreview({
                 id: '1',
                 width: 100,

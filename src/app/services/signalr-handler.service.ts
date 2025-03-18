@@ -69,7 +69,7 @@ export class SignalrHandlerService {
                 this.storeService.incrementUnreadMessages(messageDto.chatId);
                 this.browserNotificationService.showNotification(
                     chat.chatName,
-                    messageDto.id ? 'Image' : messageDto.text,
+                    messageDto.image ? 'Image' : messageDto.text,
                     isWindowActive,
                 );
             } else {

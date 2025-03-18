@@ -226,7 +226,7 @@ describe('SignalrHandlerService', () => {
                 browserNotificationService.showNotification,
             ).toHaveBeenCalledWith(
                 chats[0].chatName,
-                messageDto.imageId ? 'Image' : messageDto.text,
+                messageDto.image ? 'Image' : messageDto.text,
                 false,
             );
             expect(storeService.initChatStorage).not.toHaveBeenCalled();

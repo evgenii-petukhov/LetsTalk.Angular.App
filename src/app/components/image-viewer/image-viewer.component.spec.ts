@@ -4,6 +4,7 @@ import { StoreService } from 'src/app/services/store.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { By } from '@angular/platform-browser';
 import { errorMessages } from 'src/app/constants/errors';
+import { IImageDto } from 'src/app/api-client/api-client';
 
 describe('ImageViewerComponent', () => {
     let component: ImageViewerComponent;
@@ -11,10 +12,15 @@ describe('ImageViewerComponent', () => {
     let storeService: jasmine.SpyObj<StoreService>;
     let errorService: jasmine.SpyObj<ErrorService>;
 
+    const imageKey: IImageDto = {
+        id: 'image-id',
+        fileStorageTypeId: 1,
+    };
+
     beforeEach(async () => {
         storeService = jasmine.createSpyObj('StoreService', [
             'getImageContent',
-            'setViewedImageId',
+            'setViewedImageKey',
         ]);
         errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
 
@@ -36,12 +42,12 @@ describe('ImageViewerComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should call getImageContent and display the image when imageId is provided', async () => {
+    it('should call getImageContent and display the image when image key is provided', async () => {
         // Arrange
-        component.imageId = 'test-image-id';
         storeService.getImageContent.and.resolveTo({ content: 'image-url' });
 
         // Act
+        component.imageKey = imageKey;
         await component.ngOnChanges();
         fixture.detectChanges();
 
@@ -52,9 +58,7 @@ describe('ImageViewerComponent', () => {
         const imageView = fixture.debugElement.query(By.css('.image-view'));
         expect(imageView.styles['background-image']).toBe('url("image-url")');
 
-        expect(storeService.getImageContent).toHaveBeenCalledWith(
-            'test-image-id',
-        );
+        expect(storeService.getImageContent).toHaveBeenCalledWith(imageKey);
         expect(errorService.handleError).not.toHaveBeenCalled();
     });
 
@@ -62,17 +66,15 @@ describe('ImageViewerComponent', () => {
         // Arrange
         const error = new Error('Sample error');
         storeService.getImageContent.and.rejectWith(error);
-        component.imageId = 'test-image-id';
 
         // Act
+        component.imageKey = imageKey;
         await component.ngOnChanges();
 
         // Assert
         expect(component.isVisible).toBeFalse();
-        expect(storeService.getImageContent).toHaveBeenCalledWith(
-            'test-image-id',
-        );
-        expect(storeService.setViewedImageId).not.toHaveBeenCalled();
+        expect(storeService.getImageContent).toHaveBeenCalledWith(imageKey);
+        expect(storeService.setViewedImageKey).not.toHaveBeenCalled();
         expect(errorService.handleError).toHaveBeenCalledWith(
             error,
             errorMessages.downloadImage,
@@ -88,7 +90,7 @@ describe('ImageViewerComponent', () => {
         // Assert
         expect(component.isVisible).toBeFalse();
         expect(storeService.getImageContent).not.toHaveBeenCalled();
-        expect(storeService.setViewedImageId).not.toHaveBeenCalled();
+        expect(storeService.setViewedImageKey).not.toHaveBeenCalled();
         expect(errorService.handleError).not.toHaveBeenCalled();
     });
 
@@ -100,7 +102,7 @@ describe('ImageViewerComponent', () => {
 
         // Assert
         expect(component.isVisible).toBeFalse();
-        expect(storeService.setViewedImageId).toHaveBeenCalledWith(null);
+        expect(storeService.setViewedImageKey).toHaveBeenCalledWith(null);
         expect(errorService.handleError).not.toHaveBeenCalled();
     });
 });
