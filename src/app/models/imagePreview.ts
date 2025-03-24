@@ -6,6 +6,7 @@ export class ImagePreview {
     accountId?: string;
     width?: number | undefined;
     height?: number | undefined;
+    fileStorageTypeId?: number;
 
     constructor(init?: Partial<ImagePreview | ImagePreviewDto>) {
         Object.assign(this, init);

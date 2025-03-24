@@ -1,6 +1,7 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import {
     IChatDto,
+    IImageDto,
     IImagePreviewDto,
     ILinkPreviewDto,
     IMessageDto,
@@ -9,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-settings.selectors';
 import { StoreService } from 'src/app/services/store.service';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
-import { selectViewedImageId } from 'src/app/state/viewed-image-id/viewed-image-id.selectors';
+import { selectViewedImageKey } from 'src/app/state/viewed-image-key/viewed-image-key.selectors';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { ActiveArea } from 'src/app/enums/active-areas';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
@@ -24,7 +25,7 @@ import { SignalrHandlerService } from 'src/app/services/signalr-handler.service'
 })
 export class MessengerComponent implements OnInit, OnDestroy {
     selectedChatId$ = this.store.select(selectSelectedChatId);
-    selectedViewedImageId: string;
+    viewedImageKey: IImageDto;
     isSidebarShown = true;
     isChatShown = false;
     selectedChatId: string;
@@ -53,15 +54,15 @@ export class MessengerComponent implements OnInit, OnDestroy {
             this.store.select(selectChats),
             this.store.select(selectSelectedChat),
             this.store.select(selectLayoutSettings),
-            this.store.select(selectViewedImageId),
+            this.store.select(selectViewedImageKey),
         ])
             .pipe(takeUntil(this.unsubscribe$))
-            .subscribe(([chats, chat, layout, imageId]) => {
+            .subscribe(([chats, chat, layout, imageKey]) => {
                 this.chats = chats;
                 this.selectedChat = chat;
                 this.isSidebarShown = layout.activeArea === ActiveArea.sidebar;
                 this.isChatShown = layout.activeArea === ActiveArea.chat;
-                this.selectedViewedImageId = imageId;
+                this.viewedImageKey = imageKey;
             });
 
         await this.signalrHandlerService.initHandlers(

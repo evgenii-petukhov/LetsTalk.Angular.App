@@ -6,12 +6,18 @@ import { ChangeDetectorRef } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { ErrorService } from 'src/app/services/error.service';
 import { errorMessages } from 'src/app/constants/errors';
+import { IImageDto } from 'src/app/api-client/api-client';
 
 describe('ImageComponent', () => {
     let component: ImageComponent;
     let fixture: ComponentFixture<ImageComponent>;
     let storeService: jasmine.SpyObj<StoreService>;
     let errorService: jasmine.SpyObj<ErrorService>;
+
+    const imageKey: IImageDto = {
+        id: 'image-id',
+        fileStorageTypeId: 1,
+    };
 
     const imagePreview = {
         id: 'imagePreview1',
@@ -27,7 +33,7 @@ describe('ImageComponent', () => {
     beforeEach(waitForAsync(() => {
         storeService = jasmine.createSpyObj('StoreService', [
             'getImageContent',
-            'setViewedImageId',
+            'setViewedImageKey',
         ]);
         errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
 
@@ -68,16 +74,18 @@ describe('ImageComponent', () => {
         expect(component.height).toBe(expectedHeight);
 
         expect(storeService.getImageContent).toHaveBeenCalledOnceWith(
-            imagePreview.id,
+            imagePreview,
         );
         expect(errorService.handleError).not.toHaveBeenCalled();
     });
 
     it('should handle unknown image size', async () => {
         // Arrange
-        component.imagePreview = {
-            id: imagePreview.id,
+        const imagePreviewUnknownSize = {
+            id: 'imagePreview1',
         };
+
+        component.imagePreview = imagePreviewUnknownSize;
 
         // Act
         await component.ngOnInit();
@@ -91,7 +99,7 @@ describe('ImageComponent', () => {
             environment.imageSettings.limits.picturePreview.height,
         );
         expect(storeService.getImageContent).toHaveBeenCalledOnceWith(
-            imagePreview.id,
+            imagePreviewUnknownSize,
         );
         expect(errorService.handleError).not.toHaveBeenCalled();
     });
@@ -116,7 +124,7 @@ describe('ImageComponent', () => {
         expect(component.url).toBe(imageContent);
         expect(component.isLoading).toBeFalse();
         expect(storeService.getImageContent).toHaveBeenCalledWith(
-            imagePreview.id,
+            imagePreview,
         );
         expect(errorService.handleError).not.toHaveBeenCalled();
     });
@@ -137,7 +145,7 @@ describe('ImageComponent', () => {
         expect(component.url).toBeNull();
         expect(component.isLoading).toBeTrue();
         expect(storeService.getImageContent).toHaveBeenCalledWith(
-            imagePreview.id,
+            imagePreview,
         );
         expect(errorService.handleError).toHaveBeenCalledOnceWith(
             error,
@@ -147,17 +155,16 @@ describe('ImageComponent', () => {
 
     it('should set viewed image id on openImageViewer', async () => {
         // Arrange
-        const imageId = '1';
         const event = new PointerEvent('click');
         spyOn(event, 'preventDefault');
-        component.imageId = imageId;
+        component.imageKey = imageKey;
 
         // Act
         component.openImageViewer(event);
 
         // Assert
         expect(event.preventDefault).toHaveBeenCalled();
-        expect(storeService.setViewedImageId).toHaveBeenCalledWith(imageId);
+        expect(storeService.setViewedImageKey).toHaveBeenCalledWith(imageKey);
         expect(errorService.handleError).not.toHaveBeenCalled();
     });
 

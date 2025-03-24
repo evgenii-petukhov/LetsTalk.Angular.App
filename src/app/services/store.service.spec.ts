@@ -6,21 +6,23 @@ import { ApiService } from './api.service';
 import { FileStorageService } from './file-storage.service';
 import { chatsActions } from '../state/chats/chats.actions';
 import { loggedInUserActions } from '../state/logged-in-user/logged-in-user.actions';
-import { imagesActions } from '../state/images/images.actions';
+import { imageCacheActions } from '../state/image-cache/image-cache.actions';
 import {
     IChatDto,
     IProfileDto,
     IMessageDto,
     IImagePreviewDto,
     ILinkPreviewDto,
+    IImageDto,
+    ImageDto,
 } from '../api-client/api-client';
-import { Image } from '../models/image';
+import { ImageCacheEntry } from '../models/image-cache-entry';
 import { accountsActions } from '../state/accounts/accounts.actions';
 import { messagesActions } from '../state/messages/messages.actions';
 import { ILayoutSettings } from '../models/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
 import { selectedChatIdActions } from '../state/selected-chat/selected-chat-id.actions';
-import { viewedImageIdActions } from '../state/viewed-image-id/viewed-image-id.actions';
+import { viewedImageKeyActions } from '../state/viewed-image-key/viewed-image-key.actions';
 
 describe('StoreService', () => {
     let service: StoreService;
@@ -28,11 +30,18 @@ describe('StoreService', () => {
     let apiService: jasmine.SpyObj<ApiService>;
     let fileStorageService: jasmine.SpyObj<FileStorageService>;
 
+    const imageKey: IImageDto = {
+        id: 'image-id',
+        fileStorageTypeId: 1,
+    };
+
+    const image = new ImageDto(imageKey);
+
     const message: IMessageDto = {
         id: '1',
         chatId: 'chatId',
         created: 1724872378,
-        imageId: 'imageId',
+        image: image,
         isMine: true,
         text: 'test',
         textHtml: '<p>test</p>',
@@ -321,23 +330,21 @@ describe('StoreService', () => {
 
     describe('getImageContent', () => {
         it('should return image from store if exists', async () => {
-            const imageId = '1';
-            const mockImage: Image = {
-                imageId,
+            const mockImage: ImageCacheEntry = {
+                imageId: imageKey.id,
                 content: 'url',
                 width: 100,
                 height: 100,
             };
             store.select.and.returnValue(of([mockImage]));
 
-            const image = await service.getImageContent(imageId);
+            const image = await service.getImageContent(imageKey);
 
             expect(image).toBe(mockImage);
             expect(fileStorageService.download).not.toHaveBeenCalled();
         });
 
         it('should download image if not in store', async () => {
-            const imageId = '1';
             const mockResponse = jasmine.createSpyObj('DownloadImageResponse', [
                 'getContent',
                 'getWidth',
@@ -353,21 +360,21 @@ describe('StoreService', () => {
             const imageUrl = 'data:image/png;base64,...';
             spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);
 
-            const image = await service.getImageContent(imageId);
+            const image = await service.getImageContent(imageKey);
 
-            expect(fileStorageService.download).toHaveBeenCalledWith(imageId);
+            expect(fileStorageService.download).toHaveBeenCalledWith(imageKey);
 
             expect(store.dispatch).toHaveBeenCalledWith(
-                imagesActions.add({
+                imageCacheActions.add({
                     image: {
-                        imageId,
+                        imageId: imageKey.id,
                         content: imageUrl,
                         width: 100,
                         height: 100,
                     },
                 }),
             );
-            expect(image.imageId).toBe(imageId);
+            expect(image.imageId).toBe(imageKey.id);
             expect(image.content).toBe(imageUrl);
         });
     });
@@ -394,14 +401,13 @@ describe('StoreService', () => {
         });
     });
 
-    describe('setViewedImageId', () => {
+    describe('setViewedImageKey', () => {
         it('should dispatch set action', () => {
-            const imageId = '1';
 
-            service.setViewedImageId(imageId);
+            service.setViewedImageKey(imageKey);
 
             expect(store.dispatch).toHaveBeenCalledWith(
-                viewedImageIdActions.init({ imageId }),
+                viewedImageKeyActions.init(imageKey),
             );
         });
     });

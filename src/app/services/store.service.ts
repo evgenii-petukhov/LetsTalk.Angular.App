@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
     IChatDto,
+    IImageDto,
     IImagePreviewDto,
     ILinkPreviewDto,
     IMessageDto,
@@ -16,11 +17,11 @@ import { selectedChatIdActions } from '../state/selected-chat/selected-chat-id.a
 import { selectLoggedInUser } from '../state/logged-in-user/logged-in-user.selectors';
 import { ApiService } from './api.service';
 import { selectChats } from '../state/chats/chats.selector';
-import { imagesActions } from '../state/images/images.actions';
-import { selectImages } from '../state/images/images.selector';
+import { imageCacheActions } from '../state/image-cache/image-cache.actions';
+import { selectImageCache } from '../state/image-cache/image-cache.selector';
 import { FileStorageService } from './file-storage.service';
-import { viewedImageIdActions } from '../state/viewed-image-id/viewed-image-id.actions';
-import { Image } from '../models/image';
+import { viewedImageKeyActions } from '../state/viewed-image-key/viewed-image-key.actions';
+import { ImageCacheEntry } from '../models/image-cache-entry';
 import { selectAccounts } from '../state/accounts/accounts.selector';
 import { accountsActions } from '../state/accounts/accounts.actions';
 import { firstValueFrom } from 'rxjs';
@@ -142,28 +143,28 @@ export class StoreService {
         this.store.dispatch(selectedChatIdActions.init({ chatId }));
     }
 
-    setViewedImageId(imageId: string): void {
-        this.store.dispatch(viewedImageIdActions.init({ imageId }));
+    setViewedImageKey(imageKey: IImageDto): void {
+        this.store.dispatch(viewedImageKeyActions.init(imageKey));
     }
 
     // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
-    async getImageContent(imageId: string): Promise<Image> {
-        const images = await firstValueFrom(this.store.select(selectImages));
-        let image = images?.find((x) => x.imageId === imageId);
+    async getImageContent(imageKey: IImageDto): Promise<ImageCacheEntry> {
+        const images = await firstValueFrom(this.store.select(selectImageCache));
+        let image = images?.find((x) => x.imageId === imageKey.id);
         if (image) {
             return image;
         }
 
-        const response = await this.fileStorageService.download(imageId);
+        const response = await this.fileStorageService.download(imageKey);
         const content = URL.createObjectURL(new Blob([response.getContent()]));
         image = {
-            imageId,
+            imageId: imageKey.id,
             content,
             width: response.getWidth(),
             height: response.getHeight(),
         };
         this.store.dispatch(
-            imagesActions.add({
+            imageCacheActions.add({
                 image,
             }),
         );

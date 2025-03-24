@@ -321,7 +321,8 @@ proto.file_upload.UploadImageResponse.toObject = function(includeInstance, msg) 
     width: jspb.Message.getFieldWithDefault(msg, 2, 0),
     height: jspb.Message.getFieldWithDefault(msg, 3, 0),
     imageFormat: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    signature: jspb.Message.getFieldWithDefault(msg, 5, "")
+    fileStorageTypeId: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    signature: jspb.Message.getFieldWithDefault(msg, 6, "")
   };
 
   if (includeInstance) {
@@ -375,6 +376,10 @@ proto.file_upload.UploadImageResponse.deserializeBinaryFromReader = function(msg
       msg.setImageFormat(value);
       break;
     case 5:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setFileStorageTypeId(value);
+      break;
+    case 6:
       var value = /** @type {string} */ (reader.readString());
       msg.setSignature(value);
       break;
@@ -435,10 +440,17 @@ proto.file_upload.UploadImageResponse.serializeBinaryToWriter = function(message
       f
     );
   }
+  f = message.getFileStorageTypeId();
+  if (f !== 0) {
+    writer.writeInt32(
+      5,
+      f
+    );
+  }
   f = message.getSignature();
   if (f.length > 0) {
     writer.writeString(
-      5,
+      6,
       f
     );
   }
@@ -518,11 +530,29 @@ proto.file_upload.UploadImageResponse.prototype.setImageFormat = function(value)
 
 
 /**
- * optional string signature = 5;
+ * optional int32 file_storage_type_id = 5;
+ * @return {number}
+ */
+proto.file_upload.UploadImageResponse.prototype.getFileStorageTypeId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.file_upload.UploadImageResponse} returns this
+ */
+proto.file_upload.UploadImageResponse.prototype.setFileStorageTypeId = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
+};
+
+
+/**
+ * optional string signature = 6;
  * @return {string}
  */
 proto.file_upload.UploadImageResponse.prototype.getSignature = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
 };
 
 
@@ -531,7 +561,7 @@ proto.file_upload.UploadImageResponse.prototype.getSignature = function() {
  * @return {!proto.file_upload.UploadImageResponse} returns this
  */
 proto.file_upload.UploadImageResponse.prototype.setSignature = function(value) {
-  return jspb.Message.setProto3StringField(this, 5, value);
+  return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
@@ -567,7 +597,8 @@ proto.file_upload.DownloadImageRequest.prototype.toObject = function(opt_include
  */
 proto.file_upload.DownloadImageRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    imageId: jspb.Message.getFieldWithDefault(msg, 1, "")
+    imageId: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    fileStorageTypeId: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -608,6 +639,10 @@ proto.file_upload.DownloadImageRequest.deserializeBinaryFromReader = function(ms
       var value = /** @type {string} */ (reader.readString());
       msg.setImageId(value);
       break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setFileStorageTypeId(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -644,6 +679,13 @@ proto.file_upload.DownloadImageRequest.serializeBinaryToWriter = function(messag
       f
     );
   }
+  f = message.getFileStorageTypeId();
+  if (f !== 0) {
+    writer.writeInt32(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -662,6 +704,24 @@ proto.file_upload.DownloadImageRequest.prototype.getImageId = function() {
  */
 proto.file_upload.DownloadImageRequest.prototype.setImageId = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional int32 file_storage_type_id = 2;
+ * @return {number}
+ */
+proto.file_upload.DownloadImageRequest.prototype.getFileStorageTypeId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.file_upload.DownloadImageRequest} returns this
+ */
+proto.file_upload.DownloadImageRequest.prototype.setFileStorageTypeId = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 

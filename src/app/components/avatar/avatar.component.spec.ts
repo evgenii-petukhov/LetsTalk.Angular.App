@@ -3,6 +3,7 @@ import { AvatarComponent } from './avatar.component';
 import { StoreService } from 'src/app/services/store.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { errorMessages } from 'src/app/constants/errors';
+import { IImageDto } from 'src/app/api-client/api-client';
 
 describe('AvatarComponent', () => {
     let component: AvatarComponent;
@@ -10,7 +11,10 @@ describe('AvatarComponent', () => {
     let storeService: jasmine.SpyObj<StoreService>;
     let errorService: jasmine.SpyObj<ErrorService>;
 
-    const imageId = 'image-id';
+    const imageKey: IImageDto = {
+        id: 'image-id',
+        fileStorageTypeId: 1,
+    };
     const url = 'http://example.com/image.jpg';
     const defaultUrl = 'images/empty-avatar.svg';
     const mockImage = {
@@ -79,7 +83,8 @@ describe('AvatarComponent', () => {
         storeService.getImageContent.and.resolveTo(mockImage);
 
         // Act
-        component.urlOptions = [imageId];
+        component.urlOptions = [imageKey.id];
+        component.fileStorageTypeId = imageKey.fileStorageTypeId;
         await component.ngOnChanges();
         fixture.detectChanges();
 
@@ -87,7 +92,7 @@ describe('AvatarComponent', () => {
         expect(component.backgroundImage).toContain(
             `url('${mockImage.content}')`,
         );
-        expect(storeService.getImageContent).toHaveBeenCalledOnceWith(imageId);
+        expect(storeService.getImageContent).toHaveBeenCalledOnceWith(imageKey);
         expect(errorService.handleError).not.toHaveBeenCalledTimes(1);
     });
 
@@ -96,7 +101,8 @@ describe('AvatarComponent', () => {
         storeService.getImageContent.and.resolveTo(mockImage);
 
         // Act
-        component.urlOptions = [url, imageId];
+        component.urlOptions = [url, imageKey.id];
+        component.fileStorageTypeId = imageKey.fileStorageTypeId;
         await component.ngOnChanges();
         fixture.detectChanges();
 
@@ -113,13 +119,14 @@ describe('AvatarComponent', () => {
         storeService.getImageContent.and.resolveTo(mockImage);
 
         // Act
-        component.urlOptions = [imageId, url];
+        component.urlOptions = [imageKey.id, url];
+        component.fileStorageTypeId = imageKey.fileStorageTypeId;
         await component.ngOnChanges();
         fixture.detectChanges();
 
         // Assert
         expect(component.backgroundImage).toBe(`url('${mockImage.content}')`);
-        expect(storeService.getImageContent).toHaveBeenCalledOnceWith(imageId);
+        expect(storeService.getImageContent).toHaveBeenCalledOnceWith(imageKey);
         expect(errorService.handleError).not.toHaveBeenCalledTimes(1);
     });
 
@@ -131,12 +138,13 @@ describe('AvatarComponent', () => {
 
         // Act
         component.urlOptions = [imageId];
+        component.fileStorageTypeId = imageKey.fileStorageTypeId;
         await component.ngOnChanges();
         fixture.detectChanges();
 
         // Assert
         expect(component.backgroundImage).toBe(`url('${defaultUrl}')`);
-        expect(storeService.getImageContent).toHaveBeenCalledOnceWith(imageId);
+        expect(storeService.getImageContent).toHaveBeenCalledOnceWith(imageKey);
         expect(errorService.handleError).toHaveBeenCalledOnceWith(
             error,
             errorMessages.downloadImage,
