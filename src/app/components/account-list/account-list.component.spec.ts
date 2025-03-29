@@ -5,7 +5,7 @@ import { By } from '@angular/platform-browser';
 import { OrderByPipe } from 'src/app/pipes/orderby';
 import { StoreService } from 'src/app/services/store.service';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
-import { IAccountDto, IChatDto } from 'src/app/api-client/api-client';
+import { IAccountDto, IChatDto, ImageDto } from 'src/app/api-client/api-client';
 import { AccountListItemStubComponent } from '../account-list-item/account-list-item.component.stub';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { selectChats } from 'src/app/state/chats/chats.selector';
@@ -34,7 +34,10 @@ describe('AccountListComponent', () => {
         firstName: 'John',
         lastName: 'Doe',
         accountTypeId: 1,
-        imageId: 'img1',
+        image: new ImageDto({
+            id: 'img1',
+            fileStorageTypeId: 1,
+        })
     };
 
     const account2: IAccountDto = {

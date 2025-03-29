@@ -7,6 +7,7 @@ import { AvatarStubComponent } from '../avatar/avatar.component.stub';
 import { LogoutButtonStubComponent } from '../logout-button/logout-button.component.stub';
 import { UserDetailsStubComponent } from '../user-details/user-details.component.stub';
 import { By } from '@angular/platform-browser';
+import { ImageDto } from 'src/app/api-client/api-client';
 
 describe('LoggedInUserComponent', () => {
     let component: LoggedInUserComponent;
@@ -41,7 +42,10 @@ describe('LoggedInUserComponent', () => {
     it('should fetch logged-in user on initialization', async () => {
         // Arrange
         const profile = {
-            imageId: '1',
+            image: new ImageDto({
+                id: '1',
+                fileStorageTypeId: 1,
+            }),
             photoUrl: 'url',
         };
 

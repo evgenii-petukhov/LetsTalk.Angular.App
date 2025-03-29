@@ -52,7 +52,10 @@ describe('StoreService', () => {
         firstName: 'John',
         lastName: 'Doe',
         id: 'profileId',
-        imageId: 'imageId',
+        image: new ImageDto({
+            id: 'imageId',
+            fileStorageTypeId: 1
+        }),
     };
 
     beforeEach(() => {

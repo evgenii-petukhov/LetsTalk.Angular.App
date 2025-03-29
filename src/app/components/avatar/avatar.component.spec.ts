@@ -83,8 +83,7 @@ describe('AvatarComponent', () => {
         storeService.getImageContent.and.resolveTo(mockImage);
 
         // Act
-        component.urlOptions = [imageKey.id];
-        component.fileStorageTypeId = imageKey.fileStorageTypeId;
+        component.urlOptions = [imageKey];
         await component.ngOnChanges();
         fixture.detectChanges();
 
@@ -101,8 +100,7 @@ describe('AvatarComponent', () => {
         storeService.getImageContent.and.resolveTo(mockImage);
 
         // Act
-        component.urlOptions = [url, imageKey.id];
-        component.fileStorageTypeId = imageKey.fileStorageTypeId;
+        component.urlOptions = [url, imageKey];
         await component.ngOnChanges();
         fixture.detectChanges();
 
@@ -119,8 +117,7 @@ describe('AvatarComponent', () => {
         storeService.getImageContent.and.resolveTo(mockImage);
 
         // Act
-        component.urlOptions = [imageKey.id, url];
-        component.fileStorageTypeId = imageKey.fileStorageTypeId;
+        component.urlOptions = [imageKey, url];
         await component.ngOnChanges();
         fixture.detectChanges();
 
@@ -132,13 +129,11 @@ describe('AvatarComponent', () => {
 
     it('should display default background image if getImageContent fails', async () => {
         // Arrange
-        const imageId = 'image-id';
         const error = new Error('error');
         storeService.getImageContent.and.throwError(error);
 
         // Act
-        component.urlOptions = [imageId];
-        component.fileStorageTypeId = imageKey.fileStorageTypeId;
+        component.urlOptions = [imageKey];
         await component.ngOnChanges();
         fixture.detectChanges();
 

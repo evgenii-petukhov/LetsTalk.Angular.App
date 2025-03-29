@@ -14,7 +14,7 @@ import { IdGeneratorService } from 'src/app/services/id-generator.service';
 import { ImageUploadService } from 'src/app/services/image-upload.service';
 import { UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
-import { IChatDto, IMessageDto } from 'src/app/api-client/api-client';
+import { IChatDto, ImageDto, IMessageDto } from 'src/app/api-client/api-client';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { SendMessageButtonStubComponent } from '../send-message-button/send-message-button.component.stub';
 import { SelectImageButtonStubComponent } from '../select-image-button/select-image-button.component.stub';
@@ -42,7 +42,10 @@ describe('SendMessageComponent', () => {
         unreadCount: 0,
         lastMessageDate: 12345,
         lastMessageId: '1',
-        imageId: 'image123',
+        image: new ImageDto({
+            id: 'image123',
+            fileStorageTypeId: 1,
+        }),
         isIndividual: false,
         accountIds: ['account1'],
     };

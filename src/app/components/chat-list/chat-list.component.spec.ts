@@ -3,7 +3,7 @@ import { ChatListComponent } from './chat-list.component';
 import { DefaultProjectorFn, MemoizedSelector, Store } from '@ngrx/store';
 import { StoreService } from 'src/app/services/store.service';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
-import { IChatDto } from 'src/app/api-client/api-client';
+import { IChatDto, ImageDto } from 'src/app/api-client/api-client';
 import { ActiveArea } from 'src/app/enums/active-areas';
 import { OrderByPipe } from 'src/app/pipes/orderby';
 import { ChatListItemStubComponent } from '../chat-list-item/chat-list-item.component.stub';
@@ -227,7 +227,10 @@ describe('ChatListComponent', () => {
             chatName: 'Chat Name',
             unreadCount: 5,
             photoUrl: 'photo-url',
-            imageId: 'image-id',
+            image: new ImageDto({
+                id: 'image-id',
+                fileStorageTypeId: 1,
+            })
         };
 
         idGeneratorService.isFake.and.returnValue(false);
@@ -252,7 +255,10 @@ describe('ChatListComponent', () => {
             chatName: 'Chat Name',
             unreadCount: 5,
             photoUrl: 'photo-url',
-            imageId: 'image-id',
+            image: new ImageDto({
+                id: 'image-id',
+                fileStorageTypeId: 1,
+            })
         };
 
         idGeneratorService.isFake.and.returnValue(true);

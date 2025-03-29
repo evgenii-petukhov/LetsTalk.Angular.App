@@ -707,8 +707,7 @@ export class AccountDto implements IAccountDto {
     photoUrl?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    imageId?: string | undefined;
-    fileStorageTypeId?: number;
+    image?: ImageDto;
 
     constructor(data?: IAccountDto) {
         if (data) {
@@ -726,8 +725,7 @@ export class AccountDto implements IAccountDto {
             this.photoUrl = _data["photoUrl"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
-            this.imageId = _data["imageId"];
-            this.fileStorageTypeId = _data["fileStorageTypeId"];
+            this.image = _data["image"] ? ImageDto.fromJS(_data["image"]) : <any>undefined;
         }
     }
 
@@ -745,8 +743,7 @@ export class AccountDto implements IAccountDto {
         data["photoUrl"] = this.photoUrl;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
-        data["imageId"] = this.imageId;
-        data["fileStorageTypeId"] = this.fileStorageTypeId;
+        data["image"] = this.image ? this.image.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -757,8 +754,7 @@ export interface IAccountDto {
     photoUrl?: string | undefined;
     firstName?: string | undefined;
     lastName?: string | undefined;
-    imageId?: string | undefined;
-    fileStorageTypeId?: number;
+    image?: ImageDto;
 }
 
 export class ChatDto implements IChatDto {
@@ -769,8 +765,7 @@ export class ChatDto implements IChatDto {
     unreadCount?: number;
     lastMessageDate?: number;
     lastMessageId?: string | undefined;
-    imageId?: string | undefined;
-    fileStorageTypeId?: number;
+    image?: ImageDto;
     isIndividual?: boolean;
     accountIds?: string[] | undefined;
 
@@ -792,8 +787,7 @@ export class ChatDto implements IChatDto {
             this.unreadCount = _data["unreadCount"];
             this.lastMessageDate = _data["lastMessageDate"];
             this.lastMessageId = _data["lastMessageId"];
-            this.imageId = _data["imageId"];
-            this.fileStorageTypeId = _data["fileStorageTypeId"];
+            this.image = _data["image"] ? ImageDto.fromJS(_data["image"]) : <any>undefined;
             this.isIndividual = _data["isIndividual"];
             if (Array.isArray(_data["accountIds"])) {
                 this.accountIds = [] as any;
@@ -819,8 +813,7 @@ export class ChatDto implements IChatDto {
         data["unreadCount"] = this.unreadCount;
         data["lastMessageDate"] = this.lastMessageDate;
         data["lastMessageId"] = this.lastMessageId;
-        data["imageId"] = this.imageId;
-        data["fileStorageTypeId"] = this.fileStorageTypeId;
+        data["image"] = this.image ? this.image.toJSON() : <any>undefined;
         data["isIndividual"] = this.isIndividual;
         if (Array.isArray(this.accountIds)) {
             data["accountIds"] = [];
@@ -839,8 +832,7 @@ export interface IChatDto {
     unreadCount?: number;
     lastMessageDate?: number;
     lastMessageId?: string | undefined;
-    imageId?: string | undefined;
-    fileStorageTypeId?: number;
+    image?: ImageDto;
     isIndividual?: boolean;
     accountIds?: string[] | undefined;
 }
@@ -1399,8 +1391,7 @@ export class ProfileDto implements IProfileDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     email?: string | undefined;
-    imageId?: string | undefined;
-    fileStorageTypeId?: number;
+    image?: ImageDto;
 
     constructor(data?: IProfileDto) {
         if (data) {
@@ -1418,8 +1409,7 @@ export class ProfileDto implements IProfileDto {
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
             this.email = _data["email"];
-            this.imageId = _data["imageId"];
-            this.fileStorageTypeId = _data["fileStorageTypeId"];
+            this.image = _data["image"] ? ImageDto.fromJS(_data["image"]) : <any>undefined;
         }
     }
 
@@ -1437,8 +1427,7 @@ export class ProfileDto implements IProfileDto {
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["email"] = this.email;
-        data["imageId"] = this.imageId;
-        data["fileStorageTypeId"] = this.fileStorageTypeId;
+        data["image"] = this.image ? this.image.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -1449,8 +1438,7 @@ export interface IProfileDto {
     firstName?: string | undefined;
     lastName?: string | undefined;
     email?: string | undefined;
-    imageId?: string | undefined;
-    fileStorageTypeId?: number;
+    image?: ImageDto;
 }
 
 export class SetImagePreviewRequest implements ISetImagePreviewRequest {
