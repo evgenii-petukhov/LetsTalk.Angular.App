@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { IImageDto } from 'src/app/api-client/api-client';
 
 @Component({
     selector: 'app-avatar',
@@ -6,5 +7,5 @@ import { Component, Input } from '@angular/core';
     standalone: false,
 })
 export class AvatarStubComponent {
-    @Input() urlOptions: string[];
+    @Input() urlOptions:(string | IImageDto)[];
 }

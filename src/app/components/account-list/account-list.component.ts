@@ -58,8 +58,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
                 accountIds: [account.id],
                 accountTypeId: account.accountTypeId,
                 chatName: `${account.firstName} ${account.lastName}`,
-                imageId: account.imageId,
-                fileStorageTypeId: account.fileStorageTypeId,
+                image: account.image,
                 photoUrl: account.photoUrl,
                 unreadCount: 0,
             });

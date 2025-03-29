@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AccountListItemComponent } from './account-list-item.component';
-import { IAccountDto } from 'src/app/api-client/api-client';
+import { IAccountDto, ImageDto } from 'src/app/api-client/api-client';
 import { By } from '@angular/platform-browser';
 import { AvatarStubComponent } from '../avatar/avatar.component.stub';
 import { UserDetailsStubComponent } from '../user-details/user-details.component.stub';
@@ -13,7 +13,10 @@ describe('AccountListItemComponent', () => {
         id: '1',
         firstName: 'John',
         lastName: 'Doe',
-        imageId: 'image1',
+        image: new ImageDto({
+            id: 'image1',
+            fileStorageTypeId: 1,
+        }),
         photoUrl: 'https://example.com/photo.jpg',
     } as IAccountDto;
 
@@ -42,7 +45,7 @@ describe('AccountListItemComponent', () => {
             By.directive(AvatarStubComponent),
         ).componentInstance as AvatarStubComponent;
         expect(avatarComponent.urlOptions).toEqual([
-            account.imageId,
+            account.image,
             account.photoUrl,
         ]);
 

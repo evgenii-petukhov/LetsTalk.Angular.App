@@ -6,11 +6,9 @@
                 <div class="avatar-border">
                     <app-avatar class="avatar" [urlOptions]="[
                             form.value.photoUrl,
-                            (account$ | async)?.imageId,
+                            (account$ | async)?.image,
                             (account$ | async)?.photoUrl,
-                        ]" [fileStorageTypeId]="
-                            (account$ | async)?.fileStorageTypeId
-                        ">
+                        ]">
                         <div class="avatar-upload">
                             <div class="avatar-upload-text">
                                 <fa-icon [icon]="faUpload"></fa-icon>

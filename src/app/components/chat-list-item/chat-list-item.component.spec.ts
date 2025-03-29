@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChatListItemComponent } from './chat-list-item.component';
-import { IChatDto } from 'src/app/api-client/api-client';
+import { IChatDto, ImageDto } from 'src/app/api-client/api-client';
 import { AvatarStubComponent } from '../avatar/avatar.component.stub';
 import { UserDetailsStubComponent } from '../user-details/user-details.component.stub';
 import { UnreadCountStubComponent } from '../unread-count/unread-count.component.stub';
@@ -35,7 +35,10 @@ describe('ChatListItemComponent', () => {
             chatName: 'Chat Name',
             unreadCount: 5,
             photoUrl: 'photo-url',
-            imageId: 'image-id',
+            image: new ImageDto({
+                id: 'image-id',
+                fileStorageTypeId: 1,
+            })
         };
 
         // Act
@@ -47,7 +50,7 @@ describe('ChatListItemComponent', () => {
             By.directive(AvatarStubComponent),
         ).componentInstance as AvatarStubComponent;
         expect(avatarComponent.urlOptions).toEqual([
-            chat.imageId,
+            chat.image,
             chat.photoUrl,
         ]);
 
@@ -71,7 +74,10 @@ describe('ChatListItemComponent', () => {
             chatName: 'Chat Name',
             unreadCount: 0,
             photoUrl: 'photo-url',
-            imageId: 'image-id',
+            image: new ImageDto({
+                id: 'image-id',
+                fileStorageTypeId: 1,
+            })
         };
 
         // Act
@@ -83,7 +89,7 @@ describe('ChatListItemComponent', () => {
             By.directive(AvatarStubComponent),
         ).componentInstance as AvatarStubComponent;
         expect(avatarComponent.urlOptions).toEqual([
-            chat.imageId,
+            chat.image,
             chat.photoUrl,
         ]);
 
@@ -104,7 +110,10 @@ describe('ChatListItemComponent', () => {
             chatName: 'Chat Name',
             unreadCount: 5,
             photoUrl: 'photo-url',
-            imageId: 'image-id',
+            image: new ImageDto({
+                id: 'image-id',
+                fileStorageTypeId: 1,
+            })
         };
 
         component.chat = chat;
@@ -125,7 +134,10 @@ describe('ChatListItemComponent', () => {
             chatName: 'Chat Name',
             unreadCount: 5,
             photoUrl: 'photo-url',
-            imageId: 'image-id',
+            image: new ImageDto({
+                id: 'image-id',
+                fileStorageTypeId: 1,
+            })
         };
         spyOn(component.chatSelected, 'emit');
 
@@ -146,7 +158,10 @@ describe('ChatListItemComponent', () => {
             chatName: 'Chat Name',
             unreadCount: 5,
             photoUrl: 'photo-url',
-            imageId: 'image-id',
+            image: new ImageDto({
+                id: 'image-id',
+                fileStorageTypeId: 1,
+            })
         };
         spyOn(component.chatSelected, 'emit');
 
