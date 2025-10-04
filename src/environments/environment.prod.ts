@@ -3,14 +3,14 @@ export const environment = {
     login: {},
     services: {
         api: {
-            url: 'https://chatapi.epetukhov.cyou',
+            url: 'https://chatapi{{suffix}}.epetukhov.cyou',
         },
         notifications: {
-            url: 'https://chatnotifications.epetukhov.cyou/messagehub',
+            url: 'https://chatnotifications{{suffix}}.epetukhov.cyou/messagehub',
             connectionInterval: 5000,
         },
         fileStorage: {
-            url: 'https://chatfilestorage.epetukhov.cyou',
+            url: 'https://chatfilestorage{{suffix}}.epetukhov.cyou',
         },
     },
     imageSettings: {
