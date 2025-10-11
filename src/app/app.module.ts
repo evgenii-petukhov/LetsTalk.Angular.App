@@ -17,7 +17,6 @@ import { API_BASE_URL } from './api-client/api-client';
 import { apiClientProvider } from './providers/api-client-provider';
 import { ChatListComponent } from './components/chat-list/chat-list.component';
 import { MessengerComponent } from './components/messenger/messenger.component';
-import { ChatListItemComponent } from './components/chat-list-item/chat-list-item.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { MessageComponent } from './components/message/message.component';
 import { ToastrModule } from 'ngx-toastr';
@@ -58,7 +57,6 @@ import { SidebarModule } from './components/sidebar/sidebar.module';
         ChatListComponent,
         AccountListComponent,
         MessengerComponent,
-        ChatListItemComponent,
         AccountListItemComponent,
         MessageComponent,
         LoggedInUserComponent,
