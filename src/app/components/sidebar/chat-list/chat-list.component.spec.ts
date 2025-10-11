@@ -6,7 +6,7 @@ import { IdGeneratorService } from 'src/app/services/id-generator.service';
 import { IChatDto, ImageDto } from 'src/app/api-client/api-client';
 import { ActiveArea } from 'src/app/enums/active-areas';
 import { OrderByPipe } from 'src/app/pipes/orderby';
-import { ChatListItemStubComponent } from '../sidebar/chat-list-item/chat-list-item.component.stub';
+import { ChatListItemStubComponent } from '../chat-list-item/chat-list-item.component.stub';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { selectChats } from 'src/app/state/chats/chats.selector';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';

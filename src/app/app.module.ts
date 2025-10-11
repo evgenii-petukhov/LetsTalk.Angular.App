@@ -15,7 +15,6 @@ import { environment } from '../environments/environment';
 import { authInterceptorProvider } from './providers/auth-interceptor-provider';
 import { API_BASE_URL } from './api-client/api-client';
 import { apiClientProvider } from './providers/api-client-provider';
-import { ChatListComponent } from './components/chat-list/chat-list.component';
 import { MessengerComponent } from './components/messenger/messenger.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { MessageComponent } from './components/message/message.component';
@@ -26,7 +25,6 @@ import { ChatHeaderComponent } from './components/chat-header/chat-header.compon
 import { StoreModule } from '@ngrx/store';
 import { storeConfig } from './state/store-config';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { OrderByPipe } from './pipes/orderby';
 import { VisibleOnlyPipe } from './pipes/visibleOnly';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
@@ -54,7 +52,6 @@ import { SidebarModule } from './components/sidebar/sidebar.module';
         AuthComponent,
         ChatComponent,
         ProfileComponent,
-        ChatListComponent,
         AccountListComponent,
         MessengerComponent,
         AccountListItemComponent,
@@ -65,7 +62,6 @@ import { SidebarModule } from './components/sidebar/sidebar.module';
         ChatSidebarComponent,
         AccountSidebarComponent,
         AccountSidebarNavigationPanelComponent,
-        OrderByPipe,
         VisibleOnlyPipe,
         PrivacyPolicyComponent,
         ImageComponent,
