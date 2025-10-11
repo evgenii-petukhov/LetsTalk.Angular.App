@@ -9,6 +9,7 @@ import { LoggedInUserComponent } from './logged-in-user/logged-in-user.component
 import { LogoutButtonComponent } from './logout-button/logout-button.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AppRoutingModule } from 'src/app/app-routing.module';
+import { AccountListItemComponent } from './account-list-item/account-list-item.component';
 
 @NgModule({
     declarations: [
@@ -18,6 +19,7 @@ import { AppRoutingModule } from 'src/app/app-routing.module';
         ChatSidebarComponent,
         LoggedInUserComponent,
         LogoutButtonComponent,
+        AccountListItemComponent,
     ],
     imports: [CommonModule, SharedModule, FontAwesomeModule, AppRoutingModule],
     exports: [
@@ -27,6 +29,7 @@ import { AppRoutingModule } from 'src/app/app-routing.module';
         ChatSidebarComponent,
         LoggedInUserComponent,
         LogoutButtonComponent,
+        AccountListItemComponent,
     ],
 })
 export class SidebarModule {}

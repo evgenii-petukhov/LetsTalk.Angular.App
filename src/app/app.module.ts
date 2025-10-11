@@ -32,7 +32,6 @@ import { ImageViewerComponent } from './components/image-viewer/image-viewer.com
 import { httpLogInterceptorProvider } from './providers/http-log-interceptor-provider';
 import { grpcLogInterceptorProvider } from './providers/grpc-log-interceptor-provider';
 import { AccountListComponent } from './components/account-list/account-list.component';
-import { AccountListItemComponent } from './components/account-list-item/account-list-item.component';
 import { LoginByEmailComponent } from './components/login-by-email/login-by-email.component';
 import { InlineCountdownComponent } from './components/inline-countdown/inline-countdown.component';
 import { SendMessageComponent } from './components/send-message/send-message.component';
@@ -51,7 +50,6 @@ import { SidebarModule } from './components/sidebar/sidebar.module';
         ProfileComponent,
         AccountListComponent,
         MessengerComponent,
-        AccountListItemComponent,
         MessageComponent,
         ChatHeaderComponent,
         SidebarComponent,
