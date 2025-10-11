@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AccountListItemComponent } from './account-list-item.component';
 import { IAccountDto, ImageDto } from 'src/app/api-client/api-client';
 import { By } from '@angular/platform-browser';
-import { AvatarStubComponent } from '../avatar/avatar.component.stub';
+import { AvatarStubComponent } from '../shared/avatar/avatar.component.stub';
 import { UserDetailsStubComponent } from '../user-details/user-details.component.stub';
 
 describe('AccountListItemComponent', () => {

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChatListItemComponent } from './chat-list-item.component';
 import { IChatDto, ImageDto } from 'src/app/api-client/api-client';
-import { AvatarStubComponent } from '../avatar/avatar.component.stub';
+import { AvatarStubComponent } from '../shared/avatar/avatar.component.stub';
 import { UserDetailsStubComponent } from '../user-details/user-details.component.stub';
 import { UnreadCountStubComponent } from '../unread-count/unread-count.component.stub';
 import { By } from '@angular/platform-browser';

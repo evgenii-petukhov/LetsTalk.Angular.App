@@ -4,7 +4,7 @@ import { ChatHeaderComponent } from './chat-header.component';
 import { StoreService } from 'src/app/services/store.service';
 import { ActiveArea } from 'src/app/enums/active-areas';
 import { OrderByPipe } from 'src/app/pipes/orderby';
-import { AvatarStubComponent } from '../avatar/avatar.component.stub';
+import { AvatarStubComponent } from '../shared/avatar/avatar.component.stub';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { By } from '@angular/platform-browser';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';

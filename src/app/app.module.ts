@@ -30,7 +30,6 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { OrderByPipe } from './pipes/orderby';
 import { VisibleOnlyPipe } from './pipes/visibleOnly';
 import { ReactiveFormsModule } from '@angular/forms';
-import { AvatarComponent } from './components/avatar/avatar.component';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { ImageComponent } from './components/image/image.component';
 import { ImageViewerComponent } from './components/image-viewer/image-viewer.component';
@@ -71,7 +70,6 @@ import { SharedModule } from './components/shared/shared.module';
         AccountSidebarNavigationPanelComponent,
         OrderByPipe,
         VisibleOnlyPipe,
-        AvatarComponent,
         PrivacyPolicyComponent,
         ImageComponent,
         ImageViewerComponent,
