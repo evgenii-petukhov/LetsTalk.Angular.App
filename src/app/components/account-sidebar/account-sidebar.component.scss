@@ -1,0 +1,7 @@
+@use "bootstrap/scss/bootstrap" as *;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}

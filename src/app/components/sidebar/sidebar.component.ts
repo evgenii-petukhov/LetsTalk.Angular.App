@@ -3,7 +3,6 @@ import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 import { SidebarState } from 'src/app/enums/sidebar-state';
-import { StoreService } from 'src/app/services/store.service';
 import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-settings.selectors';
 
 @Component({
@@ -20,7 +19,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
     constructor(
         private store: Store,
-        private storeService: StoreService,
     ) {}
 
     ngOnInit(): void {
@@ -38,11 +36,5 @@ export class SidebarComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.unsubscribe$.next();
         this.unsubscribe$.complete();
-    }
-
-    switchToAccountList(): void {
-        this.storeService.setLayoutSettings({
-            sidebarState: SidebarState.accounts,
-        });
     }
 }

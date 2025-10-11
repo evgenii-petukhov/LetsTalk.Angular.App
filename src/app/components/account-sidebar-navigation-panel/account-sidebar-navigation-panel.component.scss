@@ -4,24 +4,25 @@
 
 :host {
     color: #000;
-    background: rgb(255 197 35);
-    background: linear-gradient(
-        90deg,
-        rgb(255 197 35 / 100%) 0%,
-        rgb(255 211 86 / 100%) 100%
-    );
+    background: rgb(0 0 0 / 10%);
 
     .logged-in-user-container {
         .logged-in-user-inner-container {
             display: flex;
             padding: 10px;
+            padding-left: 0;
 
-            app-avatar {
-                @include avatar-styles;
+            app-back-button {
+                padding: 0 10px 0 15px;
+                height: $avatar-size-desktop;
+
+                @include media-breakpoint-down(sm) {
+                    height: $avatar-size-mobile;
+                }
             }
 
             app-user-details {
-                padding: 0 0 0 10px;
+                padding: 0;
             }
         }
     }

@@ -70,37 +70,7 @@ describe('LoggedInUserComponent', () => {
             sidebarState: SidebarState.chats,
         });
     });
-
-    it('should the UserDetails and BackButton components if isNavigationActive is true', () => {
-        component.isNavigationActive = true;
-
-        fixture.detectChanges();
-
-        const hostElement = fixture.debugElement.nativeElement;
-        expect(hostElement.classList.contains('navigation-active')).toBeTrue();
-
-        const backButton = fixture.debugElement.query(
-            By.directive(BackButtonStubComponent),
-        );
-        expect(backButton).toBeTruthy();
-
-        const avatar = fixture.debugElement.query(
-            By.directive(AvatarStubComponent),
-        );
-        expect(avatar).toBeNull();
-
-        const userDetails = fixture.debugElement.query(
-            By.directive(UserDetailsStubComponent),
-        );
-        expect(userDetails).toBeTruthy();
-        expect(userDetails.componentInstance.value).toBe('Select contact');
-
-        const logoutButton = fixture.debugElement.query(
-            By.directive(LogoutButtonStubComponent),
-        );
-        expect(logoutButton).toBeNull();
-    });
-
+    
     it('should the Avatar, UserDetails, and LogoutButton components if isNavigationActive is false', () => {
         component.isNavigationActive = false;
 

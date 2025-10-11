@@ -1,10 +1,9 @@
 <div class="logged-in-user-container">
     <div class="logged-in-user-inner-container">
-        <app-back-button (buttonClick)="onBackButtonClicked()" *ngIf="isNavigationActive"></app-back-button>
-        <a [routerLink]="['/profile']" title="Edit profile" *ngIf="!isNavigationActive">
+        <a [routerLink]="['/profile']" title="Edit profile">
             <app-avatar [urlOptions]="account && [account.image, account.photoUrl]"></app-avatar>
         </a>
-        <app-user-details [value]="isNavigationActive ? 'Select contact' : 'You'"></app-user-details>
-        <app-logout-button (buttonClick)="onLogoutButtonClicked()" *ngIf="!isNavigationActive"></app-logout-button>
+        <app-user-details [value]="'You'"></app-user-details>
+        <app-logout-button (buttonClick)="onLogoutButtonClicked()"></app-logout-button>
     </div>
 </div>
