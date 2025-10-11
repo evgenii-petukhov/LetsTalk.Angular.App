@@ -1,7 +1,7 @@
 import { Component, HostBinding, Input, OnInit } from '@angular/core';
-import { IProfileDto } from '../../api-client/api-client';
-import { StoreService } from '../../services/store.service';
-import { SidebarState } from '../../enums/sidebar-state';
+import { IProfileDto } from 'src/app/api-client/api-client';
+import { SidebarState } from 'src/app/enums/sidebar-state';
+import { StoreService } from 'src/app/services/store.service';
 
 @Component({
     selector: 'app-account-sidebar-navigation-panel',

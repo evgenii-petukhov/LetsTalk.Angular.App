@@ -11,6 +11,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { AccountListItemComponent } from './account-list-item/account-list-item.component';
 import { AccountListComponent } from './account-list/account-list.component';
+import { AccountSidebarNavigationPanelComponent } from './account-sidebar-navigation-panel/account-sidebar-navigation-panel.component';
 
 @NgModule({
     declarations: [
@@ -22,6 +23,7 @@ import { AccountListComponent } from './account-list/account-list.component';
         LogoutButtonComponent,
         AccountListItemComponent,
         AccountListComponent,
+        AccountSidebarNavigationPanelComponent,
     ],
     imports: [CommonModule, SharedModule, FontAwesomeModule, AppRoutingModule],
     exports: [
@@ -33,6 +35,7 @@ import { AccountListComponent } from './account-list/account-list.component';
         LogoutButtonComponent,
         AccountListItemComponent,
         AccountListComponent,
+        AccountSidebarNavigationPanelComponent,
     ],
 })
 export class SidebarModule {}

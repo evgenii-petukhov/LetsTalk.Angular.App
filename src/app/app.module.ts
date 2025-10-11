@@ -37,7 +37,6 @@ import { SendMessageComponent } from './components/send-message/send-message.com
 import { SendMessageButtonComponent } from './components/send-message-button/send-message-button.component';
 import { SelectImageButtonComponent } from './components/select-image-button/select-image-button.component';
 import { AccountSidebarComponent } from './components/account-sidebar/account-sidebar.component';
-import { AccountSidebarNavigationPanelComponent } from './components/account-sidebar-navigation-panel/account-sidebar-navigation-panel.component';
 import { SharedModule } from './components/shared/shared.module';
 import { SidebarModule } from './components/sidebar/sidebar.module';
 
@@ -52,7 +51,6 @@ import { SidebarModule } from './components/sidebar/sidebar.module';
         ChatHeaderComponent,
         SidebarComponent,
         AccountSidebarComponent,
-        AccountSidebarNavigationPanelComponent,
         VisibleOnlyPipe,
         PrivacyPolicyComponent,
         ImageComponent,
