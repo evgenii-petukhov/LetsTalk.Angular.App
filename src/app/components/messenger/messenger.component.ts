@@ -47,6 +47,13 @@ export class MessengerComponent implements OnInit, OnDestroy {
         this.storeService.markAllAsRead(this.selectedChat);
     }
 
+    @HostListener('window:popstate', ['$event'])
+    onPopState(): void {
+        this.storeService.setLayoutSettings({ activeArea: ActiveArea.sidebar });
+        this.storeService.setSelectedChatId(null);
+        history.pushState(null, '', window.location.href);
+    }
+
     async ngOnInit(): Promise<void> {
         await this.storeService.initChatStorage();
 
@@ -70,6 +77,8 @@ export class MessengerComponent implements OnInit, OnDestroy {
             this.handleLinkPreviewNotification.bind(this),
             this.handleImagePreviewNotification.bind(this),
         );
+
+        history.pushState(null, '', window.location.href);
     }
 
     ngOnDestroy(): void {

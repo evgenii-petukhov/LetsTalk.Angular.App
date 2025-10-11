@@ -3,10 +3,11 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthComponent } from './components/auth/auth.component';
 import { MessengerComponent } from './components/messenger/messenger.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { authGuard } from './guards/auth-guard';
-import { profileGuard } from './guards/profile-guard';
+import { authenticatedOnlyGuard } from './guards/authenticated-only-guard';
+import { completeProfileGuard } from './guards/complete-profile-guard';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { LoginByEmailComponent } from './components/login-by-email/login-by-email.component';
+import { anonymousOnlyGuard } from './guards/anonymous-only-guard';
 
 const routes: Routes = [
     {
@@ -17,10 +18,12 @@ const routes: Routes = [
     {
         path: 'auth',
         component: AuthComponent,
+        canActivate: [anonymousOnlyGuard],
     },
     {
         path: 'login-by-email',
         component: LoginByEmailComponent,
+        canActivate: [anonymousOnlyGuard],
     },
     {
         path: 'privacy-policy',
@@ -29,12 +32,12 @@ const routes: Routes = [
     {
         path: 'chats',
         component: MessengerComponent,
-        canActivate: [authGuard, profileGuard],
+        canActivate: [authenticatedOnlyGuard, completeProfileGuard],
     },
     {
         path: 'profile',
         component: ProfileComponent,
-        canActivate: [authGuard],
+        canActivate: [authenticatedOnlyGuard],
     },
 ];
 
