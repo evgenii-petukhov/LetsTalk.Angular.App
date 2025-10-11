@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from '../shared/shared.module';
 import { ChatSidebarComponent } from './chat-sidebar/chat-sidebar.component';
 import { LoggedInUserComponent } from './logged-in-user/logged-in-user.component';
-import { LogoutButtonComponent } from './logout-button/logout-button.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { AccountListItemComponent } from './account-list-item/account-list-item.component';
@@ -17,7 +16,6 @@ import { ChatSidebarModule } from './chat-sidebar/chat-sidebar.module';
     declarations: [
         ChatSidebarComponent,
         LoggedInUserComponent,
-        LogoutButtonComponent,
         AccountListItemComponent,
         AccountListComponent,
         AccountSidebarNavigationPanelComponent,
