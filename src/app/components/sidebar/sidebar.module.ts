@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UnreadCountComponent } from './chat-sidebar/unread-count/unread-count.component';
 import { SharedModule } from '../shared/shared.module';
-import { ChatListItemComponent } from './chat-list-item/chat-list-item.component';
+import { ChatListItemComponent } from './chat-sidebar/chat-list-item/chat-list-item.component';
 import { ChatListComponent } from './chat-list/chat-list.component';
 import { ChatSidebarComponent } from './chat-sidebar/chat-sidebar.component';
 import { LoggedInUserComponent } from './logged-in-user/logged-in-user.component';
@@ -18,7 +18,6 @@ import { ChatSidebarModule } from './chat-sidebar/chat-sidebar.module';
 
 @NgModule({
     declarations: [
-        ChatListItemComponent,
         ChatListComponent,
         ChatSidebarComponent,
         LoggedInUserComponent,
