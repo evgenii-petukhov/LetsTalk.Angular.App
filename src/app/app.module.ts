@@ -36,7 +36,6 @@ import { InlineCountdownComponent } from './components/inline-countdown/inline-c
 import { SendMessageComponent } from './components/send-message/send-message.component';
 import { SendMessageButtonComponent } from './components/send-message-button/send-message-button.component';
 import { SelectImageButtonComponent } from './components/select-image-button/select-image-button.component';
-import { AccountSidebarComponent } from './components/account-sidebar/account-sidebar.component';
 import { SharedModule } from './components/shared/shared.module';
 import { SidebarModule } from './components/sidebar/sidebar.module';
 
@@ -50,7 +49,6 @@ import { SidebarModule } from './components/sidebar/sidebar.module';
         MessageComponent,
         ChatHeaderComponent,
         SidebarComponent,
-        AccountSidebarComponent,
         VisibleOnlyPipe,
         PrivacyPolicyComponent,
         ImageComponent,
