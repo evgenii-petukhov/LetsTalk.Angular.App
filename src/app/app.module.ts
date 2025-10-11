@@ -43,13 +43,13 @@ import { InlineCountdownComponent } from './components/inline-countdown/inline-c
 import { SendMessageComponent } from './components/send-message/send-message.component';
 import { UserDetailsComponent } from './components/user-details/user-details.component';
 import { UnreadCountComponent } from './components/unread-count/unread-count.component';
-import { BackButtonComponent } from './components/back-button/back-button.component';
 import { LogoutButtonComponent } from './components/logout-button/logout-button.component';
 import { SendMessageButtonComponent } from './components/send-message-button/send-message-button.component';
 import { SelectImageButtonComponent } from './components/select-image-button/select-image-button.component';
 import { ChatSidebarComponent } from './components/chat-sidebar/chat-sidebar.component';
 import { AccountSidebarComponent } from './components/account-sidebar/account-sidebar.component';
 import { AccountSidebarNavigationPanelComponent } from './components/account-sidebar-navigation-panel/account-sidebar-navigation-panel.component';
+import { SharedModule } from './components/shared/shared.module';
 
 @NgModule({
     declarations: [
@@ -80,7 +80,6 @@ import { AccountSidebarNavigationPanelComponent } from './components/account-sid
         SendMessageComponent,
         UserDetailsComponent,
         UnreadCountComponent,
-        BackButtonComponent,
         LogoutButtonComponent,
         SendMessageButtonComponent,
         SelectImageButtonComponent,
@@ -95,6 +94,7 @@ import { AccountSidebarNavigationPanelComponent } from './components/account-sid
         ToastrModule.forRoot(),
         StoreModule.forRoot(storeConfig),
         ReactiveFormsModule,
+        SharedModule,
     ],
     providers: [
         authInterceptorProvider,
