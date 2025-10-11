@@ -2,10 +2,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoggedInUserComponent } from './logged-in-user.component';
 import { StoreService } from 'src/app/services/store.service';
 import { SidebarState } from 'src/app/enums/sidebar-state';
-import { BackButtonStubComponent } from '../shared/back-button/back-button.component.stub';
-import { AvatarStubComponent } from '../shared/avatar/avatar.component.stub';
+import { BackButtonStubComponent } from '../../shared/back-button/back-button.component.stub';
+import { AvatarStubComponent } from '../../shared/avatar/avatar.component.stub';
 import { LogoutButtonStubComponent } from '../logout-button/logout-button.component.stub';
-import { UserDetailsStubComponent } from '../shared/user-details/user-details.component.stub';
+import { UserDetailsStubComponent } from '../../shared/user-details/user-details.component.stub';
 import { By } from '@angular/platform-browser';
 import { ImageDto } from 'src/app/api-client/api-client';
 

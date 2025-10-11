@@ -20,7 +20,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { MessageComponent } from './components/message/message.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { LoggedInUserComponent } from './components/logged-in-user/logged-in-user.component';
 import { ChatHeaderComponent } from './components/chat-header/chat-header.component';
 import { StoreModule } from '@ngrx/store';
 import { storeConfig } from './state/store-config';
@@ -37,10 +36,8 @@ import { AccountListItemComponent } from './components/account-list-item/account
 import { LoginByEmailComponent } from './components/login-by-email/login-by-email.component';
 import { InlineCountdownComponent } from './components/inline-countdown/inline-countdown.component';
 import { SendMessageComponent } from './components/send-message/send-message.component';
-import { LogoutButtonComponent } from './components/logout-button/logout-button.component';
 import { SendMessageButtonComponent } from './components/send-message-button/send-message-button.component';
 import { SelectImageButtonComponent } from './components/select-image-button/select-image-button.component';
-import { ChatSidebarComponent } from './components/chat-sidebar/chat-sidebar.component';
 import { AccountSidebarComponent } from './components/account-sidebar/account-sidebar.component';
 import { AccountSidebarNavigationPanelComponent } from './components/account-sidebar-navigation-panel/account-sidebar-navigation-panel.component';
 import { SharedModule } from './components/shared/shared.module';
@@ -56,10 +53,8 @@ import { SidebarModule } from './components/sidebar/sidebar.module';
         MessengerComponent,
         AccountListItemComponent,
         MessageComponent,
-        LoggedInUserComponent,
         ChatHeaderComponent,
         SidebarComponent,
-        ChatSidebarComponent,
         AccountSidebarComponent,
         AccountSidebarNavigationPanelComponent,
         VisibleOnlyPipe,
@@ -69,7 +64,6 @@ import { SidebarModule } from './components/sidebar/sidebar.module';
         LoginByEmailComponent,
         InlineCountdownComponent,
         SendMessageComponent,
-        LogoutButtonComponent,
         SendMessageButtonComponent,
         SelectImageButtonComponent,
     ],

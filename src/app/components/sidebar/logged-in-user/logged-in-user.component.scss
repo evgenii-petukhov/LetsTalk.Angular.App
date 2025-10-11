@@ -1,6 +1,6 @@
 @use "bootstrap/scss/bootstrap" as *;
-@use "../../shared-styles/mixins/avatar-styles" as *;
-@use "../../shared-styles/variables" as *;
+@use "../../../shared-styles/mixins/avatar-styles" as *;
+@use "../../../shared-styles/variables" as *;
 
 :host {
     color: #000;
