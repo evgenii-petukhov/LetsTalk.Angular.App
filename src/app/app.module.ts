@@ -23,7 +23,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ChatHeaderComponent } from './components/chat-header/chat-header.component';
 import { StoreModule } from '@ngrx/store';
 import { storeConfig } from './state/store-config';
-import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { VisibleOnlyPipe } from './pipes/visibleOnly';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
@@ -48,7 +47,6 @@ import { SidebarModule } from './components/sidebar/sidebar.module';
         MessengerComponent,
         MessageComponent,
         ChatHeaderComponent,
-        SidebarComponent,
         VisibleOnlyPipe,
         PrivacyPolicyComponent,
         ImageComponent,

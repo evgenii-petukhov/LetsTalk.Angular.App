@@ -13,6 +13,7 @@ import { AccountListItemComponent } from './account-list-item/account-list-item.
 import { AccountListComponent } from './account-list/account-list.component';
 import { AccountSidebarNavigationPanelComponent } from './account-sidebar-navigation-panel/account-sidebar-navigation-panel.component';
 import { AccountSidebarComponent } from './account-sidebar/account-sidebar.component';
+import { SidebarComponent } from './sidebar.component';
 
 @NgModule({
     declarations: [
@@ -26,19 +27,11 @@ import { AccountSidebarComponent } from './account-sidebar/account-sidebar.compo
         AccountListComponent,
         AccountSidebarNavigationPanelComponent,
         AccountSidebarComponent,
+        SidebarComponent,
     ],
     imports: [CommonModule, SharedModule, FontAwesomeModule, AppRoutingModule],
     exports: [
-        UnreadCountComponent,
-        ChatListItemComponent,
-        ChatListComponent,
-        ChatSidebarComponent,
-        LoggedInUserComponent,
-        LogoutButtonComponent,
-        AccountListItemComponent,
-        AccountListComponent,
-        AccountSidebarNavigationPanelComponent,
-        AccountSidebarComponent,
+        SidebarComponent,
     ],
 })
 export class SidebarModule {}
