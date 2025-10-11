@@ -5,10 +5,15 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { UnreadCountComponent } from './unread-count/unread-count.component';
 import { ChatListItemComponent } from './chat-list-item/chat-list-item.component';
+import { ChatListComponent } from './chat-list/chat-list.component';
 
 @NgModule({
-    declarations: [UnreadCountComponent, ChatListItemComponent],
+    declarations: [
+        UnreadCountComponent,
+        ChatListItemComponent,
+        ChatListComponent,
+    ],
     imports: [CommonModule, SharedModule, FontAwesomeModule, AppRoutingModule],
-    exports: [UnreadCountComponent, ChatListItemComponent],
+    exports: [UnreadCountComponent, ChatListItemComponent, ChatListComponent],
 })
 export class ChatSidebarModule {}
