@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UnreadCountComponent } from './unread-count/unread-count.component';
+import { UnreadCountComponent } from './chat-sidebar/unread-count/unread-count.component';
 import { SharedModule } from '../shared/shared.module';
 import { ChatListItemComponent } from './chat-list-item/chat-list-item.component';
 import { ChatListComponent } from './chat-list/chat-list.component';
@@ -14,10 +14,10 @@ import { AccountListComponent } from './account-list/account-list.component';
 import { AccountSidebarNavigationPanelComponent } from './account-sidebar-navigation-panel/account-sidebar-navigation-panel.component';
 import { AccountSidebarComponent } from './account-sidebar/account-sidebar.component';
 import { SidebarComponent } from './sidebar.component';
+import { ChatSidebarModule } from './chat-sidebar/chat-sidebar.module';
 
 @NgModule({
     declarations: [
-        UnreadCountComponent,
         ChatListItemComponent,
         ChatListComponent,
         ChatSidebarComponent,
@@ -29,9 +29,13 @@ import { SidebarComponent } from './sidebar.component';
         AccountSidebarComponent,
         SidebarComponent,
     ],
-    imports: [CommonModule, SharedModule, FontAwesomeModule, AppRoutingModule],
-    exports: [
-        SidebarComponent,
+    imports: [
+        CommonModule,
+        SharedModule,
+        FontAwesomeModule,
+        AppRoutingModule,
+        ChatSidebarModule,
     ],
+    exports: [SidebarComponent],
 })
 export class SidebarModule {}
