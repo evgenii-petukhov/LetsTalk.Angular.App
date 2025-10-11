@@ -10,7 +10,7 @@ import { By } from '@angular/platform-browser';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { IChatDto, ImageDto } from 'src/app/api-client/api-client';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
-import { UserDetailsStubComponent } from '../user-details/user-details.component.stub';
+import { UserDetailsStubComponent } from '../shared/user-details/user-details.component.stub';
 
 describe('ChatHeaderComponent', () => {
     let component: ChatHeaderComponent;
