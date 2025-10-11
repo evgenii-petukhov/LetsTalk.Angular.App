@@ -40,7 +40,6 @@ import { AccountListItemComponent } from './components/account-list-item/account
 import { LoginByEmailComponent } from './components/login-by-email/login-by-email.component';
 import { InlineCountdownComponent } from './components/inline-countdown/inline-countdown.component';
 import { SendMessageComponent } from './components/send-message/send-message.component';
-import { UnreadCountComponent } from './components/unread-count/unread-count.component';
 import { LogoutButtonComponent } from './components/logout-button/logout-button.component';
 import { SendMessageButtonComponent } from './components/send-message-button/send-message-button.component';
 import { SelectImageButtonComponent } from './components/select-image-button/select-image-button.component';
@@ -48,6 +47,7 @@ import { ChatSidebarComponent } from './components/chat-sidebar/chat-sidebar.com
 import { AccountSidebarComponent } from './components/account-sidebar/account-sidebar.component';
 import { AccountSidebarNavigationPanelComponent } from './components/account-sidebar-navigation-panel/account-sidebar-navigation-panel.component';
 import { SharedModule } from './components/shared/shared.module';
+import { SidebarModule } from './components/sidebar/sidebar.module';
 
 @NgModule({
     declarations: [
@@ -75,7 +75,6 @@ import { SharedModule } from './components/shared/shared.module';
         LoginByEmailComponent,
         InlineCountdownComponent,
         SendMessageComponent,
-        UnreadCountComponent,
         LogoutButtonComponent,
         SendMessageButtonComponent,
         SelectImageButtonComponent,
@@ -91,6 +90,7 @@ import { SharedModule } from './components/shared/shared.module';
         StoreModule.forRoot(storeConfig),
         ReactiveFormsModule,
         SharedModule,
+        SidebarModule,
     ],
     providers: [
         authInterceptorProvider,
