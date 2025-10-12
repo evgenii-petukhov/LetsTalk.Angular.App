@@ -5,7 +5,7 @@
 </div>
 <ng-template #image>
     <a href="#" (click)="openImageViewer($event)">
-        <img [src]="url" alt="Image" [style.width.px]="isSizeUnknown ? null : width"
+        <img [src]="url" alt="Image" loading="lazy" [style.width.px]="isSizeUnknown ? null : width"
             [style.height.px]="isSizeUnknown ? null : height"
             [style.maxWidth.px]="isSizeUnknown ? sizeLimit.width : null"
             [style.maxHeight.px]="isSizeUnknown ? sizeLimit.height : null" />
