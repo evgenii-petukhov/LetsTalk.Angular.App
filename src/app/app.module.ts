@@ -8,7 +8,6 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { SignInComponent } from './components/sign-in/sign-in.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { environment } from '../environments/environment';
@@ -30,18 +29,16 @@ import { ImageComponent } from './components/image/image.component';
 import { ImageViewerComponent } from './components/image-viewer/image-viewer.component';
 import { httpLogInterceptorProvider } from './providers/http-log-interceptor-provider';
 import { grpcLogInterceptorProvider } from './providers/grpc-log-interceptor-provider';
-import { LoginByEmailComponent } from './components/login-by-email/login-by-email.component';
-import { InlineCountdownComponent } from './components/inline-countdown/inline-countdown.component';
 import { SendMessageComponent } from './components/send-message/send-message.component';
 import { SendMessageButtonComponent } from './components/send-message-button/send-message-button.component';
 import { SelectImageButtonComponent } from './components/select-image-button/select-image-button.component';
 import { SharedModule } from './components/shared/shared.module';
 import { SidebarModule } from './components/sidebar/sidebar.module';
+import { SignInModule } from './components/sign-in/sign-in.module';
 
 @NgModule({
     declarations: [
         AppComponent,
-        SignInComponent,
         ChatComponent,
         ProfileComponent,
         MessengerComponent,
@@ -51,8 +48,6 @@ import { SidebarModule } from './components/sidebar/sidebar.module';
         PrivacyPolicyComponent,
         ImageComponent,
         ImageViewerComponent,
-        LoginByEmailComponent,
-        InlineCountdownComponent,
         SendMessageComponent,
         SendMessageButtonComponent,
         SelectImageButtonComponent,
@@ -69,6 +64,7 @@ import { SidebarModule } from './components/sidebar/sidebar.module';
         ReactiveFormsModule,
         SharedModule,
         SidebarModule,
+        SignInModule,
     ],
     providers: [
         authInterceptorProvider,

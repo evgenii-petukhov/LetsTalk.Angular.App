@@ -6,7 +6,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { authenticatedOnlyGuard } from './guards/authenticated-only-guard';
 import { completeProfileGuard } from './guards/complete-profile-guard';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
-import { LoginByEmailComponent } from './components/login-by-email/login-by-email.component';
+import { LoginByEmailComponent } from './components/sign-in/login-by-email/login-by-email.component';
 import { anonymousOnlyGuard } from './guards/anonymous-only-guard';
 
 const routes: Routes = [
