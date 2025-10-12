@@ -156,7 +156,18 @@ export class StoreService {
         }
 
         const response = await this.fileStorageService.download(imageKey);
-        const content = URL.createObjectURL(new Blob([response.getContent()]));
+        const rawContent = response.getContent();
+        let blobPart: BlobPart;
+
+        if (typeof rawContent === 'string') {
+            blobPart = rawContent;
+        } else if (rawContent instanceof Uint8Array) {
+            blobPart = new Uint8Array(rawContent);
+        } else {
+            throw new Error('Unsupported content type');
+        }
+
+        const content = URL.createObjectURL(new Blob([blobPart]));
         image = {
             imageId: imageKey.id,
             content,
