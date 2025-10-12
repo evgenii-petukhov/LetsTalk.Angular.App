@@ -16,7 +16,6 @@ import { API_BASE_URL } from './api-client/api-client';
 import { apiClientProvider } from './providers/api-client-provider';
 import { MessengerComponent } from './components/messenger/messenger.component';
 import { BrowserModule } from '@angular/platform-browser';
-import { MessageComponent } from './components/message/message.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
@@ -24,7 +23,6 @@ import { storeConfig } from './state/store-config';
 import { VisibleOnlyPipe } from './pipes/visibleOnly';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
-import { ImageComponent } from './components/image/image.component';
 import { ImageViewerComponent } from './components/image-viewer/image-viewer.component';
 import { httpLogInterceptorProvider } from './providers/http-log-interceptor-provider';
 import { grpcLogInterceptorProvider } from './providers/grpc-log-interceptor-provider';
@@ -39,10 +37,8 @@ import { ChatModule } from './components/chat/chat.module';
         ChatComponent,
         ProfileComponent,
         MessengerComponent,
-        MessageComponent,
         VisibleOnlyPipe,
         PrivacyPolicyComponent,
-        ImageComponent,
         ImageViewerComponent,
     ],
     imports: [

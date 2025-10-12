@@ -11,7 +11,7 @@ import { ApiService } from '../../services/api.service';
 import { StoreService } from 'src/app/services/store.service';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
 import { ChatHeaderStubComponent } from './chat-header/chat-header.component.stub';
-import { MessageStubComponent } from '../message/message.component.stub';
+import { MessageStubComponent } from './message/message.component.stub';
 import { SendMessageStubComponent } from './send-message/send-message.component.stub';
 import { VisibleOnlyPipe } from 'src/app/pipes/visibleOnly';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
