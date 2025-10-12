@@ -19,7 +19,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { MessageComponent } from './components/message/message.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ChatHeaderComponent } from './components/chat-header/chat-header.component';
 import { StoreModule } from '@ngrx/store';
 import { storeConfig } from './state/store-config';
 import { VisibleOnlyPipe } from './pipes/visibleOnly';
@@ -41,7 +40,6 @@ import { ChatModule } from './components/chat/chat.module';
         ProfileComponent,
         MessengerComponent,
         MessageComponent,
-        ChatHeaderComponent,
         VisibleOnlyPipe,
         PrivacyPolicyComponent,
         ImageComponent,

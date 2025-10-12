@@ -5,18 +5,22 @@ import { SendMessageButtonComponent } from './send-message-button/send-message-b
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SendMessageComponent } from './send-message/send-message.component';
 import { FormsModule } from '@angular/forms';
+import { ChatHeaderComponent } from './chat-header/chat-header.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
     declarations: [
         SelectImageButtonComponent,
         SendMessageButtonComponent,
         SendMessageComponent,
+        ChatHeaderComponent,
     ],
-    imports: [CommonModule, FontAwesomeModule, FormsModule],
+    imports: [CommonModule, FontAwesomeModule, FormsModule, SharedModule],
     exports: [
         SelectImageButtonComponent,
         SendMessageButtonComponent,
         SendMessageComponent,
+        ChatHeaderComponent,
     ],
 })
 export class ChatModule {}
