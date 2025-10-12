@@ -30,11 +30,10 @@ import { ImageViewerComponent } from './components/image-viewer/image-viewer.com
 import { httpLogInterceptorProvider } from './providers/http-log-interceptor-provider';
 import { grpcLogInterceptorProvider } from './providers/grpc-log-interceptor-provider';
 import { SendMessageComponent } from './components/send-message/send-message.component';
-import { SendMessageButtonComponent } from './components/send-message-button/send-message-button.component';
-import { SelectImageButtonComponent } from './components/select-image-button/select-image-button.component';
 import { SharedModule } from './components/shared/shared.module';
 import { SidebarModule } from './components/sidebar/sidebar.module';
 import { SignInModule } from './components/sign-in/sign-in.module';
+import { ChatModule } from './components/chat/chat.module';
 
 @NgModule({
     declarations: [
@@ -49,8 +48,6 @@ import { SignInModule } from './components/sign-in/sign-in.module';
         ImageComponent,
         ImageViewerComponent,
         SendMessageComponent,
-        SendMessageButtonComponent,
-        SelectImageButtonComponent,
     ],
     imports: [
         BrowserModule,
@@ -65,6 +62,7 @@ import { SignInModule } from './components/sign-in/sign-in.module';
         SharedModule,
         SidebarModule,
         SignInModule,
+        ChatModule,
     ],
     providers: [
         authInterceptorProvider,
