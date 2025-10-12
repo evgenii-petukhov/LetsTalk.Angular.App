@@ -16,8 +16,8 @@ import { UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { IChatDto, ImageDto, IMessageDto } from 'src/app/api-client/api-client';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { SendMessageButtonStubComponent } from '../chat/send-message-button/send-message-button.component.stub';
-import { SelectImageButtonStubComponent } from '../chat/select-image-button/select-image-button.component.stub';
+import { SendMessageButtonStubComponent } from '../send-message-button/send-message-button.component.stub';
+import { SelectImageButtonStubComponent } from '../select-image-button/select-image-button.component.stub';
 import { errorMessages } from 'src/app/constants/errors';
 
 describe('SendMessageComponent', () => {

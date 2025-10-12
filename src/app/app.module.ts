@@ -29,7 +29,6 @@ import { ImageComponent } from './components/image/image.component';
 import { ImageViewerComponent } from './components/image-viewer/image-viewer.component';
 import { httpLogInterceptorProvider } from './providers/http-log-interceptor-provider';
 import { grpcLogInterceptorProvider } from './providers/grpc-log-interceptor-provider';
-import { SendMessageComponent } from './components/send-message/send-message.component';
 import { SharedModule } from './components/shared/shared.module';
 import { SidebarModule } from './components/sidebar/sidebar.module';
 import { SignInModule } from './components/sign-in/sign-in.module';
@@ -47,7 +46,6 @@ import { ChatModule } from './components/chat/chat.module';
         PrivacyPolicyComponent,
         ImageComponent,
         ImageViewerComponent,
-        SendMessageComponent,
     ],
     imports: [
         BrowserModule,
