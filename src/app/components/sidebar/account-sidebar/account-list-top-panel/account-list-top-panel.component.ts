@@ -4,12 +4,12 @@ import { SidebarState } from 'src/app/enums/sidebar-state';
 import { StoreService } from 'src/app/services/store.service';
 
 @Component({
-    selector: 'app-account-sidebar-navigation-panel',
-    templateUrl: './account-sidebar-navigation-panel.component.html',
-    styleUrl: './account-sidebar-navigation-panel.component.scss',
+    selector: 'app-account-list-top-panel',
+    templateUrl: './account-list-top-panel.component.html',
+    styleUrl: './account-list-top-panel.component.scss',
     standalone: false,
 })
-export class AccountSidebarNavigationPanelComponent implements OnInit {
+export class AccountListTopPanelComponent implements OnInit {
     account: IProfileDto;
     @Input()
     @HostBinding('class.navigation-active')

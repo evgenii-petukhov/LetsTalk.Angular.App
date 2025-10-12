@@ -6,8 +6,8 @@
     color: #000;
     background: rgb(0 0 0 / 10%);
 
-    .logged-in-user-container {
-        .logged-in-user-inner-container {
+    .account-list-top-panel {
+        &__inner-container {
             display: flex;
             padding: 10px;
             padding-left: 0;

@@ -3,14 +3,14 @@ import { CommonModule } from '@angular/common';
 import { AccountListItemComponent } from './account-list-item/account-list-item.component';
 import { SharedModule } from '../../shared/shared.module';
 import { AccountListComponent } from './account-list/account-list.component';
-import { AccountSidebarNavigationPanelComponent } from './account-sidebar-navigation-panel/account-sidebar-navigation-panel.component';
+import { AccountListTopPanelComponent } from './account-list-top-panel/account-list-top-panel.component';
 import { AccountSidebarComponent } from './account-sidebar.component';
 
 @NgModule({
     declarations: [
         AccountListItemComponent,
         AccountListComponent,
-        AccountSidebarNavigationPanelComponent,
+        AccountListTopPanelComponent,
         AccountSidebarComponent,
     ],
     imports: [CommonModule, SharedModule],
