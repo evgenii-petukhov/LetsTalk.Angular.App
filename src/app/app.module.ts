@@ -8,7 +8,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AuthComponent } from './components/auth/auth.component';
+import { SignInComponent } from './components/sign-in/sign-in.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { environment } from '../environments/environment';
@@ -41,7 +41,7 @@ import { SidebarModule } from './components/sidebar/sidebar.module';
 @NgModule({
     declarations: [
         AppComponent,
-        AuthComponent,
+        SignInComponent,
         ChatComponent,
         ProfileComponent,
         MessengerComponent,

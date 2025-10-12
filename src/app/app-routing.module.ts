@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthComponent } from './components/auth/auth.component';
+import { SignInComponent } from './components/sign-in/sign-in.component';
 import { MessengerComponent } from './components/messenger/messenger.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { authenticatedOnlyGuard } from './guards/authenticated-only-guard';
@@ -16,8 +16,8 @@ const routes: Routes = [
         pathMatch: 'full',
     },
     {
-        path: 'auth',
-        component: AuthComponent,
+        path: 'sign-in',
+        component: SignInComponent,
         canActivate: [anonymousOnlyGuard],
     },
     {
@@ -38,6 +38,10 @@ const routes: Routes = [
         path: 'profile',
         component: ProfileComponent,
         canActivate: [authenticatedOnlyGuard],
+    },
+    {
+        path: '**',
+        redirectTo: '/chats',
     },
 ];
 

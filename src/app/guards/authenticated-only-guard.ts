@@ -9,4 +9,4 @@ import { TokenStorageService } from '../services/token-storage.service';
 export const authenticatedOnlyGuard = (next: ActivatedRouteSnapshot) =>
     inject(TokenStorageService).isLoggedIn()
         ? true
-        : createUrlTreeFromSnapshot(next, ['/', 'auth']);
+        : createUrlTreeFromSnapshot(next, ['/', 'sign-in']);

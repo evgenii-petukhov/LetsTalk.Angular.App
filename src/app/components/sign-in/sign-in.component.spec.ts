@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AuthComponent } from './auth.component';
+import { SignInComponent } from './sign-in.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { RouterTestingModule } from '@angular/router/testing';
 
-describe('AuthComponent', () => {
-    let component: AuthComponent;
-    let fixture: ComponentFixture<AuthComponent>;
+describe(SignInComponent.name, () => {
+    let component: SignInComponent;
+    let fixture: ComponentFixture<SignInComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [AuthComponent],
+            declarations: [SignInComponent],
             imports: [FontAwesomeModule, RouterTestingModule],
             providers: [],
         }).compileComponents();
 
-        fixture = TestBed.createComponent(AuthComponent);
+        fixture = TestBed.createComponent(SignInComponent);
         component = fixture.componentInstance;
     });
 

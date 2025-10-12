@@ -17,10 +17,10 @@ export const completeProfileGuard = async (next: ActivatedRouteSnapshot) => {
                 : createUrlTreeFromSnapshot(next, ['/', 'profile']);
         } else {
             window.localStorage.clear();
-            return createUrlTreeFromSnapshot(next, ['/', 'auth']);
+            return createUrlTreeFromSnapshot(next, ['/', 'sign-in']);
         }
     } catch {
         window.localStorage.clear();
-        return createUrlTreeFromSnapshot(next, ['/', 'auth']);
+        return createUrlTreeFromSnapshot(next, ['/', 'sign-in']);
     }
 };
