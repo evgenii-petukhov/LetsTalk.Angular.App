@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SelectImageButtonComponent } from './select-image-button/select-image-button.component';
-import { SendMessageButtonComponent } from './send-message-button/send-message-button.component';
+import { SendButtonComponent } from './send-button/send-button.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ComposeAreaComponent } from './compose-area/compose-area.component';
 import { FormsModule } from '@angular/forms';
@@ -15,7 +15,7 @@ import { VisibleOnlyPipe } from 'src/app/pipes/visibleOnly';
 @NgModule({
     declarations: [
         SelectImageButtonComponent,
-        SendMessageButtonComponent,
+        SendButtonComponent,
         ComposeAreaComponent,
         ChatHeaderComponent,
         MessageComponent,

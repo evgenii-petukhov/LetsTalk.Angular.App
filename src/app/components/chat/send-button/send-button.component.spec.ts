@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SendMessageButtonComponent } from './send-message-button.component';
+import { SendButtonComponent } from './send-button.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { By } from '@angular/platform-browser';
 
-describe('SendMessageButtonComponent', () => {
-    let component: SendMessageButtonComponent;
-    let fixture: ComponentFixture<SendMessageButtonComponent>;
+describe(SendButtonComponent.name, () => {
+    let component: SendButtonComponent;
+    let fixture: ComponentFixture<SendButtonComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [SendMessageButtonComponent],
+            declarations: [SendButtonComponent],
             imports: [FontAwesomeModule],
         }).compileComponents();
 
-        fixture = TestBed.createComponent(SendMessageButtonComponent);
+        fixture = TestBed.createComponent(SendButtonComponent);
         component = fixture.componentInstance;
     });
 
