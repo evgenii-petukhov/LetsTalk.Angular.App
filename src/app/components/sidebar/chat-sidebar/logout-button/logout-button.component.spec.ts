@@ -30,7 +30,7 @@ describe('LogoutButtonComponent', () => {
         // Assert
         const icon = fixture.debugElement.query(By.css('fa-icon'));
         expect(icon).toBeTruthy();
-        expect(icon.componentInstance.icon).toEqual(
+        expect(icon.componentInstance.icon()).toEqual(
             component.faRightFromBracket,
         );
     });

@@ -36,12 +36,8 @@ describe(SignInComponent.name, () => {
 
         // Assert
         expect(privacyLink).toBeTruthy();
-        expect(privacyLink.attributes['ng-reflect-router-link'].value).toEqual(
-            '/privacy-policy',
-        );
+        expect(privacyLink.href).toContain('/privacy-policy');
         expect(emailLink).toBeTruthy();
-        expect(emailLink.attributes['ng-reflect-router-link'].value).toEqual(
-            '/login-by-email',
-        );
+        expect(emailLink.href).toContain('/login-by-email');
     });
 });

@@ -32,7 +32,7 @@ describe('SelectImageButtonComponent', () => {
 
         // Assert
         expect(iconElement).toBeTruthy();
-        expect(iconElement.componentInstance.icon).toEqual(component.faCamera);
+        expect(iconElement.componentInstance.icon()).toEqual(component.faCamera);
     });
 
     it('should emit imageBlobReady when a file is selected', () => {

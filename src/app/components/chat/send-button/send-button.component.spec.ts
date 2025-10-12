@@ -30,7 +30,7 @@ describe(SendButtonComponent.name, () => {
 
         // Assert
         expect(iconElement).toBeTruthy();
-        expect(iconElement.componentInstance.icon).toEqual(
+        expect(iconElement.componentInstance.icon()).toEqual(
             component.faPaperPlane,
         );
     });

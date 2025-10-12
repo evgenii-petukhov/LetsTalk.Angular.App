@@ -30,7 +30,7 @@ describe('BackButtonComponent', () => {
         // Assert
         const icon = fixture.debugElement.query(By.css('fa-icon'));
         expect(icon).toBeTruthy();
-        expect(icon.componentInstance.icon).toEqual(component.faChevronLeft);
+        expect(icon.componentInstance.icon()).toEqual(component.faChevronLeft);
     });
 
     it('should emit the buttonClick event when the button is clicked', () => {
