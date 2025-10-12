@@ -4,18 +4,16 @@ import { AccountListItemComponent } from './account-list-item/account-list-item.
 import { SharedModule } from '../../shared/shared.module';
 import { AccountListComponent } from './account-list/account-list.component';
 import { AccountSidebarNavigationPanelComponent } from './account-sidebar-navigation-panel/account-sidebar-navigation-panel.component';
+import { AccountSidebarComponent } from './account-sidebar.component';
 
 @NgModule({
     declarations: [
         AccountListItemComponent,
         AccountListComponent,
         AccountSidebarNavigationPanelComponent,
+        AccountSidebarComponent,
     ],
     imports: [CommonModule, SharedModule],
-    exports: [
-        AccountListItemComponent,
-        AccountListComponent,
-        AccountSidebarNavigationPanelComponent,
-    ],
+    exports: [AccountSidebarComponent],
 })
 export class AccountSidebarModule {}
