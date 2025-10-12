@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SelectImageButtonComponent } from './select-image-button/select-image-button.component';
 import { SendMessageButtonComponent } from './send-message-button/send-message-button.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { SendMessageComponent } from './send-message/send-message.component';
+import { ComposeAreaComponent } from './compose-area/compose-area.component';
 import { FormsModule } from '@angular/forms';
 import { ChatHeaderComponent } from './chat-header/chat-header.component';
 import { SharedModule } from '../shared/shared.module';
@@ -16,7 +16,7 @@ import { VisibleOnlyPipe } from 'src/app/pipes/visibleOnly';
     declarations: [
         SelectImageButtonComponent,
         SendMessageButtonComponent,
-        SendMessageComponent,
+        ComposeAreaComponent,
         ChatHeaderComponent,
         MessageComponent,
         ImageComponent,

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SendMessageComponent } from './send-message.component';
+import { ComposeAreaComponent } from './compose-area.component';
 import {
     DefaultProjectorFn,
     MemoizedSelector,
@@ -20,9 +20,9 @@ import { SendMessageButtonStubComponent } from '../send-message-button/send-mess
 import { SelectImageButtonStubComponent } from '../select-image-button/select-image-button.component.stub';
 import { errorMessages } from 'src/app/constants/errors';
 
-describe('SendMessageComponent', () => {
-    let component: SendMessageComponent;
-    let fixture: ComponentFixture<SendMessageComponent>;
+describe(ComposeAreaComponent.name, () => {
+    let component: ComposeAreaComponent;
+    let fixture: ComponentFixture<ComposeAreaComponent>;
     let apiService: jasmine.SpyObj<ApiService>;
     let errorService: jasmine.SpyObj<ErrorService>;
     let imageUploadService: jasmine.SpyObj<ImageUploadService>;
@@ -71,7 +71,7 @@ describe('SendMessageComponent', () => {
 
         await TestBed.configureTestingModule({
             declarations: [
-                SendMessageComponent,
+                ComposeAreaComponent,
                 SendMessageButtonStubComponent,
                 SelectImageButtonStubComponent,
             ],
@@ -92,7 +92,7 @@ describe('SendMessageComponent', () => {
             ],
         }).compileComponents();
 
-        fixture = TestBed.createComponent(SendMessageComponent);
+        fixture = TestBed.createComponent(ComposeAreaComponent);
         component = fixture.componentInstance;
         store = TestBed.inject(Store) as MockStore;
         mockSelectSelectedChat = store.overrideSelector(

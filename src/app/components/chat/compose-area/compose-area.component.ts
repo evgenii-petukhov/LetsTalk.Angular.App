@@ -14,12 +14,12 @@ import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { ImageUploadService } from 'src/app/services/image-upload.service';
 
 @Component({
-    selector: 'app-send-message',
-    templateUrl: './send-message.component.html',
-    styleUrl: './send-message.component.scss',
+    selector: 'app-compose-area',
+    templateUrl: './compose-area.component.html',
+    styleUrl: './compose-area.component.scss',
     standalone: false,
 })
-export class SendMessageComponent implements OnInit, OnDestroy {
+export class ComposeAreaComponent implements OnInit, OnDestroy {
     message = '';
     isSending = false;
     private chat: IChatDto;
