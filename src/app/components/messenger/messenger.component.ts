@@ -49,9 +49,13 @@ export class MessengerComponent implements OnInit, OnDestroy {
 
     @HostListener('window:popstate', ['$event'])
     onPopState(): void {
-        this.storeService.setLayoutSettings({ activeArea: ActiveArea.sidebar });
-        this.storeService.setSelectedChatId(null);
-        this.storeService.setViewedImageKey(null);
+        if (this.viewedImageKey) {
+            this.storeService.setViewedImageKey(null);
+        } else {
+            this.storeService.setLayoutSettings({ activeArea: ActiveArea.sidebar });
+            this.storeService.setSelectedChatId(null);
+        }
+
         history.pushState(null, '', window.location.href);
     }
 
