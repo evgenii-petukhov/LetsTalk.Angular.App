@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../shared/shared.module';
-import { ChatSidebarComponent } from './chat-sidebar/chat-sidebar.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { AccountListItemComponent } from './account-list-item/account-list-item.component';
@@ -13,7 +12,6 @@ import { ChatSidebarModule } from './chat-sidebar/chat-sidebar.module';
 
 @NgModule({
     declarations: [
-        ChatSidebarComponent,
         AccountListItemComponent,
         AccountListComponent,
         AccountSidebarNavigationPanelComponent,
