@@ -9,7 +9,7 @@ import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { ProfileDto } from 'src/app/api-client/api-client';
 import { provideMockStore } from '@ngrx/store/testing';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { AvatarStubComponent } from '../avatar/avatar.component.stub';
+import { AvatarStubComponent } from '../shared/avatar/avatar.component.stub';
 import { ImageUploadService } from 'src/app/services/image-upload.service';
 import { errorMessages } from 'src/app/constants/errors';
 

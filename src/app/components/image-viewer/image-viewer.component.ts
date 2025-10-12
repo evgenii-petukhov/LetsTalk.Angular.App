@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input, OnChanges } from '@angular/core';
+import { Component, HostBinding, HostListener, Input, OnChanges } from '@angular/core';
 import { IImageDto } from 'src/app/api-client/api-client';
 import { errorMessages } from 'src/app/constants/errors';
 import { ErrorService } from 'src/app/services/error.service';
@@ -20,6 +20,12 @@ export class ImageViewerComponent implements OnChanges {
         private errorService: ErrorService,
     ) {}
 
+    @HostListener('click')
+    close(): void {
+        this.storeService.setViewedImageKey(null);
+        this.resetViewer();
+    }
+
     async ngOnChanges(): Promise<void> {
         if (!this.imageKey) {
             this.resetViewer();
@@ -29,17 +35,12 @@ export class ImageViewerComponent implements OnChanges {
         await this.loadImage();
     }
 
-    close() {
-        this.storeService.setViewedImageKey(null);
-        this.resetViewer();
-    }
-
     private async loadImage(): Promise<void> {
         try {
             const image = await this.storeService.getImageContent(
                 this.imageKey,
             );
-            this.backgroundImage = `url('${image.content}')`;
+            this.backgroundImage = image.content;
             this.isVisible = true;
         } catch (error) {
             this.errorService.handleError(error, errorMessages.downloadImage);

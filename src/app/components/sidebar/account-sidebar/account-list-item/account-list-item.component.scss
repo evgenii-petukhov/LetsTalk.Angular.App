@@ -1,0 +1,21 @@
+@use "bootstrap/scss/bootstrap" as *;
+@use "../../../../shared-styles/mixins/avatar-styles" as *;
+
+a {
+    display: flex;
+    text-decoration: none;
+    color: #000;
+    padding: 10px;
+
+    @include media-breakpoint-down(sm) {
+        padding: 8px 10px;
+    }
+
+    app-avatar {
+        @include avatar-styles;
+    }
+
+    app-user-details {
+        padding: 0 0 0 10px;
+    }
+}

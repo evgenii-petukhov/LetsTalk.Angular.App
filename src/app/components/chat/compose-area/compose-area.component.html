@@ -1,0 +1,10 @@
+<div class="send-message-container">
+    <div class="textarea-container">
+        <textarea [(ngModel)]="message" (keydown.control.enter)="onSendMessage(message)" name="message"></textarea>
+    </div>
+    <div class="button-container">
+        <app-select-image-button (imageBlobReady)="onImageBlobReady($event)"></app-select-image-button>
+        <app-send-button (buttonClick)="onSendMessage(message)"
+            [disabled]="isSending || !message.trim()"></app-send-button>
+    </div>
+</div>

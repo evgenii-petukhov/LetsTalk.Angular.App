@@ -52,11 +52,11 @@ describe('ImageViewerComponent', () => {
         fixture.detectChanges();
 
         // Assert
-        expect(component.backgroundImage).toBe("url('image-url')");
+        expect(component.backgroundImage).toBe("image-url");
         expect(component.isVisible).toBeTrue();
 
-        const imageView = fixture.debugElement.query(By.css('.image-view'));
-        expect(imageView.styles['background-image']).toBe('url("image-url")');
+        const imageElement = fixture.debugElement.query(By.css('img'));
+        expect(imageElement.nativeElement.src).toContain('image-url');
 
         expect(storeService.getImageContent).toHaveBeenCalledWith(imageKey);
         expect(errorService.handleError).not.toHaveBeenCalled();

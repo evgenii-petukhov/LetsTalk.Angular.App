@@ -1,0 +1,53 @@
+<div
+    class="bubble"
+    [ngClass]="{
+        'btm-right': message.isMine,
+        'btm-left': !message.isMine,
+        'extra-padding':
+            message.textHtml && (!message.isMine || !message.linkPreview),
+    }"
+>
+    <div class="bubble-inner-container">
+        <a
+            [href]="message.linkPreview.url"
+            target="_blank"
+            class="link-preview"
+            *ngIf="message.linkPreview"
+        >
+            <div
+                class="link-preview-image"
+                *ngIf="message.linkPreview.imageUrl && !isImageError"
+            >
+                <img
+                    [src]="message.linkPreview.imageUrl"
+                    (error)="onImageError()"
+                    referrerpolicy="no-referrer"
+                    alt="Site preview"
+                    loading="lazy"
+                />
+            </div>
+            <div class="link-preview-text-container">
+                <div class="link-preview-text">
+                    {{ message.linkPreview.title }}
+                </div>
+            </div>
+        </a>
+        <div
+            class="content"
+            [innerHTML]="message.textHtml"
+            *ngIf="message.textHtml"
+        ></div>
+        <div class="content" *ngIf="message.image">
+            <app-image
+                [imagePreview]="message.imagePreview"
+                [imageKey]="message.image"
+            ></app-image>
+        </div>
+        <div
+            class="time"
+            title="{{ message.created | date: 'HH:mm, d MMMM YYYY' }}"
+        >
+            {{ message.created | date: "HH:mm" }}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+@use "bootstrap/scss/bootstrap" as *;
+@use "../../../shared-styles/extend/center-container" as *;
+
+:host {
+    @extend %fullscreen;
+
+    .centered {
+        @extend %centered;
+
+        padding: 30px;
+        width: 400px;
+
+        @include media-breakpoint-down(md) {
+            flex: 1 1 auto;
+            width: auto;
+            margin: 15px;
+        }
+
+        .login-text {
+            margin: 0 0 15px;
+            text-align: center;
+        }
+
+        form {
+            .login-buttons {
+                display: flex;
+                justify-content: center;
+
+                button {
+                    flex: 1 1;
+                    margin: 0 10px 0 0;
+                    max-width: 165px;
+
+                    &:last-child {
+                        margin: 0;
+                    }
+                }
+            }
+        }
+    }
+}

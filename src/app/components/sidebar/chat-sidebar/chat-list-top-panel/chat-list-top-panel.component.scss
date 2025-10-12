@@ -1,0 +1,32 @@
+@use "bootstrap/scss/bootstrap" as *;
+@use "../../../../shared-styles/mixins/avatar-styles" as *;
+@use "../../../../shared-styles/variables" as *;
+
+:host {
+    color: #000;
+    background: rgb(255 197 35);
+    background: linear-gradient(
+        90deg,
+        rgb(255 197 35 / 100%) 0%,
+        rgb(255 211 86 / 100%) 100%
+    );
+
+    .chat-list-top-panel {
+        &__inner-container {
+            display: flex;
+            padding: 10px;
+
+            app-avatar {
+                @include avatar-styles;
+            }
+
+            app-user-details {
+                padding: 0 0 0 10px;
+            }
+        }
+    }
+
+    @include media-breakpoint-down(lg) {
+        box-shadow: 0 0 5px 3px rgb(0 0 0 / 20%);
+    }
+}

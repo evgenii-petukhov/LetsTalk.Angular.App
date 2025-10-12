@@ -17,10 +17,9 @@
         padding: 20px;
     }
 
-    .image-view {
-        flex: 1 1 auto;
-        background-repeat: no-repeat;
-        background-size: contain;
-        background-position: center center;
+    img {
+        object-fit: contain;
+        width: 100%;
+        height: 100%;
     }
 }
