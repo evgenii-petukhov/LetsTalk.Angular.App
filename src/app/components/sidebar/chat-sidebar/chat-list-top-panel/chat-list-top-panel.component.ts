@@ -4,12 +4,12 @@ import { IProfileDto } from 'src/app/api-client/api-client';
 import { SidebarState } from 'src/app/enums/sidebar-state';
 
 @Component({
-    selector: 'app-logged-in-user',
-    templateUrl: './logged-in-user.component.html',
-    styleUrls: ['./logged-in-user.component.scss'],
+    selector: 'app-chat-list-top-panel',
+    templateUrl: './chat-list-top-panel.component.html',
+    styleUrls: ['./chat-list-top-panel.component.scss'],
     standalone: false,
 })
-export class LoggedInUserComponent implements OnInit {
+export class ChatListTopPanelComponent implements OnInit {
     account: IProfileDto;
     @Input()
     @HostBinding('class.navigation-active')

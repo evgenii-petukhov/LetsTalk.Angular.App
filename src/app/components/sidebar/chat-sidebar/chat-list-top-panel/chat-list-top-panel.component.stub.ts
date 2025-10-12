@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-    selector: 'app-logged-in-user',
+    selector: 'app-chat-list-top-panel',
     template: '<div></div>',
     standalone: false,
 })

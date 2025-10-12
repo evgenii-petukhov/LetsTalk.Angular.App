@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LoggedInUserComponent } from './logged-in-user.component';
+import { ChatListTopPanelComponent } from './chat-list-top-panel.component';
 import { StoreService } from 'src/app/services/store.service';
 import { SidebarState } from 'src/app/enums/sidebar-state';
 import { BackButtonStubComponent } from '../../../shared/back-button/back-button.component.stub';
@@ -9,9 +9,9 @@ import { UserDetailsStubComponent } from '../../../shared/user-details/user-deta
 import { By } from '@angular/platform-browser';
 import { ImageDto } from 'src/app/api-client/api-client';
 
-describe('LoggedInUserComponent', () => {
-    let component: LoggedInUserComponent;
-    let fixture: ComponentFixture<LoggedInUserComponent>;
+describe('ChatListTopPanelComponent', () => {
+    let component: ChatListTopPanelComponent;
+    let fixture: ComponentFixture<ChatListTopPanelComponent>;
     let storeService: jasmine.SpyObj<StoreService>;
 
     beforeEach(async () => {
@@ -22,7 +22,7 @@ describe('LoggedInUserComponent', () => {
 
         await TestBed.configureTestingModule({
             declarations: [
-                LoggedInUserComponent,
+                ChatListTopPanelComponent,
                 BackButtonStubComponent,
                 AvatarStubComponent,
                 UserDetailsStubComponent,
@@ -31,7 +31,7 @@ describe('LoggedInUserComponent', () => {
             providers: [{ provide: StoreService, useValue: storeService }],
         }).compileComponents();
 
-        fixture = TestBed.createComponent(LoggedInUserComponent);
+        fixture = TestBed.createComponent(ChatListTopPanelComponent);
         component = fixture.componentInstance;
     });
 

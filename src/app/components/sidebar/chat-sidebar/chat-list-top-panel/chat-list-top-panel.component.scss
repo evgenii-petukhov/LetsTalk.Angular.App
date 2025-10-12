@@ -11,8 +11,8 @@
         rgb(255 211 86 / 100%) 100%
     );
 
-    .logged-in-user-container {
-        .logged-in-user-inner-container {
+    .chat-list-top-panel {
+        &__inner-container {
             display: flex;
             padding: 10px;
 

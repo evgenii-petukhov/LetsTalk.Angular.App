@@ -7,7 +7,7 @@ import { UnreadCountComponent } from './unread-count/unread-count.component';
 import { ChatListItemComponent } from './chat-list-item/chat-list-item.component';
 import { ChatListComponent } from './chat-list/chat-list.component';
 import { LogoutButtonComponent } from './logout-button/logout-button.component';
-import { LoggedInUserComponent } from './logged-in-user/logged-in-user.component';
+import { ChatListTopPanelComponent } from './chat-list-top-panel/chat-list-top-panel.component';
 import { ChatSidebarComponent } from './chat-sidebar.component';
 
 @NgModule({
@@ -16,7 +16,7 @@ import { ChatSidebarComponent } from './chat-sidebar.component';
         ChatListItemComponent,
         ChatListComponent,
         LogoutButtonComponent,
-        LoggedInUserComponent,
+        ChatListTopPanelComponent,
         ChatSidebarComponent,
     ],
     imports: [CommonModule, SharedModule, FontAwesomeModule, AppRoutingModule],
