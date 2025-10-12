@@ -9,6 +9,8 @@ import { ChatHeaderComponent } from './chat-header/chat-header.component';
 import { SharedModule } from '../shared/shared.module';
 import { MessageComponent } from './message/message.component';
 import { ImageComponent } from './image/image.component';
+import { ChatComponent } from './chat.component';
+import { VisibleOnlyPipe } from 'src/app/pipes/visibleOnly';
 
 @NgModule({
     declarations: [
@@ -18,6 +20,8 @@ import { ImageComponent } from './image/image.component';
         ChatHeaderComponent,
         MessageComponent,
         ImageComponent,
+        ChatComponent,
+        VisibleOnlyPipe,
     ],
     imports: [
         CommonModule,
@@ -26,12 +30,7 @@ import { ImageComponent } from './image/image.component';
         SharedModule,
     ],
     exports: [
-        SelectImageButtonComponent,
-        SendMessageButtonComponent,
-        SendMessageComponent,
-        ChatHeaderComponent,
-        MessageComponent,
-        ImageComponent,
+        ChatComponent,
     ],
 })
 export class ChatModule {}
