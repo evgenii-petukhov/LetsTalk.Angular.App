@@ -2,15 +2,24 @@
 /**
  * @fileoverview
  * @enhanceable
+ * @suppress {missingRequire} reports error on implicit type usages.
  * @suppress {messageConventions} JS Compiler reports an error if a variable or
  *     field starts with 'MSG_' and isn't a translatable message.
  * @public
  */
 // GENERATED CODE -- DO NOT EDIT!
+/* eslint-disable */
+// @ts-nocheck
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = Function('return this')();
+var global =
+    (typeof globalThis !== 'undefined' && globalThis) ||
+    (typeof window !== 'undefined' && window) ||
+    (typeof global !== 'undefined' && global) ||
+    (typeof self !== 'undefined' && self) ||
+    (function () { return this; }).call(null) ||
+    Function('return this')();
 
 goog.exportSymbol('proto.file_upload.DownloadImageRequest', null, global);
 goog.exportSymbol('proto.file_upload.DownloadImageResponse', null, global);
@@ -133,8 +142,8 @@ proto.file_upload.UploadImageRequest.prototype.toObject = function(opt_includeIn
  */
 proto.file_upload.UploadImageRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    content: msg.getContent_asB64(),
-    imageRole: jspb.Message.getFieldWithDefault(msg, 2, 0)
+content: msg.getContent_asB64(),
+imageRole: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -317,12 +326,12 @@ proto.file_upload.UploadImageResponse.prototype.toObject = function(opt_includeI
  */
 proto.file_upload.UploadImageResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    id: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    width: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    height: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    imageFormat: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    fileStorageTypeId: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    signature: jspb.Message.getFieldWithDefault(msg, 6, "")
+id: jspb.Message.getFieldWithDefault(msg, 1, ""),
+width: jspb.Message.getFieldWithDefault(msg, 2, 0),
+height: jspb.Message.getFieldWithDefault(msg, 3, 0),
+imageFormat: jspb.Message.getFieldWithDefault(msg, 4, 0),
+fileStorageTypeId: jspb.Message.getFieldWithDefault(msg, 5, 0),
+signature: jspb.Message.getFieldWithDefault(msg, 6, "")
   };
 
   if (includeInstance) {
@@ -597,8 +606,8 @@ proto.file_upload.DownloadImageRequest.prototype.toObject = function(opt_include
  */
 proto.file_upload.DownloadImageRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    imageId: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    fileStorageTypeId: jspb.Message.getFieldWithDefault(msg, 2, 0)
+imageId: jspb.Message.getFieldWithDefault(msg, 1, ""),
+fileStorageTypeId: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -757,9 +766,9 @@ proto.file_upload.DownloadImageResponse.prototype.toObject = function(opt_includ
  */
 proto.file_upload.DownloadImageResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    content: msg.getContent_asB64(),
-    width: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    height: jspb.Message.getFieldWithDefault(msg, 3, 0)
+content: msg.getContent_asB64(),
+width: jspb.Message.getFieldWithDefault(msg, 2, 0),
+height: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {

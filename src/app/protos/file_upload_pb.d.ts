@@ -21,9 +21,9 @@ export class UploadImageRequest extends jspb.Message {
 
 export namespace UploadImageRequest {
   export type AsObject = {
-    content: Uint8Array | string,
-    imageRole: ImageRoles,
-  }
+    content: Uint8Array | string;
+    imageRole: ImageRoles;
+  };
 }
 
 export class UploadImageResponse extends jspb.Message {
@@ -55,13 +55,13 @@ export class UploadImageResponse extends jspb.Message {
 
 export namespace UploadImageResponse {
   export type AsObject = {
-    id: string,
-    width: number,
-    height: number,
-    imageFormat: number,
-    fileStorageTypeId: number,
-    signature: string,
-  }
+    id: string;
+    width: number;
+    height: number;
+    imageFormat: number;
+    fileStorageTypeId: number;
+    signature: string;
+  };
 }
 
 export class DownloadImageRequest extends jspb.Message {
@@ -81,9 +81,9 @@ export class DownloadImageRequest extends jspb.Message {
 
 export namespace DownloadImageRequest {
   export type AsObject = {
-    imageId: string,
-    fileStorageTypeId: number,
-  }
+    imageId: string;
+    fileStorageTypeId: number;
+  };
 }
 
 export class DownloadImageResponse extends jspb.Message {
@@ -108,13 +108,13 @@ export class DownloadImageResponse extends jspb.Message {
 
 export namespace DownloadImageResponse {
   export type AsObject = {
-    content: Uint8Array | string,
-    width: number,
-    height: number,
-  }
+    content: Uint8Array | string;
+    width: number;
+    height: number;
+  };
 }
 
-export enum ImageRoles { 
+export enum ImageRoles {
   UNKNOWN = 0,
   AVATAR = 1,
   MESSAGE = 2,

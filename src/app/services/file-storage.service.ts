@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { FileUploadGrpcEndpointClient } from '../protos/File_uploadServiceClientPb';
+import { FileUploadGrpcEndpointClient } from '../protos/file_upload_grpc_web_pb';
 import {
     DownloadImageRequest,
     DownloadImageResponse,
@@ -45,8 +45,15 @@ export class FileStorageService {
         const request = new UploadImageRequest();
         request.setContent(content);
         request.setImageRole(imageRole);
-        return this.fileUploadService.uploadImageAsync(request, {
-            authorization: this.tokenStorageService.getToken(),
+        return new Promise((resolve, reject) => {
+            this.fileUploadService.uploadImageAsync(
+                request,
+                { authorization: this.tokenStorageService.getToken() },
+                (err, resp) => {
+                    if (err) reject(err);
+                    else resolve(resp);
+                }
+            );
         });
     }
 
@@ -54,8 +61,15 @@ export class FileStorageService {
         const request = new DownloadImageRequest();
         request.setImageId(imageKey.id);
         request.setFileStorageTypeId(imageKey.fileStorageTypeId);
-        return this.fileUploadService.downloadImageAsync(request, {
-            authorization: this.tokenStorageService.getToken(),
+        return new Promise((resolve, reject) => {
+            this.fileUploadService.downloadImageAsync(
+                request,
+                { authorization: this.tokenStorageService.getToken() },
+                (err, resp) => {
+                    if (err) reject(err);
+                    else resolve(resp);
+                }
+            );
         });
     }
 }
