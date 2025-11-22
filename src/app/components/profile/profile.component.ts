@@ -77,7 +77,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
     }
 
-    async onBack(): Promise<void> {
+    onBack(): void {
         this.location.back();
     }
 

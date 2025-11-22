@@ -22,7 +22,6 @@ import { messagesActions } from '../state/messages/messages.actions';
 import { ILayoutSettings } from '../models/layout-settings';
 import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
 import { selectedChatIdActions } from '../state/selected-chat/selected-chat-id.actions';
-import { viewedImageKeyActions } from '../state/viewed-image-key/viewed-image-key.actions';
 
 describe('StoreService', () => {
     let service: StoreService;
@@ -400,17 +399,6 @@ describe('StoreService', () => {
 
             expect(store.dispatch).toHaveBeenCalledWith(
                 selectedChatIdActions.init({ chatId }),
-            );
-        });
-    });
-
-    describe('setViewedImageKey', () => {
-        it('should dispatch set action', () => {
-
-            service.setViewedImageKey(imageKey);
-
-            expect(store.dispatch).toHaveBeenCalledWith(
-                viewedImageKeyActions.init(imageKey),
             );
         });
     });

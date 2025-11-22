@@ -11,6 +11,7 @@ import { MessageComponent } from './message/message.component';
 import { ImageComponent } from './image/image.component';
 import { ChatComponent } from './chat.component';
 import { VisibleOnlyPipe } from 'src/app/pipes/visibleOnly';
+import { AppRoutingModule } from 'src/app/app-routing.module';
 
 @NgModule({
     declarations: [
@@ -28,6 +29,7 @@ import { VisibleOnlyPipe } from 'src/app/pipes/visibleOnly';
         FontAwesomeModule,
         FormsModule,
         SharedModule,
+        AppRoutingModule,
     ],
     exports: [
         ChatComponent,

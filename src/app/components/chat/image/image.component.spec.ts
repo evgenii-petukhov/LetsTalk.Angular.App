@@ -6,18 +6,12 @@ import { ChangeDetectorRef } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { ErrorService } from 'src/app/services/error.service';
 import { errorMessages } from 'src/app/constants/errors';
-import { IImageDto } from 'src/app/api-client/api-client';
 
 describe('ImageComponent', () => {
     let component: ImageComponent;
     let fixture: ComponentFixture<ImageComponent>;
     let storeService: jasmine.SpyObj<StoreService>;
     let errorService: jasmine.SpyObj<ErrorService>;
-
-    const imageKey: IImageDto = {
-        id: 'image-id',
-        fileStorageTypeId: 1,
-    };
 
     const imagePreview = {
         id: 'imagePreview1',
@@ -33,7 +27,6 @@ describe('ImageComponent', () => {
     beforeEach(waitForAsync(() => {
         storeService = jasmine.createSpyObj('StoreService', [
             'getImageContent',
-            'setViewedImageKey',
         ]);
         errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
 
@@ -115,6 +108,7 @@ describe('ImageComponent', () => {
 
         component.imagePreview = imagePreview;
         component.imagePreview.width = 100;
+        component.chatId = 'chatId';
 
         // Act
         await component.ngOnInit();
@@ -123,9 +117,7 @@ describe('ImageComponent', () => {
         // Assert
         expect(component.url).toBe(imageContent);
         expect(component.isLoading).toBeFalse();
-        expect(storeService.getImageContent).toHaveBeenCalledWith(
-            imagePreview,
-        );
+        expect(storeService.getImageContent).toHaveBeenCalledWith(imagePreview);
         expect(errorService.handleError).not.toHaveBeenCalled();
     });
 
@@ -144,28 +136,11 @@ describe('ImageComponent', () => {
         // Assert
         expect(component.url).toBeNull();
         expect(component.isLoading).toBeTrue();
-        expect(storeService.getImageContent).toHaveBeenCalledWith(
-            imagePreview,
-        );
+        expect(storeService.getImageContent).toHaveBeenCalledWith(imagePreview);
         expect(errorService.handleError).toHaveBeenCalledOnceWith(
             error,
             errorMessages.downloadImage,
         );
-    });
-
-    it('should set viewed image id on openImageViewer', async () => {
-        // Arrange
-        const event = new PointerEvent('click');
-        spyOn(event, 'preventDefault');
-        component.imageKey = imageKey;
-
-        // Act
-        component.openImageViewer(event);
-
-        // Assert
-        expect(event.preventDefault).toHaveBeenCalled();
-        expect(storeService.setViewedImageKey).toHaveBeenCalledWith(imageKey);
-        expect(errorService.handleError).not.toHaveBeenCalled();
     });
 
     it('should not load image content if imagePreview is not provided', async () => {

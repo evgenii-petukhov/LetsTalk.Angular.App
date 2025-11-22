@@ -9,6 +9,7 @@ import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-poli
 import { LoginByEmailComponent } from './components/sign-in/login-by-email/login-by-email.component';
 import { anonymousOnlyGuard } from './guards/anonymous-only-guard';
 import { ChatComponent } from './components/chat/chat.component';
+import { ImageViewerComponent } from './components/image-viewer/image-viewer.component';
 
 const routes: Routes = [
     {
@@ -39,6 +40,13 @@ const routes: Routes = [
                 path: 'chat/:id',
                 component: ChatComponent,
                 canActivate: [authenticatedOnlyGuard, completeProfileGuard],
+                children: [
+                    {
+                        path: 'image/:imageKey',
+                        component: ImageViewerComponent,
+                        canActivate: [authenticatedOnlyGuard, completeProfileGuard],
+                    },
+                ],
             },
         ],
     },

@@ -20,7 +20,6 @@ import { selectChats } from '../state/chats/chats.selector';
 import { imageCacheActions } from '../state/image-cache/image-cache.actions';
 import { selectImageCache } from '../state/image-cache/image-cache.selector';
 import { FileStorageService } from './file-storage.service';
-import { viewedImageKeyActions } from '../state/viewed-image-key/viewed-image-key.actions';
 import { ImageCacheEntry } from '../models/image-cache-entry';
 import { selectAccounts } from '../state/accounts/accounts.selector';
 import { accountsActions } from '../state/accounts/accounts.actions';
@@ -141,10 +140,6 @@ export class StoreService {
 
     setSelectedChatId(chatId: string): void {
         this.store.dispatch(selectedChatIdActions.init({ chatId }));
-    }
-
-    setViewedImageKey(imageKey: IImageDto): void {
-        this.store.dispatch(viewedImageKeyActions.init(imageKey));
     }
 
     // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/

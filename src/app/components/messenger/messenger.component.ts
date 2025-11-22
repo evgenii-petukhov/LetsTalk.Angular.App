@@ -1,7 +1,6 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import {
     IChatDto,
-    IImageDto,
     IImagePreviewDto,
     ILinkPreviewDto,
     IMessageDto,
@@ -9,7 +8,6 @@ import {
 import { Store } from '@ngrx/store';
 import { StoreService } from 'src/app/services/store.service';
 import { combineLatest, filter, map, startWith, Subject, takeUntil } from 'rxjs';
-import { selectViewedImageKey } from 'src/app/state/viewed-image-key/viewed-image-key.selectors';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { selectChats } from 'src/app/state/chats/chats.selector';
@@ -25,7 +23,6 @@ import { IdGeneratorService } from 'src/app/services/id-generator.service';
 })
 export class MessengerComponent implements OnInit, OnDestroy {
     selectedChatId$ = this.store.select(selectSelectedChatId);
-    viewedImageKey: IImageDto;
     isSidebarShown = true;
     selectedChatId: string;
 
@@ -70,13 +67,11 @@ export class MessengerComponent implements OnInit, OnDestroy {
         combineLatest([
             this.store.select(selectChats),
             this.store.select(selectSelectedChat),
-            this.store.select(selectViewedImageKey),
         ])
             .pipe(takeUntil(this.unsubscribe$))
-            .subscribe(([chats, chat, imageKey]) => {
+            .subscribe(([chats, chat]) => {
                 this.chats = chats;
                 this.selectedChat = chat;
-                this.viewedImageKey = imageKey;
             });
 
         await this.signalrHandlerService.initHandlers(

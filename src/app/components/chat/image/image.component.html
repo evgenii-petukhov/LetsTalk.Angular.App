@@ -4,7 +4,7 @@
     </div>
 </div>
 <ng-template #image>
-    <a href="#" (click)="openImageViewer($event)">
+    <a [routerLink]="['/messenger/chat', chatId, 'image', imageKeyParam]">
         <img [src]="url" alt="Image" loading="lazy" [style.width.px]="isSizeUnknown ? null : width"
             [style.height.px]="isSizeUnknown ? null : height"
             [style.maxWidth.px]="isSizeUnknown ? sizeLimit.width : null"

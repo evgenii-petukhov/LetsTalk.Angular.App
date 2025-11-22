@@ -15,12 +15,14 @@ import { environment } from 'src/environments/environment';
 export class ImageComponent implements OnInit {
     @Input() imagePreview: ImagePreview;
     @Input() imageKey: IImageDto;
+    @Input() chatId: string;
     url: string;
     isLoading = true;
     isSizeUnknown = false;
     width = environment.imageSettings.limits.picturePreview.width;
     height = environment.imageSettings.limits.picturePreview.height;
     sizeLimit = environment.imageSettings.limits.picturePreview;
+    imageKeyParam: string;
 
     constructor(
         private storeService: StoreService,
@@ -28,6 +30,10 @@ export class ImageComponent implements OnInit {
     ) {}
 
     async ngOnInit(): Promise<void> {
+        this.imageKeyParam = this.imageKey
+            ? `${this.imageKey.id}_${this.imageKey.fileStorageTypeId}`
+            : null;
+
         try {
             if (!this.imagePreview) {
                 return;
@@ -36,7 +42,9 @@ export class ImageComponent implements OnInit {
             this.setSize(this.imagePreview.width, this.imagePreview.height);
 
             if (this.imagePreview.id) {
-                const image = await this.storeService.getImageContent(this.imagePreview);
+                const image = await this.storeService.getImageContent(
+                    this.imagePreview,
+                );
                 if (image) {
                     this.url = image.content;
                     this.setSize(image.width, image.height);
@@ -46,13 +54,6 @@ export class ImageComponent implements OnInit {
         } catch (e) {
             this.errorService.handleError(e, errorMessages.downloadImage);
             this.url = null;
-        }
-    }
-
-    openImageViewer(e: PointerEvent): void {
-        e.preventDefault();
-        if (this.imageKey) {
-            this.storeService.setViewedImageKey(this.imageKey);
         }
     }
 

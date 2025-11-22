@@ -15,6 +15,7 @@ export class Message {
     linkPreview?: LinkPreview;
     image?: Image;
     imagePreview?: ImagePreview;
+    chatId?: string;
 
     constructor(...inits: Partial<Message | IMessageDto>[]) {
         inits
