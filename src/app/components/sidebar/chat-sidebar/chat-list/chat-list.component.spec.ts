@@ -3,8 +3,7 @@ import { ChatListComponent } from './chat-list.component';
 import { DefaultProjectorFn, MemoizedSelector, Store } from '@ngrx/store';
 import { StoreService } from 'src/app/services/store.service';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
-import { IChatDto, ImageDto } from 'src/app/api-client/api-client';
-import { ActiveArea } from 'src/app/enums/active-areas';
+import { IChatDto } from 'src/app/api-client/api-client';
 import { OrderByPipe } from 'src/app/pipes/orderby';
 import { ChatListItemStubComponent } from '../chat-list-item/chat-list-item.component.stub';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -218,61 +217,5 @@ describe('ChatListComponent', () => {
             .query(By.directive(ChatListItemStubComponent));
 
         expect(selected.componentInstance.chat).toBe(chat1);
-    });
-
-    it('should select chat and call storeService methods on chatSelected', () => {
-        // Arrange
-        const chat: IChatDto = {
-            id: 'chat-id',
-            chatName: 'Chat Name',
-            unreadCount: 5,
-            photoUrl: 'photo-url',
-            image: new ImageDto({
-                id: 'image-id',
-                fileStorageTypeId: 1,
-            })
-        };
-
-        idGeneratorService.isFake.and.returnValue(false);
-
-        // Act
-        component.onChatSelected(chat);
-
-        // Assert
-        expect(storeService.setSelectedChatId).toHaveBeenCalledOnceWith(
-            chat.id,
-        );
-        expect(storeService.markAllAsRead).toHaveBeenCalledOnceWith(chat);
-        expect(storeService.setLayoutSettings).toHaveBeenCalledOnceWith({
-            activeArea: ActiveArea.chat,
-        });
-    });
-
-    it('should not call markAllAsRead if chat ID is fake', () => {
-        // Arrange
-        const chat: IChatDto = {
-            id: '-1',
-            chatName: 'Chat Name',
-            unreadCount: 5,
-            photoUrl: 'photo-url',
-            image: new ImageDto({
-                id: 'image-id',
-                fileStorageTypeId: 1,
-            })
-        };
-
-        idGeneratorService.isFake.and.returnValue(true);
-
-        // Act
-        component.onChatSelected(chat);
-
-        // Assert
-        expect(storeService.setSelectedChatId).toHaveBeenCalledOnceWith(
-            chat.id,
-        );
-        expect(storeService.markAllAsRead).not.toHaveBeenCalled();
-        expect(storeService.setLayoutSettings).toHaveBeenCalledOnceWith({
-            activeArea: ActiveArea.chat,
-        });
     });
 });

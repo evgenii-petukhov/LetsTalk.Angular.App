@@ -1,4 +1,4 @@
-<a href="#" *ngIf="chat" (click)="onChatSelected()">
+<a href="#" *ngIf="chat" [routerLink]="['/messenger/chat', chat.id]">
     <app-avatar [urlOptions]="[chat.image, chat.photoUrl]"></app-avatar>
     <app-user-details [value]="chat.chatName"></app-user-details>
     <app-unread-count [value]="chat.unreadCount" *ngIf="chat.unreadCount"></app-unread-count>

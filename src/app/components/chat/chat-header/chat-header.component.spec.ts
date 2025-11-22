@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DefaultProjectorFn, MemoizedSelector, Store } from '@ngrx/store';
 import { ChatHeaderComponent } from './chat-header.component';
 import { StoreService } from 'src/app/services/store.service';
-import { ActiveArea } from 'src/app/enums/active-areas';
 import { OrderByPipe } from 'src/app/pipes/orderby';
 import { AvatarStubComponent } from '../../shared/avatar/avatar.component.stub';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -13,7 +12,6 @@ import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.se
 import { UserDetailsStubComponent } from '../../shared/user-details/user-details.component.stub';
 
 describe('ChatHeaderComponent', () => {
-    let component: ChatHeaderComponent;
     let fixture: ComponentFixture<ChatHeaderComponent>;
     let store: MockStore;
     let storeService: jasmine.SpyObj<StoreService>;
@@ -62,25 +60,11 @@ describe('ChatHeaderComponent', () => {
         }).compileComponents();
 
         fixture = TestBed.createComponent(ChatHeaderComponent);
-        component = fixture.componentInstance;
         store = TestBed.inject(Store) as MockStore;
         mockSelectSelectedChat = store.overrideSelector(
             selectSelectedChat,
             null,
         );
-    });
-
-    it('should call setLayoutSettings and setSelectedChatId on back button click', () => {
-        // Arrange
-
-        // Act
-        component.onBackClicked();
-
-        // Assert
-        expect(storeService.setLayoutSettings).toHaveBeenCalledOnceWith({
-            activeArea: ActiveArea.sidebar,
-        });
-        expect(storeService.setSelectedChatId).toHaveBeenCalledOnceWith(null);
     });
 
     it('should display the chat name and pass correct urlOptions to app-avatar', () => {

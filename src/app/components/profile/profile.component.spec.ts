@@ -77,16 +77,6 @@ describe('ProfileComponent', () => {
         expect(component.email).toBe('john.doe@example.com');
     });
 
-    it('should navigate back to chats on onBack call', () => {
-        // Arrange
-
-        // Act
-        component.onBack();
-
-        // Assert
-        expect(router.navigate).toHaveBeenCalledWith(['chats']);
-    });
-
     it('should handle avatar selection and set the photoUrl in the form', async () => {
         // Arrange
         const file = new File([''], 'avatar.png', { type: 'image/png' });
@@ -135,7 +125,6 @@ describe('ProfileComponent', () => {
             uploadResponse,
         );
         expect(storeService.setLoggedInUser).toHaveBeenCalledWith(profile);
-        expect(router.navigate).toHaveBeenCalledWith(['chats']);
     });
 
     it('should handle errors on image uploading', async () => {

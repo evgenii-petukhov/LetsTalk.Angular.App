@@ -8,11 +8,12 @@ import { completeProfileGuard } from './guards/complete-profile-guard';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { LoginByEmailComponent } from './components/sign-in/login-by-email/login-by-email.component';
 import { anonymousOnlyGuard } from './guards/anonymous-only-guard';
+import { ChatComponent } from './components/chat/chat.component';
 
 const routes: Routes = [
     {
         path: '',
-        redirectTo: '/chats',
+        redirectTo: '/messenger',
         pathMatch: 'full',
     },
     {
@@ -30,9 +31,16 @@ const routes: Routes = [
         component: PrivacyPolicyComponent,
     },
     {
-        path: 'chats',
+        path: 'messenger',
         component: MessengerComponent,
         canActivate: [authenticatedOnlyGuard, completeProfileGuard],
+        children: [
+            {
+                path: 'chat/:id',
+                component: ChatComponent,
+                canActivate: [authenticatedOnlyGuard, completeProfileGuard],
+            },
+        ],
     },
     {
         path: 'profile',
@@ -41,7 +49,7 @@ const routes: Routes = [
     },
     {
         path: '**',
-        redirectTo: '/chats',
+        redirectTo: '/messenger',
     },
 ];
 

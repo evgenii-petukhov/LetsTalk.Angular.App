@@ -1,10 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
-import { StoreService } from 'src/app/services/store.service';
-import { ActiveArea } from 'src/app/enums/active-areas';
 import { IChatDto } from 'src/app/api-client/api-client';
 import { Subject, takeUntil } from 'rxjs';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-chat-header',
@@ -18,7 +17,7 @@ export class ChatHeaderComponent implements OnInit, OnDestroy {
 
     constructor(
         private store: Store,
-        private storeService: StoreService,
+        private location: Location,
     ) {}
 
     ngOnInit(): void {
@@ -30,9 +29,8 @@ export class ChatHeaderComponent implements OnInit, OnDestroy {
             });
     }
 
-    onBackClicked(): void {
-        this.storeService.setLayoutSettings({ activeArea: ActiveArea.sidebar });
-        this.storeService.setSelectedChatId(null);
+    async onBackClicked(): Promise<void> {
+        this.location.back();
     }
 
     ngOnDestroy(): void {

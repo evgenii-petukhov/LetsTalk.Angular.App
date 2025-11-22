@@ -10,12 +10,11 @@ import {
     ILinkPreviewDto,
     IImagePreviewDto,
 } from 'src/app/api-client/api-client';
-import { ActiveArea } from 'src/app/enums/active-areas';
 import { selectChats } from 'src/app/state/chats/chats.selector';
-import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-settings.selectors';
 import { StubChatComponent } from '../chat/chat.component.stub';
 import { StubImageViewerComponent } from '../image-viewer/image-viewer.component.stub';
 import { StubSidebarComponent } from '../sidebar/sidebar.component.stub';
+import { ActivatedRoute } from '@angular/router';
 
 describe('MessengerComponent', () => {
     let component: MessengerComponent;
@@ -35,6 +34,7 @@ describe('MessengerComponent', () => {
         storeService = jasmine.createSpyObj('StoreService', [
             'markAllAsRead',
             'initChatStorage',
+            'setSelectedChatId',
         ]);
         store = jasmine.createSpyObj('Store', ['select']);
 
@@ -52,6 +52,7 @@ describe('MessengerComponent', () => {
                 },
                 { provide: StoreService, useValue: storeService },
                 { provide: Store, useValue: store },
+                { provide: ActivatedRoute, useValue: { firstChild: null, params: of({}) } }
             ],
         }).compileComponents();
 
@@ -61,8 +62,6 @@ describe('MessengerComponent', () => {
         store.select.and.callFake((selector) => {
             if (selector === selectChats) {
                 return of([]);
-            } else if (selector === selectLayoutSettings) {
-                return of({ activeArea: ActiveArea.sidebar });
             }
             return of(null);
         });
