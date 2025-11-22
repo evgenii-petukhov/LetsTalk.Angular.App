@@ -6,7 +6,7 @@
                         : ['unreadCount', 'lastMessageDate', 'chatName']
                         : ['desc', 'desc', 'asc']
             " [ngClass]="selectedChatId === chat.id && 'selected'">
-            <app-chat-list-item [chat]="chat" (chatSelected)="onChatSelected($event)">
+            <app-chat-list-item [chat]="chat">
             </app-chat-list-item>
         </li>
     </ul>

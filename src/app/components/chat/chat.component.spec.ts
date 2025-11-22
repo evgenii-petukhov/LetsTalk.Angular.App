@@ -21,6 +21,9 @@ import { selectMessages } from 'src/app/state/messages/messages.selector';
 import { By } from '@angular/platform-browser';
 import { IMessageDto } from 'src/app/api-client/api-client';
 import { OrderByPipe } from 'src/app/pipes/orderby';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
+import { selectChats } from 'src/app/state/chats/chats.selector';
 
 describe('ChatComponent', () => {
     let component: ChatComponent;
@@ -39,6 +42,7 @@ describe('ChatComponent', () => {
         readonly Message[],
         DefaultProjectorFn<readonly Message[]>
     >;
+    let mockSelectChats: any;
 
     beforeEach(async () => {
         apiService = jasmine.createSpyObj('ApiService', ['getMessages']);
@@ -46,6 +50,7 @@ describe('ChatComponent', () => {
             'initMessages',
             'addMessages',
             'setLastMessageInfo',
+            'setSelectedChatId',
         ]);
         idGeneratorService = jasmine.createSpyObj('IdGeneratorService', [
             'isFake',
@@ -65,6 +70,10 @@ describe('ChatComponent', () => {
                 { provide: ApiService, useValue: apiService },
                 { provide: StoreService, useValue: storeService },
                 { provide: IdGeneratorService, useValue: idGeneratorService },
+                {
+                    provide: ActivatedRoute,
+                    useValue: { firstChild: null, params: of({}) },
+                },
             ],
         }).compileComponents();
 
@@ -76,6 +85,7 @@ describe('ChatComponent', () => {
             selectSelectedChatId,
             null,
         );
+        mockSelectChats = store.overrideSelector(selectChats, []);
     });
 
     it('should create', () => {
@@ -84,14 +94,17 @@ describe('ChatComponent', () => {
 
     it('should not render any messages when chatId is real and message list is empty', fakeAsync(() => {
         // Arrange
+        storeService.markAllAsRead = jasmine.createSpy('markAllAsRead');
+
         const chatId = 'chatId';
         const messageDtos = [];
+        mockSelectChats.setResult([{ id: chatId }]);
         mockSelectSelectedChatId.setResult(chatId);
         mockSelectMessages.setResult(messageDtos);
         apiService.getMessages.and.resolveTo(messageDtos);
 
         // Act
-        store.refreshState();
+        store.refreshState(); 
         fixture.detectChanges();
 
         tick();

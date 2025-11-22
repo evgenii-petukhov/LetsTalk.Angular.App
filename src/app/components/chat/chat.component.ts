@@ -16,6 +16,7 @@ import { StoreService } from 'src/app/services/store.service';
 import { Message } from 'src/app/models/message';
 import { Subject, takeUntil } from 'rxjs';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-chat',
@@ -43,9 +44,12 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
         private store: Store,
         private storeService: StoreService,
         private idGeneratorService: IdGeneratorService,
+        private location: Location,
     ) {}
 
     ngOnInit(): void {
+        this.location.replaceState('/messenger');
+        
         this.store
             .select(selectSelectedChatId)
             .pipe(takeUntil(this.unsubscribe$))

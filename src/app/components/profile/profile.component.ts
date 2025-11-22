@@ -5,12 +5,12 @@ import { ApiService } from 'src/app/services/api.service';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import { selectLoggedInUser } from 'src/app/state/logged-in-user/logged-in-user.selectors';
 import { Store } from '@ngrx/store';
-import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { ErrorService } from 'src/app/services/error.service';
 import { errorMessages } from 'src/app/constants/errors';
 import { ImageUploadService } from 'src/app/services/image-upload.service';
+import { Location } from '@angular/common';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -35,13 +35,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
     faUpload = faUpload;
 
     constructor(
-        private router: Router,
         private fb: FormBuilder,
         private storeService: StoreService,
         private apiService: ApiService,
         private store: Store,
         private imageUploadService: ImageUploadService,
         private errorService: ErrorService,
+        private location: Location,
     ) {}
 
     async ngOnInit(): Promise<void> {
@@ -78,7 +78,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 
     async onBack(): Promise<void> {
-        await this.router.navigate(['chats']);
+        this.location.back();
     }
 
     async onAvatarSelected(event: Event): Promise<void> {
@@ -101,7 +101,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
                 image,
             );
             this.storeService.setLoggedInUser(profileDto);
-            await this.router.navigate(['chats']);
+            this.location.back();
             this.isSending = false;
         } catch (e) {
             this.handleSubmitError(e, errorMessages.saveProfile);

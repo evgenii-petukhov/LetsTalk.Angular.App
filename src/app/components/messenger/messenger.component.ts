@@ -7,15 +7,15 @@ import {
     IMessageDto,
 } from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
-import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-settings.selectors';
 import { StoreService } from 'src/app/services/store.service';
-import { combineLatest, Subject, takeUntil } from 'rxjs';
+import { combineLatest, filter, map, startWith, Subject, takeUntil } from 'rxjs';
 import { selectViewedImageKey } from 'src/app/state/viewed-image-key/viewed-image-key.selectors';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
-import { ActiveArea } from 'src/app/enums/active-areas';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { selectChats } from 'src/app/state/chats/chats.selector';
 import { SignalrHandlerService } from 'src/app/services/signalr-handler.service';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { IdGeneratorService } from 'src/app/services/id-generator.service';
 
 @Component({
     selector: 'app-messenger',
@@ -27,7 +27,6 @@ export class MessengerComponent implements OnInit, OnDestroy {
     selectedChatId$ = this.store.select(selectSelectedChatId);
     viewedImageKey: IImageDto;
     isSidebarShown = true;
-    isChatShown = false;
     selectedChatId: string;
 
     private chats: readonly IChatDto[] = [];
@@ -39,6 +38,9 @@ export class MessengerComponent implements OnInit, OnDestroy {
         private store: Store,
         private storeService: StoreService,
         private signalrHandlerService: SignalrHandlerService,
+        private activatedRoute: ActivatedRoute,
+        private router: Router,
+        private idGeneratorService: IdGeneratorService,
     ) {}
 
     @HostListener('document:visibilitychange', ['$event'])
@@ -47,33 +49,33 @@ export class MessengerComponent implements OnInit, OnDestroy {
         this.storeService.markAllAsRead(this.selectedChat);
     }
 
-    @HostListener('window:popstate', ['$event'])
-    onPopState(): void {
-        if (this.viewedImageKey) {
-            this.storeService.setViewedImageKey(null);
-        } else {
-            this.storeService.setLayoutSettings({ activeArea: ActiveArea.sidebar });
-            this.storeService.setSelectedChatId(null);
-        }
-
-        history.pushState(null, '', window.location.href);
-    }
-
     async ngOnInit(): Promise<void> {
         await this.storeService.initChatStorage();
+
+        this.router.events.pipe(
+            filter(event => event instanceof NavigationEnd),
+            startWith(null),
+            map(() => this.activatedRoute.firstChild?.snapshot.params || {}),
+            takeUntil(this.unsubscribe$)
+        ).subscribe(params => {
+            const chatId = params['id'];
+            this.isSidebarShown = !chatId;
+            this.storeService.setSelectedChatId(chatId);
+
+            if (this.chats && !this.idGeneratorService.isFake(chatId)) {
+                this.storeService.markAllAsRead(this.chats.find(c => c.id === chatId));
+            }
+        });
 
         combineLatest([
             this.store.select(selectChats),
             this.store.select(selectSelectedChat),
-            this.store.select(selectLayoutSettings),
             this.store.select(selectViewedImageKey),
         ])
             .pipe(takeUntil(this.unsubscribe$))
-            .subscribe(([chats, chat, layout, imageKey]) => {
+            .subscribe(([chats, chat, imageKey]) => {
                 this.chats = chats;
                 this.selectedChat = chat;
-                this.isSidebarShown = layout.activeArea === ActiveArea.sidebar;
-                this.isChatShown = layout.activeArea === ActiveArea.chat;
                 this.viewedImageKey = imageKey;
             });
 
@@ -82,8 +84,6 @@ export class MessengerComponent implements OnInit, OnDestroy {
             this.handleLinkPreviewNotification.bind(this),
             this.handleImagePreviewNotification.bind(this),
         );
-
-        history.pushState(null, '', window.location.href);
     }
 
     ngOnDestroy(): void {

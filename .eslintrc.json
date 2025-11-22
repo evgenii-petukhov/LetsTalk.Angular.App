@@ -36,10 +36,8 @@
                         "style": "kebab-case"
                     }
                 ],
-                "@angular-eslint/prefer-standalone": "off",
-                "deprecation/deprecation": "warn"
-            },
-            "plugins": ["deprecation"]
+                "@angular-eslint/prefer-standalone": "off"
+            }
         },
         {
             "files": ["*.html"],
