@@ -9,8 +9,6 @@ import {
     IProfileDto,
 } from '../api-client/api-client';
 import { chatsActions } from '../state/chats/chats.actions';
-import { ILayoutSettings } from '../models/layout-settings';
-import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
 import { loggedInUserActions } from '../state/logged-in-user/logged-in-user.actions';
 import { messagesActions } from '../state/messages/messages.actions';
 import { selectedChatIdActions } from '../state/selected-chat/selected-chat-id.actions';
@@ -115,10 +113,6 @@ export class StoreService {
 
     addChat(chatDto: IChatDto): void {
         this.store.dispatch(chatsActions.add({ chatDto }));
-    }
-
-    setLayoutSettings(settings: ILayoutSettings): void {
-        this.store.dispatch(layoutSettingsActions.init({ settings }));
     }
 
     async getLoggedInUser(): Promise<IProfileDto> {

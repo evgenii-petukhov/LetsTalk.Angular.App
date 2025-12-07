@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChatListTopPanelComponent } from './chat-list-top-panel.component';
 import { StoreService } from 'src/app/services/store.service';
-import { SidebarState } from 'src/app/enums/sidebar-state';
 import { BackButtonStubComponent } from '../../../shared/back-button/back-button.component.stub';
 import { AvatarStubComponent } from '../../../shared/avatar/avatar.component.stub';
 import { LogoutButtonStubComponent } from '../logout-button/logout-button.component.stub';
@@ -17,7 +16,6 @@ describe('ChatListTopPanelComponent', () => {
     beforeEach(async () => {
         storeService = jasmine.createSpyObj('StoreService', [
             'getLoggedInUser',
-            'setLayoutSettings',
         ]);
 
         await TestBed.configureTestingModule({
@@ -57,18 +55,6 @@ describe('ChatListTopPanelComponent', () => {
         // Assert
         expect(storeService.getLoggedInUser).toHaveBeenCalled();
         expect(component.account).toEqual(profile);
-    });
-
-    it('should call setLayoutSettings with chats state when back button clicked', async () => {
-        // Arrange
-
-        // Act
-        component.onBackButtonClicked();
-
-        // Assert
-        expect(storeService.setLayoutSettings).toHaveBeenCalledWith({
-            sidebarState: SidebarState.chats,
-        });
     });
     
     it('should the Avatar, UserDetails, and LogoutButton components if isNavigationActive is false', () => {

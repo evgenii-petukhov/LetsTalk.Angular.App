@@ -41,7 +41,6 @@ describe('ChatHeaderComponent', () => {
 
     beforeEach(async () => {
         storeService = jasmine.createSpyObj('StoreService', [
-            'setLayoutSettings',
             'setSelectedChatId',
         ]);
 

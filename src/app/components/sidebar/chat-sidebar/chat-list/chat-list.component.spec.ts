@@ -32,7 +32,6 @@ describe('ChatListComponent', () => {
         storeService = jasmine.createSpyObj('StoreService', [
             'setSelectedChatId',
             'markAllAsRead',
-            'setLayoutSettings',
         ]);
         idGeneratorService = jasmine.createSpyObj('IdGeneratorService', [
             'isFake',

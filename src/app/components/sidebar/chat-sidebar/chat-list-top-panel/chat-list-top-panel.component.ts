@@ -1,7 +1,6 @@
 import { Component, HostBinding, Input, OnInit } from '@angular/core';
 import { StoreService } from 'src/app/services/store.service';
 import { IProfileDto } from 'src/app/api-client/api-client';
-import { SidebarState } from 'src/app/enums/sidebar-state';
 
 @Component({
     selector: 'app-chat-list-top-panel',
@@ -24,11 +23,5 @@ export class ChatListTopPanelComponent implements OnInit {
     onLogoutButtonClicked(): void {
         window.localStorage.clear();
         window.location.reload();
-    }
-
-    onBackButtonClicked(): void {
-        this.storeService.setLayoutSettings({
-            sidebarState: SidebarState.chats,
-        });
     }
 }
