@@ -1,8 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 import { SidebarState } from 'src/app/enums/sidebar-state';
+import { StoreService } from 'src/app/services/store.service';
 import { selectLayoutSettings } from 'src/app/state/layout-settings/layout-settings.selectors';
 
 @Component({
@@ -19,7 +21,20 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
     constructor(
         private store: Store,
-    ) {}
+        private storeService: StoreService,
+        private activatedRoute: ActivatedRoute,
+    ) {
+        this.activatedRoute.queryParams
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe((params) => {
+                const showContacts = params['show_contacts'] === '1';
+                this.storeService.setLayoutSettings({
+                    sidebarState: showContacts
+                        ? SidebarState.accounts
+                        : SidebarState.chats,
+                });
+            });
+    }
 
     ngOnInit(): void {
         this.store

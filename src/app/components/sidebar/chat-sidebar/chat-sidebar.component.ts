@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import { SidebarState } from 'src/app/enums/sidebar-state';
-import { StoreService } from 'src/app/services/store.service';
 
 @Component({
     selector: 'app-chat-sidebar',
@@ -11,14 +9,4 @@ import { StoreService } from 'src/app/services/store.service';
 })
 export class ChatSidebarComponent {
     faCirclePlus = faCirclePlus;
-
-    constructor(
-        private storeService: StoreService,
-    ) {}
-
-    switchToAccountList(): void {
-        this.storeService.setLayoutSettings({
-            sidebarState: SidebarState.accounts,
-        });
-    }
 }

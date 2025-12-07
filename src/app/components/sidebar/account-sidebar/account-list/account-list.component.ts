@@ -2,11 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ChatDto, IAccountDto, IChatDto } from 'src/app/api-client/api-client';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { StoreService } from 'src/app/services/store.service';
-import { SidebarState } from 'src/app/enums/sidebar-state';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
 import { Store } from '@ngrx/store';
 import { selectChats } from 'src/app/state/chats/chats.selector';
 import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-account-list',
@@ -23,6 +23,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
         private store: Store,
         private storeService: StoreService,
         private idGeneratorService: IdGeneratorService,
+        private location: Location,
     ) {}
 
     async ngOnInit(): Promise<void> {
@@ -66,8 +67,6 @@ export class AccountListComponent implements OnInit, OnDestroy {
             this.storeService.addChat(chatDto);
             this.storeService.setSelectedChatId(chatDto.id);
         }
-        this.storeService.setLayoutSettings({
-            sidebarState: SidebarState.chats,
-        });
+        this.location.back();
     }
 }
