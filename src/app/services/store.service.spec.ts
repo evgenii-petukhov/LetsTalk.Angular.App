@@ -19,8 +19,6 @@ import {
 import { ImageCacheEntry } from '../models/image-cache-entry';
 import { accountsActions } from '../state/accounts/accounts.actions';
 import { messagesActions } from '../state/messages/messages.actions';
-import { ILayoutSettings } from '../models/layout-settings';
-import { layoutSettingsActions } from '../state/layout-settings/layout-settings.actions';
 import { selectedChatIdActions } from '../state/selected-chat/selected-chat-id.actions';
 
 describe('StoreService', () => {
@@ -290,18 +288,6 @@ describe('StoreService', () => {
 
             expect(store.dispatch).toHaveBeenCalledWith(
                 chatsActions.add({ chatDto: chat }),
-            );
-        });
-    });
-
-    describe('setLayoutSettings', () => {
-        it('should dispatch set action', () => {
-            const layoutSettings: ILayoutSettings = {};
-
-            service.setLayoutSettings(layoutSettings);
-
-            expect(store.dispatch).toHaveBeenCalledWith(
-                layoutSettingsActions.init({ settings: layoutSettings }),
             );
         });
     });

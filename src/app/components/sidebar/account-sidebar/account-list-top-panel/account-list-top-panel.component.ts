@@ -1,7 +1,7 @@
 import { Component, HostBinding, Input, OnInit } from '@angular/core';
 import { IProfileDto } from 'src/app/api-client/api-client';
-import { SidebarState } from 'src/app/enums/sidebar-state';
 import { StoreService } from 'src/app/services/store.service';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-account-list-top-panel',
@@ -15,7 +15,10 @@ export class AccountListTopPanelComponent implements OnInit {
     @HostBinding('class.navigation-active')
     isNavigationActive: boolean = false;
 
-    constructor(private storeService: StoreService) {}
+    constructor(
+        private storeService: StoreService,
+        private location: Location,
+    ) {}
 
     async ngOnInit(): Promise<void> {
         this.account = await this.storeService.getLoggedInUser();
@@ -27,8 +30,6 @@ export class AccountListTopPanelComponent implements OnInit {
     }
 
     onBackButtonClicked(): void {
-        this.storeService.setLayoutSettings({
-            sidebarState: SidebarState.chats,
-        });
+        this.location.back();
     }
 }

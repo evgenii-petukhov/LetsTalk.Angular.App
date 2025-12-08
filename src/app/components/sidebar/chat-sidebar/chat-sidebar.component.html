@@ -1,5 +1,5 @@
-<button class="new-chat-button" (click)="switchToAccountList()">
+<a class="new-chat-button" [routerLink]="[]" [queryParams]="{ show_contacts: 1 }" [queryParamsHandling]="'merge'">
     <fa-icon [icon]="faCirclePlus" [title]="'New chat'"></fa-icon>
-</button>
+</a>
 <app-chat-list-top-panel></app-chat-list-top-panel>
 <app-chat-list></app-chat-list>

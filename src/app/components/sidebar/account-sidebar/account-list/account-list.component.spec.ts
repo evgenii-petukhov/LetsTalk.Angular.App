@@ -10,7 +10,6 @@ import { AccountListItemStubComponent } from '../account-list-item/account-list-
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { selectChats } from 'src/app/state/chats/chats.selector';
 import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
-import { SidebarState } from 'src/app/enums/sidebar-state';
 
 describe('AccountListComponent', () => {
     let component: AccountListComponent;
@@ -63,7 +62,6 @@ describe('AccountListComponent', () => {
             'setSelectedChatId',
             'markAllAsRead',
             'addChat',
-            'setLayoutSettings',
         ]);
         idGeneratorService = jasmine.createSpyObj('IdGeneratorService', [
             'getNextFakeId',
@@ -142,9 +140,6 @@ describe('AccountListComponent', () => {
         expect(storeService.markAllAsRead).toHaveBeenCalledOnceWith(chat1);
         expect(idGeneratorService.getNextFakeId).not.toHaveBeenCalledTimes(1);
         expect(storeService.addChat).not.toHaveBeenCalledTimes(1);
-        expect(storeService.setLayoutSettings).toHaveBeenCalledOnceWith({
-            sidebarState: SidebarState.chats,
-        });
     });
 
     it('should create a new chat and call setSelectedChatId when onAccountSelected is called with a new account', async () => {
@@ -167,8 +162,5 @@ describe('AccountListComponent', () => {
         expect(storeService.setSelectedChatId).toHaveBeenCalledOnceWith(
             newChatId.toString(),
         );
-        expect(storeService.setLayoutSettings).toHaveBeenCalledOnceWith({
-            sidebarState: SidebarState.chats,
-        });
     });
 });
