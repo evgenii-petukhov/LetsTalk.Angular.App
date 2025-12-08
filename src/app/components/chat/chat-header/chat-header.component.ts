@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { IChatDto } from 'src/app/api-client/api-client';
@@ -13,12 +13,10 @@ import { Location } from '@angular/common';
 })
 export class ChatHeaderComponent implements OnInit, OnDestroy {
     chat: IChatDto;
-    private unsubscribe$: Subject<void> = new Subject<void>();
 
-    constructor(
-        private store: Store,
-        private location: Location,
-    ) {}
+    private readonly unsubscribe$: Subject<void> = new Subject<void>();
+    private readonly store = inject(Store);
+    private readonly location = inject(Location);
 
     ngOnInit(): void {
         this.store

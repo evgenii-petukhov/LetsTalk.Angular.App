@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input, OnInit } from '@angular/core';
+import { Component, HostBinding, inject, Input, OnInit } from '@angular/core';
 import { IProfileDto } from 'src/app/api-client/api-client';
 import { StoreService } from 'src/app/services/store.service';
 import { Location } from '@angular/common';
@@ -15,10 +15,8 @@ export class AccountListTopPanelComponent implements OnInit {
     @HostBinding('class.navigation-active')
     isNavigationActive: boolean = false;
 
-    constructor(
-        private storeService: StoreService,
-        private location: Location,
-    ) {}
+    private readonly storeService = inject(StoreService);
+    private readonly location = inject(Location);
 
     async ngOnInit(): Promise<void> {
         this.account = await this.storeService.getLoggedInUser();

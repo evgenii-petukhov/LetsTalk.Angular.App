@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { required, validate } from 'src/app/decorators/required.decorator';
 import { IChatDto, IMessageDto } from 'src/app/api-client/api-client';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
@@ -22,17 +22,16 @@ import { ImageUploadService } from 'src/app/services/image-upload.service';
 export class ComposeAreaComponent implements OnInit, OnDestroy {
     message = '';
     isSending = false;
+    
     private chat: IChatDto;
-    private unsubscribe$: Subject<void> = new Subject<void>();
 
-    constructor(
-        private store: Store,
-        private apiService: ApiService,
-        private errorService: ErrorService,
-        private storeService: StoreService,
-        private idGeneratorService: IdGeneratorService,
-        private imageUploadService: ImageUploadService,
-    ) {}
+    private readonly unsubscribe$: Subject<void> = new Subject<void>();
+    private readonly store = inject(Store);
+    private readonly apiService = inject(ApiService);
+    private readonly errorService = inject(ErrorService);
+    private readonly storeService = inject(StoreService);
+    private readonly idGeneratorService = inject(IdGeneratorService);
+    private readonly imageUploadService = inject(ImageUploadService);
 
     ngOnInit(): void {
         this.store

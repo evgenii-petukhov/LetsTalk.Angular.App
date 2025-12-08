@@ -2,6 +2,7 @@ import {
     AfterViewInit,
     Component,
     ElementRef,
+    inject,
     OnDestroy,
     OnInit,
     QueryList,
@@ -29,21 +30,20 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     @ViewChildren('scrollItem') itemElements: QueryList<any>;
     messages: readonly Message[] = [];
+    
     private scrollContainer: HTMLDivElement;
     private chatId: string;
-    private unsubscribe$: Subject<void> = new Subject<void>();
     private pageIndex = 0;
     private scrollCounter = 0;
     private isMessageListLoaded = false;
     private previousScrollHeight = 0;
     private scrollSequencePromise = Promise.resolve();
 
-    constructor(
-        private apiService: ApiService,
-        private store: Store,
-        private storeService: StoreService,
-        private idGeneratorService: IdGeneratorService,
-    ) {}
+    private readonly unsubscribe$: Subject<void> = new Subject<void>();
+    private readonly apiService = inject(ApiService);
+    private readonly store = inject(Store);
+    private readonly storeService = inject(StoreService);
+    private readonly idGeneratorService = inject(IdGeneratorService);
 
     ngOnInit(): void {       
         this.store

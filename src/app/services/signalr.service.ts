@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
     HttpTransportType,
     HubConnectionBuilder,
@@ -26,10 +26,11 @@ type TypeDto = TypeDtoMap[TypeNames];
     providedIn: 'root',
 })
 export class SignalrService {
-    private retryPolicy = new ConstantRetryPolicy(
+    private readonly tokenStorageService = inject(TokenStorageService);
+    private readonly retryPolicy = new ConstantRetryPolicy(
         environment.services.notifications.connectionInterval,
     );
-    private hubConnectionBuilder = new HubConnectionBuilder()
+    private readonly hubConnectionBuilder = new HubConnectionBuilder()
         .withUrl(environment.services.notifications.url, {
             skipNegotiation: true,
             transport: HttpTransportType.WebSockets,
@@ -44,8 +45,6 @@ export class SignalrService {
     private handlerMapping: {
         [K in TypeNames]: (dto: TypeDtoMap[K]) => void;
     };
-
-    constructor(private tokenStorageService: TokenStorageService) {}
 
     async init(
         messageHandler: (messageDto: IMessageDto) => Promise<void>,

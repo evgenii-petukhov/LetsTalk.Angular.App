@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { IChatDto } from 'src/app/api-client/api-client';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
@@ -15,11 +15,8 @@ export class ChatListComponent implements OnInit, OnDestroy {
     chats: readonly IChatDto[] = [];
     selectedChatId: string;
 
-    private unsubscribe$: Subject<void> = new Subject<void>();
-
-    constructor(
-        private store: Store,
-    ) {}
+    private readonly store = inject(Store);
+    private readonly unsubscribe$: Subject<void> = new Subject<void>();
 
     ngOnInit(): void {
         combineLatest([

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
     HttpInterceptor,
     HttpHandler,
@@ -12,7 +12,7 @@ const TOKEN_HEADER_KEY = 'Authorization';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-    constructor(private tokenStorageService: TokenStorageService) {}
+    private readonly tokenStorageService = inject(TokenStorageService);
 
     intercept<T>(
         request: HttpRequest<T>,

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { StoreService } from 'src/app/services/store.service';
 import { ApiService } from 'src/app/services/api.service';
@@ -23,26 +23,24 @@ import { Location } from '@angular/common';
     standalone: false,
 })
 export class ProfileComponent implements OnInit, OnDestroy {
-    account$ = this.store.select(selectLoggedInUser);
     isSending = false;
     email = '';
 
+    private readonly fb = inject(FormBuilder);
+    private readonly storeService = inject(StoreService);
+    private readonly apiService = inject(ApiService);
+    private readonly store = inject(Store);
+    private readonly imageUploadService = inject(ImageUploadService);
+    private readonly errorService = inject(ErrorService);
+    private readonly location = inject(Location);
+
+    account$ = this.store.select(selectLoggedInUser);
     form = this.fb.group({
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
         photoUrl: [null],
     });
     faUpload = faUpload;
-
-    constructor(
-        private fb: FormBuilder,
-        private storeService: StoreService,
-        private apiService: ApiService,
-        private store: Store,
-        private imageUploadService: ImageUploadService,
-        private errorService: ErrorService,
-        private location: Location,
-    ) {}
 
     async ngOnInit(): Promise<void> {
         const account = await this.storeService.getLoggedInUser();

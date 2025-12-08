@@ -1,13 +1,12 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
     providedIn: 'root',
 })
 export class BrowserNotificationService {
+    private readonly toastr = inject(ToastrService);
     private isServiceWorkerRegistered = false;
-
-    constructor(private toastr: ToastrService) {}
 
     async init() {
         if (this.isServiceWorkerRegistered) {

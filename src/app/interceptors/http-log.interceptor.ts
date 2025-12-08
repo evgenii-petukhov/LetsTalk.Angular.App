@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
     HttpInterceptor,
     HttpHandler,
@@ -11,7 +11,7 @@ import { RequestLoggingService } from '../services/request-logging.service';
 
 @Injectable()
 export class HttpLogInterceptor implements HttpInterceptor {
-    constructor(private requestLoggingService: RequestLoggingService) {}
+    private readonly requestLoggingService = inject(RequestLoggingService);
 
     intercept<T>(
         request: HttpRequest<T>,

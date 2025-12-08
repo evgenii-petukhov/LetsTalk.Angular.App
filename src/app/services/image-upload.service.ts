@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ImageService } from './image.service';
 import { FileStorageService } from './file-storage.service';
 import { ImageRoles, UploadImageResponse } from '../protos/file_upload_pb';
@@ -7,10 +7,8 @@ import { ImageRoles, UploadImageResponse } from '../protos/file_upload_pb';
     providedIn: 'root',
 })
 export class ImageUploadService {
-    constructor(
-        private imageService: ImageService,
-        private fileStorageService: FileStorageService,
-    ) {}
+    private readonly imageService = inject(ImageService);
+    private readonly fileStorageService = inject(FileStorageService);
 
     async resizeAndUploadImage(
         photoUrl: string,

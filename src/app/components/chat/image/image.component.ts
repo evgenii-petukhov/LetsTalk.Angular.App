@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { IImageDto } from 'src/app/api-client/api-client';
 import { errorMessages } from 'src/app/constants/errors';
 import { ImagePreview } from 'src/app/models/imagePreview';
@@ -24,10 +24,8 @@ export class ImageComponent implements OnInit {
     sizeLimit = environment.imageSettings.limits.picturePreview;
     imageKeyParam: string;
 
-    constructor(
-        private storeService: StoreService,
-        private errorService: ErrorService,
-    ) {}
+    private readonly storeService = inject(StoreService);
+    private readonly errorService = inject(ErrorService);
 
     async ngOnInit(): Promise<void> {
         this.imageKeyParam = this.imageKey

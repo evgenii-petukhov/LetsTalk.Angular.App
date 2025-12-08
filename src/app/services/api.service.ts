@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import {
     LoginResponseDto,
@@ -22,7 +22,7 @@ import { UploadImageResponse } from '../protos/file_upload_pb';
     providedIn: 'root',
 })
 export class ApiService {
-    constructor(private client: ApiClient) {}
+    private readonly client = inject(ApiClient);
 
     loginByEmail(email: string, code: number): Promise<LoginResponseDto> {
         const request = new EmailLoginRequest({

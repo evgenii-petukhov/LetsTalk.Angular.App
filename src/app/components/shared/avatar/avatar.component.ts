@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, inject, Input, OnChanges } from '@angular/core';
 import { IImageDto } from 'src/app/api-client/api-client';
 import { errorMessages } from 'src/app/constants/errors';
 import { ErrorService } from 'src/app/services/error.service';
@@ -13,12 +13,10 @@ import { StoreService } from 'src/app/services/store.service';
 export class AvatarComponent implements OnChanges {
     @Input() urlOptions: (string | IImageDto)[] | null = null;
     backgroundImage: string = '';
-    private readonly defaultPhotoUrl = 'images/empty-avatar.svg';
 
-    constructor(
-        private storeService: StoreService,
-        private errorService: ErrorService,
-    ) {}
+    private readonly defaultPhotoUrl = 'images/empty-avatar.svg';
+    private readonly storeService = inject(StoreService);
+    private readonly errorService = inject(ErrorService);
 
     ngOnChanges(): void {
         this.processUrlOptions();
@@ -53,7 +51,7 @@ export class AvatarComponent implements OnChanges {
         }
     }
 
-    private isImageDto(value: any): value is IImageDto {
+    private isImageDto(value: string | IImageDto): value is IImageDto {
         return value && typeof value === 'object' && 'id' in value && 'fileStorageTypeId' in value;
     }
 

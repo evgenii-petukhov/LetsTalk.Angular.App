@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
     IChatDto,
@@ -27,11 +27,9 @@ import { firstValueFrom } from 'rxjs';
     providedIn: 'root',
 })
 export class StoreService {
-    constructor(
-        private store: Store,
-        private apiService: ApiService,
-        private fileStorageService: FileStorageService,
-    ) {}
+    private readonly store = inject(Store);
+    private readonly apiService = inject(ApiService);
+    private readonly fileStorageService = inject(FileStorageService);
 
     async markAllAsRead(chat: IChatDto): Promise<void> {
         if (!chat || chat.unreadCount === 0) {

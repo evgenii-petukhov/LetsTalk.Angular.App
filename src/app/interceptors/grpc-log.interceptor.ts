@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { RequestLoggingService } from '../services/request-logging.service';
 
 @Injectable()
 export class GrpcLogInterceptor {
-    constructor(private requestLoggingService: RequestLoggingService) {}
+    private readonly requestLoggingService = inject(RequestLoggingService);
 
     async intercept<
         T extends { f: { array: string[] }; c: { name: string } },

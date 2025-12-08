@@ -2,6 +2,7 @@ import {
     Component,
     HostBinding,
     HostListener,
+    inject,
     OnDestroy,
     OnInit,
 } from '@angular/core';
@@ -21,16 +22,15 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class ImageViewerComponent implements OnInit, OnDestroy {
     backgroundImage: string;
-    private imageKey: IImageDto;
     @HostBinding('class.visible') isVisible: boolean = false;
-    private unsubscribe$: Subject<void> = new Subject<void>();
 
-    constructor(
-        private storeService: StoreService,
-        private errorService: ErrorService,
-        private route: ActivatedRoute,
-        private location: Location,
-    ) {}
+    private imageKey: IImageDto;
+    
+    private readonly unsubscribe$: Subject<void> = new Subject<void>();
+    private readonly storeService = inject(StoreService);
+    private readonly errorService = inject(ErrorService);
+    private readonly route = inject(ActivatedRoute);
+    private readonly location = inject(Location);
 
     @HostListener('click')
     close(): void {

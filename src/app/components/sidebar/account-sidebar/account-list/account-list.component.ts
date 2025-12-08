@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ChatDto, IAccountDto, IChatDto } from 'src/app/api-client/api-client';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { StoreService } from 'src/app/services/store.service';
@@ -16,15 +16,14 @@ import { Location } from '@angular/common';
 })
 export class AccountListComponent implements OnInit, OnDestroy {
     accounts: readonly IAccountDto[] = [];
-    private unsubscribe$: Subject<void> = new Subject<void>();
+
     private chats: readonly IChatDto[] = [];
 
-    constructor(
-        private store: Store,
-        private storeService: StoreService,
-        private idGeneratorService: IdGeneratorService,
-        private location: Location,
-    ) {}
+    private readonly unsubscribe$: Subject<void> = new Subject<void>();
+    private readonly store = inject(Store);
+    private readonly storeService = inject(StoreService);
+    private readonly idGeneratorService = inject(IdGeneratorService);
+    private readonly location = inject(Location);
 
     async ngOnInit(): Promise<void> {
         combineLatest([

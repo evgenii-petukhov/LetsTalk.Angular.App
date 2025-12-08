@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnDestroy, OnInit } from '@angular/core';
 import {
     IChatDto,
     IImagePreviewDto,
@@ -22,23 +22,22 @@ import { IdGeneratorService } from 'src/app/services/id-generator.service';
     standalone: false,
 })
 export class MessengerComponent implements OnInit, OnDestroy {
-    selectedChatId$ = this.store.select(selectSelectedChatId);
     isSidebarShown = true;
     selectedChatId: string;
 
     private chats: readonly IChatDto[] = [];
     private selectedChat: IChatDto;
     private isWindowActive = true;
-    private unsubscribe$: Subject<void> = new Subject<void>();
+    
+    private readonly unsubscribe$: Subject<void> = new Subject<void>();
+    private readonly store = inject(Store);
+    private readonly storeService = inject(StoreService);
+    private readonly signalrHandlerService = inject(SignalrHandlerService);
+    private readonly activatedRoute = inject(ActivatedRoute);
+    private readonly router = inject(Router);
+    private readonly idGeneratorService = inject(IdGeneratorService);
 
-    constructor(
-        private store: Store,
-        private storeService: StoreService,
-        private signalrHandlerService: SignalrHandlerService,
-        private activatedRoute: ActivatedRoute,
-        private router: Router,
-        private idGeneratorService: IdGeneratorService,
-    ) {}
+    selectedChatId$ = this.store.select(selectSelectedChatId);
 
     @HostListener('document:visibilitychange', ['$event'])
     onVisibilityChange(event: Event): void {

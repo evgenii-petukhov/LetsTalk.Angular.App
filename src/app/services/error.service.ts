@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ErrorService {
-    constructor(private toastr: ToastrService) { }
+    private readonly toastr = inject(ToastrService);
 
     handleError(e: any, defaultMessage: string): void {
         const errors = this.getCommaSeparatedErrorMessages(e, defaultMessage);

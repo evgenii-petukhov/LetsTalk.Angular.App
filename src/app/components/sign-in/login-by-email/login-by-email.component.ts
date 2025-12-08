@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { errorMessages } from 'src/app/constants/errors';
@@ -13,23 +13,21 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
     standalone: false,
 })
 export class LoginByEmailComponent {
-    form = this.fb.group({
-        email: ['', [Validators.email, Validators.required]],
-        code: ['', [Validators.pattern('\\s*\\d{4}\\s*'), Validators.required]],
-    });
-
     isCodeRequested = false;
     isCodeRequestInProgress = false;
     isSubmitInProgress = false;
     codeValidInSeconds = 0;
 
-    constructor(
-        private router: Router,
-        private fb: FormBuilder,
-        private apiService: ApiService,
-        private tokenStorage: TokenStorageService,
-        private errorService: ErrorService,
-    ) {}
+    private readonly router = inject(Router);
+    private readonly fb = inject(FormBuilder);
+    private readonly apiService = inject(ApiService);
+    private readonly tokenStorage = inject(TokenStorageService);
+    private readonly errorService = inject(ErrorService);
+
+    form = this.fb.group({
+        email: ['', [Validators.email, Validators.required]],
+        code: ['', [Validators.pattern('\\s*\\d{4}\\s*'), Validators.required]],
+    });
 
     async onSubmit(): Promise<void> {
         this.isSubmitInProgress = true;

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { SignalrService } from './signalr.service';
 import {
     IMessageDto,
@@ -14,12 +14,10 @@ import { BrowserNotificationService } from './browser-notification.service';
     providedIn: 'root',
 })
 export class SignalrHandlerService {
-    constructor(
-        private apiService: ApiService,
-        private storeService: StoreService,
-        private signalrService: SignalrService,
-        private browserNotificationService: BrowserNotificationService,
-    ) {}
+    private readonly apiService = inject(ApiService);
+    private readonly storeService = inject(StoreService);
+    private readonly signalrService = inject(SignalrService);
+    private readonly browserNotificationService = inject(BrowserNotificationService);
 
     async initHandlers(
         handleMessageNotification: (messageDto: IMessageDto) => Promise<void>,

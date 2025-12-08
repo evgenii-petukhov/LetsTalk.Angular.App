@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { faCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { Subject, takeUntil } from 'rxjs';
@@ -13,11 +13,11 @@ export class SidebarComponent implements OnDestroy {
     faCirclePlus = faCirclePlus;
     isChatListShown = true;
     isAccountListShown = false;
-    private unsubscribe$: Subject<void> = new Subject<void>();
 
-    constructor(
-        private activatedRoute: ActivatedRoute,
-    ) {
+    private readonly activatedRoute = inject(ActivatedRoute);
+    private readonly unsubscribe$: Subject<void> = new Subject<void>();
+
+    constructor() {
         this.activatedRoute.queryParams
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe((params) => {

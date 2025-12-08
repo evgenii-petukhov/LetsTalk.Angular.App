@@ -51,7 +51,7 @@ describe('ImageViewerComponent', () => {
         // Arrange
         const imageKeyParam = `${imageKey.id}_${imageKey.fileStorageTypeId}`;
         const activatedRoute = TestBed.inject(ActivatedRoute);
-        (activatedRoute as any).params = of({ imageKey: imageKeyParam });
+        activatedRoute.params = of({ imageKey: imageKeyParam });
 
         storeService.getImageContent.and.resolveTo({ content: 'image-url' });
 
@@ -74,7 +74,7 @@ describe('ImageViewerComponent', () => {
         // Arrange
         const imageKeyParam = `${imageKey.id}_${imageKey.fileStorageTypeId}`;
         const activatedRoute = TestBed.inject(ActivatedRoute);
-        (activatedRoute as any).params = of({ imageKey: imageKeyParam });
+        activatedRoute.params = of({ imageKey: imageKeyParam });
 
         const error = new Error('Sample error');
         storeService.getImageContent.and.rejectWith(error);
