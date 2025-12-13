@@ -1,9 +1,14 @@
+@use "bootstrap/scss/bootstrap" as *;
 @use "../../../shared-styles/mixins/scrollbars" as *;
 
 .send-message-container {
     display: flex;
-    padding: 10px 6px 6px 10px;
+    padding: 10px 6px 10px 10px;
     max-height: 171px;
+
+    @include media-breakpoint-down(sm) {
+        padding: 10px 6px 15px 10px;
+    }
 
     .compose-area-container {
         flex: 1 1 auto;
@@ -36,6 +41,12 @@
                 padding: 4px 0;
                 overflow: hidden;
                 min-height: 18px;
+
+                @include media-breakpoint-down(sm) {
+                    font-size: 17px;
+                    line-height: 22px;
+                    min-height: 24px;
+                }
             }
         }
     }
