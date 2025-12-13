@@ -12,6 +12,7 @@ import { ErrorService } from 'src/app/services/error.service';
 import { environment } from 'src/environments/environment';
 import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { ImageUploadService } from 'src/app/services/image-upload.service';
+import { AutoResizeTextArea } from '../auto-resize-text-area/auto-resize-text-area';
 
 @Component({
     selector: 'app-compose-area',
@@ -23,8 +24,8 @@ export class ComposeAreaComponent implements OnInit, OnDestroy {
     message = '';
     isSending = false;
 
-    @ViewChild('textarea')
-    textareaRef: ElementRef<HTMLTextAreaElement>;
+    @ViewChild(AutoResizeTextArea)
+    textareaRef: AutoResizeTextArea;
 
     private chat: IChatDto;
 
@@ -54,9 +55,7 @@ export class ComposeAreaComponent implements OnInit, OnDestroy {
     async onSendMessage(@required message: string): Promise<void> {
         this.message = '';
         this.isSending = true;
-        const element = this.textareaRef.nativeElement;
-        element.style.height = 'auto';
-        element.focus();
+        this.textareaRef.focus();
         try {
             await this.processSendMessage(this.chat, message);
         } catch (e) {
@@ -84,12 +83,6 @@ export class ComposeAreaComponent implements OnInit, OnDestroy {
         } finally {
             URL.revokeObjectURL(base64);
         }
-    }
-
-    onMessageChanged(): void {
-        const element = this.textareaRef.nativeElement;
-        element.style.height = 'auto';
-        element.style.height = `${element.scrollHeight}px`;
     }
 
     private async processSendMessage(

@@ -1,11 +1,7 @@
 <div class="send-message-container">
     <div class="compose-area-container">
-        <div class="textarea-container">
-            <div class="textarea-container__scrollable">
-                <textarea #textarea [(ngModel)]="message" name="message" rows="1"
-                    (keydown.control.enter)="onSendMessage(message)" (ngModelChange)="onMessageChanged()"></textarea>
-            </div>
-        </div>
+        <app-auto-resize-text-area [(text)]="message" (onSubmit)="onSendMessage($event)"
+            #textarea></app-auto-resize-text-area>
         <app-select-image-button (imageBlobReady)="onImageBlobReady($event)" *ngIf="!message"></app-select-image-button>
     </div>
     <app-send-button (buttonClick)="onSendMessage(message)" [disabled]="isSending || !message.trim()"></app-send-button>

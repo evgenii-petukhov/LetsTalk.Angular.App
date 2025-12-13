@@ -12,6 +12,7 @@ import { ImageComponent } from './image/image.component';
 import { ChatComponent } from './chat.component';
 import { VisibleOnlyPipe } from 'src/app/pipes/visibleOnly';
 import { AppRoutingModule } from 'src/app/app-routing.module';
+import { AutoResizeTextArea } from './auto-resize-text-area/auto-resize-text-area';
 
 @NgModule({
     declarations: [
@@ -22,6 +23,7 @@ import { AppRoutingModule } from 'src/app/app-routing.module';
         MessageComponent,
         ImageComponent,
         ChatComponent,
+        AutoResizeTextArea,
         VisibleOnlyPipe,
     ],
     imports: [
