@@ -1,12 +1,13 @@
 :host {
     display: flex;
+    align-items: end;
 
     button {
         flex: 0 1 auto;
         background: none;
         border: none;
         font-size: 21px;
-        padding: 0 8px;
+        padding: 2px 8px;
         color: #5a5a5a;
         position: relative;
 

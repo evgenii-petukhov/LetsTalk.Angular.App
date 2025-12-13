@@ -19,7 +19,7 @@
 
             .content {
                 overflow-wrap: anywhere;
-                font-size: 14px;
+                font-size: 15px;
                 line-height: 20px;
                 display: flex;
                 flex: 0 1 auto;
@@ -28,6 +28,10 @@
                 /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
                 ::ng-deep p {
                     margin: 0;
+
+                    a {
+                        font-size: 14px;
+                    }
                 }
             }
 
@@ -63,7 +67,7 @@
 
                     .link-preview-text {
                         overflow-wrap: anywhere;
-                        font-size: 14px;
+                        font-size: 13px;
                         line-height: 20px;
                         font-weight: 600;
                     }

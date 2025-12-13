@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { required, validate } from 'src/app/decorators/required.decorator';
 import { IChatDto, IMessageDto } from 'src/app/api-client/api-client';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
@@ -22,7 +22,10 @@ import { ImageUploadService } from 'src/app/services/image-upload.service';
 export class ComposeAreaComponent implements OnInit, OnDestroy {
     message = '';
     isSending = false;
-    
+
+    @ViewChild('textarea')
+    textareaRef: ElementRef<HTMLTextAreaElement>;
+
     private chat: IChatDto;
 
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
@@ -51,6 +54,9 @@ export class ComposeAreaComponent implements OnInit, OnDestroy {
     async onSendMessage(@required message: string): Promise<void> {
         this.message = '';
         this.isSending = true;
+        const element = this.textareaRef.nativeElement;
+        element.style.height = 'auto';
+        element.focus();
         try {
             await this.processSendMessage(this.chat, message);
         } catch (e) {
@@ -78,6 +84,12 @@ export class ComposeAreaComponent implements OnInit, OnDestroy {
         } finally {
             URL.revokeObjectURL(base64);
         }
+    }
+
+    onMessageChanged(): void {
+        const element = this.textareaRef.nativeElement;
+        element.style.height = 'auto';
+        element.style.height = `${element.scrollHeight}px`;
     }
 
     private async processSendMessage(

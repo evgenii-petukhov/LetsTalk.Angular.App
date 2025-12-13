@@ -1,10 +1,12 @@
 <div class="send-message-container">
-    <div class="textarea-container">
-        <textarea [(ngModel)]="message" (keydown.control.enter)="onSendMessage(message)" name="message"></textarea>
+    <div class="compose-area-container">
+        <div class="textarea-container">
+            <div class="textarea-container__scrollable">
+                <textarea #textarea [(ngModel)]="message" name="message" rows="1"
+                    (keydown.control.enter)="onSendMessage(message)" (ngModelChange)="onMessageChanged()"></textarea>
+            </div>
+        </div>
+        <app-select-image-button (imageBlobReady)="onImageBlobReady($event)" *ngIf="!message"></app-select-image-button>
     </div>
-    <div class="button-container">
-        <app-select-image-button (imageBlobReady)="onImageBlobReady($event)"></app-select-image-button>
-        <app-send-button (buttonClick)="onSendMessage(message)"
-            [disabled]="isSending || !message.trim()"></app-send-button>
-    </div>
+    <app-send-button (buttonClick)="onSendMessage(message)" [disabled]="isSending || !message.trim()"></app-send-button>
 </div>

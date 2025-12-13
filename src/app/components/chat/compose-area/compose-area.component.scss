@@ -3,37 +3,40 @@
 .send-message-container {
     display: flex;
     padding: 10px 6px 6px 10px;
-    min-height: 66px;
-    max-height: 66px;
+    max-height: 171px;
 
-    .textarea-container {
+    .compose-area-container {
         flex: 1 1 auto;
         display: flex;
+        border: 2px solid rgb(0 0 0 / 40%);
+        border-radius: 12px;
 
-        textarea {
+        .textarea-container {
             flex: 1 1 auto;
-            resize: none;
-            border-radius: 8px;
-            border: 2px solid rgb(0 0 0 / 40%);
-            outline: none;
-            font-size: 14px;
-            line-height: 20px;
-            padding: 3px 8px;
+            display: flex;
+            padding: 4px 0;
 
-            @include scrollbars;
-        }
-    }
+            &__scrollable {
+                flex: 1 1 auto;
+                display: flex;
+                overflow: auto;
+                padding: 0 10px;
+                align-items: center;
 
-    .button-container {
-        flex: 0 1 auto;
-        display: flex;
+                @include scrollbars;
+            }
 
-        app-select-image-button {
-            margin-left: 4px;
-        }
-
-        app-send-button {
-            margin-right: 2px;
+            textarea {
+                flex: 1 1 auto;
+                resize: none;
+                border: none;
+                outline: none;
+                font-size: 15px;
+                line-height: 18px;
+                padding: 4px 0;
+                overflow: hidden;
+                min-height: 18px;
+            }
         }
     }
 }
