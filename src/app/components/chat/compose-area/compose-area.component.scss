@@ -1,7 +1,7 @@
 @use "bootstrap/scss/bootstrap" as *;
 @use "../../../shared-styles/mixins/scrollbars" as *;
 
-.send-message-container {
+.compose-area {
     display: flex;
     padding: 10px 6px 10px 10px;
     max-height: 171px;
@@ -10,7 +10,7 @@
         padding: 10px 6px 15px 10px;
     }
 
-    .compose-area-container {
+    &__input-group {
         flex: 1 1 auto;
         display: flex;
         border: 2px solid rgb(0 0 0 / 40%);
