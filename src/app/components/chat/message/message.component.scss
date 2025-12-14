@@ -1,3 +1,5 @@
+@use "bootstrap/scss/bootstrap" as *;
+
 // https://codepen.io/Founts/pen/AJyVOr
 :host {
     display: flex;
@@ -19,18 +21,24 @@
 
             .content {
                 overflow-wrap: anywhere;
-                font-size: 15px;
+                font-size: 14px;
                 line-height: 20px;
                 display: flex;
                 flex: 0 1 auto;
                 flex-direction: column;
 
+                @include media-breakpoint-down(sm) {
+                    font-size: 15px;
+                }
+
                 /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
                 ::ng-deep p {
                     margin: 0;
 
-                    a {
-                        font-size: 14px;
+                    @include media-breakpoint-down(sm) {
+                        a {
+                            font-size: 14px;
+                        }
                     }
                 }
             }
@@ -68,7 +76,7 @@
                     .link-preview-text {
                         overflow-wrap: anywhere;
                         font-size: 13px;
-                        line-height: 20px;
+                        line-height: 16px;
                         font-weight: 600;
                     }
                 }
