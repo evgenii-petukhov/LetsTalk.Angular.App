@@ -1,5 +1,5 @@
-<div class="textarea-container">
-    <div class="textarea-container__scrollable">
+<div class="auto-resize-text-area">
+    <div class="auto-resize-text-area__scrollable">
         <textarea #textarea [(ngModel)]="text" name="message" rows="1" (keydown.control.enter)="submit()"
             (ngModelChange)="onTextChanged()"></textarea>
     </div>

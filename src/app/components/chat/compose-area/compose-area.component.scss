@@ -15,5 +15,15 @@
         display: flex;
         border: 2px solid rgb(0 0 0 / 40%);
         border-radius: 12px;
+        overflow: hidden;
+
+        app-select-image-button {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+
+            &.hidden {
+                transform: translateX(45px);
+                opacity: 0;
+            }
+        }
     }
 }
