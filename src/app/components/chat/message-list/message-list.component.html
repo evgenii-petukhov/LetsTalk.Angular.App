@@ -1,0 +1,12 @@
+<div class="messages-container" #scrollFrame (scroll)="onScroll()">
+    <ul>
+        <li *ngFor="
+                    let message of messages
+                        | visibleOnly : isMessageVisible
+                        | orderBy : ['created'] : ['asc']
+                ">
+            <app-message #scrollItem [message]="message" [ngClass]="message.isMine && 'mine'">
+            </app-message>
+        </li>
+    </ul>
+</div>

@@ -2,18 +2,18 @@ import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@
 
 @Component({
     selector: 'app-auto-resize-text-area',
-    templateUrl: './auto-resize-text-area.html',
-    styleUrl: './auto-resize-text-area.scss',
+    templateUrl: './auto-resize-text-area.component.html',
+    styleUrl: './auto-resize-text-area.component.scss',
     standalone: false,
 })
-export class AutoResizeTextArea {
+export class AutoResizeTextAreaComponent {
     @Input() text = '';
     @Output() textChange = new EventEmitter<string>();
 
     @ViewChild('textarea')
     textareaRef: ElementRef<HTMLTextAreaElement>;
 
-    @Output() onSubmit = new EventEmitter<string>();
+    @Output() submitted = new EventEmitter<string>();
 
     focus(): void {
         const element = this.textareaRef.nativeElement;
@@ -29,6 +29,6 @@ export class AutoResizeTextArea {
     }
 
     submit(): void {
-        this.onSubmit.emit(this.text);
+        this.submitted.emit(this.text);
     }
 }

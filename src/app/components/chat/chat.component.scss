@@ -4,7 +4,6 @@
 :host {
     display: flex;
     flex: 1 1 auto;
-    overflow: hidden;
 
     @include media-breakpoint-down(md) {
         display: flex;
@@ -16,26 +15,5 @@
         flex-direction: column;
         flex: 1 1 auto;
         overflow: hidden;
-
-        .messages-container {
-            flex: 1 1 auto;
-            overflow-y: auto;
-
-            @include scrollbars;
-
-            ul {
-                margin: 0;
-                padding: 10px 0;
-
-                li {
-                    display: flex;
-                    margin: 0 0 10px;
-
-                    &:last-child {
-                        margin: 0;
-                    }
-                }
-            }
-        }
     }
 }

@@ -1,6 +1,6 @@
 <div class="compose-area">
     <div class="compose-area__input-group">
-        <app-auto-resize-text-area [(text)]="message" (onSubmit)="onSendMessage($event)"
+        <app-auto-resize-text-area [(text)]="message" (submitted)="onSendMessage($event)"
             #textarea></app-auto-resize-text-area>
         <app-select-image-button (imageBlobReady)="onImageBlobReady($event)" [ngClass]="message && 'hidden'"></app-select-image-button>
     </div>

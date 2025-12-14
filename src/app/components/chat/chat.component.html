@@ -1,17 +1,8 @@
 <router-outlet></router-outlet>
 <div class="chat-container">
     <app-chat-header></app-chat-header>
-    <div class="messages-container" #scrollFrame (scroll)="onScroll()">
-        <ul>
-            <li *ngFor="
-                    let message of messages
-                        | visibleOnly : isMessageVisible
-                        | orderBy : ['created'] : ['asc']
-                ">
-                <app-message #scrollItem [message]="message" [ngClass]="message.isMine && 'mine'">
-                </app-message>
-            </li>
-        </ul>
-    </div>
-    <app-compose-area></app-compose-area>
+    <app-message-list (statusChanged)="onStatusChanged($event)" *ngIf="isMessageListVisible"></app-message-list>
+    <app-compose-area *ngIf="isComposeAreaVisible"></app-compose-area>
+    <app-not-found *ngIf="isNotFoundVisible"></app-not-found>
+    <app-error *ngIf="isErrorVisible"></app-error>
 </div>

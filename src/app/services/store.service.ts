@@ -113,6 +113,14 @@ export class StoreService {
         this.store.dispatch(chatsActions.add({ chatDto }));
     }
 
+    async isChatIdValid(chatId: string): Promise<boolean> {
+        const chats = await firstValueFrom(
+            this.store.select(selectChats),
+        );
+
+        return chats?.some((x) => x.id === chatId);
+    }
+
     async getLoggedInUser(): Promise<IProfileDto> {
         const account = await firstValueFrom(
             this.store.select(selectLoggedInUser),

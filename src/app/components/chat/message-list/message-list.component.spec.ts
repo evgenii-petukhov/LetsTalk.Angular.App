@@ -5,14 +5,14 @@ import {
     TestBed,
     tick,
 } from '@angular/core/testing';
-import { ChatComponent } from './chat.component';
+import { MessageListComponent } from './message-list.component';
 import { DefaultProjectorFn, MemoizedSelector, Store } from '@ngrx/store';
-import { ApiService } from '../../services/api.service';
+import { ApiService } from '../../../services/api.service';
 import { StoreService } from 'src/app/services/store.service';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
-import { ChatHeaderStubComponent } from './chat-header/chat-header.component.stub';
-import { MessageStubComponent } from './message/message.component.stub';
-import { SendMessageStubComponent } from './compose-area/compose-area.component.stub';
+import { ChatHeaderStubComponent } from '../chat-header/chat-header.component.stub';
+import { MessageStubComponent } from '../message/message.component.stub';
+import { SendMessageStubComponent } from '../compose-area/compose-area.component.stub';
 import { VisibleOnlyPipe } from 'src/app/pipes/visibleOnly';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
@@ -25,9 +25,9 @@ import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { selectChats } from 'src/app/state/chats/chats.selector';
 
-describe('ChatComponent', () => {
-    let component: ChatComponent;
-    let fixture: ComponentFixture<ChatComponent>;
+describe('MessageListComponent', () => {
+    let component: MessageListComponent;
+    let fixture: ComponentFixture<MessageListComponent>;
     let apiService: jasmine.SpyObj<ApiService>;
     let store: MockStore;
     let storeService: jasmine.SpyObj<StoreService>;
@@ -51,6 +51,7 @@ describe('ChatComponent', () => {
             'addMessages',
             'setLastMessageInfo',
             'setSelectedChatId',
+            'isChatIdValid'
         ]);
         idGeneratorService = jasmine.createSpyObj('IdGeneratorService', [
             'isFake',
@@ -58,7 +59,7 @@ describe('ChatComponent', () => {
 
         await TestBed.configureTestingModule({
             declarations: [
-                ChatComponent,
+                MessageListComponent,
                 ChatHeaderStubComponent,
                 MessageStubComponent,
                 SendMessageStubComponent,
@@ -77,7 +78,7 @@ describe('ChatComponent', () => {
             ],
         }).compileComponents();
 
-        fixture = TestBed.createComponent(ChatComponent);
+        fixture = TestBed.createComponent(MessageListComponent);
         component = fixture.componentInstance;
         store = TestBed.inject(Store) as MockStore;
         mockSelectMessages = store.overrideSelector(selectMessages, null);
