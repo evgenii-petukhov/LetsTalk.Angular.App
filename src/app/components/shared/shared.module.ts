@@ -5,12 +5,14 @@ import { BackButtonComponent } from './back-button/back-button.component';
 import { AvatarComponent } from './avatar/avatar.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { OrderByPipe } from 'src/app/pipes/orderby';
+import { TopPanelComponent } from './top-panel/top-panel.component';
 
 @NgModule({
     declarations: [
         BackButtonComponent,
         AvatarComponent,
         UserDetailsComponent,
+        TopPanelComponent,
         OrderByPipe,
     ],
     imports: [CommonModule, FontAwesomeModule],
@@ -18,6 +20,7 @@ import { OrderByPipe } from 'src/app/pipes/orderby';
         BackButtonComponent,
         AvatarComponent,
         UserDetailsComponent,
+        TopPanelComponent,
         OrderByPipe,
     ],
 })

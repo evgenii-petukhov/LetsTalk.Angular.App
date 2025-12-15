@@ -1,4 +1,5 @@
 @use "bootstrap/scss/bootstrap" as *;
+@use "../../../shared-styles/mixins/line-clamp" as *;
 
 // https://codepen.io/Founts/pen/AJyVOr
 :host {
@@ -34,6 +35,10 @@
                 /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
                 ::ng-deep p {
                     margin: 0;
+
+                    a {
+                        @include line-clamp(2);
+                    }
 
                     @include media-breakpoint-down(sm) {
                         a {
@@ -78,11 +83,8 @@
                         font-size: 13px;
                         line-height: 16px;
                         font-weight: 600;
-                        overflow: hidden;
-                        display: -webkit-box;
-                        line-clamp: 3;
-                        -webkit-line-clamp: 3;
-                        -webkit-box-orient: vertical;
+                        
+                        @include line-clamp(3);
                     }
                 }
 

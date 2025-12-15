@@ -1,7 +1,6 @@
 import { Component, HostBinding, inject, Input, OnInit } from '@angular/core';
 import { IProfileDto } from 'src/app/api-client/api-client';
 import { StoreService } from 'src/app/services/store.service';
-import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-account-list-top-panel',
@@ -16,7 +15,6 @@ export class AccountListTopPanelComponent implements OnInit {
     isNavigationActive: boolean = false;
 
     private readonly storeService = inject(StoreService);
-    private readonly location = inject(Location);
 
     async ngOnInit(): Promise<void> {
         this.account = await this.storeService.getLoggedInUser();
@@ -25,9 +23,5 @@ export class AccountListTopPanelComponent implements OnInit {
     onLogoutButtonClicked(): void {
         window.localStorage.clear();
         window.location.reload();
-    }
-
-    onBackButtonClicked(): void {
-        this.location.back();
     }
 }

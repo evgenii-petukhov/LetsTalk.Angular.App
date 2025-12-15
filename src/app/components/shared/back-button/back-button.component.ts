@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -9,6 +9,7 @@ import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 })
 export class BackButtonComponent {
     faChevronLeft = faChevronLeft;
+    @Input() showText = false;
     @Output() buttonClick = new EventEmitter();
 
     onButtonClicked(): void {

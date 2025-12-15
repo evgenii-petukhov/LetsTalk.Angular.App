@@ -1,6 +1,6 @@
 <router-outlet></router-outlet>
 <div class="chat-container">
-    <app-chat-header></app-chat-header>
+    <app-chat-header [backButton]="isNotFoundVisible || isErrorVisible ? 'visibleWithText' : 'visible'"></app-chat-header>
     <app-message-list (statusChanged)="onStatusChanged($event)" *ngIf="isMessageListVisible"></app-message-list>
     <app-compose-area *ngIf="isComposeAreaVisible"></app-compose-area>
     <app-not-found *ngIf="isNotFoundVisible"></app-not-found>

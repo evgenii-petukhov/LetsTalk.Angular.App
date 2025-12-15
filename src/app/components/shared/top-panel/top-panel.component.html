@@ -1,0 +1,3 @@
+<app-back-button *ngIf="['visible', 'visibleWithText'].includes(backButton)"
+    [showText]="backButton === 'visibleWithText'" (buttonClick)="onClick()"></app-back-button>
+<ng-content></ng-content>
