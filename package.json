@@ -9,6 +9,8 @@
         "build:dev:clean": "npm cache clean --force && ng cache clean && rimraf dist && ng build --configuration development",
         "build:dev:hosting": "ng build --configuration development-hosting",
         "test": "ng test",
+        "test-coverage": "ng test --code-coverage",
+        "test-silent": "ng test --watch=false --browsers=ChromeHeadless",
         "lint": "ng lint --fix && npx stylelint \"**/*.scss\" --fix"
     },
     "private": true,
