@@ -292,6 +292,58 @@ describe('StoreService', () => {
         });
     });
 
+    describe('isChatIdValid', () => {
+        it('should return true if chat ID exists in store', async () => {
+            const mockChats = [
+                { id: '1' },
+                { id: '2' },
+                { id: '3' }
+            ] as IChatDto[];
+            store.select.and.returnValue(of(mockChats));
+
+            const result = await service.isChatIdValid('2');
+
+            expect(result).toBe(true);
+        });
+
+        it('should return false if chat ID does not exist in store', async () => {
+            const mockChats = [
+                { id: '1' },
+                { id: '2' },
+                { id: '3' }
+            ] as IChatDto[];
+            store.select.and.returnValue(of(mockChats));
+
+            const result = await service.isChatIdValid('nonexistent');
+
+            expect(result).toBe(false);
+        });
+
+        it('should return false if chats array is null', async () => {
+            store.select.and.returnValue(of(null));
+
+            const result = await service.isChatIdValid('1');
+
+            expect(result).toBe(false);
+        });
+
+        it('should return false if chats array is undefined', async () => {
+            store.select.and.returnValue(of(undefined));
+
+            const result = await service.isChatIdValid('1');
+
+            expect(result).toBe(false);
+        });
+
+        it('should return false if chats array is empty', async () => {
+            store.select.and.returnValue(of([]));
+
+            const result = await service.isChatIdValid('1');
+
+            expect(result).toBe(false);
+        });
+    });
+
     describe('getLoggedInUser', () => {
         it('should return logged in user from store if exists', async () => {
             store.select.and.returnValue(of(account));

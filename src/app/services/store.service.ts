@@ -118,7 +118,7 @@ export class StoreService {
             this.store.select(selectChats),
         );
 
-        return chats?.some((x) => x.id === chatId);
+        return chats?.some((x) => x.id === chatId) ?? false;
     }
 
     async getLoggedInUser(): Promise<IProfileDto> {
