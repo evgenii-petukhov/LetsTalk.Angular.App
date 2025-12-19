@@ -1,0 +1,21 @@
+@use "bootstrap/scss/bootstrap" as *;
+@use "../../../shared-styles/variables" as *;
+
+:host {
+    display: flex;
+    padding: 10px;
+    min-height: 60px;
+    color: #000;
+
+    app-back-button {
+        padding: 0 10px;
+    }
+
+    @include media-breakpoint-down(lg) {
+        box-shadow: 0 0 5px 3px rgb(0 0 0 / 20%);
+    }
+
+    @include media-breakpoint-down(sm) {
+        min-height: 62px;
+    }
+}

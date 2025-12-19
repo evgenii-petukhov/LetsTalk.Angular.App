@@ -1,33 +1,18 @@
 @use "bootstrap/scss/bootstrap" as *;
 @use "../../../../shared-styles/mixins/avatar-styles" as *;
-@use "../../../../shared-styles/variables" as *;
 
 :host {
-    color: #000;
     background: rgb(0 0 0 / 10%);
 
-    .account-list-top-panel {
-        &__inner-container {
-            display: flex;
-            padding: 10px;
-            padding-left: 0;
-
-            app-back-button {
-                padding: 0 10px 0 15px;
-                height: $avatar-size-desktop;
-
-                @include media-breakpoint-down(sm) {
-                    height: $avatar-size-mobile;
-                }
-            }
-
-            app-user-details {
-                padding: 0;
-            }
-        }
+    app-user-details {
+        padding: 0;
     }
 
-    @include media-breakpoint-down(lg) {
-        box-shadow: 0 0 5px 3px rgb(0 0 0 / 20%);
+    app-top-panel {
+        padding: 10px 0;
+
+        @include media-breakpoint-down(sm) {
+            min-height: 76px;
+        }
     }
 }

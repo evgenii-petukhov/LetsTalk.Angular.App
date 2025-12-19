@@ -19,6 +19,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { SendMessageButtonStubComponent } from '../send-button/send-button.component.stub';
 import { SelectImageButtonStubComponent } from '../select-image-button/select-image-button.component.stub';
 import { errorMessages } from 'src/app/constants/errors';
+import { AutoResizeTextAreaStubComponent } from '../auto-resize-text-area/auto-resize-text-area.component.stub';
 
 describe(ComposeAreaComponent.name, () => {
     let component: ComposeAreaComponent;
@@ -74,6 +75,7 @@ describe(ComposeAreaComponent.name, () => {
                 ComposeAreaComponent,
                 SendMessageButtonStubComponent,
                 SelectImageButtonStubComponent,
+                AutoResizeTextAreaStubComponent,
             ],
             imports: [FormsModule, StoreModule.forRoot({})],
             providers: [

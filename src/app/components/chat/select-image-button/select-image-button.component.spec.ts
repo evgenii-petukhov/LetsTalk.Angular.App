@@ -23,7 +23,7 @@ describe('SelectImageButtonComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should display the faCamera icon', () => {
+    it('should display the faImage icon', () => {
         // Arrange
         const iconElement = fixture.debugElement.query(By.css('fa-icon'));
 
@@ -32,7 +32,7 @@ describe('SelectImageButtonComponent', () => {
 
         // Assert
         expect(iconElement).toBeTruthy();
-        expect(iconElement.componentInstance.icon()).toEqual(component.faCamera);
+        expect(iconElement.componentInstance.icon()).toEqual(component.faImage);
     });
 
     it('should emit imageBlobReady when a file is selected', () => {

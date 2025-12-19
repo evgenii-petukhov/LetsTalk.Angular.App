@@ -9,6 +9,8 @@
         "build:dev:clean": "npm cache clean --force && ng cache clean && rimraf dist && ng build --configuration development",
         "build:dev:hosting": "ng build --configuration development-hosting",
         "test": "ng test",
+        "test-coverage": "ng test --code-coverage",
+        "test-silent": "ng test --watch=false --browsers=ChromeHeadless",
         "lint": "ng lint --fix && npx stylelint \"**/*.scss\" --fix"
     },
     "private": true,
@@ -54,6 +56,7 @@
         "@types/node": "^24.7.2",
         "@typescript-eslint/eslint-plugin": "8.46.0",
         "@typescript-eslint/parser": "8.46.0",
+        "baseline-browser-mapping": "^2.9.7",
         "eslint": "^9.37.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-import": "latest",

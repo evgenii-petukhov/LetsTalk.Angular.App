@@ -1,0 +1,9 @@
+@use "bootstrap/scss/bootstrap" as *;
+
+@mixin line-clamp($rows) {
+    overflow: hidden;
+    display: -webkit-box;
+    line-clamp: $rows;
+    -webkit-line-clamp: $rows;
+    -webkit-box-orient: vertical;
+}

@@ -22,7 +22,7 @@ import { IdGeneratorService } from 'src/app/services/id-generator.service';
     standalone: false,
 })
 export class MessengerComponent implements OnInit, OnDestroy {
-    isSidebarShown = true;
+    isSidebarShown = false;
     selectedChatId: string;
 
     private chats: readonly IChatDto[] = [];

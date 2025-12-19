@@ -20,6 +20,13 @@ body {
         background-color: #fff;
         background-image: none;
     }
+
+    @include media-breakpoint-down(sm) {
+        .toast-top-right {
+            top: auto;
+            bottom: 60px;
+        }
+    }
 }
 
 app-root {

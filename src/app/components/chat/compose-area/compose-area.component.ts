@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { required, validate } from 'src/app/decorators/required.decorator';
 import { IChatDto, IMessageDto } from 'src/app/api-client/api-client';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
@@ -12,6 +12,7 @@ import { ErrorService } from 'src/app/services/error.service';
 import { environment } from 'src/environments/environment';
 import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { ImageUploadService } from 'src/app/services/image-upload.service';
+import { AutoResizeTextAreaComponent } from '../auto-resize-text-area/auto-resize-text-area.component';
 
 @Component({
     selector: 'app-compose-area',
@@ -22,7 +23,10 @@ import { ImageUploadService } from 'src/app/services/image-upload.service';
 export class ComposeAreaComponent implements OnInit, OnDestroy {
     message = '';
     isSending = false;
-    
+
+    @ViewChild(AutoResizeTextAreaComponent)
+    textareaRef: AutoResizeTextAreaComponent;
+
     private chat: IChatDto;
 
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
@@ -51,6 +55,7 @@ export class ComposeAreaComponent implements OnInit, OnDestroy {
     async onSendMessage(@required message: string): Promise<void> {
         this.message = '';
         this.isSending = true;
+        this.textareaRef?.focus();
         try {
             await this.processSendMessage(this.chat, message);
         } catch (e) {

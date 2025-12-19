@@ -1,39 +1,29 @@
+@use "bootstrap/scss/bootstrap" as *;
 @use "../../../shared-styles/mixins/scrollbars" as *;
 
-.send-message-container {
+.compose-area {
     display: flex;
-    padding: 10px 6px 6px 10px;
-    min-height: 66px;
-    max-height: 66px;
+    padding: 10px 6px 10px 10px;
+    max-height: 171px;
 
-    .textarea-container {
-        flex: 1 1 auto;
-        display: flex;
-
-        textarea {
-            flex: 1 1 auto;
-            resize: none;
-            border-radius: 8px;
-            border: 2px solid rgb(0 0 0 / 40%);
-            outline: none;
-            font-size: 14px;
-            line-height: 20px;
-            padding: 3px 8px;
-
-            @include scrollbars;
-        }
+    @include media-breakpoint-down(sm) {
+        padding: 10px 6px 15px 10px;
     }
 
-    .button-container {
-        flex: 0 1 auto;
+    &__input-group {
+        flex: 1 1 auto;
         display: flex;
+        border: 2px solid rgb(0 0 0 / 40%);
+        border-radius: 12px;
+        overflow: hidden;
 
         app-select-image-button {
-            margin-left: 4px;
-        }
+            transition: transform 0.3s ease, opacity 0.3s ease;
 
-        app-send-button {
-            margin-right: 2px;
+            &.hidden {
+                transform: translateX(45px);
+                opacity: 0;
+            }
         }
     }
 }

@@ -1,0 +1,40 @@
+@use "bootstrap/scss/bootstrap" as *;
+@use "../../../shared-styles/mixins/scrollbars" as *;
+:host {
+    display: flex;
+    flex: 1 1 auto;
+
+    .auto-resize-text-area {
+        flex: 1 1 auto;
+        display: flex;
+        padding: 4px 0;
+
+        &__scrollable {
+            flex: 1 1 auto;
+            display: flex;
+            overflow: auto;
+            padding: 0 10px;
+            align-items: center;
+
+            @include scrollbars;
+        }
+
+        textarea {
+            flex: 1 1 auto;
+            resize: none;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            line-height: 18px;
+            padding: 4px 0;
+            overflow: hidden;
+            min-height: 18px;
+
+            @include media-breakpoint-down(sm) {
+                font-size: 17px;
+                line-height: 22px;
+                min-height: 24px;
+            }
+        }
+    }
+}

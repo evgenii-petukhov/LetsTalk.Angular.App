@@ -2,33 +2,29 @@
 @use "../../../shared-styles/mixins/avatar-styles" as *;
 
 :host {
-    display: flex;
-    text-decoration: none;
-    color: #000;
-    padding: 10px;
-    background: rgb(0 0 0 / 10%);
     z-index: 1;
+    
+    app-top-panel {
+        background: rgb(0 0 0 / 10%);
 
-    @include media-breakpoint-down(lg) {
-        box-shadow: 0 0 5px 3px rgb(0 0 0 / 20%);
-        padding: 10px 10px 10px 0;
-    }
+        app-avatar {
+            @include avatar-styles(42px);
+        }
 
-    app-back-button {
-        padding: 0 10px;
-        display: none;
+        app-user-details {
+            padding: 0 0 0 10px;
+        }
+
+        ::ng-deep app-back-button {
+            display: none;
+        }
 
         @include media-breakpoint-down(lg) {
-            display: flex;
-            padding: 0 10px 0 15px;
+            padding: 10px 0;
+
+            ::ng-deep app-back-button {
+                display: flex;
+            }
         }
-    }
-
-    app-avatar {
-        @include avatar-styles(42px);
-    }
-
-    app-user-details {
-        padding: 0 0 0 10px;
     }
 }

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { faCamera } from '@fortawesome/free-solid-svg-icons';
+import { faImage } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-select-image-button',
@@ -8,7 +8,7 @@ import { faCamera } from '@fortawesome/free-solid-svg-icons';
     standalone: false,
 })
 export class SelectImageButtonComponent {
-    faCamera = faCamera;
+    faImage = faImage;
     @Output() imageBlobReady = new EventEmitter<Blob>();
 
     onImageSelected(event: Event): void {

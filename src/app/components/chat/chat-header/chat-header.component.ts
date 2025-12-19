@@ -1,9 +1,9 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { IChatDto } from 'src/app/api-client/api-client';
 import { Subject, takeUntil } from 'rxjs';
-import { Location } from '@angular/common';
+import { BackButtonStatus } from 'src/app/models/back-button-status';
 
 @Component({
     selector: 'app-chat-header',
@@ -13,10 +13,10 @@ import { Location } from '@angular/common';
 })
 export class ChatHeaderComponent implements OnInit, OnDestroy {
     chat: IChatDto;
+    @Input() backButton: BackButtonStatus;
 
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
     private readonly store = inject(Store);
-    private readonly location = inject(Location);
 
     ngOnInit(): void {
         this.store
@@ -25,10 +25,6 @@ export class ChatHeaderComponent implements OnInit, OnDestroy {
             .subscribe((chat) => {
                 this.chat = chat;
             });
-    }
-
-    async onBackClicked(): Promise<void> {
-        this.location.back();
     }
 
     ngOnDestroy(): void {
