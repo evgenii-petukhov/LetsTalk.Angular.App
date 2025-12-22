@@ -18,7 +18,7 @@ import { StoreService } from 'src/app/services/store.service';
 import { Message } from 'src/app/models/message';
 import { Subject, takeUntil } from 'rxjs';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
-import { ApiException } from 'src/app/api-client/api-client';
+import { ProblemDetails } from 'src/app/api-client/api-client';
 import { MessageListStatus } from 'src/app/models/message-list-status';
 
 @Component({
@@ -172,7 +172,7 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.pageIndex++;
             }
         } catch (e) {
-            if (e instanceof ApiException && e.status === 404) {
+            if (e instanceof ProblemDetails && e.status === 404) {
                 this.statusChanged.emit(MessageListStatus.NotFound);
             } else {
                 this.statusChanged.emit(MessageListStatus.Error);
