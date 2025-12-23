@@ -4,6 +4,8 @@ import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.se
 import { IChatDto } from 'src/app/api-client/api-client';
 import { Subject, takeUntil } from 'rxjs';
 import { BackButtonStatus } from 'src/app/models/back-button-status';
+import { faPhone } from '@fortawesome/free-solid-svg-icons';
+import { RtcConnectionService } from 'src/app/services/rtc-connection.service';
 
 @Component({
     selector: 'app-chat-header',
@@ -13,10 +15,12 @@ import { BackButtonStatus } from 'src/app/models/back-button-status';
 })
 export class ChatHeaderComponent implements OnInit, OnDestroy {
     chat: IChatDto;
+    faPhone = faPhone;
     @Input() backButton: BackButtonStatus;
 
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
     private readonly store = inject(Store);
+    private readonly rtcConnectionService = inject(RtcConnectionService);
 
     ngOnInit(): void {
         this.store
@@ -30,5 +34,9 @@ export class ChatHeaderComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.unsubscribe$.next();
         this.unsubscribe$.complete();
+    }
+
+    async onCallClicked(): Promise<void> {
+        return this.rtcConnectionService.initializeCallAsync(this.chat.accountIds[0]);
     }
 }

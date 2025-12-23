@@ -9,6 +9,7 @@ import {
 import { StoreService } from './store.service';
 import { ApiService } from './api.service';
 import { BrowserNotificationService } from './browser-notification.service';
+import { RtcSessionSettings } from '../models/RtcSessionSettings';
 
 @Injectable({
     providedIn: 'root',
@@ -27,12 +28,20 @@ export class SignalrHandlerService {
         handleImagePreviewNotification: (
             imagePreviewDto: IImagePreviewDto,
         ) => void,
+        handleRtcSessionOfferNotification: (
+            sessionSettings: RtcSessionSettings,
+        ) => void,
+        handleRtcSessionAnswerNotification: (
+            sessionSettings: RtcSessionSettings,
+        ) => void,
     ): Promise<void> {
         await this.browserNotificationService.init();
         await this.signalrService.init(
             handleMessageNotification,
             handleLinkPreviewNotification,
             handleImagePreviewNotification,
+            handleRtcSessionOfferNotification,
+            handleRtcSessionAnswerNotification,
         );
     }
 

@@ -14,6 +14,8 @@ import { selectChats } from 'src/app/state/chats/chats.selector';
 import { SignalrHandlerService } from 'src/app/services/signalr-handler.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
+import { RtcSessionSettings } from 'src/app/models/RtcSessionSettings';
+import { RtcConnectionService } from 'src/app/services/rtc-connection.service';
 
 @Component({
     selector: 'app-messenger',
@@ -36,6 +38,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
     private readonly activatedRoute = inject(ActivatedRoute);
     private readonly router = inject(Router);
     private readonly idGeneratorService = inject(IdGeneratorService);
+    private readonly rtcConnectionService = inject(RtcConnectionService);
 
     selectedChatId$ = this.store.select(selectSelectedChatId);
 
@@ -77,6 +80,8 @@ export class MessengerComponent implements OnInit, OnDestroy {
             this.handleMessageNotification.bind(this),
             this.handleLinkPreviewNotification.bind(this),
             this.handleImagePreviewNotification.bind(this),
+            this.handleRtcSessionOfferNotification.bind(this),
+            this.handleRtcSessionAnswerNotification.bind(this),
         );
     }
 
@@ -107,5 +112,13 @@ export class MessengerComponent implements OnInit, OnDestroy {
             dto,
             this.selectedChat?.id,
         );
+    }
+
+    handleRtcSessionOfferNotification(sessionSettings: RtcSessionSettings): void {
+        this.rtcConnectionService.acceptCallAsync(sessionSettings.accountId, sessionSettings.offer);
+    }
+
+    handleRtcSessionAnswerNotification(sessionSettings: RtcSessionSettings): void {
+        this.rtcConnectionService.openChannelAsync(sessionSettings.answer);
     }
 }

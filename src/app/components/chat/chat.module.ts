@@ -16,6 +16,7 @@ import { AutoResizeTextAreaComponent } from './auto-resize-text-area/auto-resize
 import { MessageListComponent } from './message-list/message-list.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { ErrorComponent } from './error/error.component';
+import { CallComponent } from './call/call.component';
 
 @NgModule({
     declarations: [
@@ -26,6 +27,7 @@ import { ErrorComponent } from './error/error.component';
         MessageComponent,
         ImageComponent,
         ChatComponent,
+        CallComponent,
         AutoResizeTextAreaComponent,
         MessageListComponent,
         NotFoundComponent,
