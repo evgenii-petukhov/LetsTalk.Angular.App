@@ -13,12 +13,25 @@ export class RtcConnectionService {
     private readonly iceStatisticsService = inject(IceStatisticsService);
     private connection = new RTCPeerConnection({
         iceServers: [
-            { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
             {
-                urls: 'turn:relay1.expressturn.com:3480',
-                username: '000000002081634833',
-                credential: 'sHASFidRDCXTgfg6hGCGPQJ4xns=',
+                urls: [
+                    'stun:stun.cloudflare.com:3478',
+                    'stun:stun.cloudflare.com:53',
+                ],
+            },
+            {
+                urls: [
+                    'turn:turn.cloudflare.com:3478?transport=udp',
+                    'turn:turn.cloudflare.com:3478?transport=tcp',
+                    'turns:turn.cloudflare.com:5349?transport=tcp',
+                    'turn:turn.cloudflare.com:53?transport=udp',
+                    'turn:turn.cloudflare.com:80?transport=tcp',
+                    'turns:turn.cloudflare.com:443?transport=tcp',
+                ],
+                username:
+                    'g06a9c09872f4d3f965175ffb1c23d5529f723250c6dfe219209fc204ba7eadb',
+                credential:
+                    'e8cd6ecd1c806f762521ac9086c3974b3c94101a0fa1b1839926616c9ce1fb46',
             },
         ],
         iceCandidatePoolSize: 10,
