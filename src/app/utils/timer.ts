@@ -1,10 +1,11 @@
 export class Timer {
     private timerId: number = null;
     private isTimerExpired = false;
-    private readonly callback: () => void;
-    private readonly delay: number;
 
-    constructor(callback: () => void, delay: number) {
+    constructor(
+        private readonly callback: () => void,
+        private readonly delay: number,
+    ) {
         if (typeof callback !== 'function') {
             throw new Error('Callback must be a function');
         }

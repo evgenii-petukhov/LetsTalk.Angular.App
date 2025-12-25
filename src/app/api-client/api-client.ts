@@ -199,8 +199,8 @@ export class ApiClient {
      * @param body (optional) 
      * @return OK
      */
-    initialize(body: InitializeCallRequest | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/Call/Initialize";
+    startOutgoingCall(body: InitializeCallRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Call/StartOutgoingCall";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -215,11 +215,11 @@ export class ApiClient {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processInitialize(response_);
+            return this.processStartOutgoingCall(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processInitialize(response_ as any);
+                    return this.processStartOutgoingCall(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<void>;
                 }
@@ -228,7 +228,7 @@ export class ApiClient {
         }));
     }
 
-    protected processInitialize(response: HttpResponseBase): Observable<void> {
+    protected processStartOutgoingCall(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -251,8 +251,8 @@ export class ApiClient {
      * @param body (optional) 
      * @return OK
      */
-    accept(body: AcceptCallRequest | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/Call/Accept";
+    handleIncomingCall(body: AcceptCallRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Call/HandleIncomingCall";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -267,11 +267,11 @@ export class ApiClient {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAccept(response_);
+            return this.processHandleIncomingCall(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAccept(response_ as any);
+                    return this.processHandleIncomingCall(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<void>;
                 }
@@ -280,7 +280,7 @@ export class ApiClient {
         }));
     }
 
-    protected processAccept(response: HttpResponseBase): Observable<void> {
+    protected processHandleIncomingCall(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :

@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { Subject, takeUntil } from 'rxjs';
 import { MessageListStatus } from 'src/app/models/message-list-status';
-import { RtcConnectionService } from 'src/app/services/rtc-connection.service';
+import { RtcPeerConnectionManager } from 'src/app/services/rtc-peer-connection-manager';
 
 @Component({
     selector: 'app-chat',
@@ -32,7 +32,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
     private mediaStream: MediaStream | null = null;
     private readonly store = inject(Store);
-    private readonly rtcConnectionService = inject(RtcConnectionService);
+    private readonly connectionManager = inject(RtcPeerConnectionManager);
 
     async ngOnInit(): Promise<void> {
         this.store
@@ -53,24 +53,20 @@ export class ChatComponent implements OnInit, OnDestroy {
                 audio: true,
             });
             this.localVideo.nativeElement.srcObject = this.mediaStream;
-            const connection = this.rtcConnectionService.getConnection();
-            this.mediaStream.getTracks().forEach(track => connection.addTrack(track, this.mediaStream));
-
-            connection.ontrack = (e) => {
-                if (this.remoteVideo.nativeElement.srcObject) return;
-                this.remoteVideo.nativeElement.srcObject = e.streams[0];
-            };
-
+            this.connectionManager.startTrackingStream(
+                this.mediaStream,
+                (e) => {
+                    if (this.remoteVideo.nativeElement.srcObject) return;
+                    this.remoteVideo.nativeElement.srcObject = e.streams[0];
+                },
+            );
         } catch (error) {
             console.error('Error accessing media devices:', error);
         }
     }
 
     ngOnDestroy(): void {
-        // Clean up media stream
-        if (this.mediaStream) {
-            this.mediaStream.getTracks().forEach((track) => track.stop());
-        }
+        this.connectionManager.stopTrackingStream(this.mediaStream);
 
         this.unsubscribe$.next();
         this.unsubscribe$.complete();

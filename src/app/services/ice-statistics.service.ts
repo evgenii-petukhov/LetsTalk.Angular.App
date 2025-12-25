@@ -34,7 +34,7 @@ export class IceStatisticsService {
         );
     }
 
-    preCheck(candidates: RTCIceCandidate[]) {
+    hasMinimumCandidateCount(candidates: RTCIceCandidate[]) {
         return candidates.length >= this.getRequiredTotal();
     }
 

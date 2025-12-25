@@ -37,6 +37,6 @@ export class ChatHeaderComponent implements OnInit, OnDestroy {
     }
 
     async onCallClicked(): Promise<void> {
-        return this.rtcConnectionService.initializeCallAsync(this.chat.accountIds[0]);
+        return this.rtcConnectionService.startOutgoingCall(this.chat.accountIds[0]);
     }
 }

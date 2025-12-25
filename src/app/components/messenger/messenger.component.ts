@@ -115,10 +115,10 @@ export class MessengerComponent implements OnInit, OnDestroy {
     }
 
     handleRtcSessionOfferNotification(sessionSettings: RtcSessionSettings): void {
-        this.rtcConnectionService.acceptCallAsync(sessionSettings.accountId, sessionSettings.offer);
+        this.rtcConnectionService.handleIncomingCall(sessionSettings.accountId, sessionSettings.offer);
     }
 
     handleRtcSessionAnswerNotification(sessionSettings: RtcSessionSettings): void {
-        this.rtcConnectionService.openChannelAsync(sessionSettings.answer);
+        this.rtcConnectionService.establishConnection(sessionSettings.answer);
     }
 }
