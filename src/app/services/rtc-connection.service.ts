@@ -10,32 +10,6 @@ import { RtcPeerConnectionManager } from './rtc-peer-connection-manager';
 export class RtcConnectionService {
     private readonly apiService = inject(ApiService);
     private readonly connectionManager = inject(RtcPeerConnectionManager);
-    private config: RTCConfiguration = {
-        iceServers: [
-            {
-                urls: [
-                    'stun:stun.cloudflare.com:3478',
-                    'stun:stun.cloudflare.com:53',
-                ],
-            },
-            {
-                urls: [
-                    'turn:turn.cloudflare.com:3478?transport=udp',
-                    'turn:turn.cloudflare.com:3478?transport=tcp',
-                    'turns:turn.cloudflare.com:5349?transport=tcp',
-                    'turn:turn.cloudflare.com:53?transport=udp',
-                    'turn:turn.cloudflare.com:80?transport=tcp',
-                    'turns:turn.cloudflare.com:443?transport=tcp',
-                ],
-                username:
-                    'g06a9c09872f4d3f965175ffb1c23d5529f723250c6dfe219209fc204ba7eadb',
-                credential:
-                    'e8cd6ecd1c806f762521ac9086c3974b3c94101a0fa1b1839926616c9ce1fb46',
-            },
-        ],
-        iceCandidatePoolSize: 10,
-        iceTransportPolicy: 'all',
-    };
     private iceCandidateSubject = new Subject<string>();
     private iceGatheringComplete = new Subject<void>();
     private iceGatheringTimer: Timer;
@@ -49,7 +23,8 @@ export class RtcConnectionService {
     }
 
     async startOutgoingCall(accountId: string): Promise<void> {
-        this.connectionManager.initiateOffer(this.config);
+        const callSettings = await this.apiService.getCallSettings();
+        this.connectionManager.initiateOffer(JSON.parse(callSettings.iceServerConfiguration));
 
         this.iceGatheringTimer = new Timer(() => {
             this.connectionManager.requestCompleteGathering();
@@ -64,8 +39,10 @@ export class RtcConnectionService {
 
     async handleIncomingCall(accountId: string, offer: string): Promise<void> {
         const remote = JSON.parse(offer);
+        const callSettings = await this.apiService.getCallSettings();
+
         await this.connectionManager.handleOfferAndCreateAnswer(
-            this.config,
+            JSON.parse(callSettings.iceServerConfiguration),
             remote.desc,
             remote.candidates,
         );
