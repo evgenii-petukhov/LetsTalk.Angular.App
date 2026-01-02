@@ -1,4 +1,4 @@
-import { CandidateStat } from '../models/CandidateStat';
+import { CandidateStat } from '../models/candidate-stat';
 import { inject, Injectable } from '@angular/core';
 import { IceStatisticsService } from './ice-statistics.service';
 

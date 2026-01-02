@@ -7,7 +7,7 @@ import {
     ILinkPreviewDto,
     IMessageDto,
 } from '../api-client/api-client';
-import { RtcSessionSettings } from '../models/RtcSessionSettings';
+import { RtcSessionSettings } from '../models/rtc-sessions-settings';
 
 describe('SignalrService', () => {
     let service: SignalrService;

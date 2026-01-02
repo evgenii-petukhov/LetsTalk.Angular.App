@@ -1,9 +1,9 @@
 import { IMessageDto } from '../api-client/api-client';
-import { LinkPreview } from './linkPreview';
+import { LinkPreview } from './link-preview';
 import { isOfType } from '../helpers/type-utils.helper';
 import { getLocalDate } from '../helpers/date-utils.helper';
 import { Image } from './image';
-import { ImagePreview } from './imagePreview';
+import { ImagePreview } from './image-preview';
 
 export class Message {
     id?: string;

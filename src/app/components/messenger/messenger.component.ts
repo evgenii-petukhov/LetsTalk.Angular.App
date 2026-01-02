@@ -14,7 +14,7 @@ import { selectChats } from 'src/app/state/chats/chats.selector';
 import { SignalrHandlerService } from 'src/app/services/signalr-handler.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
-import { RtcSessionSettings } from 'src/app/models/RtcSessionSettings';
+import { RtcSessionSettings } from 'src/app/models/rtc-sessions-settings';
 import { RtcConnectionService } from 'src/app/services/rtc-connection.service';
 
 @Component({

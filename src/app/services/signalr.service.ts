@@ -12,7 +12,7 @@ import {
 } from '../api-client/api-client';
 import { ConstantRetryPolicy } from './constant-retry-policy';
 import { TokenStorageService } from './token-storage.service';
-import { RtcSessionSettings } from '../models/RtcSessionSettings';
+import { RtcSessionSettings } from '../models/rtc-sessions-settings';
 
 type TypeDtoMap = {
     MessageDto: IMessageDto;

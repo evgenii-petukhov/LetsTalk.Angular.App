@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MessageComponent } from './message.component';
 import { Message } from 'src/app/models/message';
-import { ImagePreview } from 'src/app/models/imagePreview';
+import { ImagePreview } from 'src/app/models/image-preview';
 import { By } from '@angular/platform-browser';
 import { ImageStubComponent } from '../image/image.component.stub';
 import { IImageDto, ImageDto } from 'src/app/api-client/api-client';

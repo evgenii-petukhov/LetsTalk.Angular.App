@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { IceStatisticsService } from './ice-statistics.service';
-import { CandidateStat } from '../models/CandidateStat';
+import { CandidateStat } from '../models/candidate-stat';
 import { IceStatisticsTestHelper } from './ice-statistics.service.test-helper';
 
 describe('IceStatisticsService', () => {

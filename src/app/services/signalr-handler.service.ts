@@ -9,7 +9,7 @@ import {
 import { StoreService } from './store.service';
 import { ApiService } from './api.service';
 import { BrowserNotificationService } from './browser-notification.service';
-import { RtcSessionSettings } from '../models/RtcSessionSettings';
+import { RtcSessionSettings } from '../models/rtc-sessions-settings';
 
 @Injectable({
     providedIn: 'root',
