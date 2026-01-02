@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
-import { CandidateStat } from '../models/candidate-stat';
+import { IceCandidateMetrics } from '../models/ice-candidate-metrics';
 
 @Injectable({
     providedIn: 'root',
 })
-export class IceStatisticsService {
-    private readonly required: CandidateStat = {
+export class IceCandidateMetricsService {
+    private readonly required: IceCandidateMetrics = {
         host: 1,
         srflx: 1,
         prflx: 0,
         relay: 1,
     };
 
-    getCandidateStatistics(candidates: RTCIceCandidate[]): CandidateStat {
-        const result: CandidateStat = {
+    getIceCandidateMetrics(candidates: RTCIceCandidate[]): IceCandidateMetrics {
+        const result: IceCandidateMetrics = {
             host: 0,
             srflx: 0,
             prflx: 0,
@@ -26,7 +26,7 @@ export class IceStatisticsService {
         return result;
     }
 
-    hasSufficientServers(stat: CandidateStat): boolean {
+    hasSufficientServers(stat: IceCandidateMetrics): boolean {
         return (
             stat.host >= this.required.host &&
             stat.srflx >= this.required.srflx &&

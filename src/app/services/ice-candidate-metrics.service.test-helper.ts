@@ -1,8 +1,8 @@
 /**
- * Test helper utilities for IceStatisticsService tests
+ * Test helper utilities for IceCandidateMetrics tests
  */
 
-export class IceStatisticsTestHelper {
+export class IceCandidateMetricsTestHelper {
     /**
      * Creates a mock RTCIceCandidate with the specified type
      */

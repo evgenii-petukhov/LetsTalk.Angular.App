@@ -1,6 +1,6 @@
-import { CandidateStat } from '../models/candidate-stat';
+import { IceCandidateMetrics } from '../models/ice-candidate-metrics';
 import { inject, Injectable } from '@angular/core';
-import { IceStatisticsService } from './ice-statistics.service';
+import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
 
 @Injectable({
     providedIn: 'root',
@@ -10,7 +10,7 @@ export class RtcPeerConnectionManager {
     onGatheringCompleted: () => {};
     private connection = new RTCPeerConnection();
     private localCandidates: RTCIceCandidate[] = [];
-    private readonly iceStatisticsService = inject(IceStatisticsService);
+    private readonly iceCandidateMetricsService = inject(IceCandidateMetricsService);
     private isGathering = true;
 
     constructor() {
@@ -46,15 +46,15 @@ export class RtcPeerConnectionManager {
 
     requestCompleteGathering(): void {
         if (
-            !this.iceStatisticsService.hasMinimumCandidateCount(
+            !this.iceCandidateMetricsService.hasMinimumCandidateCount(
                 this.localCandidates,
             )
         )
             return;
 
-        const stat = this.getCandidateStatistics();
-        if (this.iceStatisticsService.hasSufficientServers(stat)) {
-            this.finalizeIceGathering(stat);
+        const stats = this.getCandidateMetrics();
+        if (this.iceCandidateMetricsService.hasSufficientServers(stats)) {
+            this.finalizeIceGathering(stats);
         }
     }
 
@@ -94,8 +94,8 @@ export class RtcPeerConnectionManager {
         if (!this.isGathering) return;
 
         if (!e.candidate) {
-            const stat = this.getCandidateStatistics();
-            this.finalizeIceGathering(stat);
+            const stats = this.getCandidateMetrics();
+            this.finalizeIceGathering(stats);
             return;
         }
 
@@ -109,14 +109,13 @@ export class RtcPeerConnectionManager {
         this.onCandidatesReceived?.(JSON.stringify(data));
     }
 
-    private finalizeIceGathering(stat: CandidateStat): void {
-        console.log('ICE statistics:', JSON.stringify(stat));
+    private finalizeIceGathering(stat: IceCandidateMetrics): void {
         this.isGathering = false;
         this.onGatheringCompleted?.();
     }
 
-    private getCandidateStatistics() {
-        return this.iceStatisticsService.getCandidateStatistics(
+    private getCandidateMetrics() {
+        return this.iceCandidateMetricsService.getIceCandidateMetrics(
             this.localCandidates,
         );
     }

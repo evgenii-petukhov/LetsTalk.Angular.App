@@ -1,3 +1,3 @@
-export type CandidateStat = {
+export type IceCandidateMetrics = {
     [K in RTCIceCandidateType]: number;
 };
