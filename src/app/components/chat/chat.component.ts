@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
-import { Subject, takeUntil } from 'rxjs';
+import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { MessageListStatus } from 'src/app/models/message-list-status';
 import { selectVideoCall } from 'src/app/state/video-call/video-call.selectors';
 
@@ -41,18 +41,15 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit(): Promise<void> {
-        this.store
-            .select(selectSelectedChatId)
+        combineLatest([
+            this.store.select(selectSelectedChatId),
+            this.store.select(selectVideoCall),
+        ])
             .pipe(takeUntil(this.unsubscribe$))
-            .subscribe(async () => {
+            .subscribe(async ([chatId, state]) => {
                 this.messageListStatus = MessageListStatus.Unknown;
-            });
-
-        this.store
-            .select(selectVideoCall)
-            .pipe(takeUntil(this.unsubscribe$))
-            .subscribe(async (state) => {
-                this.isCallInProgress = state !== null;
+                this.isCallInProgress =
+                    state !== null && state.chatId === chatId;
             });
     }
 
