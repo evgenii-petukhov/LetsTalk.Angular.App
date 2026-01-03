@@ -1,12 +1,22 @@
+@use "bootstrap/scss/bootstrap" as *;
+
 :host {
     display: flex;
-    flex-direction: column;
     height: 100vh;
     overflow: hidden;
 
+    @include media-breakpoint-down(sm) {
+        flex-direction: column;
+    }
+
     video {
         flex: 1;
-        height: 50%;
+        width: 50%;
         object-fit: cover;
+
+        @include media-breakpoint-down(sm) {
+            height: 50%;
+            width: auto;
+        }
     }
 }
