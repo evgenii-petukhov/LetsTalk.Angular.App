@@ -10,7 +10,6 @@ import { LoginByEmailComponent } from './components/sign-in/login-by-email/login
 import { anonymousOnlyGuard } from './guards/anonymous-only-guard';
 import { ChatComponent } from './components/chat/chat.component';
 import { ImageViewerComponent } from './components/image-viewer/image-viewer.component';
-import { CallComponent } from './components/chat/call/call.component';
 
 const routes: Routes = [
     {
@@ -45,11 +44,6 @@ const routes: Routes = [
                     {
                         path: 'image/:imageKey',
                         component: ImageViewerComponent,
-                        canActivate: [authenticatedOnlyGuard, completeProfileGuard],
-                    },
-                    {
-                        path: 'call',
-                        component: CallComponent,
                         canActivate: [authenticatedOnlyGuard, completeProfileGuard],
                     },
                 ],

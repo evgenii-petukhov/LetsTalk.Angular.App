@@ -7,12 +7,12 @@ import { RtcPeerConnectionManager } from 'src/app/services/rtc-peer-connection-m
 import { selectVideoCall } from 'src/app/state/video-call/video-call.selectors';
 
 @Component({
-    selector: 'app-call',
-    templateUrl: './call.component.html',
-    styleUrl: './call.component.scss',
+    selector: 'app-video-call',
+    templateUrl: './video-call.component.html',
+    styleUrl: './video-call.component.scss',
     standalone: false,
 })
-export class CallComponent implements OnInit, OnDestroy {
+export class VideoCallComponent implements OnInit, OnDestroy {
     @ViewChild('localVideo', { static: false })
     localVideo!: ElementRef<HTMLVideoElement>;
     @ViewChild('remoteVideo', { static: false })
