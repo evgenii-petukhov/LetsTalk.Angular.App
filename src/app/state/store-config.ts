@@ -4,6 +4,7 @@ import { imageCacheReducer } from './image-cache/image-cache.reducer';
 import { loggedInUserReducer } from './logged-in-user/logged-in-user.reducer';
 import { messagesReducer } from './messages/messages.reducer';
 import { selectedChatIdReducer } from './selected-chat/selected-chat-id.reducer';
+import { videoCallReducer } from './video-call/video-call.reducer';
 
 export const storeConfig = {
     messages: messagesReducer,
@@ -12,4 +13,5 @@ export const storeConfig = {
     accounts: accountsReducer,
     loggedInUser: loggedInUserReducer,
     imageCache: imageCacheReducer,
+    videoCall: videoCallReducer,
 };

@@ -5,7 +5,7 @@ import { IChatDto } from 'src/app/api-client/api-client';
 import { Subject, takeUntil } from 'rxjs';
 import { BackButtonStatus } from 'src/app/models/back-button-status';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
-import { RtcConnectionService } from 'src/app/services/rtc-connection.service';
+import { StoreService } from 'src/app/services/store.service';
 
 @Component({
     selector: 'app-chat-header',
@@ -20,7 +20,7 @@ export class ChatHeaderComponent implements OnInit, OnDestroy {
 
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
     private readonly store = inject(Store);
-    private readonly rtcConnectionService = inject(RtcConnectionService);
+    private readonly storeService = inject(StoreService);
 
     ngOnInit(): void {
         this.store
@@ -37,6 +37,10 @@ export class ChatHeaderComponent implements OnInit, OnDestroy {
     }
 
     async onCallClicked(): Promise<void> {
-        return this.rtcConnectionService.startOutgoingCall(this.chat.accountIds[0]);
+        this.storeService.initVideoCall({
+            chatId: this.chat.id,
+            accountId: this.chat.accountIds[0],
+            isIncoming: false
+        });
     }
 }

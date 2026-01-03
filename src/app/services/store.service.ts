@@ -22,6 +22,8 @@ import { ImageCacheEntry } from '../models/image-cache-entry';
 import { selectAccounts } from '../state/accounts/accounts.selector';
 import { accountsActions } from '../state/accounts/accounts.actions';
 import { firstValueFrom } from 'rxjs';
+import { videoCallActions } from '../state/video-call/video-call.actions';
+import { VideoCallState } from '../models/video-call-state';
 
 @Injectable({
     providedIn: 'root',
@@ -114,9 +116,7 @@ export class StoreService {
     }
 
     async isChatIdValid(chatId: string): Promise<boolean> {
-        const chats = await firstValueFrom(
-            this.store.select(selectChats),
-        );
+        const chats = await firstValueFrom(this.store.select(selectChats));
 
         return chats?.some((x) => x.id === chatId) ?? false;
     }
@@ -142,9 +142,15 @@ export class StoreService {
         this.store.dispatch(selectedChatIdActions.init({ chatId }));
     }
 
+    initVideoCall(settings: VideoCallState): void {
+        this.store.dispatch(videoCallActions.init({ settings }));
+    }
+
     // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
     async getImageContent(imageKey: IImageDto): Promise<ImageCacheEntry> {
-        const images = await firstValueFrom(this.store.select(selectImageCache));
+        const images = await firstValueFrom(
+            this.store.select(selectImageCache),
+        );
         let image = images?.find((x) => x.imageId === imageKey.id);
         if (image) {
             return image;

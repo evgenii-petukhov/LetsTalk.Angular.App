@@ -1,16 +1,9 @@
-import {
-    Component,
-    ElementRef,
-    inject,
-    OnDestroy,
-    OnInit,
-    ViewChild,
-} from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { Subject, takeUntil } from 'rxjs';
 import { MessageListStatus } from 'src/app/models/message-list-status';
-import { RtcPeerConnectionManager } from 'src/app/services/rtc-peer-connection-manager';
+import { selectVideoCall } from 'src/app/state/video-call/video-call.selectors';
 
 @Component({
     selector: 'app-chat',
@@ -19,70 +12,77 @@ import { RtcPeerConnectionManager } from 'src/app/services/rtc-peer-connection-m
     standalone: false,
 })
 export class ChatComponent implements OnInit, OnDestroy {
-    @ViewChild('localVideo', { static: false })
-    localVideo!: ElementRef<HTMLVideoElement>;
-    @ViewChild('remoteVideo', { static: false })
-    remoteVideo!: ElementRef<HTMLVideoElement>;
-
     isMessageListVisible = false;
     isComposeAreaVisible = false;
     isNotFoundVisible = false;
     isErrorVisible = false;
 
+    private _isCallInProgress = false;
+    private _messageListStatus = MessageListStatus.Unknown;
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
-    private mediaStream: MediaStream | null = null;
     private readonly store = inject(Store);
-    private readonly connectionManager = inject(RtcPeerConnectionManager);
+
+    get isCallInProgress(): boolean {
+        return this._isCallInProgress;
+    }
+
+    set isCallInProgress(value: boolean) {
+        this._isCallInProgress = value;
+        this.updateElementsVisibilityForStatus();
+    }
+
+    get messageListStatus(): MessageListStatus {
+        return this._messageListStatus;
+    }
+
+    set messageListStatus(value: MessageListStatus) {
+        this._messageListStatus = value;
+        this.updateElementsVisibilityForStatus();
+    }
 
     async ngOnInit(): Promise<void> {
         this.store
             .select(selectSelectedChatId)
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe(async () => {
-                this.setMessageListVisibility(MessageListStatus.Unknown);
+                this.messageListStatus = MessageListStatus.Unknown;
             });
 
-        // Initialize media stream
-        await this.initializeMediaStream();
-    }
-
-    private async initializeMediaStream(): Promise<void> {
-        try {
-            this.mediaStream = await navigator.mediaDevices.getUserMedia({
-                video: true,
-                audio: true,
+        this.store
+            .select(selectVideoCall)
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe(async (state) => {
+                this.isCallInProgress = state !== null;
             });
-            this.localVideo.nativeElement.srcObject = this.mediaStream;
-            this.connectionManager.startTrackingStream(
-                this.mediaStream,
-                (e) => {
-                    if (this.remoteVideo.nativeElement.srcObject) return;
-                    this.remoteVideo.nativeElement.srcObject = e.streams[0];
-                },
-            );
-        } catch (error) {
-            console.error('Error accessing media devices:', error);
-        }
     }
 
     ngOnDestroy(): void {
-        this.connectionManager.stopTrackingStream(this.mediaStream);
-
         this.unsubscribe$.next();
         this.unsubscribe$.complete();
     }
 
     onStatusChanged(status: MessageListStatus): void {
-        this.setMessageListVisibility(status);
+        this.messageListStatus = status;
     }
 
-    private setMessageListVisibility(status: MessageListStatus): void {
-        this.isMessageListVisible = [
-            MessageListStatus.Unknown,
-            MessageListStatus.Success,
-        ].includes(status);
-        this.isComposeAreaVisible = status === MessageListStatus.Success;
-        this.isNotFoundVisible = status === MessageListStatus.NotFound;
-        this.isErrorVisible = status === MessageListStatus.Error;
+    private updateElementsVisibilityForStatus(): void {
+        if (this.isCallInProgress) {
+            this.isMessageListVisible =
+                this.isComposeAreaVisible =
+                this.isNotFoundVisible =
+                this.isErrorVisible =
+                    false;
+        } else {
+            this.isMessageListVisible = [
+                MessageListStatus.Unknown,
+                MessageListStatus.Success,
+            ].includes(this.messageListStatus);
+            this.isComposeAreaVisible =
+                this.messageListStatus === MessageListStatus.Success;
+            this.isNotFoundVisible =
+                this.messageListStatus === MessageListStatus.NotFound;
+            this.isErrorVisible =
+                this.messageListStatus === MessageListStatus.Error;
+        }
     }
 }

@@ -1,0 +1,12 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+
+    video {
+        flex: 1;
+        height: 50%;
+        object-fit: cover;
+    }
+}
