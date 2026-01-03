@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment';
 import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
 import { ImageUploadService } from 'src/app/services/image-upload.service';
 import { AutoResizeTextAreaComponent } from '../auto-resize-text-area/auto-resize-text-area.component';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-compose-area',
@@ -36,6 +37,7 @@ export class ComposeAreaComponent implements OnInit, OnDestroy {
     private readonly storeService = inject(StoreService);
     private readonly idGeneratorService = inject(IdGeneratorService);
     private readonly imageUploadService = inject(ImageUploadService);
+    private readonly router = inject(Router);
 
     ngOnInit(): void {
         this.store
@@ -115,7 +117,7 @@ export class ComposeAreaComponent implements OnInit, OnDestroy {
         const chatDto = await this.apiService.createIndividualChat(accountId);
         await this.apiService.sendMessage(chatDto.id, message, image);
         this.storeService.updateChatId(chatId, chatDto.id);
-        this.storeService.setSelectedChatId(chatDto.id);
+        await this.router.navigate(['/messenger/chat', chatDto.id]);
     }
 
     private async handleMessageSending(

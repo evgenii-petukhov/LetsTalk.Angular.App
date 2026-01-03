@@ -140,7 +140,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
         const chat = this.chats.find(
             (chat) => chat.id === sessionSettings.chatId,
         );
-        if (chat) {
+        if (!chat) {
             await this.storeService.initChatStorage(true);
         }
 
