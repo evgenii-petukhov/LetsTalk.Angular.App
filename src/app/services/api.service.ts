@@ -121,18 +121,18 @@ export class ApiService {
         return firstValueFrom(this.client.generateLoginCode(request));
     }
 
-    startOutgoingCall(accountId: string, offer: string): Promise<void> {
+    startOutgoingCall(chatId: string, offer: string): Promise<void> {
         const request = new StartOutgoingCallRequest({
-            accountId,
+            chatId,
             offer
         });
 
         return firstValueFrom(this.client.startOutgoingCall(request));
     }
 
-    handleIncomingCall(accountId: string, answer: string): Promise<void> {
+    handleIncomingCall(chatId: string, answer: string): Promise<void> {
         const request = new HandleIncomingCallRequest({
-            accountId,
+            chatId,
             answer
         });
 

@@ -2,6 +2,7 @@ import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@an
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 import { VideoCallState } from 'src/app/models/video-call-state';
+import { VideoCallType } from 'src/app/models/video-call-type';
 import { RtcConnectionService } from 'src/app/services/rtc-connection.service';
 import { RtcPeerConnectionManager } from 'src/app/services/rtc-peer-connection-manager';
 import { selectVideoCall } from 'src/app/state/video-call/video-call.selectors';
@@ -33,10 +34,10 @@ export class VideoCallComponent implements OnInit, OnDestroy {
             .subscribe(async (state) => {
                 if (this.state === null) {
                     await this.initializeMediaStream();
-                    if (state.isIncoming) {
-                        await this.rtcConnectionService.handleIncomingCall(state.accountId, state.offer);
+                    if (state.type === VideoCallType.Incoming) {
+                        await this.rtcConnectionService.handleIncomingCall(state.chatId, state.offer);
                     } else {
-                        await this.rtcConnectionService.startOutgoingCall(state.accountId);
+                        await this.rtcConnectionService.startOutgoingCall(state.chatId);
                     }
                 }
                 this.state = state;

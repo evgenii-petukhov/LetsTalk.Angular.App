@@ -1,6 +1,7 @@
+import { VideoCallType } from "./video-call-type";
+
 export interface VideoCallState {
     chatId?: string;
-    accountId: string;
     offer?: string;
-    isIncoming: boolean;
+    type: VideoCallType;
 }

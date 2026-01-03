@@ -1,4 +1,10 @@
-import { Component, HostListener, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+    Component,
+    HostListener,
+    inject,
+    OnDestroy,
+    OnInit,
+} from '@angular/core';
 import {
     IChatDto,
     IImagePreviewDto,
@@ -7,7 +13,14 @@ import {
 } from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
 import { StoreService } from 'src/app/services/store.service';
-import { combineLatest, filter, map, startWith, Subject, takeUntil } from 'rxjs';
+import {
+    combineLatest,
+    filter,
+    map,
+    startWith,
+    Subject,
+    takeUntil,
+} from 'rxjs';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { selectChats } from 'src/app/state/chats/chats.selector';
@@ -16,6 +29,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
 import { RtcSessionSettings } from 'src/app/models/rtc-sessions-settings';
 import { RtcConnectionService } from 'src/app/services/rtc-connection.service';
+import { VideoCallType } from 'src/app/models/video-call-type';
 
 @Component({
     selector: 'app-messenger',
@@ -30,7 +44,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
     private chats: readonly IChatDto[] = [];
     private selectedChat: IChatDto;
     private isWindowActive = true;
-    
+
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
     private readonly store = inject(Store);
     private readonly storeService = inject(StoreService);
@@ -51,20 +65,26 @@ export class MessengerComponent implements OnInit, OnDestroy {
     async ngOnInit(): Promise<void> {
         await this.storeService.initChatStorage();
 
-        this.router.events.pipe(
-            filter(event => event instanceof NavigationEnd),
-            startWith(null),
-            map(() => this.activatedRoute.firstChild?.snapshot.params || {}),
-            takeUntil(this.unsubscribe$)
-        ).subscribe(params => {
-            const chatId = params['id'];
-            this.isSidebarShown = !chatId;
-            this.storeService.setSelectedChatId(chatId);
+        this.router.events
+            .pipe(
+                filter((event) => event instanceof NavigationEnd),
+                startWith(null),
+                map(
+                    () => this.activatedRoute.firstChild?.snapshot.params || {},
+                ),
+                takeUntil(this.unsubscribe$),
+            )
+            .subscribe((params) => {
+                const chatId = params['id'];
+                this.isSidebarShown = !chatId;
+                this.storeService.setSelectedChatId(chatId);
 
-            if (this.chats && !this.idGeneratorService.isFake(chatId)) {
-                this.storeService.markAllAsRead(this.chats.find(c => c.id === chatId));
-            }
-        });
+                if (this.chats && !this.idGeneratorService.isFake(chatId)) {
+                    this.storeService.markAllAsRead(
+                        this.chats.find((c) => c.id === chatId),
+                    );
+                }
+            });
 
         combineLatest([
             this.store.select(selectChats),
@@ -114,16 +134,28 @@ export class MessengerComponent implements OnInit, OnDestroy {
         );
     }
 
-    handleRtcSessionOfferNotification(sessionSettings: RtcSessionSettings): void {
+    async handleRtcSessionOfferNotification(
+        sessionSettings: RtcSessionSettings,
+    ): Promise<void> {
+        const chat = this.chats.find(
+            (chat) => chat.id === sessionSettings.chatId,
+        );
+        if (chat) {
+            await this.storeService.initChatStorage(true);
+        }
+
+        await this.router.navigate(['/messenger/chat', sessionSettings.chatId]);
+
         this.storeService.initVideoCall({
-            chatId: '',
-            accountId: sessionSettings.accountId,
-            isIncoming: true,
-            offer: sessionSettings.offer
+            chatId: sessionSettings.chatId,
+            type: VideoCallType.Incoming,
+            offer: sessionSettings.offer,
         });
     }
 
-    handleRtcSessionAnswerNotification(sessionSettings: RtcSessionSettings): void {
+    handleRtcSessionAnswerNotification(
+        sessionSettings: RtcSessionSettings,
+    ): void {
         this.rtcConnectionService.establishConnection(sessionSettings.answer);
     }
 }
