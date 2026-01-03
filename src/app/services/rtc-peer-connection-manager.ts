@@ -8,10 +8,15 @@ import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
 export class RtcPeerConnectionManager {
     onCandidatesReceived: (data: string) => void;
     onGatheringCompleted: () => {};
+    isMediaCaptured = false;
     private connection = new RTCPeerConnection();
     private localCandidates: RTCIceCandidate[] = [];
-    private readonly iceCandidateMetricsService = inject(IceCandidateMetricsService);
+    private readonly iceCandidateMetricsService = inject(
+        IceCandidateMetricsService,
+    );
     private isGathering = true;
+    private localMediaStream: MediaStream | null = null;
+    private remoteMediaStream: MediaStream | null = null;
 
     constructor() {
         this.connection.onicecandidate = this.onIceCandidateReceived.bind(this);
@@ -72,22 +77,64 @@ export class RtcPeerConnectionManager {
         }
     }
 
-    startTrackingStream(
-        stream: MediaStream,
-        onTrack: (e: RTCTrackEvent) => void,
-    ): void {
-        if (stream && this.connection) {
-            stream
+    async startMediaCapture(
+        localVideo: HTMLVideoElement,
+        remoteVideo: HTMLVideoElement,
+    ): Promise<void> {
+        try {
+            this.localMediaStream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: true,
+            });
+            this.connectLocalVideo(localVideo);
+            this.localMediaStream
                 .getTracks()
-                .forEach((track) => this.connection.addTrack(track, stream));
-            this.connection.ontrack = onTrack;
+                .forEach((track) =>
+                    this.connection.addTrack(track, this.localMediaStream),
+                );
+            this.connection.ontrack = (e) => {
+                this.remoteMediaStream = e.streams[0];
+                this.connectRemoteVideo(remoteVideo);
+            };
+            this.isMediaCaptured = true;
+        } catch (error) {
+            console.error('Error accessing media devices:', error);
         }
     }
 
-    stopTrackingStream(stream: MediaStream): void {
-        if (stream) {
-            stream.getTracks().forEach((track) => track.stop());
+    reconnectVideoElements(
+        localVideo: HTMLVideoElement,
+        remoteVideo: HTMLVideoElement,
+    ): void {
+        this.connectLocalVideo(localVideo);
+        this.connectRemoteVideo(remoteVideo);
+    }
+
+    private connectLocalVideo(localVideo: HTMLVideoElement): void {
+        if (this.localMediaStream && localVideo) {
+            localVideo.srcObject = this.localMediaStream;
         }
+    }
+
+    private connectRemoteVideo(remoteVideo: HTMLVideoElement): void {
+        if (this.remoteMediaStream && remoteVideo) {
+            remoteVideo.srcObject = this.remoteMediaStream;
+        }
+    }
+
+    endCall(): void {
+        if (this.connection) {
+            this.localMediaStream.getTracks().forEach((track) => track.stop());
+            this.connection.close();
+            this.connection = new RTCPeerConnection();
+            this.connection.onicecandidate =
+                this.onIceCandidateReceived.bind(this);
+        }
+
+        this.remoteMediaStream = null;
+        this.localCandidates = [];
+        this.isGathering = true;
+        this.isMediaCaptured = false;
     }
 
     private onIceCandidateReceived(e: RTCPeerConnectionIceEvent): void {
