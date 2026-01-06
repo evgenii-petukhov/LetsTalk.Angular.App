@@ -28,8 +28,6 @@ import { SignalrHandlerService } from 'src/app/services/signalr-handler.service'
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
 import { RtcSessionSettings } from 'src/app/models/rtc-sessions-settings';
-import { RtcConnectionService } from 'src/app/services/rtc-connection.service';
-import { VideoCallType } from 'src/app/models/video-call-type';
 
 @Component({
     selector: 'app-messenger',
@@ -52,7 +50,6 @@ export class MessengerComponent implements OnInit, OnDestroy {
     private readonly activatedRoute = inject(ActivatedRoute);
     private readonly router = inject(Router);
     private readonly idGeneratorService = inject(IdGeneratorService);
-    private readonly rtcConnectionService = inject(RtcConnectionService);
 
     selectedChatId$ = this.store.select(selectSelectedChatId);
 
@@ -137,25 +134,18 @@ export class MessengerComponent implements OnInit, OnDestroy {
     async handleRtcSessionOfferNotification(
         sessionSettings: RtcSessionSettings,
     ): Promise<void> {
-        const chat = this.chats.find(
-            (chat) => chat.id === sessionSettings.chatId,
+        this.signalrHandlerService.handleRtcSessionOfferNotification(
+            this.chats,
+            sessionSettings.chatId,
+            sessionSettings.offer,
         );
-        if (!chat) {
-            await this.storeService.initChatStorage(true);
-        }
-
-        await this.router.navigate(['/messenger/chat', sessionSettings.chatId]);
-
-        this.storeService.initVideoCall({
-            chatId: sessionSettings.chatId,
-            type: 'incoming',
-            offer: sessionSettings.offer,
-        });
     }
 
     handleRtcSessionAnswerNotification(
         sessionSettings: RtcSessionSettings,
     ): void {
-        this.rtcConnectionService.establishConnection(sessionSettings.answer);
+        this.signalrHandlerService.handleRtcSessionAnswerNotification(
+            sessionSettings.answer,
+        );
     }
 }

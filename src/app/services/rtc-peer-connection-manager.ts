@@ -124,7 +124,11 @@ export class RtcPeerConnectionManager {
 
     endCall(): void {
         if (this.connection) {
-            this.localMediaStream.getTracks().forEach((track) => track.stop());
+            if (this.localMediaStream) {
+                this.localMediaStream
+                    .getTracks()
+                    .forEach((track) => track.stop());
+            }
             this.connection.close();
             this.connection = new RTCPeerConnection();
             this.connection.onicecandidate =

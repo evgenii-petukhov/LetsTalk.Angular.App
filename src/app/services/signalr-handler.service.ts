@@ -10,6 +10,8 @@ import { StoreService } from './store.service';
 import { ApiService } from './api.service';
 import { BrowserNotificationService } from './browser-notification.service';
 import { RtcSessionSettings } from '../models/rtc-sessions-settings';
+import { Router } from '@angular/router';
+import { RtcConnectionService } from './rtc-connection.service';
 
 @Injectable({
     providedIn: 'root',
@@ -19,6 +21,8 @@ export class SignalrHandlerService {
     private readonly storeService = inject(StoreService);
     private readonly signalrService = inject(SignalrService);
     private readonly browserNotificationService = inject(BrowserNotificationService);
+    private readonly rtcConnectionService = inject(RtcConnectionService);
+    private readonly router = inject(Router);
 
     async initHandlers(
         handleMessageNotification: (messageDto: IMessageDto) => Promise<void>,
@@ -103,5 +107,32 @@ export class SignalrHandlerService {
             return;
         }
         this.storeService.setImagePreview(imagePreviewDto);
+    }
+
+    async handleRtcSessionOfferNotification(
+        chats: readonly IChatDto[],
+        chatId: string,
+        offer: string,
+    ): Promise<void> {
+        const chat = chats.find(
+            (chat) => chat.id === chatId,
+        );
+        if (!chat) {
+            await this.storeService.initChatStorage(true);
+        }
+
+        await this.router.navigate(['/messenger/chat', chatId]);
+
+        this.storeService.initVideoCall({
+            chatId,
+            type: 'incoming',
+            offer,
+        });
+    }
+
+    handleRtcSessionAnswerNotification(
+        answer: string
+    ): void {
+        this.rtcConnectionService.establishConnection(answer);
     }
 }
