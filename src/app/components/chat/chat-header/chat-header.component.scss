@@ -11,6 +11,10 @@
             @include avatar-styles(42px);
         }
 
+        app-call-button {
+            @include avatar-styles(42px);
+        }
+
         app-user-details {
             padding: 0 0 0 10px;
         }

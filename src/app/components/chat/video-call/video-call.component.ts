@@ -49,7 +49,7 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
                         this.localVideo.nativeElement,
                         this.remoteVideo.nativeElement,
                     );
-                    if (state.type === VideoCallType.Incoming) {
+                    if (state.type === 'incoming') {
                         await this.rtcConnectionService.handleIncomingCall(
                             state.chatId,
                             state.offer,

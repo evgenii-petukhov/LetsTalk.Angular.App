@@ -54,7 +54,7 @@ export class ChatHeaderComponent implements OnInit, OnDestroy {
         
         this.storeService.initVideoCall({
             chatId: chatId ?? this.chat.id,
-            type: VideoCallType.Outgoing,
+            type: 'outgoing',
         });
     }
 

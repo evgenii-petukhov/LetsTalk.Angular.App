@@ -1,9 +1,11 @@
 @use "bootstrap/scss/bootstrap" as *;
+@use "../../../shared-styles/mixins/avatar-styles" as *;
 
 :host {
     display: flex;
     height: 100vh;
     overflow: hidden;
+    position: relative;
 
     @include media-breakpoint-down(sm) {
         flex-direction: column;
@@ -17,6 +19,20 @@
         @include media-breakpoint-down(sm) {
             height: 50%;
             width: auto;
+        }
+    }
+
+    .controls {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        
+        .controls-inner {
+            app-call-button {
+                @include avatar-styles(42px);
+            }
         }
     }
 }

@@ -17,6 +17,7 @@ import { MessageListComponent } from './message-list/message-list.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { ErrorComponent } from './error/error.component';
 import { VideoCallComponent } from './video-call/video-call.component';
+import { CallButtonComponent } from './call-button/call-button.component';
 
 @NgModule({
     declarations: [
@@ -32,6 +33,7 @@ import { VideoCallComponent } from './video-call/video-call.component';
         MessageListComponent,
         NotFoundComponent,
         ErrorComponent,
+        CallButtonComponent,
         VisibleOnlyPipe,
     ],
     imports: [

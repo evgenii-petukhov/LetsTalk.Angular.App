@@ -148,7 +148,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
 
         this.storeService.initVideoCall({
             chatId: sessionSettings.chatId,
-            type: VideoCallType.Incoming,
+            type: 'incoming',
             offer: sessionSettings.offer,
         });
     }

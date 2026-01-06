@@ -1,3 +1,7 @@
 <video #localVideo id="localVideo" autoplay muted playsinline></video>
 <video #remoteVideo id="remoteVideo" autoplay playsinline></video>
-<button (click)="endCall()">End call</button>
+<div class="controls">
+    <div class="controls-inner">
+        <app-call-button [mode]="'end-call'" (buttonClick)="endCall()"></app-call-button>
+    </div>
+</div>

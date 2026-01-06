@@ -1,0 +1,1 @@
+export type CallButtonMode = 'start-call' | 'end-call';
