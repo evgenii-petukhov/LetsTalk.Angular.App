@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CallButtonComponent } from './call-button.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { CallButtonMode } from 'src/app/models/call-button-mode';
 import { By } from '@angular/platform-browser';
 
 describe('CallButtonComponent', () => {
@@ -193,7 +192,7 @@ describe('CallButtonComponent', () => {
     describe('Integration with Parent Component', () => {
         it('should work correctly when used with input binding', () => {
             // Arrange
-            const testMode: CallButtonMode = 'end-call';
+            const testMode = 'end-call';
 
             // Act
             component.mode = testMode;

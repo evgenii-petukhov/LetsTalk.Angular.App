@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
-import { CallButtonMode } from 'src/app/models/call-button-mode';
 
 @Component({
     selector: 'app-call-button',
@@ -10,7 +9,7 @@ import { CallButtonMode } from 'src/app/models/call-button-mode';
 })
 export class CallButtonComponent {
     faPhone = faPhone;
-    @Input() mode: CallButtonMode = 'start-call';
+    @Input() mode: 'start-call' | 'end-call' = 'start-call';
     @Output() buttonClick = new EventEmitter();
 
     onButtonClicked(): void {

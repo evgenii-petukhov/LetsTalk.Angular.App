@@ -6,7 +6,6 @@ import { Subject, takeUntil } from 'rxjs';
 import { BackButtonStatus } from 'src/app/models/back-button-status';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import { StoreService } from 'src/app/services/store.service';
-import { VideoCallType } from 'src/app/models/video-call-type';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
