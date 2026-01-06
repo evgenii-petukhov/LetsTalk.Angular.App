@@ -3,6 +3,7 @@ import { lastValueFrom, Subject, takeUntil } from 'rxjs';
 import { ApiService } from './api.service';
 import { Timer } from '../utils/timer';
 import { RtcPeerConnectionManager } from './rtc-peer-connection-manager';
+import { StoreService } from './store.service';
 
 @Injectable({
     providedIn: 'root',
@@ -10,6 +11,7 @@ import { RtcPeerConnectionManager } from './rtc-peer-connection-manager';
 export class RtcConnectionService {
     private readonly apiService = inject(ApiService);
     private readonly connectionManager = inject(RtcPeerConnectionManager);
+    private readonly storeService = inject(StoreService);
     private iceCandidateSubject = new Subject<string>();
     private iceGatheringComplete = new Subject<void>();
     private iceGatheringTimer: Timer;
@@ -20,6 +22,8 @@ export class RtcConnectionService {
             this.onIceCandidateGenerated.bind(this);
         this.connectionManager.onGatheringCompleted =
             this.onIceGatheringComplete.bind(this);
+        this.connectionManager.onConnectionStateChange =
+            this.onConnectionStateChange.bind(this);
     }
 
     async startOutgoingCall(accountId: string): Promise<void> {
@@ -80,5 +84,11 @@ export class RtcConnectionService {
     private onIceGatheringComplete(): void {
         this.iceGatheringComplete.next();
         this.iceGatheringTimer.clear();
+    }
+
+    private onConnectionStateChange(state: RTCPeerConnectionState): void {
+        if (state === 'disconnected') {
+            this.storeService.markCallAsDisconnected();
+        }
     }
 }

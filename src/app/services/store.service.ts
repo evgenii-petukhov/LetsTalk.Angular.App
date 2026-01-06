@@ -151,6 +151,10 @@ export class StoreService {
         );
     }
 
+    markCallAsDisconnected(): void {
+        this.store.dispatch(videoCallActions.markCallAsDisconnected());
+    }
+
     resetCall(): void {
         this.store.dispatch(videoCallActions.reset());
     }

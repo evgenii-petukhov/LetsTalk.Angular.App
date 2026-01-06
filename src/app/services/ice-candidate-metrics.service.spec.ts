@@ -15,247 +15,79 @@ describe('IceCandidateMetricsService', () => {
         expect(service).toBeTruthy();
     });
 
-    describe('getCandidateStatistics', () => {
-        it('should return zero counts for empty candidate array', () => {
-            const result = service.getIceCandidateMetrics([]);
-
-            expect(result).toEqual({
-                host: 0,
-                srflx: 0,
-                prflx: 0,
-                relay: 0,
-            });
-        });
-
-        it('should count single host candidate correctly', () => {
-            const candidates = [
-                IceCandidateMetricsTestHelper.createMockCandidate('host'),
-            ];
-            const result = service.getIceCandidateMetrics(candidates);
-
-            expect(result).toEqual({
-                host: 1,
-                srflx: 0,
-                prflx: 0,
-                relay: 0,
-            });
-        });
-
-        it('should count single srflx candidate correctly', () => {
-            const candidates = [
-                IceCandidateMetricsTestHelper.createMockCandidate('srflx'),
-            ];
-            const result = service.getIceCandidateMetrics(candidates);
-
-            expect(result).toEqual({
-                host: 0,
-                srflx: 1,
-                prflx: 0,
-                relay: 0,
-            });
-        });
-
-        it('should count single prflx candidate correctly', () => {
-            const candidates = [
-                IceCandidateMetricsTestHelper.createMockCandidate('prflx'),
-            ];
-            const result = service.getIceCandidateMetrics(candidates);
-
-            expect(result).toEqual({
-                host: 0,
-                srflx: 0,
-                prflx: 1,
-                relay: 0,
-            });
-        });
-
-        it('should count single relay candidate correctly', () => {
-            const candidates = [
-                IceCandidateMetricsTestHelper.createMockCandidate('relay'),
-            ];
-            const result = service.getIceCandidateMetrics(candidates);
-
-            expect(result).toEqual({
-                host: 0,
-                srflx: 0,
-                prflx: 0,
-                relay: 1,
-            });
-        });
-
-        it('should count multiple candidates of same type correctly', () => {
-            const candidates = IceCandidateMetricsTestHelper.createMockCandidateArray(
-                { host: 3 },
-            );
-            const result = service.getIceCandidateMetrics(candidates);
-
-            expect(result).toEqual({
-                host: 3,
-                srflx: 0,
-                prflx: 0,
-                relay: 0,
-            });
-        });
-
-        it('should count mixed candidate types correctly', () => {
-            const candidates = IceCandidateMetricsTestHelper.createMockCandidateArray(
-                {
-                    host: 2,
-                    srflx: 3,
-                    prflx: 1,
-                    relay: 2,
-                },
-            );
-            const result = service.getIceCandidateMetrics(candidates);
-
-            expect(result).toEqual({
-                host: 2,
-                srflx: 3,
-                prflx: 1,
-                relay: 2,
-            });
-        });
-
-        it('should handle large number of candidates', () => {
-            const candidates = IceCandidateMetricsTestHelper.createMockCandidateArray(
-                {
-                    host: 100,
-                    srflx: 100,
-                    prflx: 100,
-                    relay: 100,
-                },
-            );
-
-            const result = service.getIceCandidateMetrics(candidates);
-
-            expect(result).toEqual({
-                host: 100,
-                srflx: 100,
-                prflx: 100,
-                relay: 100,
-            });
-        });
-
-        it('should handle candidates with different properties correctly', () => {
-            const candidates = [
-                IceCandidateMetricsTestHelper.createMockCandidate('host', {
-                    port: 1234,
-                }),
-                IceCandidateMetricsTestHelper.createMockCandidate('host', {
-                    port: 5678,
-                }),
-                IceCandidateMetricsTestHelper.createMockCandidate('srflx', {
-                    protocol: 'tcp',
-                }),
-            ];
-
-            const result = service.getIceCandidateMetrics(candidates);
-
-            expect(result).toEqual({
-                host: 2,
-                srflx: 1,
-                prflx: 0,
-                relay: 0,
-            });
-        });
-    });
-
     describe('hasSufficientServers', () => {
         it('should return true when all requirements are met exactly', () => {
-            expect(service.hasSufficientServers({
+            const candidates = IceCandidateMetricsTestHelper.createMockCandidateArray({
                 host: 1,
                 srflx: 1,
-                prflx: 0,
                 relay: 1,
-            })).toBe(true);
+            });
+            expect(service.hasSufficientServers(candidates)).toBe(true);
         });
 
         it('should return true when all requirements are exceeded', () => {
-            expect(
-                service.hasSufficientServers({
-                    host: 5,
-                    srflx: 3,
-                    prflx: 2,
-                    relay: 4,
-                }),
-            ).toBe(true);
+            const candidates = IceCandidateMetricsTestHelper.createMockCandidateArray({
+                host: 5,
+                srflx: 3,
+                relay: 4,
+            });
+            expect(service.hasSufficientServers(candidates)).toBe(true);
         });
 
         it('should return false when host requirement is not met', () => {
-            expect(
-                service.hasSufficientServers({
-                    host: 0,
-                    srflx: 1,
-                    prflx: 0,
-                    relay: 1,
-                }),
-            ).toBe(false);
+            const candidates = IceCandidateMetricsTestHelper.createMockCandidateArray({
+                srflx: 1,
+                relay: 1,
+            });
+            expect(service.hasSufficientServers(candidates)).toBe(false);
         });
 
         it('should return false when srflx requirement is not met', () => {
-            expect(
-                service.hasSufficientServers({
-                    host: 1,
-                    srflx: 0,
-                    prflx: 0,
-                    relay: 1,
-                }),
-            ).toBe(false);
+            const candidates = IceCandidateMetricsTestHelper.createMockCandidateArray({
+                host: 1,
+                relay: 1,
+            });
+            expect(service.hasSufficientServers(candidates)).toBe(false);
         });
 
         it('should return false when relay requirement is not met', () => {
-            expect(
-                service.hasSufficientServers({
-                    host: 1,
-                    srflx: 1,
-                    prflx: 0,
-                    relay: 0,
-                }),
-            ).toBe(false);
+            const candidates = IceCandidateMetricsTestHelper.createMockCandidateArray({
+                host: 1,
+                srflx: 1,
+            });
+            expect(service.hasSufficientServers(candidates)).toBe(false);
         });
 
         it('should return false when multiple requirements are not met', () => {
-            expect(
-                service.hasSufficientServers({
-                    host: 0,
-                    srflx: 0,
-                    prflx: 0,
-                    relay: 0,
-                }),
-            ).toBe(false);
+            const candidates: RTCIceCandidate[] = [];
+            expect(service.hasSufficientServers(candidates)).toBe(false);
         });
 
         it('should return true when prflx exceeds requirement (prflx requirement is 0)', () => {
-            expect(
-                service.hasSufficientServers({
-                    host: 1,
-                    srflx: 1,
-                    prflx: 5,
-                    relay: 1,
-                }),
-            ).toBe(true);
+            const candidates = IceCandidateMetricsTestHelper.createMockCandidateArray({
+                host: 1,
+                srflx: 1,
+                prflx: 5,
+                relay: 1,
+            });
+            expect(service.hasSufficientServers(candidates)).toBe(true);
         });
 
         it('should handle boundary values correctly', () => {
             // Test exactly at the boundary
-            expect(
-                service.hasSufficientServers({
-                    host: 1,
-                    srflx: 1,
-                    prflx: 0,
-                    relay: 1,
-                }),
-            ).toBe(true);
+            const candidatesAtBoundary = IceCandidateMetricsTestHelper.createMockCandidateArray({
+                host: 1,
+                srflx: 1,
+                relay: 1,
+            });
+            expect(service.hasSufficientServers(candidatesAtBoundary)).toBe(true);
 
             // Test just below the boundary
-            expect(
-                service.hasSufficientServers({
-                    host: 0,
-                    srflx: 1,
-                    prflx: 0,
-                    relay: 1,
-                }),
-            ).toBe(false);
+            const candidatesBelowBoundary = IceCandidateMetricsTestHelper.createMockCandidateArray({
+                srflx: 1,
+                relay: 1,
+            });
+            expect(service.hasSufficientServers(candidatesBelowBoundary)).toBe(false);
         });
     });
 
@@ -343,10 +175,7 @@ describe('IceCandidateMetricsService', () => {
                 scenario.shouldPassPreCheck,
             );
 
-            const stats = service.getIceCandidateMetrics(scenario.candidates);
-            expect(stats).toEqual(scenario.expectedStats);
-
-            expect(service.hasSufficientServers(stats)).toBe(
+            expect(service.hasSufficientServers(scenario.candidates)).toBe(
                 scenario.shouldBeSufficient,
             );
         });
@@ -358,10 +187,7 @@ describe('IceCandidateMetricsService', () => {
                 scenario.shouldPassPreCheck,
             );
 
-            const stats = service.getIceCandidateMetrics(scenario.candidates);
-            expect(stats).toEqual(scenario.expectedStats);
-
-            expect(service.hasSufficientServers(stats)).toBe(
+            expect(service.hasSufficientServers(scenario.candidates)).toBe(
                 scenario.shouldBeSufficient,
             );
         });
@@ -373,10 +199,7 @@ describe('IceCandidateMetricsService', () => {
                 scenario.shouldPassPreCheck,
             );
 
-            const stats = service.getIceCandidateMetrics(scenario.candidates);
-            expect(stats).toEqual(scenario.expectedStats);
-
-            expect(service.hasSufficientServers(stats)).toBe(
+            expect(service.hasSufficientServers(scenario.candidates)).toBe(
                 scenario.shouldBeSufficient,
             );
         });
@@ -388,10 +211,7 @@ describe('IceCandidateMetricsService', () => {
                 scenario.shouldPassPreCheck,
             );
 
-            const stats = service.getIceCandidateMetrics(scenario.candidates);
-            expect(stats).toEqual(scenario.expectedStats);
-
-            expect(service.hasSufficientServers(stats)).toBe(
+            expect(service.hasSufficientServers(scenario.candidates)).toBe(
                 scenario.shouldBeSufficient,
             );
         });
@@ -403,10 +223,7 @@ describe('IceCandidateMetricsService', () => {
                 scenario.shouldPassPreCheck,
             );
 
-            const stats = service.getIceCandidateMetrics(scenario.candidates);
-            expect(stats).toEqual(scenario.expectedStats);
-
-            expect(service.hasSufficientServers(stats)).toBe(
+            expect(service.hasSufficientServers(scenario.candidates)).toBe(
                 scenario.shouldBeSufficient,
             );
         });
@@ -423,8 +240,7 @@ describe('IceCandidateMetricsService', () => {
 
             // Should not throw errors
             expect(() => {
-                const stats = service.getIceCandidateMetrics(candidates);
-                service.hasSufficientServers(stats);
+                service.hasSufficientServers(candidates);
                 service.hasMinimumCandidateCount(candidates);
             }).not.toThrow();
         });
@@ -441,18 +257,11 @@ describe('IceCandidateMetricsService', () => {
                 },
             );
 
-            const stats = service.getIceCandidateMetrics(candidates);
+            service.hasSufficientServers(candidates);
             const endTime = performance.now();
 
             // Should complete within reasonable time (less than 100ms)
             expect(endTime - startTime).toBeLessThan(100);
-
-            expect(stats).toEqual({
-                host: 1000,
-                srflx: 1000,
-                prflx: 1000,
-                relay: 1000,
-            });
         });
 
         it('should maintain consistency across multiple calls', () => {
@@ -465,16 +274,13 @@ describe('IceCandidateMetricsService', () => {
             );
 
             // Multiple calls should return identical results
-            const stats1 = service.getIceCandidateMetrics(candidates);
-            const stats2 = service.getIceCandidateMetrics(candidates);
-            const stats3 = service.getIceCandidateMetrics(candidates);
+            const result1 = service.hasSufficientServers(candidates);
+            const result2 = service.hasSufficientServers(candidates);
+            const result3 = service.hasSufficientServers(candidates);
 
-            expect(stats1).toEqual(stats2);
-            expect(stats2).toEqual(stats3);
+            expect(result1).toBe(result2);
+            expect(result2).toBe(result3);
 
-            expect(service.hasSufficientServers(stats1)).toBe(
-                service.hasSufficientServers(stats2),
-            );
             expect(service.hasMinimumCandidateCount(candidates)).toBe(
                 service.hasMinimumCandidateCount(candidates),
             );
@@ -484,30 +290,40 @@ describe('IceCandidateMetricsService', () => {
     describe('Service requirements configuration', () => {
         it('should have correct default requirements', () => {
             // Test the requirements indirectly through hasSufficientServers
-            const minimalStat: IceCandidateMetrics = {
+            const minimalCandidates = IceCandidateMetricsTestHelper.createMockCandidateArray({
                 host: 1,
                 srflx: 1,
-                prflx: 0,
                 relay: 1,
-            };
+            });
 
-            expect(service.hasSufficientServers(minimalStat)).toBe(true);
+            expect(service.hasSufficientServers(minimalCandidates)).toBe(true);
 
             // Test that reducing any required field fails
-            expect(
-                service.hasSufficientServers({ ...minimalStat, host: 0 }),
-            ).toBe(false);
-            expect(
-                service.hasSufficientServers({ ...minimalStat, srflx: 0 }),
-            ).toBe(false);
-            expect(
-                service.hasSufficientServers({ ...minimalStat, relay: 0 }),
-            ).toBe(false);
+            const noHostCandidates = IceCandidateMetricsTestHelper.createMockCandidateArray({
+                srflx: 1,
+                relay: 1,
+            });
+            expect(service.hasSufficientServers(noHostCandidates)).toBe(false);
+
+            const noSrflxCandidates = IceCandidateMetricsTestHelper.createMockCandidateArray({
+                host: 1,
+                relay: 1,
+            });
+            expect(service.hasSufficientServers(noSrflxCandidates)).toBe(false);
+
+            const noRelayCandidates = IceCandidateMetricsTestHelper.createMockCandidateArray({
+                host: 1,
+                srflx: 1,
+            });
+            expect(service.hasSufficientServers(noRelayCandidates)).toBe(false);
 
             // Test that prflx is not required (can be 0)
-            expect(
-                service.hasSufficientServers({ ...minimalStat, prflx: 0 }),
-            ).toBe(true);
+            const noPrflxCandidates = IceCandidateMetricsTestHelper.createMockCandidateArray({
+                host: 1,
+                srflx: 1,
+                relay: 1,
+            });
+            expect(service.hasSufficientServers(noPrflxCandidates)).toBe(true);
         });
     });
 });

@@ -1,4 +1,3 @@
-import { IceCandidateMetrics } from '../models/ice-candidate-metrics';
 import { inject, Injectable } from '@angular/core';
 import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
 
@@ -8,6 +7,7 @@ import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
 export class RtcPeerConnectionManager {
     onCandidatesReceived: (data: string) => void;
     onGatheringCompleted: () => {};
+    onConnectionStateChange: (state: RTCPeerConnectionState) => void;
     isMediaCaptured = false;
     private connection = new RTCPeerConnection();
     private localCandidates: RTCIceCandidate[] = [];
@@ -20,6 +20,8 @@ export class RtcPeerConnectionManager {
 
     constructor() {
         this.connection.onicecandidate = this.onIceCandidateReceived.bind(this);
+        this.connection.onconnectionstatechange =
+            this._onConnectionStateChange.bind(this);
     }
 
     async initiateOffer(config: RTCConfiguration): Promise<void> {
@@ -57,9 +59,8 @@ export class RtcPeerConnectionManager {
         )
             return;
 
-        const stats = this.getCandidateMetrics();
-        if (this.iceCandidateMetricsService.hasSufficientServers(stats)) {
-            this.finalizeIceGathering(stats);
+        if (this.iceCandidateMetricsService.hasSufficientServers(this.localCandidates)) {
+            this.finalizeIceGathering();
         }
     }
 
@@ -151,6 +152,8 @@ export class RtcPeerConnectionManager {
             this.connection = new RTCPeerConnection();
             this.connection.onicecandidate =
                 this.onIceCandidateReceived.bind(this);
+            this.connection.onconnectionstatechange =
+                this._onConnectionStateChange.bind(this);
         }
 
         this.remoteMediaStream = null;
@@ -163,8 +166,7 @@ export class RtcPeerConnectionManager {
         if (!this.isGathering) return;
 
         if (!e.candidate) {
-            const stats = this.getCandidateMetrics();
-            this.finalizeIceGathering(stats);
+            this.finalizeIceGathering();
             return;
         }
 
@@ -178,14 +180,12 @@ export class RtcPeerConnectionManager {
         this.onCandidatesReceived?.(JSON.stringify(data));
     }
 
-    private finalizeIceGathering(stat: IceCandidateMetrics): void {
+    private finalizeIceGathering(): void {
         this.isGathering = false;
         this.onGatheringCompleted?.();
     }
 
-    private getCandidateMetrics() {
-        return this.iceCandidateMetricsService.getIceCandidateMetrics(
-            this.localCandidates,
-        );
+    private _onConnectionStateChange(): void {
+        this.onConnectionStateChange?.(this.connection.connectionState);
     }
 }

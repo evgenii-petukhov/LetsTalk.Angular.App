@@ -91,7 +91,6 @@ describe('RtcPeerConnectionManager', () => {
             [
                 'hasMinimumCandidateCount',
                 'hasSufficientServers',
-                'getIceCandidateMetrics',
             ],
         );
 
@@ -196,9 +195,6 @@ describe('RtcPeerConnectionManager', () => {
             iceCandidateMetricsService.hasSufficientServers.and.returnValue(
                 true,
             );
-            iceCandidateMetricsService.getIceCandidateMetrics.and.returnValue(
-                mockIceCandidateMetrics,
-            );
             service.onGatheringCompleted = jasmine.createSpy(
                 'onGatheringCompleted',
             );
@@ -208,11 +204,8 @@ describe('RtcPeerConnectionManager', () => {
 
             // Assert
             expect(
-                iceCandidateMetricsService.getIceCandidateMetrics,
-            ).toHaveBeenCalledWith([]);
-            expect(
                 iceCandidateMetricsService.hasSufficientServers,
-            ).toHaveBeenCalledWith(mockIceCandidateMetrics);
+            ).toHaveBeenCalledWith([]);
             expect(service['isGathering']).toBe(false);
             expect(service.onGatheringCompleted).toHaveBeenCalled();
         });
@@ -224,9 +217,6 @@ describe('RtcPeerConnectionManager', () => {
             );
             iceCandidateMetricsService.hasSufficientServers.and.returnValue(
                 false,
-            );
-            iceCandidateMetricsService.getIceCandidateMetrics.and.returnValue(
-                mockIceCandidateMetrics,
             );
             service.onGatheringCompleted = jasmine.createSpy(
                 'onGatheringCompleted',
@@ -457,9 +447,6 @@ describe('RtcPeerConnectionManager', () => {
             // Arrange
             service['isGathering'] = true;
             const mockEvent = { candidate: null } as RTCPeerConnectionIceEvent;
-            iceCandidateMetricsService.getIceCandidateMetrics.and.returnValue(
-                mockIceCandidateMetrics,
-            );
             service.onGatheringCompleted = jasmine.createSpy(
                 'onGatheringCompleted',
             );
@@ -538,20 +525,5 @@ describe('RtcPeerConnectionManager', () => {
             expect(mockVideo.srcObject).toBe(mockMediaStream);
         });
 
-        it('should get candidate metrics', () => {
-            // Arrange
-            iceCandidateMetricsService.getIceCandidateMetrics.and.returnValue(
-                mockIceCandidateMetrics,
-            );
-
-            // Act
-            const result = service['getCandidateMetrics']();
-
-            // Assert
-            expect(
-                iceCandidateMetricsService.getIceCandidateMetrics,
-            ).toHaveBeenCalledWith([]);
-            expect(result).toBe(mockIceCandidateMetrics);
-        });
     });
 });

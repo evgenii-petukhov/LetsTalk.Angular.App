@@ -1,13 +1,17 @@
 import { TestBed } from '@angular/core/testing';
+import { Store } from '@ngrx/store';
 import { RtcConnectionService } from './rtc-connection.service';
 import { ApiService } from './api.service';
 import { RtcPeerConnectionManager } from './rtc-peer-connection-manager';
+import { StoreService } from './store.service';
 import { CallSettingsDto } from '../api-client/api-client';
 
 describe('RtcConnectionService', () => {
     let service: RtcConnectionService;
     let apiService: jasmine.SpyObj<ApiService>;
     let connectionManager: jasmine.SpyObj<RtcPeerConnectionManager>;
+    let storeService: jasmine.SpyObj<StoreService>;
+    let mockStore: jasmine.SpyObj<Store>;
 
     const mockCallSettings = {
         iceServerConfiguration: JSON.stringify({
@@ -63,8 +67,15 @@ describe('RtcConnectionService', () => {
             {
                 onCandidatesReceived: null,
                 onGatheringCompleted: null,
+                onConnectionStateChange: null,
             },
         );
+
+        storeService = jasmine.createSpyObj('StoreService', [
+            'markCallAsDisconnected',
+        ]);
+
+        mockStore = jasmine.createSpyObj('Store', ['dispatch', 'select']);
 
         TestBed.configureTestingModule({
             providers: [
@@ -74,6 +85,8 @@ describe('RtcConnectionService', () => {
                     provide: RtcPeerConnectionManager,
                     useValue: connectionManager,
                 },
+                { provide: StoreService, useValue: storeService },
+                { provide: Store, useValue: mockStore },
             ],
         });
 
@@ -87,6 +100,7 @@ describe('RtcConnectionService', () => {
     it('should set up connection manager callbacks in constructor', () => {
         expect(connectionManager.onCandidatesReceived).toBeDefined();
         expect(connectionManager.onGatheringCompleted).toBeDefined();
+        expect(connectionManager.onConnectionStateChange).toBeDefined();
     });
 
     describe('startOutgoingCall', () => {
@@ -346,6 +360,24 @@ describe('RtcConnectionService', () => {
             // Assert
             expect(service['iceGatheringComplete'].next).toHaveBeenCalled();
             expect(mockTimer.clear).toHaveBeenCalled();
+        });
+    });
+
+    describe('onConnectionStateChange', () => {
+        it('should mark call as disconnected when state is disconnected', () => {
+            // Act
+            service['onConnectionStateChange']('disconnected');
+
+            // Assert
+            expect(storeService.markCallAsDisconnected).toHaveBeenCalled();
+        });
+
+        it('should not mark call as disconnected for other states', () => {
+            // Act
+            service['onConnectionStateChange']('connected');
+
+            // Assert
+            expect(storeService.markCallAsDisconnected).not.toHaveBeenCalled();
         });
     });
 

@@ -41,6 +41,11 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
             .subscribe(async (state) => {
                 if (state === null) return;
 
+                if (state.isDisconnected) {
+                    this.endCall();
+                    return;
+                }
+
                 if (this.connectionManager.isMediaCaptured) {
                     this.connectionManager.reconnectVideoElements(
                         this.localVideo.nativeElement,

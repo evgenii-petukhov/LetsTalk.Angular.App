@@ -12,7 +12,21 @@ export class IceCandidateMetricsService {
         relay: 1,
     };
 
-    getIceCandidateMetrics(candidates: RTCIceCandidate[]): IceCandidateMetrics {
+    hasSufficientServers(candidates: RTCIceCandidate[]): boolean {
+        const metrics = this.getIceCandidateMetrics(candidates);
+
+        return (
+            metrics.host >= this.required.host &&
+            metrics.srflx >= this.required.srflx &&
+            metrics.relay >= this.required.relay
+        );
+    }
+
+    hasMinimumCandidateCount(candidates: RTCIceCandidate[]) {
+        return candidates.length >= this.getRequiredTotal();
+    }
+
+    private getIceCandidateMetrics(candidates: RTCIceCandidate[]): IceCandidateMetrics {
         const result: IceCandidateMetrics = {
             host: 0,
             srflx: 0,
@@ -24,18 +38,6 @@ export class IceCandidateMetricsService {
             result[candidate.type] = result[candidate.type] + 1;
         }
         return result;
-    }
-
-    hasSufficientServers(stat: IceCandidateMetrics): boolean {
-        return (
-            stat.host >= this.required.host &&
-            stat.srflx >= this.required.srflx &&
-            stat.relay >= this.required.relay
-        );
-    }
-
-    hasMinimumCandidateCount(candidates: RTCIceCandidate[]) {
-        return candidates.length >= this.getRequiredTotal();
     }
 
     private getRequiredTotal(): number {

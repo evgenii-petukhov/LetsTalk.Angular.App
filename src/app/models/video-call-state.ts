@@ -4,4 +4,5 @@ export interface VideoCallState {
     type: 'outgoing' | 'incoming';
     captureVideo: boolean;
     captureAudio: boolean;
+    isDisconnected: boolean;
 }
