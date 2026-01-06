@@ -10,11 +10,17 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { IChatDto, ImageDto } from 'src/app/api-client/api-client';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { UserDetailsStubComponent } from '../../shared/user-details/user-details.component.stub';
+import { ApiService } from 'src/app/services/api.service';
+import { IdGeneratorService } from 'src/app/services/id-generator.service';
+import { Router } from '@angular/router';
 
 describe('ChatHeaderComponent', () => {
     let fixture: ComponentFixture<ChatHeaderComponent>;
     let store: MockStore;
     let storeService: jasmine.SpyObj<StoreService>;
+    let apiService: jasmine.SpyObj<ApiService>;
+    let idGeneratorService: jasmine.SpyObj<IdGeneratorService>;
+    let router: jasmine.SpyObj<Router>;
     let mockSelectSelectedChat: MemoizedSelector<
         object,
         IChatDto,
@@ -25,7 +31,7 @@ describe('ChatHeaderComponent', () => {
         chatName: 'Chat1',
         image: new ImageDto({
             id: 'img1',
-            fileStorageTypeId: 1
+            fileStorageTypeId: 1,
         }),
         photoUrl: 'url1',
     };
@@ -34,7 +40,7 @@ describe('ChatHeaderComponent', () => {
         chatName: 'Chat2',
         image: new ImageDto({
             id: 'img2',
-            fileStorageTypeId: 1
+            fileStorageTypeId: 1,
         }),
         photoUrl: 'url2',
     };
@@ -42,7 +48,17 @@ describe('ChatHeaderComponent', () => {
     beforeEach(async () => {
         storeService = jasmine.createSpyObj('StoreService', [
             'setSelectedChatId',
+            'initVideoCall',
+            'updateChatId',
         ]);
+        apiService = jasmine.createSpyObj('ApiService', [
+            'createIndividualChat',
+        ]);
+        idGeneratorService = jasmine.createSpyObj('IdGeneratorService', [
+            'isFake',
+        ]);
+        router = jasmine.createSpyObj('Router', ['navigate']);
+        router.navigate.and.resolveTo(true);
 
         await TestBed.configureTestingModule({
             declarations: [
@@ -54,6 +70,9 @@ describe('ChatHeaderComponent', () => {
             providers: [
                 provideMockStore({}),
                 { provide: StoreService, useValue: storeService },
+                { provide: ApiService, useValue: apiService },
+                { provide: IdGeneratorService, useValue: idGeneratorService },
+                { provide: Router, useValue: router },
             ],
             imports: [FontAwesomeModule],
         }).compileComponents();

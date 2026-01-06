@@ -19,7 +19,7 @@ import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-
 import { Message } from 'src/app/models/message';
 import { selectMessages } from 'src/app/state/messages/messages.selector';
 import { By } from '@angular/platform-browser';
-import { IMessageDto } from 'src/app/api-client/api-client';
+import { IMessageDto, ProblemDetails } from 'src/app/api-client/api-client';
 import { OrderByPipe } from 'src/app/pipes/orderby';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
@@ -374,7 +374,7 @@ describe('MessageListComponent', () => {
             const chatId = 'real-chat-id';
             component['chatId'] = chatId;
             idGeneratorService.isFake.and.returnValue(false);
-            const apiError = new ApiException('Not found', 404, '', null, null);
+            const apiError = new ProblemDetails({ status: 404 });
             apiService.getMessages.and.rejectWith(apiError);
             spyOn(component.statusChanged, 'emit');
 

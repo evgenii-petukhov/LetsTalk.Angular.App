@@ -36,7 +36,7 @@ describe('AccountListComponent', () => {
         image: new ImageDto({
             id: 'img1',
             fileStorageTypeId: 1,
-        })
+        }),
     };
 
     const account2: IAccountDto = {
@@ -59,7 +59,6 @@ describe('AccountListComponent', () => {
     beforeEach(async () => {
         storeService = jasmine.createSpyObj('StoreService', [
             'initAccountStorage',
-            'setSelectedChatId',
             'markAllAsRead',
             'addChat',
         ]);
@@ -122,7 +121,7 @@ describe('AccountListComponent', () => {
         expect(accountListItems[3].account).toBe(account2);
     });
 
-    it('should call setSelectedChatId and markAllAsRead when onAccountSelected is called with an existing chat', async () => {
+    it('should call markAllAsRead when onAccountSelected is called with an existing chat', async () => {
         // Arrange
         mockSelectAccounts.setResult([account1]);
         mockSelectChats.setResult([chat1]);
@@ -134,15 +133,12 @@ describe('AccountListComponent', () => {
 
         // Assert
         expect(storeService.initAccountStorage).toHaveBeenCalledTimes(1);
-        expect(storeService.setSelectedChatId).toHaveBeenCalledOnceWith(
-            chat1.id,
-        );
         expect(storeService.markAllAsRead).toHaveBeenCalledOnceWith(chat1);
         expect(idGeneratorService.getNextFakeId).not.toHaveBeenCalledTimes(1);
         expect(storeService.addChat).not.toHaveBeenCalledTimes(1);
     });
 
-    it('should create a new chat and call setSelectedChatId when onAccountSelected is called with a new account', async () => {
+    it('should create a new chat when onAccountSelected is called with a new account', async () => {
         // Arrange
         const newChatId = -1;
         mockSelectAccounts.setResult([account1]);
@@ -159,8 +155,5 @@ describe('AccountListComponent', () => {
         expect(storeService.markAllAsRead).not.toHaveBeenCalledTimes(1);
         expect(idGeneratorService.getNextFakeId).toHaveBeenCalledTimes(1);
         expect(storeService.addChat).toHaveBeenCalledTimes(1);
-        expect(storeService.setSelectedChatId).toHaveBeenCalledOnceWith(
-            newChatId.toString(),
-        );
     });
 });

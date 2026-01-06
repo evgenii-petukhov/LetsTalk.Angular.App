@@ -20,6 +20,7 @@ import { SendMessageButtonStubComponent } from '../send-button/send-button.compo
 import { SelectImageButtonStubComponent } from '../select-image-button/select-image-button.component.stub';
 import { errorMessages } from 'src/app/constants/errors';
 import { AutoResizeTextAreaStubComponent } from '../auto-resize-text-area/auto-resize-text-area.component.stub';
+import { Router } from '@angular/router';
 
 describe(ComposeAreaComponent.name, () => {
     let component: ComposeAreaComponent;
@@ -29,6 +30,7 @@ describe(ComposeAreaComponent.name, () => {
     let imageUploadService: jasmine.SpyObj<ImageUploadService>;
     let storeService: jasmine.SpyObj<StoreService>;
     let idGeneratorService: jasmine.SpyObj<IdGeneratorService>;
+    let router: jasmine.SpyObj<Router>;
     let store: MockStore;
     let mockSelectSelectedChat: MemoizedSelector<
         object,
@@ -61,7 +63,6 @@ describe(ComposeAreaComponent.name, () => {
             'addMessage',
             'setLastMessageInfo',
             'updateChatId',
-            'setSelectedChatId',
         ]);
         idGeneratorService = jasmine.createSpyObj('IdGeneratorService', [
             'isFake',
@@ -69,6 +70,8 @@ describe(ComposeAreaComponent.name, () => {
         imageUploadService = jasmine.createSpyObj('ImageUploadService', [
             'resizeAndUploadImage',
         ]);
+        router = jasmine.createSpyObj('Router', ['navigate']);
+        router.navigate.and.resolveTo(true);
 
         await TestBed.configureTestingModule({
             declarations: [
@@ -91,6 +94,7 @@ describe(ComposeAreaComponent.name, () => {
                     provide: ImageUploadService,
                     useValue: imageUploadService,
                 },
+                { provide: Router, useValue: router },
             ],
         }).compileComponents();
 
@@ -221,15 +225,16 @@ describe(ComposeAreaComponent.name, () => {
 
         // Assert
         expect(apiService.createIndividualChat).toHaveBeenCalledWith(
-            mockChat.accountIds[0],
+            individualChat.accountIds[0],
         );
         expect(storeService.updateChatId).toHaveBeenCalledWith(
-            mockChat.id,
+            individualChat.id,
             createdChat.id,
         );
-        expect(storeService.setSelectedChatId).toHaveBeenCalledWith(
+        expect(router.navigate).toHaveBeenCalledWith([
+            '/messenger/chat',
             createdChat.id,
-        );
+        ]);
         expect(apiService.sendMessage).toHaveBeenCalledWith(
             createdChat.id,
             'Hello',
