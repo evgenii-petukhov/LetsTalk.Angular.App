@@ -7,12 +7,15 @@ import {
     CreateMessageRequest,
     CreateIndividualChatRequest,
     GenerateLoginCodeRequest,
+    StartOutgoingCallRequest,
+    HandleIncomingCallRequest,
     LoginResponseDto,
     ChatDto,
     AccountDto,
     MessageDto,
     ProfileDto,
     GenerateLoginCodeResponseDto,
+    CallSettingsDto,
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 import { of } from 'rxjs';
@@ -52,6 +55,9 @@ describe('ApiService', () => {
             'chat',
             'markAsRead',
             'generateLoginCode',
+            'startOutgoingCall',
+            'handleIncomingCall',
+            'callSettings',
         ]);
 
         TestBed.configureTestingModule({
@@ -214,5 +220,46 @@ describe('ApiService', () => {
             jasmine.any(GenerateLoginCodeRequest),
         );
         expect(result).toEqual(mockResponse);
+    });
+
+    it('should start outgoing call', async () => {
+        // Arrange
+        apiClient.startOutgoingCall.and.returnValue(of(undefined));
+
+        // Act
+        const result = await service.startOutgoingCall('chatId', 'offer-sdp');
+
+        // Assert
+        expect(apiClient.startOutgoingCall).toHaveBeenCalledWith(
+            jasmine.any(StartOutgoingCallRequest),
+        );
+        expect(result).toBeUndefined();
+    });
+
+    it('should handle incoming call', async () => {
+        // Arrange
+        apiClient.handleIncomingCall.and.returnValue(of(undefined));
+
+        // Act
+        const result = await service.handleIncomingCall('chatId', 'answer-sdp');
+
+        // Assert
+        expect(apiClient.handleIncomingCall).toHaveBeenCalledWith(
+            jasmine.any(HandleIncomingCallRequest),
+        );
+        expect(result).toBeUndefined();
+    });
+
+    it('should get call settings', async () => {
+        // Arrange
+        const mockCallSettings = new CallSettingsDto();
+        apiClient.callSettings.and.returnValue(of(mockCallSettings));
+
+        // Act
+        const result = await service.getCallSettings();
+
+        // Assert
+        expect(apiClient.callSettings).toHaveBeenCalled();
+        expect(result).toEqual(mockCallSettings);
     });
 });
