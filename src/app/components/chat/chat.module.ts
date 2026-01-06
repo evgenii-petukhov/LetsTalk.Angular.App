@@ -18,6 +18,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { ErrorComponent } from './error/error.component';
 import { VideoCallComponent } from './video-call/video-call.component';
 import { CallButtonComponent } from './call-button/call-button.component';
+import { MediaToggleButtonComponent } from './media-toggle-button/media-toggle-button.component';
 
 @NgModule({
     declarations: [
@@ -34,6 +35,7 @@ import { CallButtonComponent } from './call-button/call-button.component';
         NotFoundComponent,
         ErrorComponent,
         CallButtonComponent,
+        MediaToggleButtonComponent,
         VisibleOnlyPipe,
     ],
     imports: [

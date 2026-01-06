@@ -1,9 +1,12 @@
-import { createActionGroup, props } from '@ngrx/store';
-import { VideoCallState } from 'src/app/models/video-call-state';
+import { createActionGroup, emptyProps, props } from '@ngrx/store';
 
 export const videoCallActions = createActionGroup({
     source: 'videoCall',
     events: {
-        init: props<{ settings: VideoCallState }>(),
+        initOutgoingCall: props<{ chatId: string }>(),
+        initIncomingCall: props<{ chatId: string; offer: string }>(),
+        toggleVideo: emptyProps(),
+        toggleAudio: emptyProps(),
+        reset: emptyProps(),
     },
 });

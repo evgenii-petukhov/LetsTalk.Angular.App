@@ -54,7 +54,7 @@ describe('ChatHeaderComponent', () => {
     beforeEach(async () => {
         storeService = jasmine.createSpyObj('StoreService', [
             'setSelectedChatId',
-            'initVideoCall',
+            'initOutgoingCall',
             'updateChatId',
         ]);
         apiService = jasmine.createSpyObj('ApiService', [
@@ -133,10 +133,7 @@ describe('ChatHeaderComponent', () => {
         await fixture.componentInstance.onCallClicked();
 
         // Assert
-        expect(storeService.initVideoCall).toHaveBeenCalledWith({
-            chatId: mockChat.id,
-            type: 'outgoing',
-        });
+        expect(storeService.initOutgoingCall).toHaveBeenCalledWith(mockChat.id);
         expect(apiService.createIndividualChat).not.toHaveBeenCalled();
         expect(storeService.updateChatId).not.toHaveBeenCalled();
         expect(router.navigate).not.toHaveBeenCalled();
@@ -173,10 +170,7 @@ describe('ChatHeaderComponent', () => {
             '/messenger/chat',
             createdChat.id,
         ]);
-        expect(storeService.initVideoCall).toHaveBeenCalledWith({
-            chatId: createdChat.id,
-            type: 'outgoing',
-        });
+        expect(storeService.initOutgoingCall).toHaveBeenCalledWith(createdChat.id);
     });
 
     it('should not create individual chat when chat is individual but id is not fake', async () => {
@@ -196,10 +190,7 @@ describe('ChatHeaderComponent', () => {
         expect(apiService.createIndividualChat).not.toHaveBeenCalled();
         expect(storeService.updateChatId).not.toHaveBeenCalled();
         expect(router.navigate).not.toHaveBeenCalled();
-        expect(storeService.initVideoCall).toHaveBeenCalledWith({
-            chatId: individualChat.id,
-            type: 'outgoing',
-        });
+        expect(storeService.initOutgoingCall).toHaveBeenCalledWith(individualChat.id);
     });
 
     it('should unsubscribe on destroy', () => {

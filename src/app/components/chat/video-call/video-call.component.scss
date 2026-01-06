@@ -30,7 +30,11 @@
         justify-content: center;
         
         .controls-inner {
-            app-call-button {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            
+            app-call-button, app-media-toggle-button {
                 @include avatar-styles(42px);
             }
         }

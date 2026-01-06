@@ -4,4 +4,6 @@ export interface VideoCallState {
     chatId?: string;
     offer?: string;
     type: VideoCallType;
+    captureVideo: boolean;
+    captureAudio: boolean;
 }

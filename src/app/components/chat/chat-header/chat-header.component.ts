@@ -48,14 +48,11 @@ export class ChatHeaderComponent implements OnInit, OnDestroy {
         if (this.shouldCreateIndividualChat(this.chat)) {
             chatId = await this.handleIndividualChatCreation(
                 this.chat.id,
-                this.chat.accountIds[0]
+                this.chat.accountIds[0],
             );
         }
-        
-        this.storeService.initVideoCall({
-            chatId: chatId ?? this.chat.id,
-            type: 'outgoing',
-        });
+
+        this.storeService.initOutgoingCall(chatId ?? this.chat.id);
     }
 
     private shouldCreateIndividualChat(chat: IChatDto): boolean {

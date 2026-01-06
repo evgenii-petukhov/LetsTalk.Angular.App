@@ -20,7 +20,9 @@ export class SignalrHandlerService {
     private readonly apiService = inject(ApiService);
     private readonly storeService = inject(StoreService);
     private readonly signalrService = inject(SignalrService);
-    private readonly browserNotificationService = inject(BrowserNotificationService);
+    private readonly browserNotificationService = inject(
+        BrowserNotificationService,
+    );
     private readonly rtcConnectionService = inject(RtcConnectionService);
     private readonly router = inject(Router);
 
@@ -114,25 +116,17 @@ export class SignalrHandlerService {
         chatId: string,
         offer: string,
     ): Promise<void> {
-        const chat = chats.find(
-            (chat) => chat.id === chatId,
-        );
+        const chat = chats.find((chat) => chat.id === chatId);
         if (!chat) {
             await this.storeService.initChatStorage(true);
         }
 
         await this.router.navigate(['/messenger/chat', chatId]);
 
-        this.storeService.initVideoCall({
-            chatId,
-            type: 'incoming',
-            offer,
-        });
+        this.storeService.initIncomingCall(chatId, offer);
     }
 
-    handleRtcSessionAnswerNotification(
-        answer: string
-    ): void {
+    handleRtcSessionAnswerNotification(answer: string): void {
         this.rtcConnectionService.establishConnection(answer);
     }
 }

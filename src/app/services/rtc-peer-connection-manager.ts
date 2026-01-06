@@ -122,6 +122,24 @@ export class RtcPeerConnectionManager {
         }
     }
 
+    setVideoEnabled(enabled: boolean): void {
+        if (this.localMediaStream) {
+            const videoTracks = this.localMediaStream.getVideoTracks();
+            videoTracks.forEach(track => {
+                track.enabled = enabled;
+            });
+        }
+    }
+
+    setAudioEnabled(enabled: boolean): void {
+        if (this.localMediaStream) {
+            const audioTracks = this.localMediaStream.getAudioTracks();
+            audioTracks.forEach(track => {
+                track.enabled = enabled;
+            });
+        }
+    }
+
     endCall(): void {
         if (this.connection) {
             if (this.localMediaStream) {

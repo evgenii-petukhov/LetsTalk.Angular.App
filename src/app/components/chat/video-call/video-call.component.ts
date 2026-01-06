@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
-import { VideoCallType } from 'src/app/models/video-call-type';
 import { RtcConnectionService } from 'src/app/services/rtc-connection.service';
 import { RtcPeerConnectionManager } from 'src/app/services/rtc-peer-connection-manager';
 import { StoreService } from 'src/app/services/store.service';
@@ -25,6 +24,9 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
     localVideo!: ElementRef<HTMLVideoElement>;
     @ViewChild('remoteVideo', { static: false })
     remoteVideo!: ElementRef<HTMLVideoElement>;
+
+    captureVideo = true;
+    captureAudio = true;
 
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
     private readonly store = inject(Store);
@@ -60,6 +62,12 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
                         );
                     }
                 }
+
+                this.connectionManager.setVideoEnabled(state.captureVideo);
+                this.connectionManager.setAudioEnabled(state.captureAudio);
+
+                this.captureVideo = state.captureVideo;
+                this.captureAudio = state.captureAudio;
             });
     }
 
@@ -75,6 +83,14 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
         this.connectionManager.endCall();
         this.localVideo.nativeElement.srcObject = null;
         this.remoteVideo.nativeElement.srcObject = null;
-        this.storeService.initVideoCall(null);
+        this.storeService.resetCall();
+    }
+
+    toggleVideo() {
+        this.storeService.toggleVideo();
+    }
+
+    toggleAudio() {
+        this.storeService.toggleAudio();
     }
 }
