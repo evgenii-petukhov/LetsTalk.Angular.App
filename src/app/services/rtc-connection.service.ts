@@ -28,7 +28,9 @@ export class RtcConnectionService {
 
     async startOutgoingCall(accountId: string): Promise<void> {
         const callSettings = await this.apiService.getCallSettings();
-        this.connectionManager.initiateOffer(JSON.parse(callSettings.iceServerConfiguration));
+        this.connectionManager.initiateOffer(
+            JSON.parse(callSettings.iceServerConfiguration),
+        );
 
         this.iceGatheringTimer = new Timer(() => {
             this.connectionManager.requestCompleteGathering();
@@ -73,6 +75,10 @@ export class RtcConnectionService {
         );
     }
 
+    endCall(): void {
+        this.processEndCall();
+    }
+
     private onIceCandidateGenerated(data: string): void {
         this.iceCandidateSubject.next(data);
 
@@ -88,7 +94,12 @@ export class RtcConnectionService {
 
     private onConnectionStateChange(state: RTCPeerConnectionState): void {
         if (state === 'disconnected') {
-            this.storeService.markCallAsDisconnected();
+            this.processEndCall();
         }
+    }
+
+    private processEndCall() {
+        this.connectionManager.reinitialize();
+        this.storeService.resetCall();
     }
 }

@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { RtcPeerConnectionManager } from './rtc-peer-connection-manager';
 import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
-import { IceCandidateMetrics } from '../models/ice-candidate-metrics';
+import { RtcPeerConnectionManager } from './rtc-peer-connection-manager';
 
 describe('RtcPeerConnectionManager', () => {
     let service: RtcPeerConnectionManager;
@@ -28,13 +27,6 @@ describe('RtcPeerConnectionManager', () => {
         candidate: 'candidate:1 1 UDP 2130706431 192.168.1.1 54400 typ host',
         sdpMLineIndex: 0,
         sdpMid: '0',
-    };
-
-    const mockIceCandidateMetrics: IceCandidateMetrics = {
-        host: 2,
-        srflx: 1,
-        relay: 1,
-        prflx: 0,
     };
 
     beforeEach(() => {
@@ -400,7 +392,7 @@ describe('RtcPeerConnectionManager', () => {
             service.isMediaCaptured = true;
 
             // Act
-            service.endCall();
+            service.reinitialize();
 
             // Assert
             expect(mockTrack.stop).toHaveBeenCalled();
@@ -417,7 +409,7 @@ describe('RtcPeerConnectionManager', () => {
             service['localMediaStream'] = null;
 
             // Act
-            service.endCall();
+            service.reinitialize();
 
             // Assert
             expect(mockTrack.stop).not.toHaveBeenCalled();

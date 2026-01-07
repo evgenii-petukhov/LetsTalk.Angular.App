@@ -11,7 +11,6 @@ export const videoCallReducer = createReducer(
         type: 'outgoing',
         captureVideo: true,
         captureAudio: true,
-        isDisconnected: false,
     })),
     on(videoCallActions.initIncomingCall, (_state, { chatId, offer }) => ({
         chatId,
@@ -19,11 +18,6 @@ export const videoCallReducer = createReducer(
         type: 'incoming',
         captureVideo: true,
         captureAudio: true,
-        isDisconnected: false,
-    })),
-    on(videoCallActions.markCallAsDisconnected, (state) => ({
-        ...state,
-        isDisconnected: true,
     })),
     on(videoCallActions.toggleVideo, (state) => {
         if (!state) return state;

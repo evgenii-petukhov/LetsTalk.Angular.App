@@ -7,7 +7,7 @@ import {
     ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Subject, takeUntil } from 'rxjs';
+import { pairwise, startWith, Subject, takeUntil } from 'rxjs';
 import { RtcConnectionService } from 'src/app/services/rtc-connection.service';
 import { RtcPeerConnectionManager } from 'src/app/services/rtc-peer-connection-manager';
 import { StoreService } from 'src/app/services/store.service';
@@ -37,14 +37,14 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
     ngAfterViewInit(): void {
         this.store
             .select(selectVideoCall)
-            .pipe(takeUntil(this.unsubscribe$))
-            .subscribe(async (state) => {
-                if (state === null) return;
-
-                if (state.isDisconnected) {
-                    this.endCall();
+            .pipe(startWith(null), pairwise(), takeUntil(this.unsubscribe$))
+            .subscribe(async ([prevState, currentState]) => {
+                if (prevState !== null && currentState === null) {
+                    this.disconnectVideoElements();
                     return;
                 }
+
+                if (currentState === null) return;
 
                 if (this.connectionManager.isMediaCaptured) {
                     this.connectionManager.reconnectVideoElements(
@@ -56,39 +56,39 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
                         this.localVideo.nativeElement,
                         this.remoteVideo.nativeElement,
                     );
-                    if (state.type === 'incoming') {
+                    if (currentState.type === 'incoming') {
                         await this.rtcConnectionService.handleIncomingCall(
-                            state.chatId,
-                            state.offer,
+                            currentState.chatId,
+                            currentState.offer,
                         );
                     } else {
                         await this.rtcConnectionService.startOutgoingCall(
-                            state.chatId,
+                            currentState.chatId,
                         );
                     }
                 }
 
-                this.connectionManager.setVideoEnabled(state.captureVideo);
-                this.connectionManager.setAudioEnabled(state.captureAudio);
+                this.connectionManager.setVideoEnabled(
+                    currentState.captureVideo,
+                );
+                this.connectionManager.setAudioEnabled(
+                    currentState.captureAudio,
+                );
 
-                this.captureVideo = state.captureVideo;
-                this.captureAudio = state.captureAudio;
+                this.captureVideo = currentState.captureVideo;
+                this.captureAudio = currentState.captureAudio;
             });
     }
 
     ngOnDestroy(): void {
-        this.localVideo.nativeElement.srcObject = null;
-        this.remoteVideo.nativeElement.srcObject = null;
+        this.disconnectVideoElements();
 
         this.unsubscribe$.next();
         this.unsubscribe$.complete();
     }
 
     endCall(): void {
-        this.connectionManager.endCall();
-        this.localVideo.nativeElement.srcObject = null;
-        this.remoteVideo.nativeElement.srcObject = null;
-        this.storeService.resetCall();
+        this.rtcConnectionService.endCall();
     }
 
     toggleVideo() {
@@ -97,5 +97,10 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
 
     toggleAudio() {
         this.storeService.toggleAudio();
+    }
+
+    private disconnectVideoElements(): void {
+        this.localVideo.nativeElement.srcObject = null;
+        this.remoteVideo.nativeElement.srcObject = null;
     }
 }

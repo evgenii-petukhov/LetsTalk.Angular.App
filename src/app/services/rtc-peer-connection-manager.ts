@@ -141,7 +141,7 @@ export class RtcPeerConnectionManager {
         }
     }
 
-    endCall(): void {
+    reinitialize(): void {
         if (this.connection) {
             if (this.localMediaStream) {
                 this.localMediaStream

@@ -363,24 +363,6 @@ describe('RtcConnectionService', () => {
         });
     });
 
-    describe('onConnectionStateChange', () => {
-        it('should mark call as disconnected when state is disconnected', () => {
-            // Act
-            service['onConnectionStateChange']('disconnected');
-
-            // Assert
-            expect(storeService.markCallAsDisconnected).toHaveBeenCalled();
-        });
-
-        it('should not mark call as disconnected for other states', () => {
-            // Act
-            service['onConnectionStateChange']('connected');
-
-            // Assert
-            expect(storeService.markCallAsDisconnected).not.toHaveBeenCalled();
-        });
-    });
-
     describe('integration scenarios', () => {
         it('should handle complete outgoing call flow', async () => {
             // Arrange

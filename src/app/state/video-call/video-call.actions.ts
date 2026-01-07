@@ -7,7 +7,6 @@ export const videoCallActions = createActionGroup({
         initIncomingCall: props<{ chatId: string; offer: string }>(),
         toggleVideo: emptyProps(),
         toggleAudio: emptyProps(),
-        markCallAsDisconnected: emptyProps(),
         reset: emptyProps(),
     },
 });

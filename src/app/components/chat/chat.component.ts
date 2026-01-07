@@ -1,4 +1,10 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Component,
+    inject,
+    OnDestroy,
+    OnInit,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
@@ -16,7 +22,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     isComposeAreaVisible = false;
     isNotFoundVisible = false;
     isErrorVisible = false;
-
+    private readonly cdr = inject(ChangeDetectorRef);
     private _isCallInProgress = false;
     private _messageListStatus = MessageListStatus.Unknown;
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
@@ -81,5 +87,7 @@ export class ChatComponent implements OnInit, OnDestroy {
             this.isErrorVisible =
                 this.messageListStatus === MessageListStatus.Error;
         }
+
+        this.cdr.markForCheck();
     }
 }
