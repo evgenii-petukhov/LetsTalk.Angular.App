@@ -1,14 +1,8 @@
-import {
-    ChangeDetectorRef,
-    Component,
-    inject,
-    OnDestroy,
-    OnInit,
-} from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
-import { combineLatest, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Subject, takeUntil } from 'rxjs';
 import { MessageListStatus } from 'src/app/models/message-list-status';
+import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { selectVideoCall } from 'src/app/state/video-call/video-call.selectors';
 
 @Component({
@@ -22,40 +16,19 @@ export class ChatComponent implements OnInit, OnDestroy {
     isComposeAreaVisible = false;
     isNotFoundVisible = false;
     isErrorVisible = false;
-    private readonly cdr = inject(ChangeDetectorRef);
-    private _isCallInProgress = false;
-    private _messageListStatus = MessageListStatus.Unknown;
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
     private readonly store = inject(Store);
+    private messageListStatusSubject = new BehaviorSubject<MessageListStatus>(
+        MessageListStatus.Unknown,
+    );
+    messageListStatus$ = this.messageListStatusSubject.asObservable();
 
-    get isCallInProgress(): boolean {
-        return this._isCallInProgress;
-    }
-
-    set isCallInProgress(value: boolean) {
-        this._isCallInProgress = value;
-        this.updateElementsVisibilityForStatus();
-    }
-
-    get messageListStatus(): MessageListStatus {
-        return this._messageListStatus;
-    }
-
-    set messageListStatus(value: MessageListStatus) {
-        this._messageListStatus = value;
-        this.updateElementsVisibilityForStatus();
-    }
-
-    async ngOnInit(): Promise<void> {
-        combineLatest([
-            this.store.select(selectSelectedChatId),
-            this.store.select(selectVideoCall),
-        ])
+    ngOnInit(): void {
+        this.store
+            .select(selectSelectedChatId)
             .pipe(takeUntil(this.unsubscribe$))
-            .subscribe(async ([chatId, state]) => {
-                this.messageListStatus = MessageListStatus.Unknown;
-                this.isCallInProgress =
-                    state !== null && state.chatId === chatId;
+            .subscribe(() => {
+                this.messageListStatusSubject.next(MessageListStatus.Unknown);
             });
     }
 
@@ -64,30 +37,62 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.unsubscribe$.complete();
     }
 
+    isCallInProgress$ = combineLatest([
+        this.store.select(selectSelectedChatId),
+        this.store.select(selectVideoCall),
+    ]).pipe(
+        map(([chatId, state]) => state !== null && state.chatId === chatId),
+        takeUntil(this.unsubscribe$),
+    );
+
+    isMessageListVisible$ = combineLatest([
+        this.isCallInProgress$,
+        this.messageListStatus$,
+    ]).pipe(
+        map(
+            ([isCallInProgress, status]) =>
+                !isCallInProgress &&
+                [MessageListStatus.Unknown, MessageListStatus.Success].includes(
+                    status,
+                ),
+        ),
+        takeUntil(this.unsubscribe$),
+    );
+
+    isComposeAreaVisible$ = combineLatest([
+        this.isCallInProgress$,
+        this.messageListStatus$,
+    ]).pipe(
+        map(
+            ([isCallInProgress, status]) =>
+                !isCallInProgress && status === MessageListStatus.Success,
+        ),
+        takeUntil(this.unsubscribe$),
+    );
+
+    isNotFoundVisible$ = combineLatest([
+        this.isCallInProgress$,
+        this.messageListStatus$,
+    ]).pipe(
+        map(
+            ([isCallInProgress, status]) =>
+                !isCallInProgress && status === MessageListStatus.NotFound,
+        ),
+        takeUntil(this.unsubscribe$),
+    );
+
+    isErrorVisible$ = combineLatest([
+        this.isCallInProgress$,
+        this.messageListStatus$,
+    ]).pipe(
+        map(
+            ([isCallInProgress, status]) =>
+                !isCallInProgress && status === MessageListStatus.Error,
+        ),
+        takeUntil(this.unsubscribe$),
+    );
+
     onStatusChanged(status: MessageListStatus): void {
-        this.messageListStatus = status;
-    }
-
-    private updateElementsVisibilityForStatus(): void {
-        if (this.isCallInProgress) {
-            this.isMessageListVisible =
-                this.isComposeAreaVisible =
-                this.isNotFoundVisible =
-                this.isErrorVisible =
-                    false;
-        } else {
-            this.isMessageListVisible = [
-                MessageListStatus.Unknown,
-                MessageListStatus.Success,
-            ].includes(this.messageListStatus);
-            this.isComposeAreaVisible =
-                this.messageListStatus === MessageListStatus.Success;
-            this.isNotFoundVisible =
-                this.messageListStatus === MessageListStatus.NotFound;
-            this.isErrorVisible =
-                this.messageListStatus === MessageListStatus.Error;
-        }
-
-        this.cdr.markForCheck();
+        this.messageListStatusSubject.next(status);
     }
 }

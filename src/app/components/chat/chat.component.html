@@ -2,9 +2,10 @@
 <div class="chat-container">
     <app-chat-header
         [backButton]="isNotFoundVisible || isErrorVisible ? 'visibleWithText' : 'visible'"></app-chat-header>
-    <app-message-list (statusChanged)="onStatusChanged($event)" *ngIf="isMessageListVisible"></app-message-list>
-    <app-compose-area *ngIf="isComposeAreaVisible"></app-compose-area>
-    <app-not-found *ngIf="isNotFoundVisible"></app-not-found>
-    <app-error *ngIf="isErrorVisible"></app-error>
-    <app-video-call *ngIf="isCallInProgress"></app-video-call>
+    <app-message-list (statusChanged)="onStatusChanged($event)"
+        *ngIf="isMessageListVisible$ | async"></app-message-list>
+    <app-compose-area *ngIf="isComposeAreaVisible$ | async"></app-compose-area>
+    <app-not-found *ngIf="isNotFoundVisible$ | async"></app-not-found>
+    <app-error *ngIf="isErrorVisible$ | async"></app-error>
+    <app-video-call *ngIf="isCallInProgress$ | async"></app-video-call>
 </div>
