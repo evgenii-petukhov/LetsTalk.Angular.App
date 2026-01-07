@@ -6,6 +6,7 @@
     height: 100vh;
     overflow: hidden;
     position: relative;
+    background: #000;
 
     @include media-breakpoint-down(sm) {
         flex-direction: column;
@@ -28,13 +29,14 @@
         width: 100%;
         display: flex;
         justify-content: center;
-        
+
         .controls-inner {
             display: flex;
-            gap: 10px;
+            gap: 25px;
             align-items: center;
-            
-            app-call-button, app-media-toggle-button {
+
+            app-call-button,
+            app-media-toggle-button {
                 @include avatar-styles(42px);
             }
         }

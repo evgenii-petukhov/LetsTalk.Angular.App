@@ -29,6 +29,10 @@
             ::ng-deep app-back-button {
                 display: flex;
             }
+
+            ::ng-deep app-call-button {
+                margin-right: 15px;
+            }
         }
     }
 }
