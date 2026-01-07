@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
-import { Subject, of } from 'rxjs';
+import { Subject } from 'rxjs';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { VideoCallComponent } from './video-call.component';
 import { RtcConnectionService } from 'src/app/services/rtc-connection.service';

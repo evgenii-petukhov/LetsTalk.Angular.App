@@ -34,7 +34,7 @@ export class IceCandidateMetricsService {
             relay: 0,
         };
 
-        for (let candidate of candidates) {
+        for (const candidate of candidates) {
             result[candidate.type] = result[candidate.type] + 1;
         }
         return result;

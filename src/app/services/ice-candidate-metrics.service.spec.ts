@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
 import { IceCandidateMetricsTestHelper } from './ice-candidate-metrics.service.test-helper';
-import { IceCandidateMetrics } from '../models/ice-candidate-metrics';
 
 describe('IceCandidateMetricsService', () => {
     let service: IceCandidateMetricsService;

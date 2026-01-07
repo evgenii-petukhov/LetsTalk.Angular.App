@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { inject, Injectable } from '@angular/core';
 import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
 
@@ -6,7 +7,7 @@ import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
 })
 export class RtcPeerConnectionManager {
     onCandidatesReceived: (data: string) => void;
-    onGatheringCompleted: () => {};
+    onGatheringCompleted: () => void;
     onConnectionStateChange: (state: RTCPeerConnectionState) => void;
     isMediaCaptured = false;
     private connection = new RTCPeerConnection();
@@ -44,7 +45,7 @@ export class RtcPeerConnectionManager {
 
         await this.connection.setRemoteDescription(desc);
         if (candidates) {
-            for (let c of candidates) await this.connection.addIceCandidate(c);
+            for (const c of candidates) await this.connection.addIceCandidate(c);
         }
 
         const answer = await this.connection.createAnswer();
@@ -74,7 +75,7 @@ export class RtcPeerConnectionManager {
 
         await this.connection.setRemoteDescription(desc);
         if (candidates) {
-            for (let c of candidates) await this.connection.addIceCandidate(c);
+            for (const c of candidates) await this.connection.addIceCandidate(c);
         }
     }
 

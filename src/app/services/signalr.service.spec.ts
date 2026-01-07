@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { HubConnectionBuilder } from '@microsoft/signalr';
 import { SignalrService } from './signalr.service';
@@ -93,7 +94,7 @@ describe('SignalrService', () => {
             if (service && service.removeHandlers) {
                 service.removeHandlers();
             }
-        } catch (error) {
+        } catch {
             // Ignore cleanup errors
         }
     });
@@ -431,7 +432,7 @@ describe('SignalrService', () => {
 
             // Mock setInterval to capture the retry function
             let retryFunction: Function;
-            spyOn(window, 'setInterval').and.callFake((fn: Function, delay: number) => {
+            spyOn(window, 'setInterval').and.callFake((fn: Function) => {
                 retryFunction = fn;
                 return 123 as any;
             });
