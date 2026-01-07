@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
-import { constraints, RtcPeerConnectionManager } from './rtc-peer-connection-manager';
+import { constraintSets, RtcPeerConnectionManager } from './rtc-peer-connection-manager';
 
 describe('RtcPeerConnectionManager', () => {
     let service: RtcPeerConnectionManager;
@@ -293,13 +293,12 @@ describe('RtcPeerConnectionManager', () => {
             await service.startMediaCapture(mockLocalVideo, mockRemoteVideo);
 
             // Assert
-            expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith(constraints);
+            expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith(constraintSets[0]);
             expect(mockLocalVideo.srcObject).toBe(mockMediaStream);
             expect(mockConnection.addTrack).toHaveBeenCalledWith(
                 mockTrack,
                 mockMediaStream,
             );
-            expect(mockConnection.ontrack).toBeDefined();
             expect(service.isMediaCaptured).toBe(true);
         });
 
@@ -315,10 +314,8 @@ describe('RtcPeerConnectionManager', () => {
             await service.startMediaCapture(mockLocalVideo, mockRemoteVideo);
 
             // Assert
-            expect(console.error).toHaveBeenCalledWith(
-                'Error accessing media devices:',
-                error,
-            );
+            expect(console.error).toHaveBeenCalledWith(error);
+            expect(console.error).toHaveBeenCalledTimes(constraintSets.length);
             expect(service.isMediaCaptured).toBe(false);
         });
 

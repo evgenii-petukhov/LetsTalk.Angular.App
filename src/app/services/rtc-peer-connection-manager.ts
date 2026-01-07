@@ -2,18 +2,62 @@
 import { inject, Injectable } from '@angular/core';
 import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
 
-export const constraints = {
-    video: {
-        width: { ideal: 640, max: 640 },
-        height: { ideal: 360, max: 360 },
-        frameRate: { ideal: 15, max: 15 },
+export const constraintSets: MediaStreamConstraints[] = [
+    // Standard enhanced
+    {
+        video: {
+            width: { ideal: 960, max: 960 },
+            height: { ideal: 540, max: 540 },
+            frameRate: { ideal: 15, max: 30 },
+        },
+        audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+        },
     },
-    audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true,
+    // Standard
+    {
+        video: {
+            width: { ideal: 640, max: 640 },
+            height: { ideal: 480, max: 480 },
+            frameRate: { ideal: 15, max: 30 },
+        },
+        audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+        },
     },
-};
+    // Relaxed
+    {
+        video: {
+            width: { ideal: 640 },
+            height: { ideal: 360 },
+            frameRate: { ideal: 15 },
+        },
+        audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+        },
+    },
+    // Basic
+    {
+        video: {
+            width: { ideal: 640 },
+            height: { ideal: 360 },
+        },
+        audio: {
+            echoCancellation: true,
+        },
+    },
+    // Simple
+    {
+        video: true,
+        audio: true,
+    },
+];
 
 @Injectable({
     providedIn: 'root',
@@ -96,21 +140,25 @@ export class RtcPeerConnectionManager {
         localVideo: HTMLVideoElement,
         remoteVideo: HTMLVideoElement,
     ): Promise<void> {
-        try {
-            this.localMediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-            this.connectLocalVideo(localVideo);
-            this.localMediaStream
-                .getTracks()
-                .forEach((track) =>
-                    this.connection.addTrack(track, this.localMediaStream),
-                );
-            this.connection.ontrack = (e) => {
-                this.remoteMediaStream = e.streams[0];
-                this.connectRemoteVideo(remoteVideo);
-            };
-            this.isMediaCaptured = true;
-        } catch (error) {
-            console.error('Error accessing media devices:', error);
+        for (const constraints of constraintSets) {
+            try {
+                this.localMediaStream =
+                    await navigator.mediaDevices.getUserMedia(constraints);
+                this.connectLocalVideo(localVideo);
+                this.localMediaStream
+                    .getTracks()
+                    .forEach((track) =>
+                        this.connection.addTrack(track, this.localMediaStream),
+                    );
+                this.connection.ontrack = (e) => {
+                    this.remoteMediaStream = e.streams[0];
+                    this.connectRemoteVideo(remoteVideo);
+                };
+                this.isMediaCaptured = true;
+                return;
+            } catch (error) {
+                console.error(error);
+            }
         }
     }
 
