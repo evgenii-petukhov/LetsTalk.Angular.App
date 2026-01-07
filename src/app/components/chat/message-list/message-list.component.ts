@@ -2,10 +2,8 @@ import {
     AfterViewInit,
     Component,
     ElementRef,
-    EventEmitter,
     inject,
     OnDestroy,
-    Output,
     QueryList,
     ViewChild,
     ViewChildren, OnInit,
@@ -33,7 +31,6 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     @ViewChildren('scrollItem') itemElements: QueryList<any>;
     messages: readonly Message[] = [];
-    @Output() statusChanged = new EventEmitter<MessageListStatus>();
 
     private scrollContainer: HTMLDivElement;
     private chatId: string;
@@ -132,9 +129,9 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
             );
             if (isChatIdValid) {
                 this.isMessageListLoaded = true;
-                this.statusChanged.emit(MessageListStatus.Success);
+                this.storeService.setSelectedChatMessageListStatus(MessageListStatus.Success);
             } else {
-                this.statusChanged.emit(MessageListStatus.NotFound);
+                this.storeService.setSelectedChatMessageListStatus(MessageListStatus.NotFound);
             }
 
             return;
@@ -164,7 +161,7 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
                     lastMessageId,
                 );
                 this.isMessageListLoaded = true;
-                this.statusChanged.emit(MessageListStatus.Success);
+                this.storeService.setSelectedChatMessageListStatus(MessageListStatus.Success);
             }
             if (messageDtos.length === 0) {
                 this.decreaseScrollCounter();
@@ -173,9 +170,9 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         } catch (e) {
             if (e instanceof ProblemDetails && e.status === 404) {
-                this.statusChanged.emit(MessageListStatus.NotFound);
+                this.storeService.setSelectedChatMessageListStatus(MessageListStatus.NotFound);
             } else {
-                this.statusChanged.emit(MessageListStatus.Error);
+                this.storeService.setSelectedChatMessageListStatus(MessageListStatus.Error);
             }
         }
     }

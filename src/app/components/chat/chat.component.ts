@@ -1,8 +1,16 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { Subject, takeUntil } from 'rxjs';
 import { MessageListStatus } from 'src/app/models/message-list-status';
+import { StoreService } from 'src/app/services/store.service';
+import {
+    selectSelectedChatIsCallInProgress,
+    selectSelectedChatIsComposeAreaVisible,
+    selectSelectedChatIsErrorVisible,
+    selectSelectedChatIsMessageListVisible,
+    selectSelectedChatIsNotFoundVisible,
+} from 'src/app/state/selected-chat-ui/selected-chat-ui.selectors';
+import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 
 @Component({
     selector: 'app-chat',
@@ -11,20 +19,18 @@ import { MessageListStatus } from 'src/app/models/message-list-status';
     standalone: false,
 })
 export class ChatComponent implements OnInit, OnDestroy {
-    isMessageListVisible = false;
-    isComposeAreaVisible = false;
-    isNotFoundVisible = false;
-    isErrorVisible = false;
-
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
     private readonly store = inject(Store);
+    private readonly storeService = inject(StoreService);
 
     ngOnInit(): void {
         this.store
             .select(selectSelectedChatId)
             .pipe(takeUntil(this.unsubscribe$))
-            .subscribe(async () => {
-                this.setMessageListVisibility(MessageListStatus.Unknown);
+            .subscribe(() => {
+                this.storeService.setSelectedChatMessageListStatus(
+                    MessageListStatus.Unknown,
+                );
             });
     }
 
@@ -33,18 +39,13 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.unsubscribe$.complete();
     }
 
-    onStatusChanged(status: MessageListStatus): void {
-        this.setMessageListVisibility(status);
-    }
-
-    private setMessageListVisibility(status: MessageListStatus): void {
-        this.isMessageListVisible = [
-            MessageListStatus.Unknown,
-            MessageListStatus.Success,
-        ].includes(status);
-        this.isComposeAreaVisible =
-            status === MessageListStatus.Success;
-        this.isNotFoundVisible = status === MessageListStatus.NotFound;
-        this.isErrorVisible = status === MessageListStatus.Error;
-    }
+    isCallInProgress$ = this.store.select(selectSelectedChatIsCallInProgress);
+    isMessageListVisible$ = this.store.select(
+        selectSelectedChatIsMessageListVisible,
+    );
+    isComposeAreaVisible$ = this.store.select(
+        selectSelectedChatIsComposeAreaVisible,
+    );
+    isNotFoundVisible$ = this.store.select(selectSelectedChatIsNotFoundVisible);
+    isErrorVisible$ = this.store.select(selectSelectedChatIsErrorVisible);
 }

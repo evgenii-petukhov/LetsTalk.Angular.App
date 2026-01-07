@@ -1,0 +1,11 @@
+:host {
+    display: flex;
+
+    button {
+        flex: 1;
+        border: none;
+        background: rgb(248, 248, 248);
+        border-radius: 50%;
+        box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.35);
+    }
+}

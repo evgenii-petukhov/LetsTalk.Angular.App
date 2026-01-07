@@ -1,4 +1,10 @@
-import { Component, HostListener, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+    Component,
+    HostListener,
+    inject,
+    OnDestroy,
+    OnInit,
+} from '@angular/core';
 import {
     IChatDto,
     IImagePreviewDto,
@@ -7,13 +13,21 @@ import {
 } from 'src/app/api-client/api-client';
 import { Store } from '@ngrx/store';
 import { StoreService } from 'src/app/services/store.service';
-import { combineLatest, filter, map, startWith, Subject, takeUntil } from 'rxjs';
+import {
+    combineLatest,
+    filter,
+    map,
+    startWith,
+    Subject,
+    takeUntil,
+} from 'rxjs';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { selectChats } from 'src/app/state/chats/chats.selector';
 import { SignalrHandlerService } from 'src/app/services/signalr-handler.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { IdGeneratorService } from 'src/app/services/id-generator.service';
+import { RtcSessionSettings } from 'src/app/models/rtc-sessions-settings';
 
 @Component({
     selector: 'app-messenger',
@@ -28,7 +42,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
     private chats: readonly IChatDto[] = [];
     private selectedChat: IChatDto;
     private isWindowActive = true;
-    
+
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
     private readonly store = inject(Store);
     private readonly storeService = inject(StoreService);
@@ -48,20 +62,26 @@ export class MessengerComponent implements OnInit, OnDestroy {
     async ngOnInit(): Promise<void> {
         await this.storeService.initChatStorage();
 
-        this.router.events.pipe(
-            filter(event => event instanceof NavigationEnd),
-            startWith(null),
-            map(() => this.activatedRoute.firstChild?.snapshot.params || {}),
-            takeUntil(this.unsubscribe$)
-        ).subscribe(params => {
-            const chatId = params['id'];
-            this.isSidebarShown = !chatId;
-            this.storeService.setSelectedChatId(chatId);
+        this.router.events
+            .pipe(
+                filter((event) => event instanceof NavigationEnd),
+                startWith(null),
+                map(
+                    () => this.activatedRoute.firstChild?.snapshot.params || {},
+                ),
+                takeUntil(this.unsubscribe$),
+            )
+            .subscribe((params) => {
+                const chatId = params['id'];
+                this.isSidebarShown = !chatId;
+                this.storeService.setSelectedChatId(chatId);
 
-            if (this.chats && !this.idGeneratorService.isFake(chatId)) {
-                this.storeService.markAllAsRead(this.chats.find(c => c.id === chatId));
-            }
-        });
+                if (this.chats && !this.idGeneratorService.isFake(chatId)) {
+                    this.storeService.markAllAsRead(
+                        this.chats.find((c) => c.id === chatId),
+                    );
+                }
+            });
 
         combineLatest([
             this.store.select(selectChats),
@@ -77,6 +97,8 @@ export class MessengerComponent implements OnInit, OnDestroy {
             this.handleMessageNotification.bind(this),
             this.handleLinkPreviewNotification.bind(this),
             this.handleImagePreviewNotification.bind(this),
+            this.handleRtcSessionOfferNotification.bind(this),
+            this.handleRtcSessionAnswerNotification.bind(this),
         );
     }
 
@@ -106,6 +128,24 @@ export class MessengerComponent implements OnInit, OnDestroy {
         this.signalrHandlerService.handleImagePreviewNotification(
             dto,
             this.selectedChat?.id,
+        );
+    }
+
+    async handleRtcSessionOfferNotification(
+        sessionSettings: RtcSessionSettings,
+    ): Promise<void> {
+        this.signalrHandlerService.handleRtcSessionOfferNotification(
+            this.chats,
+            sessionSettings.chatId,
+            sessionSettings.offer,
+        );
+    }
+
+    handleRtcSessionAnswerNotification(
+        sessionSettings: RtcSessionSettings,
+    ): void {
+        this.signalrHandlerService.handleRtcSessionAnswerNotification(
+            sessionSettings.answer,
         );
     }
 }

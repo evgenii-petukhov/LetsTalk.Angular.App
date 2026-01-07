@@ -198,6 +198,161 @@ export class ApiClient {
     /**
      * @return OK
      */
+    callSettings(): Observable<CallSettingsDto> {
+        let url_ = this.baseUrl + "/api/Call/CallSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCallSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCallSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CallSettingsDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CallSettingsDto>;
+        }));
+    }
+
+    protected processCallSettings(response: HttpResponseBase): Observable<CallSettingsDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CallSettingsDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    startOutgoingCall(body: StartOutgoingCallRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Call/StartOutgoingCall";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processStartOutgoingCall(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processStartOutgoingCall(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processStartOutgoingCall(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    handleIncomingCall(body: HandleIncomingCallRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Call/HandleIncomingCall";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processHandleIncomingCall(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processHandleIncomingCall(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processHandleIncomingCall(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return OK
+     */
     chatAll(): Observable<ChatDto[]> {
         let url_ = this.baseUrl + "/api/Chat";
         url_ = url_.replace(/[?&]$/, "");
@@ -763,6 +918,46 @@ export interface IAccountDto {
     image?: ImageDto;
 }
 
+export class CallSettingsDto implements ICallSettingsDto {
+    iceServerConfiguration?: string | undefined;
+    maxVideoDurationInSeconds?: number;
+
+    constructor(data?: ICallSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.iceServerConfiguration = _data["iceServerConfiguration"];
+            this.maxVideoDurationInSeconds = _data["maxVideoDurationInSeconds"];
+        }
+    }
+
+    static fromJS(data: any): CallSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CallSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["iceServerConfiguration"] = this.iceServerConfiguration;
+        data["maxVideoDurationInSeconds"] = this.maxVideoDurationInSeconds;
+        return data;
+    }
+}
+
+export interface ICallSettingsDto {
+    iceServerConfiguration?: string | undefined;
+    maxVideoDurationInSeconds?: number;
+}
+
 export class ChatDto implements IChatDto {
     id?: string | undefined;
     accountTypeId?: number;
@@ -1077,6 +1272,46 @@ export class GenerateLoginCodeResponseDto implements IGenerateLoginCodeResponseD
 
 export interface IGenerateLoginCodeResponseDto {
     codeValidInSeconds?: number;
+}
+
+export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
+    chatId?: string | undefined;
+    answer?: string | undefined;
+
+    constructor(data?: IHandleIncomingCallRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.chatId = _data["chatId"];
+            this.answer = _data["answer"];
+        }
+    }
+
+    static fromJS(data: any): HandleIncomingCallRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new HandleIncomingCallRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["chatId"] = this.chatId;
+        data["answer"] = this.answer;
+        return data;
+    }
+}
+
+export interface IHandleIncomingCallRequest {
+    chatId?: string | undefined;
+    answer?: string | undefined;
 }
 
 export class ImageDto implements IImageDto {
@@ -1629,6 +1864,46 @@ export interface ISetLinkPreviewRequest {
     title?: string | undefined;
     imageUrl?: string | undefined;
     signature?: string | undefined;
+}
+
+export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
+    chatId?: string | undefined;
+    offer?: string | undefined;
+
+    constructor(data?: IStartOutgoingCallRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.chatId = _data["chatId"];
+            this.offer = _data["offer"];
+        }
+    }
+
+    static fromJS(data: any): StartOutgoingCallRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new StartOutgoingCallRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["chatId"] = this.chatId;
+        data["offer"] = this.offer;
+        return data;
+    }
+}
+
+export interface IStartOutgoingCallRequest {
+    chatId?: string | undefined;
+    offer?: string | undefined;
 }
 
 export class UpdateProfileRequest implements IUpdateProfileRequest {

@@ -15,6 +15,9 @@ import {
     EmailLoginRequest,
     GenerateLoginCodeResponseDto,
     GenerateLoginCodeRequest,
+    StartOutgoingCallRequest,
+    HandleIncomingCallRequest,
+    CallSettingsDto,
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 
@@ -116,5 +119,27 @@ export class ApiService {
         });
 
         return firstValueFrom(this.client.generateLoginCode(request));
+    }
+
+    startOutgoingCall(chatId: string, offer: string): Promise<void> {
+        const request = new StartOutgoingCallRequest({
+            chatId,
+            offer
+        });
+
+        return firstValueFrom(this.client.startOutgoingCall(request));
+    }
+
+    handleIncomingCall(chatId: string, answer: string): Promise<void> {
+        const request = new HandleIncomingCallRequest({
+            chatId,
+            answer
+        });
+
+        return firstValueFrom(this.client.handleIncomingCall(request));
+    }
+
+    getCallSettings(): Promise<CallSettingsDto> {
+        return firstValueFrom(this.client.callSettings());
     }
 }

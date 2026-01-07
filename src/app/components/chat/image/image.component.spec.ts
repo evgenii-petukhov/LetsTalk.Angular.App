@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ImageComponent } from './image.component';
 import { StoreService } from 'src/app/services/store.service';
-import { ImagePreview } from 'src/app/models/imagePreview';
-import { ChangeDetectorRef } from '@angular/core';
+import { ImagePreview } from 'src/app/models/image-preview';
 import { environment } from 'src/environments/environment';
 import { ErrorService } from 'src/app/services/error.service';
 import { errorMessages } from 'src/app/constants/errors';
@@ -35,7 +34,6 @@ describe('ImageComponent', () => {
             providers: [
                 { provide: StoreService, useValue: storeService },
                 { provide: ErrorService, useValue: errorService },
-                ChangeDetectorRef,
             ],
         }).compileComponents();
 

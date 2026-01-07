@@ -1,4 +1,5 @@
 <app-top-panel [backButton]="backButton">
     <app-avatar *ngIf="chat" [urlOptions]="[chat.image, chat.photoUrl]"></app-avatar>
     <app-user-details [value]="chat?.chatName"></app-user-details>
+    <app-call-button (buttonClick)="onCallClicked()"></app-call-button>
 </app-top-panel>

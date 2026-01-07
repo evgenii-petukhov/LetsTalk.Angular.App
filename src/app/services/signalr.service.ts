@@ -12,11 +12,14 @@ import {
 } from '../api-client/api-client';
 import { ConstantRetryPolicy } from './constant-retry-policy';
 import { TokenStorageService } from './token-storage.service';
+import { RtcSessionSettings } from '../models/rtc-sessions-settings';
 
 type TypeDtoMap = {
     MessageDto: IMessageDto;
     LinkPreviewDto: ILinkPreviewDto;
     ImagePreviewDto: IImagePreviewDto;
+    RtcSessionOffer: RtcSessionSettings;
+    RtcSessionAnswer: RtcSessionSettings;
 };
 
 type TypeNames = keyof TypeDtoMap;
@@ -50,6 +53,8 @@ export class SignalrService {
         messageHandler: (messageDto: IMessageDto) => Promise<void>,
         linkPreviewHandler: (response: ILinkPreviewDto) => void,
         imagePreviewHandler: (response: IImagePreviewDto) => void,
+        rtcSessionOfferHandler: (response: RtcSessionSettings) => void,
+        RtcSessionAnswerHandler: (response: RtcSessionSettings) => void,
     ): Promise<void> {
         if (this.isInitialized) {
             return;
@@ -59,6 +64,8 @@ export class SignalrService {
             MessageDto: messageHandler,
             LinkPreviewDto: linkPreviewHandler,
             ImagePreviewDto: imagePreviewHandler,
+            RtcSessionOffer: rtcSessionOfferHandler,
+            RtcSessionAnswer: RtcSessionAnswerHandler,
         };
 
         await this.setUpConnection();

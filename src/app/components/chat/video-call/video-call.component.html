@@ -1,0 +1,11 @@
+<video #localVideo id="localVideo" autoplay muted playsinline></video>
+<video #remoteVideo id="remoteVideo" autoplay playsinline></video>
+<div class="controls">
+    <div class="controls-inner">
+        <app-media-toggle-button [isMuted]="!captureVideo" [mode]="'video'"
+            (buttonClick)="toggleVideo()"></app-media-toggle-button>
+        <app-media-toggle-button [isMuted]="!captureAudio" [mode]="'audio'"
+            (buttonClick)="toggleAudio()"></app-media-toggle-button>
+        <app-call-button [mode]="'end-call'" (buttonClick)="endCall()"></app-call-button>
+    </div>
+</div>

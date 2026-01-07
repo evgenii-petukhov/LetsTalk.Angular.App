@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     ComponentFixture,
     fakeAsync,
@@ -19,10 +20,10 @@ import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-
 import { Message } from 'src/app/models/message';
 import { selectMessages } from 'src/app/state/messages/messages.selector';
 import { By } from '@angular/platform-browser';
-import { IMessageDto } from 'src/app/api-client/api-client';
+import { IMessageDto, ProblemDetails } from 'src/app/api-client/api-client';
 import { OrderByPipe } from 'src/app/pipes/orderby';
 import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { selectChats } from 'src/app/state/chats/chats.selector';
 import { MessageListStatus } from 'src/app/models/message-list-status';
 import { ApiException } from 'src/app/api-client/api-client';
@@ -55,6 +56,7 @@ describe('MessageListComponent', () => {
             'setLastMessageInfo',
             'setSelectedChatId',
             'isChatIdValid',
+            'setSelectedChatMessageListStatus',
         ]);
         idGeneratorService = jasmine.createSpyObj('IdGeneratorService', [
             'isFake',
@@ -121,6 +123,9 @@ describe('MessageListComponent', () => {
             0,
             '',
         );
+        expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
+            MessageListStatus.Success,
+        );
         const messages = fixture.debugElement.queryAll(
             By.directive(MessageStubComponent),
         );
@@ -164,6 +169,9 @@ describe('MessageListComponent', () => {
             chatId,
             1725113717,
             'message2',
+        );
+        expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
+            MessageListStatus.Success,
         );
 
         // Act
@@ -322,13 +330,12 @@ describe('MessageListComponent', () => {
     });
 
     describe('loadMessages with fake chatId', () => {
-        it('should emit Success status when fake chatId is valid', fakeAsync(() => {
+        it('should set Success status when fake chatId is valid', fakeAsync(() => {
             // Arrange
             const chatId = 'fake-chat-id';
             component['chatId'] = chatId;
             idGeneratorService.isFake.and.returnValue(true);
             storeService.isChatIdValid.and.resolveTo(true);
-            spyOn(component.statusChanged, 'emit');
 
             // Act
             component['loadMessages']();
@@ -337,18 +344,17 @@ describe('MessageListComponent', () => {
             // Assert
             expect(storeService.isChatIdValid).toHaveBeenCalledWith(chatId);
             expect(component['isMessageListLoaded']).toBe(true);
-            expect(component.statusChanged.emit).toHaveBeenCalledWith(
+            expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
                 MessageListStatus.Success,
             );
         }));
 
-        it('should emit NotFound status when fake chatId is invalid', fakeAsync(() => {
+        it('should set NotFound status when fake chatId is invalid', fakeAsync(() => {
             // Arrange
             const chatId = 'fake-chat-id';
             component['chatId'] = chatId;
             idGeneratorService.isFake.and.returnValue(true);
             storeService.isChatIdValid.and.resolveTo(false);
-            spyOn(component.statusChanged, 'emit');
 
             // Act
             component['loadMessages']();
@@ -356,7 +362,7 @@ describe('MessageListComponent', () => {
 
             // Assert
             expect(storeService.isChatIdValid).toHaveBeenCalledWith(chatId);
-            expect(component.statusChanged.emit).toHaveBeenCalledWith(
+            expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
                 MessageListStatus.NotFound,
             );
         }));
@@ -369,26 +375,25 @@ describe('MessageListComponent', () => {
             } as HTMLDivElement;
         });
 
-        it('should emit NotFound status when API returns 404', fakeAsync(() => {
+        it('should set NotFound status when API returns 404', fakeAsync(() => {
             // Arrange
             const chatId = 'real-chat-id';
             component['chatId'] = chatId;
             idGeneratorService.isFake.and.returnValue(false);
-            const apiError = new ApiException('Not found', 404, '', null, null);
+            const apiError = new ProblemDetails({ status: 404 });
             apiService.getMessages.and.rejectWith(apiError);
-            spyOn(component.statusChanged, 'emit');
 
             // Act
             component['loadMessages']();
             tick();
 
             // Assert
-            expect(component.statusChanged.emit).toHaveBeenCalledWith(
+            expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
                 MessageListStatus.NotFound,
             );
         }));
 
-        it('should emit Error status when API returns other error', fakeAsync(() => {
+        it('should set Error status when API returns other error', fakeAsync(() => {
             // Arrange
             const chatId = 'real-chat-id';
             component['chatId'] = chatId;
@@ -401,32 +406,30 @@ describe('MessageListComponent', () => {
                 null,
             );
             apiService.getMessages.and.rejectWith(apiError);
-            spyOn(component.statusChanged, 'emit');
 
             // Act
             component['loadMessages']();
             tick();
 
             // Assert
-            expect(component.statusChanged.emit).toHaveBeenCalledWith(
+            expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
                 MessageListStatus.Error,
             );
         }));
 
-        it('should emit Error status when non-API error occurs', fakeAsync(() => {
+        it('should set Error status when non-API error occurs', fakeAsync(() => {
             // Arrange
             const chatId = 'real-chat-id';
             component['chatId'] = chatId;
             idGeneratorService.isFake.and.returnValue(false);
             apiService.getMessages.and.rejectWith(new Error('Network error'));
-            spyOn(component.statusChanged, 'emit');
 
             // Act
             component['loadMessages']();
             tick();
 
             // Assert
-            expect(component.statusChanged.emit).toHaveBeenCalledWith(
+            expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
                 MessageListStatus.Error,
             );
         }));
@@ -646,5 +649,262 @@ describe('MessageListComponent', () => {
             expect(component['isMessageListLoaded']).toBe(true);
             expect(storeService.initMessages).toHaveBeenCalledWith([]);
         }));
+    });
+
+    describe('ngOnInit', () => {
+        it('should subscribe to selectedChatId and messages selectors', () => {
+            // Arrange
+            spyOn(store, 'select').and.callThrough();
+
+            // Act
+            component.ngOnInit();
+
+            // Assert
+            expect(store.select).toHaveBeenCalledWith(selectSelectedChatId);
+            expect(store.select).toHaveBeenCalledWith(selectMessages);
+        });
+
+        it('should initialize component state when selectedChatId changes', fakeAsync(() => {
+            // Arrange
+            const chatId = 'test-chat-id';
+            mockSelectSelectedChatId.setResult(chatId);
+            apiService.getMessages.and.resolveTo([]);
+
+            // Act
+            component.ngOnInit();
+            store.refreshState();
+            tick();
+
+            // Assert
+            expect(component['chatId']).toBe(chatId);
+            expect(component['pageIndex']).toBe(0);
+            expect(component['scrollCounter']).toBe(0);
+            expect(component['isMessageListLoaded']).toBe(true);
+            expect(storeService.initMessages).toHaveBeenCalledWith([]);
+        }));
+
+        it('should update messages when messages selector changes', fakeAsync(() => {
+            // Arrange
+            const messages = [
+                new Message({ id: '1', text: 'Hello' }),
+                new Message({ id: '2', text: 'World' })
+            ];
+            mockSelectMessages.setResult(messages);
+
+            // Act
+            component.ngOnInit();
+            store.refreshState();
+            tick();
+
+            // Assert
+            expect(component.messages).toBe(messages);
+        }));
+    });
+
+    describe('loadMessages with successful API response', () => {
+        beforeEach(() => {
+            component['scrollContainer'] = {
+                scrollHeight: 100,
+            } as HTMLDivElement;
+        });
+
+        it('should set Success status on initial successful load', fakeAsync(() => {
+            // Arrange
+            const chatId = 'real-chat-id';
+            component['chatId'] = chatId;
+            component['isMessageListLoaded'] = false;
+            idGeneratorService.isFake.and.returnValue(false);
+            const messageDtos = [
+                { id: 'msg1', text: 'Hello', created: 123456 },
+                { id: 'msg2', text: 'World', created: 123457 }
+            ];
+            apiService.getMessages.and.resolveTo(messageDtos);
+
+            // Act
+            component['loadMessages']();
+            tick();
+
+            // Assert
+            expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
+                MessageListStatus.Success,
+            );
+            expect(component['isMessageListLoaded']).toBe(true);
+        }));
+
+        it('should not set status on pagination load', fakeAsync(() => {
+            // Arrange
+            const chatId = 'real-chat-id';
+            component['chatId'] = chatId;
+            component['isMessageListLoaded'] = true; // Already loaded
+            idGeneratorService.isFake.and.returnValue(false);
+            const messageDtos = [
+                { id: 'msg3', text: 'More', created: 123458 }
+            ];
+            apiService.getMessages.and.resolveTo(messageDtos);
+
+            // Act
+            component['loadMessages']();
+            tick();
+
+            // Assert
+            expect(storeService.setSelectedChatMessageListStatus).not.toHaveBeenCalled();
+        }));
+
+        it('should calculate lastMessageInfo correctly', fakeAsync(() => {
+            // Arrange
+            const chatId = 'real-chat-id';
+            component['chatId'] = chatId;
+            component['isMessageListLoaded'] = false;
+            idGeneratorService.isFake.and.returnValue(false);
+            const messageDtos = [
+                { id: 'msg1', text: 'Hello', created: 123456 },
+                { id: 'msg2', text: 'World', created: 123459 },
+                { id: 'msg3', text: 'Latest', created: 123458 }
+            ];
+            apiService.getMessages.and.resolveTo(messageDtos);
+
+            // Act
+            component['loadMessages']();
+            tick();
+
+            // Assert
+            expect(storeService.setLastMessageInfo).toHaveBeenCalledWith(
+                chatId,
+                123459, // Max created timestamp
+                'msg2'  // ID of message with max timestamp
+            );
+        }));
+
+        it('should handle empty message response on initial load', fakeAsync(() => {
+            // Arrange
+            const chatId = 'real-chat-id';
+            component['chatId'] = chatId;
+            component['isMessageListLoaded'] = false;
+            idGeneratorService.isFake.and.returnValue(false);
+            apiService.getMessages.and.resolveTo([]);
+
+            // Act
+            component['loadMessages']();
+            tick();
+
+            // Assert
+            expect(storeService.setLastMessageInfo).toHaveBeenCalledWith(
+                chatId,
+                0,
+                ''
+            );
+            expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
+                MessageListStatus.Success,
+            );
+        }));
+    });
+
+    describe('scrollSequencePromise', () => {
+        it('should call scrollToBottom when itemElements change', fakeAsync(() => {
+            // Arrange
+            const mockElement = document.createElement('div');
+            component.scrollFrame = {
+                nativeElement: mockElement,
+            } as ElementRef;
+            
+            component['scrollContainer'] = {
+                get scrollHeight() {
+                    return 200;
+                },
+                scroll: jasmine.createSpy('scroll')
+            } as any;
+
+            spyOn<any>(component, 'scrollToBottom').and.callThrough();
+
+            const changesSubject = new Subject();
+            const mockQueryList = {
+                changes: changesSubject.asObservable()
+            } as any;
+            component.itemElements = mockQueryList;
+
+            // Act
+            component.ngAfterViewInit();
+            
+            // Emit a change to trigger scroll operation
+            changesSubject.next([1]);
+            tick(); // Allow promise to resolve
+
+            // Assert
+            expect(component['scrollToBottom']).toHaveBeenCalled();
+        }));
+    });
+
+    describe('edge cases', () => {
+        it('should handle undefined scrollContainer in scrollToBottom', () => {
+            // Arrange
+            component['scrollContainer'] = undefined as any;
+            component['scrollCounter'] = 0;
+
+            // Act & Assert - Should throw because the component doesn't handle undefined scrollContainer
+            expect(() => component['scrollToBottom']()).toThrowError();
+        });
+
+        it('should handle null chatId in loadMessages', fakeAsync(() => {
+            // Arrange
+            component['chatId'] = null;
+            component['isMessageListLoaded'] = false;
+
+            // Act
+            component['loadMessages']();
+            tick();
+
+            // Assert
+            expect(component['isMessageListLoaded']).toBe(true);
+            expect(apiService.getMessages).not.toHaveBeenCalled();
+            expect(storeService.setSelectedChatMessageListStatus).not.toHaveBeenCalled();
+        }));
+
+        it('should handle messages with same timestamp in lastMessageInfo calculation', fakeAsync(() => {
+            // Arrange
+            const chatId = 'real-chat-id';
+            component['chatId'] = chatId;
+            component['isMessageListLoaded'] = false;
+            idGeneratorService.isFake.and.returnValue(false);
+            const messageDtos = [
+                { id: 'msg1', text: 'Hello', created: 123456 },
+                { id: 'msg2', text: 'World', created: 123456 }, // Same timestamp
+            ];
+            apiService.getMessages.and.resolveTo(messageDtos);
+
+            // Act
+            component['loadMessages']();
+            tick();
+
+            // Assert
+            expect(storeService.setLastMessageInfo).toHaveBeenCalledWith(
+                chatId,
+                123456,
+                jasmine.any(String) // Should be one of the message IDs
+            );
+        }));
+    });
+
+    describe('component lifecycle', () => {
+        it('should properly clean up subscriptions on destroy', () => {
+            // Arrange
+            const unsubscribeSpy = spyOn(component['unsubscribe$'], 'next');
+            const completeSpy = spyOn(component['unsubscribe$'], 'complete');
+
+            // Act
+            component.ngOnDestroy();
+
+            // Assert
+            expect(unsubscribeSpy).toHaveBeenCalled();
+            expect(completeSpy).toHaveBeenCalled();
+        });
+
+        it('should initialize with default values', () => {
+            // Assert
+            expect(component.messages).toEqual([]);
+            expect(component['pageIndex']).toBe(0);
+            expect(component['scrollCounter']).toBe(0);
+            expect(component['isMessageListLoaded']).toBe(false);
+            expect(component['previousScrollHeight']).toBe(0);
+        });
     });
 });

@@ -49,7 +49,6 @@ export class AccountListComponent implements OnInit, OnDestroy {
             (chat) => chat.isIndividual && chat.accountIds[0] === account.id,
         );
         if (chat) {
-            this.storeService.setSelectedChatId(chat.id);
             await this.storeService.markAllAsRead(chat);
         } else {
             const chatDto = new ChatDto({
@@ -64,7 +63,6 @@ export class AccountListComponent implements OnInit, OnDestroy {
             });
 
             this.storeService.addChat(chatDto);
-            this.storeService.setSelectedChatId(chatDto.id);
         }
         this.location.back();
     }

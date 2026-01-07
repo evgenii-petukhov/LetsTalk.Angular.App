@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
@@ -20,6 +21,8 @@ import { ImageCacheEntry } from '../models/image-cache-entry';
 import { accountsActions } from '../state/accounts/accounts.actions';
 import { messagesActions } from '../state/messages/messages.actions';
 import { selectedChatIdActions } from '../state/selected-chat/selected-chat-id.actions';
+import { videoCallActions } from '../state/video-call/video-call.actions';
+import { selectedChatUiActions } from '../state/selected-chat-ui/selected-chat-ui.actions';
 
 describe('StoreService', () => {
     let service: StoreService;
@@ -438,6 +441,230 @@ describe('StoreService', () => {
             expect(store.dispatch).toHaveBeenCalledWith(
                 selectedChatIdActions.init({ chatId }),
             );
+        });
+    });
+
+    describe('initOutgoingCall', () => {
+        it('should dispatch initOutgoingCall action', () => {
+            const chatId = '1';
+
+            service.initOutgoingCall(chatId);
+
+            expect(store.dispatch).toHaveBeenCalledWith(
+                videoCallActions.initOutgoingCall({ chatId }),
+            );
+        });
+    });
+
+    describe('initIncomingCall', () => {
+        it('should dispatch initIncomingCall action', () => {
+            const chatId = '1';
+            const offer = 'sdp-offer-string';
+
+            service.initIncomingCall(chatId, offer);
+
+            expect(store.dispatch).toHaveBeenCalledWith(
+                videoCallActions.initIncomingCall({ chatId, offer }),
+            );
+        });
+    });
+
+    describe('resetCall', () => {
+        it('should dispatch reset action', () => {
+            service.resetCall();
+
+            expect(store.dispatch).toHaveBeenCalledWith(
+                videoCallActions.reset(),
+            );
+        });
+    });
+
+    describe('toggleVideo', () => {
+        it('should dispatch toggleVideo action', () => {
+            service.toggleVideo();
+
+            expect(store.dispatch).toHaveBeenCalledWith(
+                videoCallActions.toggleVideo(),
+            );
+        });
+    });
+
+    describe('toggleAudio', () => {
+        it('should dispatch toggleAudio action', () => {
+            service.toggleAudio();
+
+            expect(store.dispatch).toHaveBeenCalledWith(
+                videoCallActions.toggleAudio(),
+            );
+        });
+    });
+
+    describe('setSelectedChatMessageListStatus', () => {
+        it('should dispatch setMessageListStatus action', () => {
+            const messageListStatus = 'Success' as any; // Using 'as any' to avoid importing the enum
+
+            service.setSelectedChatMessageListStatus(messageListStatus);
+
+            expect(store.dispatch).toHaveBeenCalledWith(
+                selectedChatUiActions.setMessageListStatus({
+                    messageListStatus,
+                }),
+            );
+        });
+    });
+
+    describe('markAllAsRead edge cases', () => {
+        it('should return early if chat is null', async () => {
+            await service.markAllAsRead(null as any);
+
+            expect(apiService.markAsRead).not.toHaveBeenCalled();
+            expect(store.dispatch).not.toHaveBeenCalled();
+        });
+
+        it('should return early if chat is undefined', async () => {
+            await service.markAllAsRead(undefined as any);
+
+            expect(apiService.markAsRead).not.toHaveBeenCalled();
+            expect(store.dispatch).not.toHaveBeenCalled();
+        });
+
+        it('should return early if unreadCount is 0', async () => {
+            const chat: IChatDto = {
+                id: '1',
+                unreadCount: 0,
+                lastMessageId: '123',
+                lastMessageDate: 1234567890,
+            };
+
+            await service.markAllAsRead(chat);
+
+            expect(apiService.markAsRead).not.toHaveBeenCalled();
+            expect(store.dispatch).not.toHaveBeenCalled();
+        });
+
+        it('should call setLastMessageInfo when marking as read', async () => {
+            const chat: IChatDto = {
+                id: '1',
+                unreadCount: 2,
+                lastMessageId: '123',
+                lastMessageDate: 1234567890,
+            };
+
+            apiService.markAsRead.and.resolveTo();
+            spyOn(service, 'setLastMessageInfo');
+
+            await service.markAllAsRead(chat);
+
+            expect(service.setLastMessageInfo).toHaveBeenCalledWith(
+                chat.id,
+                chat.lastMessageDate,
+                chat.lastMessageId,
+            );
+        });
+    });
+
+    describe('getImageContent edge cases', () => {
+        it('should handle string content type from download response', async () => {
+            const mockResponse = jasmine.createSpyObj('DownloadImageResponse', [
+                'getContent',
+                'getWidth',
+                'getHeight',
+            ]);
+            const mockContent = 'string-content';
+            mockResponse.getContent.and.returnValue(mockContent);
+            mockResponse.getWidth.and.returnValue(150);
+            mockResponse.getHeight.and.returnValue(200);
+
+            store.select.and.returnValue(of([]));
+            fileStorageService.download.and.resolveTo(mockResponse);
+            const imageUrl = 'data:image/png;base64,string-content';
+            spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);
+
+            const image = await service.getImageContent(imageKey);
+
+            expect(image.imageId).toBe(imageKey.id);
+            expect(image.content).toBe(imageUrl);
+            expect(image.width).toBe(150);
+            expect(image.height).toBe(200);
+        });
+
+        it('should throw error for unsupported content type', async () => {
+            const mockResponse = jasmine.createSpyObj('DownloadImageResponse', [
+                'getContent',
+                'getWidth',
+                'getHeight',
+            ]);
+            const mockContent = { unsupported: 'type' }; // Unsupported type
+            mockResponse.getContent.and.returnValue(mockContent);
+
+            store.select.and.returnValue(of([]));
+            fileStorageService.download.and.resolveTo(mockResponse);
+
+            try {
+                await service.getImageContent(imageKey);
+                fail('Expected error to be thrown');
+            } catch (error) {
+                expect(error.message).toBe('Unsupported content type');
+            }
+        });
+
+        it('should return cached image if found in store', async () => {
+            const cachedImage: ImageCacheEntry = {
+                imageId: imageKey.id,
+                content: 'cached-url',
+                width: 300,
+                height: 400,
+            };
+            store.select.and.returnValue(of([cachedImage]));
+
+            const result = await service.getImageContent(imageKey);
+
+            expect(result).toBe(cachedImage);
+            expect(fileStorageService.download).not.toHaveBeenCalled();
+        });
+
+        it('should handle empty image cache array', async () => {
+            const mockResponse = jasmine.createSpyObj('DownloadImageResponse', [
+                'getContent',
+                'getWidth',
+                'getHeight',
+            ]);
+            const mockContent = new Uint8Array([1, 2, 3]);
+            mockResponse.getContent.and.returnValue(mockContent);
+            mockResponse.getWidth.and.returnValue(100);
+            mockResponse.getHeight.and.returnValue(100);
+
+            store.select.and.returnValue(of([])); // Empty array
+            fileStorageService.download.and.resolveTo(mockResponse);
+            const imageUrl = 'data:image/png;base64,generated';
+            spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);
+
+            const image = await service.getImageContent(imageKey);
+
+            expect(image.imageId).toBe(imageKey.id);
+            expect(fileStorageService.download).toHaveBeenCalledWith(imageKey);
+        });
+
+        it('should handle null image cache', async () => {
+            const mockResponse = jasmine.createSpyObj('DownloadImageResponse', [
+                'getContent',
+                'getWidth',
+                'getHeight',
+            ]);
+            const mockContent = new Uint8Array([1, 2, 3]);
+            mockResponse.getContent.and.returnValue(mockContent);
+            mockResponse.getWidth.and.returnValue(100);
+            mockResponse.getHeight.and.returnValue(100);
+
+            store.select.and.returnValue(of(null)); // Null cache
+            fileStorageService.download.and.resolveTo(mockResponse);
+            const imageUrl = 'data:image/png;base64,generated';
+            spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);
+
+            const image = await service.getImageContent(imageKey);
+
+            expect(image.imageId).toBe(imageKey.id);
+            expect(fileStorageService.download).toHaveBeenCalledWith(imageKey);
         });
     });
 });

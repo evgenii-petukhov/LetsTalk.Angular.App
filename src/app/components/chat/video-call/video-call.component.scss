@@ -1,0 +1,44 @@
+@use "bootstrap/scss/bootstrap" as *;
+@use "../../../shared-styles/mixins/avatar-styles" as *;
+
+:host {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    background: #000;
+
+    @include media-breakpoint-down(sm) {
+        flex-direction: column;
+    }
+
+    video {
+        flex: 1;
+        width: 42%;
+        object-fit: cover;
+
+        @include media-breakpoint-down(sm) {
+            height: 50%;
+            width: auto;
+        }
+    }
+
+    .controls {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+
+        .controls-inner {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+
+            app-call-button,
+            app-media-toggle-button {
+                @include avatar-styles(42px);
+            }
+        }
+    }
+}

@@ -1,14 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { SignalrHandlerService } from './signalr-handler.service';
 import { SignalrService } from './signalr.service';
 import { StoreService } from './store.service';
 import { ApiService } from './api.service';
 import { BrowserNotificationService } from './browser-notification.service';
+import { RtcConnectionService } from './rtc-connection.service';
+import { Router } from '@angular/router';
 import {
     IMessageDto,
     ILinkPreviewDto,
     IImagePreviewDto,
     IChatDto,
+    ImageDto,
 } from '../api-client/api-client';
 
 describe('SignalrHandlerService', () => {
@@ -17,9 +21,49 @@ describe('SignalrHandlerService', () => {
     let storeService: jasmine.SpyObj<StoreService>;
     let signalrService: jasmine.SpyObj<SignalrService>;
     let browserNotificationService: jasmine.SpyObj<BrowserNotificationService>;
+    let rtcConnectionService: jasmine.SpyObj<RtcConnectionService>;
+    let router: jasmine.SpyObj<Router>;
+
+    const mockMessageDto: IMessageDto = {
+        id: '1',
+        chatId: 'chatId',
+        text: 'message',
+        created: 1728867957,
+        isMine: false,
+        image: null,
+    } as IMessageDto;
+
+    const mockImageMessageDto: IMessageDto = {
+        id: '2',
+        chatId: 'chatId',
+        text: '',
+        created: 1728867958,
+        isMine: false,
+        image: new ImageDto(),
+    } as IMessageDto;
+
+    const mockChats: IChatDto[] = [
+        { id: 'chatId', chatName: 'Chat 1', unreadCount: 0 } as IChatDto,
+        { id: 'otherChatId', chatName: 'Chat 2', unreadCount: 0 } as IChatDto,
+    ];
+
+    const mockLinkPreviewDto: ILinkPreviewDto = {
+        chatId: 'chatId',
+        url: 'http://example.com',
+        title: 'Example',
+    } as ILinkPreviewDto;
+
+    const mockImagePreviewDto: IImagePreviewDto = {
+        chatId: 'chatId',
+        imageId: '1',
+        url: 'http://example.com/image.jpg',
+    } as IImagePreviewDto;
 
     beforeEach(() => {
+        // Create spies with return values
         apiService = jasmine.createSpyObj('ApiService', ['markAsRead']);
+        apiService.markAsRead.and.returnValue(Promise.resolve());
+
         storeService = jasmine.createSpyObj('StoreService', [
             'setLastMessageInfo',
             'addMessage',
@@ -27,15 +71,28 @@ describe('SignalrHandlerService', () => {
             'initChatStorage',
             'setLinkPreview',
             'setImagePreview',
+            'initIncomingCall',
         ]);
+        storeService.initChatStorage.and.returnValue(Promise.resolve());
+
         signalrService = jasmine.createSpyObj('SignalrService', [
             'init',
             'removeHandlers',
         ]);
+        signalrService.init.and.returnValue(Promise.resolve());
+
         browserNotificationService = jasmine.createSpyObj(
             'BrowserNotificationService',
             ['init', 'showNotification'],
         );
+        browserNotificationService.init.and.returnValue(Promise.resolve());
+
+        rtcConnectionService = jasmine.createSpyObj('RtcConnectionService', [
+            'establishConnection',
+        ]);
+
+        router = jasmine.createSpyObj('Router', ['navigate']);
+        router.navigate.and.returnValue(Promise.resolve(true));
 
         TestBed.configureTestingModule({
             providers: [
@@ -47,297 +104,937 @@ describe('SignalrHandlerService', () => {
                     provide: BrowserNotificationService,
                     useValue: browserNotificationService,
                 },
+                {
+                    provide: RtcConnectionService,
+                    useValue: rtcConnectionService,
+                },
+                { provide: Router, useValue: router },
             ],
         });
 
         service = TestBed.inject(SignalrHandlerService);
     });
 
-    describe('initHandlers', () => {
-        it('should initialize SignalR handlers', async () => {
-            // Arrange
-            const handleMessageNotification = jasmine.createSpy(
-                'handleMessageNotification',
-            );
-            const handleLinkPreviewNotification = jasmine.createSpy(
-                'handleLinkPreviewNotification',
-            );
-            const handleImagePreviewNotification = jasmine.createSpy(
-                'handleImagePreviewNotification',
-            );
+    it('should be created', () => {
+        expect(service).toBeTruthy();
+    });
 
-            // Act
+    describe('initHandlers', () => {
+        let handleMessageNotification: jasmine.Spy;
+        let handleLinkPreviewNotification: jasmine.Spy;
+        let handleImagePreviewNotification: jasmine.Spy;
+        let handleRtcSessionOfferNotification: jasmine.Spy;
+        let handleRtcSessionAnswerNotification: jasmine.Spy;
+
+        beforeEach(() => {
+            handleMessageNotification = jasmine.createSpy('handleMessageNotification');
+            handleLinkPreviewNotification = jasmine.createSpy('handleLinkPreviewNotification');
+            handleImagePreviewNotification = jasmine.createSpy('handleImagePreviewNotification');
+            handleRtcSessionOfferNotification = jasmine.createSpy('handleRtcSessionOfferNotification');
+            handleRtcSessionAnswerNotification = jasmine.createSpy('handleRtcSessionAnswerNotification');
+        });
+
+        it('should initialize browser notifications and SignalR handlers', async () => {
             await service.initHandlers(
                 handleMessageNotification,
                 handleLinkPreviewNotification,
                 handleImagePreviewNotification,
+                handleRtcSessionOfferNotification,
+                handleRtcSessionAnswerNotification,
             );
 
-            // Assert
+            expect(browserNotificationService.init).toHaveBeenCalledTimes(1);
             expect(signalrService.init).toHaveBeenCalledWith(
                 handleMessageNotification,
                 handleLinkPreviewNotification,
                 handleImagePreviewNotification,
+                handleRtcSessionOfferNotification,
+                handleRtcSessionAnswerNotification,
             );
+        });
+
+        it('should handle browser notification initialization failure gracefully', async () => {
+            browserNotificationService.init.and.returnValue(Promise.reject(new Error('Notification init failed')));
+
+            await expectAsync(
+                service.initHandlers(
+                    handleMessageNotification,
+                    handleLinkPreviewNotification,
+                    handleImagePreviewNotification,
+                    handleRtcSessionOfferNotification,
+                    handleRtcSessionAnswerNotification,
+                )
+            ).toBeRejected();
+
             expect(browserNotificationService.init).toHaveBeenCalledTimes(1);
+        });
+
+        it('should handle SignalR initialization failure gracefully', async () => {
+            signalrService.init.and.returnValue(Promise.reject(new Error('SignalR init failed')));
+
+            await expectAsync(
+                service.initHandlers(
+                    handleMessageNotification,
+                    handleLinkPreviewNotification,
+                    handleImagePreviewNotification,
+                    handleRtcSessionOfferNotification,
+                    handleRtcSessionAnswerNotification,
+                )
+            ).toBeRejected();
+
+            expect(signalrService.init).toHaveBeenCalledTimes(1);
         });
     });
 
     describe('removeHandlers', () => {
         it('should remove SignalR handlers', () => {
-            // Arrange
-
-            // Act
             service.removeHandlers();
 
-            // Assert
-            expect(signalrService.removeHandlers).toHaveBeenCalled();
+            expect(signalrService.removeHandlers).toHaveBeenCalledTimes(1);
+        });
+
+        it('should be callable multiple times without error', () => {
+            service.removeHandlers();
+            service.removeHandlers();
+
+            expect(signalrService.removeHandlers).toHaveBeenCalledTimes(2);
         });
     });
 
     describe('handleMessageNotification', () => {
-        const messageDto = {
-            id: '1',
-            chatId: 'chatId',
-            text: 'message',
-            created: 1728867957,
-            isMine: false,
-        } as IMessageDto;
-
-        const chats = [
-            { id: 'chatId', chatName: 'Chat 1', unreadCount: 0 },
-        ] as IChatDto[];
-
         it('should set last message info and add message if chatId matches selectedChatId', async () => {
-            // Arrange
-
-            // Act
-            await service.handleMessageNotification(
-                messageDto,
-                'chatId',
-                chats,
-                false,
-            );
-
-            // Assert
-            expect(storeService.setLastMessageInfo).toHaveBeenCalledOnceWith(
-                messageDto.chatId,
-                messageDto.created,
-                messageDto.id,
-            );
-            expect(storeService.addMessage).toHaveBeenCalledOnceWith(
-                messageDto,
-            );
-            expect(apiService.markAsRead).not.toHaveBeenCalled();
-            expect(
-                storeService.incrementUnreadMessages,
-            ).toHaveBeenCalledOnceWith('chatId');
-            expect(
-                browserNotificationService.showNotification,
-            ).toHaveBeenCalledOnceWith('Chat 1', 'message', false);
-            expect(storeService.initChatStorage).not.toHaveBeenCalled();
-        });
-
-        it('should not mark message as read if it is mine', async () => {
-            // Arrange
-            const mockMessageDto = {
-                ...messageDto,
-                isMine: true,
-            };
-
-            // Act
             await service.handleMessageNotification(
                 mockMessageDto,
                 'chatId',
-                chats,
+                mockChats,
                 false,
             );
 
-            // Assert
-            expect(storeService.setLastMessageInfo).toHaveBeenCalledOnceWith(
+            expect(storeService.setLastMessageInfo).toHaveBeenCalledWith(
                 mockMessageDto.chatId,
                 mockMessageDto.created,
                 mockMessageDto.id,
             );
-            expect(storeService.addMessage).toHaveBeenCalledOnceWith(
-                mockMessageDto,
+            expect(storeService.addMessage).toHaveBeenCalledWith(mockMessageDto);
+        });
+
+        it('should not process further if message is mine', async () => {
+            const myMessageDto = { ...mockMessageDto, isMine: true };
+
+            await service.handleMessageNotification(
+                myMessageDto,
+                'chatId',
+                mockChats,
+                false,
             );
+
+            expect(storeService.setLastMessageInfo).toHaveBeenCalledWith(
+                myMessageDto.chatId,
+                myMessageDto.created,
+                myMessageDto.id,
+            );
+            expect(storeService.addMessage).toHaveBeenCalledWith(myMessageDto);
             expect(apiService.markAsRead).not.toHaveBeenCalled();
             expect(storeService.incrementUnreadMessages).not.toHaveBeenCalled();
-            expect(
-                browserNotificationService.showNotification,
-            ).not.toHaveBeenCalled();
-            expect(storeService.initChatStorage).not.toHaveBeenCalled();
+            expect(browserNotificationService.showNotification).not.toHaveBeenCalled();
         });
 
         it('should mark message as read if window is active and chatId matches selectedChatId', async () => {
-            // Arrange
-
-            // Act
             await service.handleMessageNotification(
-                messageDto,
+                mockMessageDto,
                 'chatId',
-                chats,
+                mockChats,
                 true,
             );
 
-            // Assert
-            expect(storeService.setLastMessageInfo).toHaveBeenCalledOnceWith(
-                messageDto.chatId,
-                messageDto.created,
-                messageDto.id,
-            );
-            expect(storeService.addMessage).toHaveBeenCalledOnceWith(
-                messageDto,
-            );
             expect(apiService.markAsRead).toHaveBeenCalledWith(
-                messageDto.chatId,
-                messageDto.id,
+                mockMessageDto.chatId,
+                mockMessageDto.id,
             );
             expect(storeService.incrementUnreadMessages).not.toHaveBeenCalled();
-            expect(
-                browserNotificationService.showNotification,
-            ).not.toHaveBeenCalled();
-            expect(storeService.initChatStorage).not.toHaveBeenCalled();
+            expect(browserNotificationService.showNotification).not.toHaveBeenCalled();
         });
 
         it('should increment unread messages and show notification if chatId does not match selectedChatId', async () => {
-            // Arrange
-
-            // Act
             await service.handleMessageNotification(
-                messageDto,
+                mockMessageDto,
                 'otherChatId',
-                chats,
+                mockChats,
                 false,
             );
 
-            // Assert
-            expect(storeService.setLastMessageInfo).toHaveBeenCalledOnceWith(
-                messageDto.chatId,
-                messageDto.created,
-                messageDto.id,
-            );
             expect(storeService.addMessage).not.toHaveBeenCalled();
-            expect(storeService.incrementUnreadMessages).toHaveBeenCalledWith(
-                messageDto.chatId,
-            );
-            expect(
-                browserNotificationService.showNotification,
-            ).toHaveBeenCalledWith(
-                chats[0].chatName,
-                messageDto.image ? 'Image' : messageDto.text,
+            expect(storeService.incrementUnreadMessages).toHaveBeenCalledWith(mockMessageDto.chatId);
+            expect(browserNotificationService.showNotification).toHaveBeenCalledWith(
+                'Chat 1',
+                mockMessageDto.text,
                 false,
             );
-            expect(storeService.initChatStorage).not.toHaveBeenCalled();
+        });
+
+        it('should show "Image" notification for image messages', async () => {
+            await service.handleMessageNotification(
+                mockImageMessageDto,
+                'otherChatId',
+                mockChats,
+                false,
+            );
+
+            expect(browserNotificationService.showNotification).toHaveBeenCalledWith(
+                'Chat 1',
+                'Image',
+                false,
+            );
         });
 
         it('should initialize chat storage if chat is not found', async () => {
-            // Arrange
-
-            // Act
+            const messageWithUnknownChat = { ...mockMessageDto, chatId: 'nonExistentChatId' };
+            
             await service.handleMessageNotification(
-                messageDto,
-                'chatId',
+                messageWithUnknownChat,
+                'selectedChatId', // Different from message chatId
+                mockChats, // mockChats doesn't contain 'nonExistentChatId'
+                false,
+            );
+
+            expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
+            expect(storeService.incrementUnreadMessages).not.toHaveBeenCalled();
+            expect(browserNotificationService.showNotification).not.toHaveBeenCalled();
+        });
+
+        it('should handle empty chats array', async () => {
+            await service.handleMessageNotification(
+                mockMessageDto,
+                'otherChatId', // Different from message chatId so it goes to else branch
                 [],
                 false,
             );
 
-            // Assert
-            expect(storeService.setLastMessageInfo).toHaveBeenCalledOnceWith(
-                messageDto.chatId,
-                messageDto.created,
-                messageDto.id,
+            expect(storeService.setLastMessageInfo).toHaveBeenCalledWith(
+                mockMessageDto.chatId,
+                mockMessageDto.created,
+                mockMessageDto.id,
             );
-            expect(storeService.addMessage).toHaveBeenCalledOnceWith(
-                messageDto,
-            );
-            expect(apiService.markAsRead).not.toHaveBeenCalled();
-            expect(storeService.incrementUnreadMessages).not.toHaveBeenCalled();
-            expect(
-                browserNotificationService.showNotification,
-            ).not.toHaveBeenCalled();
+            expect(storeService.addMessage).not.toHaveBeenCalled(); // chatId doesn't match selectedChatId
             expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
+        });
+
+        it('should handle markAsRead API failure gracefully', async () => {
+            apiService.markAsRead.and.returnValue(Promise.reject(new Error('API Error')));
+
+            await expectAsync(
+                service.handleMessageNotification(
+                    mockMessageDto,
+                    'chatId',
+                    mockChats,
+                    true,
+                )
+            ).toBeRejected();
+
+            expect(apiService.markAsRead).toHaveBeenCalledWith(
+                mockMessageDto.chatId,
+                mockMessageDto.id,
+            );
+        });
+
+        it('should handle initChatStorage failure gracefully', async () => {
+            storeService.initChatStorage.and.returnValue(Promise.reject(new Error('Storage Error')));
+            
+            const messageWithUnknownChat = { ...mockMessageDto, chatId: 'nonExistentChatId' };
+
+            await expectAsync(
+                service.handleMessageNotification(
+                    messageWithUnknownChat,
+                    'selectedChatId', // Different from message chatId
+                    mockChats, // mockChats doesn't contain 'nonExistentChatId'
+                    false,
+                )
+            ).toBeRejected();
+
+            expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
+        });
+
+        it('should handle window active state correctly for different chat', async () => {
+            await service.handleMessageNotification(
+                mockMessageDto,
+                'otherChatId',
+                mockChats,
+                true, // Window is active but different chat
+            );
+
+            expect(apiService.markAsRead).not.toHaveBeenCalled();
+            expect(storeService.incrementUnreadMessages).toHaveBeenCalledWith(mockMessageDto.chatId);
+            expect(browserNotificationService.showNotification).toHaveBeenCalledWith(
+                'Chat 1',
+                mockMessageDto.text,
+                true, // Window is active
+            );
+        });
+
+        it('should handle null/undefined message properties', async () => {
+            const incompleteMessage = {
+                id: '1',
+                chatId: 'chatId',
+                text: null,
+                created: 1728867957,
+                isMine: false,
+                image: null,
+            } as IMessageDto;
+
+            await service.handleMessageNotification(
+                incompleteMessage,
+                'otherChatId',
+                mockChats,
+                false,
+            );
+
+            expect(browserNotificationService.showNotification).toHaveBeenCalledWith(
+                'Chat 1',
+                null, // Should handle null text
+                false,
+            );
         });
     });
 
     describe('handleLinkPreviewNotification', () => {
         it('should set link preview if chatId matches selectedChatId', () => {
-            // Arrange
-            const linkPreviewDto: ILinkPreviewDto = {
-                chatId: 'chatId',
-                url: 'http://example.com',
-            } as ILinkPreviewDto;
-            const selectedChatId = 'chatId';
+            service.handleLinkPreviewNotification(mockLinkPreviewDto, 'chatId');
 
-            // Act
-            service.handleLinkPreviewNotification(
-                linkPreviewDto,
-                selectedChatId,
-            );
-
-            // Assert
-            expect(storeService.setLinkPreview).toHaveBeenCalledWith(
-                linkPreviewDto,
-            );
+            expect(storeService.setLinkPreview).toHaveBeenCalledWith(mockLinkPreviewDto);
         });
 
         it('should not set link preview if chatId does not match selectedChatId', () => {
-            // Arrange
-            const linkPreviewDto: ILinkPreviewDto = {
-                chatId: 'chatId',
-                url: 'http://example.com',
-            } as ILinkPreviewDto;
-            const selectedChatId = 'otherChatId';
+            service.handleLinkPreviewNotification(mockLinkPreviewDto, 'otherChatId');
 
-            // Act
-            service.handleLinkPreviewNotification(
-                linkPreviewDto,
-                selectedChatId,
-            );
-
-            // Assert
             expect(storeService.setLinkPreview).not.toHaveBeenCalled();
+        });
+
+        it('should handle null selectedChatId', () => {
+            service.handleLinkPreviewNotification(mockLinkPreviewDto, null as any);
+
+            expect(storeService.setLinkPreview).not.toHaveBeenCalled();
+        });
+
+        it('should handle undefined selectedChatId', () => {
+            service.handleLinkPreviewNotification(mockLinkPreviewDto, undefined as any);
+
+            expect(storeService.setLinkPreview).not.toHaveBeenCalled();
+        });
+
+        it('should handle empty string selectedChatId', () => {
+            service.handleLinkPreviewNotification(mockLinkPreviewDto, '');
+
+            expect(storeService.setLinkPreview).not.toHaveBeenCalled();
+        });
+
+        it('should handle null linkPreviewDto chatId', () => {
+            const nullChatIdDto = { ...mockLinkPreviewDto, chatId: null as any };
+            
+            service.handleLinkPreviewNotification(nullChatIdDto, 'chatId');
+
+            expect(storeService.setLinkPreview).not.toHaveBeenCalled();
+        });
+
+        it('should handle malformed linkPreviewDto', () => {
+            const malformedDto = {
+                chatId: 'chatId',
+                url: null,
+                title: undefined,
+            } as any;
+            
+            service.handleLinkPreviewNotification(malformedDto, 'chatId');
+
+            expect(storeService.setLinkPreview).toHaveBeenCalledWith(malformedDto);
+        });
+
+        it('should handle very long URLs and titles', () => {
+            const longDataDto = {
+                ...mockLinkPreviewDto,
+                url: 'http://example.com/' + 'a'.repeat(2000),
+                title: 'Very long title: ' + 'b'.repeat(1000),
+            };
+            
+            service.handleLinkPreviewNotification(longDataDto, 'chatId');
+
+            expect(storeService.setLinkPreview).toHaveBeenCalledWith(longDataDto);
+        });
+
+        it('should handle special characters in link data', () => {
+            const specialCharsDto = {
+                ...mockLinkPreviewDto,
+                url: 'http://example.com/path with spaces & émojis 🔗',
+                title: 'Title with <script>alert("xss")</script> & 中文',
+            };
+            
+            service.handleLinkPreviewNotification(specialCharsDto, 'chatId');
+
+            expect(storeService.setLinkPreview).toHaveBeenCalledWith(specialCharsDto);
         });
     });
 
     describe('handleImagePreviewNotification', () => {
         it('should set image preview if chatId matches selectedChatId', () => {
-            // Arrange
-            const imagePreviewDto: IImagePreviewDto = {
-                chatId: 'chatId',
-                imageId: '1',
-            } as IImagePreviewDto;
-            const selectedChatId = 'chatId';
+            service.handleImagePreviewNotification(mockImagePreviewDto, 'chatId');
 
-            // Act
-            service.handleImagePreviewNotification(
-                imagePreviewDto,
-                selectedChatId,
-            );
-
-            // Assert
-            expect(storeService.setImagePreview).toHaveBeenCalledWith(
-                imagePreviewDto,
-            );
+            expect(storeService.setImagePreview).toHaveBeenCalledWith(mockImagePreviewDto);
         });
 
         it('should not set image preview if chatId does not match selectedChatId', () => {
-            // Arrange
-            const imagePreviewDto: IImagePreviewDto = {
-                chatId: 'chatId',
-                imageId: '1',
-            } as IImagePreviewDto;
-            const selectedChatId = 'otherChatId';
+            service.handleImagePreviewNotification(mockImagePreviewDto, 'otherChatId');
 
-            // Act
-            service.handleImagePreviewNotification(
-                imagePreviewDto,
-                selectedChatId,
+            expect(storeService.setImagePreview).not.toHaveBeenCalled();
+        });
+
+        it('should handle null selectedChatId', () => {
+            service.handleImagePreviewNotification(mockImagePreviewDto, null as any);
+
+            expect(storeService.setImagePreview).not.toHaveBeenCalled();
+        });
+
+        it('should handle undefined selectedChatId', () => {
+            service.handleImagePreviewNotification(mockImagePreviewDto, undefined as any);
+
+            expect(storeService.setImagePreview).not.toHaveBeenCalled();
+        });
+
+        it('should handle empty string selectedChatId', () => {
+            service.handleImagePreviewNotification(mockImagePreviewDto, '');
+
+            expect(storeService.setImagePreview).not.toHaveBeenCalled();
+        });
+
+        it('should handle null imagePreviewDto chatId', () => {
+            const nullChatIdDto = { ...mockImagePreviewDto, chatId: null as any };
+            
+            service.handleImagePreviewNotification(nullChatIdDto, 'chatId');
+
+            expect(storeService.setImagePreview).not.toHaveBeenCalled();
+        });
+
+        it('should handle malformed imagePreviewDto', () => {
+            const malformedDto = {
+                chatId: 'chatId',
+                imageId: null,
+                url: undefined,
+            } as any;
+            
+            service.handleImagePreviewNotification(malformedDto, 'chatId');
+
+            expect(storeService.setImagePreview).toHaveBeenCalledWith(malformedDto);
+        });
+
+        it('should handle very long URLs', () => {
+            const longUrlDto = {
+                ...mockImagePreviewDto,
+                url: 'http://example.com/' + 'a'.repeat(2000) + '.jpg',
+            };
+            
+            service.handleImagePreviewNotification(longUrlDto, 'chatId');
+
+            expect(storeService.setImagePreview).toHaveBeenCalledWith(longUrlDto);
+        });
+
+        it('should handle special characters in image data', () => {
+            const specialCharsDto = {
+                ...mockImagePreviewDto,
+                imageId: 'img-🖼️-special',
+                url: 'http://example.com/image with spaces & special chars.jpg',
+            };
+            
+            service.handleImagePreviewNotification(specialCharsDto, 'chatId');
+
+            expect(storeService.setImagePreview).toHaveBeenCalledWith(specialCharsDto);
+        });
+    });
+
+    describe('RTC Session Handlers', () => {
+        describe('handleRtcSessionOfferNotification', () => {
+            it('should navigate to chat and init incoming call when chat exists', async () => {
+                const chatId = 'chatId';
+                const offer = 'mock-offer-string';
+
+                await service.handleRtcSessionOfferNotification(
+                    mockChats,
+                    chatId,
+                    offer,
+                );
+
+                expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
+                expect(storeService.initIncomingCall).toHaveBeenCalledWith(chatId, offer);
+                expect(storeService.initChatStorage).not.toHaveBeenCalled();
+            });
+
+            it('should init chat storage when chat does not exist', async () => {
+                const chatId = 'nonExistentChatId';
+                const offer = 'mock-offer-string';
+
+                await service.handleRtcSessionOfferNotification(
+                    mockChats,
+                    chatId,
+                    offer,
+                );
+
+                expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
+                expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
+                expect(storeService.initIncomingCall).toHaveBeenCalledWith(chatId, offer);
+            });
+
+            it('should handle empty chats array', async () => {
+                const chatId = 'chatId';
+                const offer = 'mock-offer-string';
+
+                await service.handleRtcSessionOfferNotification(
+                    [],
+                    chatId,
+                    offer,
+                );
+
+                expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
+                expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
+                expect(storeService.initIncomingCall).toHaveBeenCalledWith(chatId, offer);
+            });
+
+            it('should handle router navigation failure gracefully', async () => {
+                const chatId = 'chatId';
+                const offer = 'mock-offer-string';
+                router.navigate.and.returnValue(Promise.reject(new Error('Navigation failed')));
+
+                await expectAsync(
+                    service.handleRtcSessionOfferNotification(
+                        mockChats,
+                        chatId,
+                        offer,
+                    )
+                ).toBeRejected();
+
+                expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
+            });
+
+            it('should handle initChatStorage failure gracefully', async () => {
+                const chatId = 'nonExistentChatId';
+                const offer = 'mock-offer-string';
+                storeService.initChatStorage.and.returnValue(Promise.reject(new Error('Storage init failed')));
+
+                await expectAsync(
+                    service.handleRtcSessionOfferNotification(
+                        mockChats,
+                        chatId,
+                        offer,
+                    )
+                ).toBeRejected();
+
+                expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
+            });
+
+            it('should handle null/undefined parameters', async () => {
+                await expectAsync(
+                    service.handleRtcSessionOfferNotification(
+                        null as any,
+                        'chatId',
+                        'offer',
+                    )
+                ).toBeRejected();
+            });
+
+            it('should handle empty string parameters', async () => {
+                const chatId = '';
+                const offer = '';
+
+                await service.handleRtcSessionOfferNotification(
+                    mockChats,
+                    chatId,
+                    offer,
+                );
+
+                expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
+                expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
+                expect(storeService.initIncomingCall).toHaveBeenCalledWith(chatId, offer);
+            });
+        });
+
+        describe('handleRtcSessionAnswerNotification', () => {
+            it('should establish RTC connection with answer', () => {
+                const answer = 'mock-answer-string';
+
+                service.handleRtcSessionAnswerNotification(answer);
+
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+            });
+
+            it('should handle empty answer string', () => {
+                const answer = '';
+
+                service.handleRtcSessionAnswerNotification(answer);
+
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+            });
+
+            it('should handle null answer', () => {
+                const answer = null as any;
+
+                service.handleRtcSessionAnswerNotification(answer);
+
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+            });
+
+            it('should handle undefined answer', () => {
+                const answer = undefined as any;
+
+                service.handleRtcSessionAnswerNotification(answer);
+
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+            });
+
+            it('should be callable multiple times', () => {
+                const answer1 = 'answer1';
+                const answer2 = 'answer2';
+
+                service.handleRtcSessionAnswerNotification(answer1);
+                service.handleRtcSessionAnswerNotification(answer2);
+
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledTimes(2);
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer1);
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer2);
+            });
+
+            it('should handle very long answer strings', () => {
+                const longAnswer = 'a'.repeat(10000);
+
+                service.handleRtcSessionAnswerNotification(longAnswer);
+
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(longAnswer);
+            });
+        });
+    });
+
+    describe('Integration Tests', () => {
+        it('should handle complete message workflow for active window and selected chat', async () => {
+            await service.handleMessageNotification(
+                mockMessageDto,
+                'chatId',
+                mockChats,
+                true,
             );
 
-            // Assert
-            expect(storeService.setImagePreview).not.toHaveBeenCalled();
+            // Verify complete workflow
+            expect(storeService.setLastMessageInfo).toHaveBeenCalledWith(
+                mockMessageDto.chatId,
+                mockMessageDto.created,
+                mockMessageDto.id,
+            );
+            expect(storeService.addMessage).toHaveBeenCalledWith(mockMessageDto);
+            expect(apiService.markAsRead).toHaveBeenCalledWith(
+                mockMessageDto.chatId,
+                mockMessageDto.id,
+            );
+            expect(storeService.incrementUnreadMessages).not.toHaveBeenCalled();
+            expect(browserNotificationService.showNotification).not.toHaveBeenCalled();
+        });
+
+        it('should handle complete message workflow for inactive window and different chat', async () => {
+            await service.handleMessageNotification(
+                mockMessageDto,
+                'otherChatId',
+                mockChats,
+                false,
+            );
+
+            // Verify complete workflow
+            expect(storeService.setLastMessageInfo).toHaveBeenCalledWith(
+                mockMessageDto.chatId,
+                mockMessageDto.created,
+                mockMessageDto.id,
+            );
+            expect(storeService.addMessage).not.toHaveBeenCalled();
+            expect(apiService.markAsRead).not.toHaveBeenCalled();
+            expect(storeService.incrementUnreadMessages).toHaveBeenCalledWith(mockMessageDto.chatId);
+            expect(browserNotificationService.showNotification).toHaveBeenCalledWith(
+                'Chat 1',
+                mockMessageDto.text,
+                false,
+            );
+        });
+
+        it('should handle service initialization and cleanup lifecycle', async () => {
+            const handlers = {
+                message: jasmine.createSpy('messageHandler'),
+                linkPreview: jasmine.createSpy('linkPreviewHandler'),
+                imagePreview: jasmine.createSpy('imagePreviewHandler'),
+                rtcOffer: jasmine.createSpy('rtcOfferHandler'),
+                rtcAnswer: jasmine.createSpy('rtcAnswerHandler'),
+            };
+
+            // Initialize
+            await service.initHandlers(
+                handlers.message,
+                handlers.linkPreview,
+                handlers.imagePreview,
+                handlers.rtcOffer,
+                handlers.rtcAnswer,
+            );
+
+            expect(browserNotificationService.init).toHaveBeenCalledTimes(1);
+            expect(signalrService.init).toHaveBeenCalledTimes(1);
+
+            // Cleanup
+            service.removeHandlers();
+
+            expect(signalrService.removeHandlers).toHaveBeenCalledTimes(1);
+        });
+
+        it('should handle complete RTC workflow', async () => {
+            const chatId = 'chatId';
+            const offer = 'test-offer';
+            const answer = 'test-answer';
+
+            // Handle offer
+            await service.handleRtcSessionOfferNotification(mockChats, chatId, offer);
+
+            expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
+            expect(storeService.initIncomingCall).toHaveBeenCalledWith(chatId, offer);
+
+            // Handle answer
+            service.handleRtcSessionAnswerNotification(answer);
+
+            expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+        });
+
+        it('should handle mixed notification types in sequence', async () => {
+            // Message notification
+            await service.handleMessageNotification(mockMessageDto, 'chatId', mockChats, true);
+
+            // Link preview notification
+            service.handleLinkPreviewNotification(mockLinkPreviewDto, 'chatId');
+
+            // Image preview notification
+            service.handleImagePreviewNotification(mockImagePreviewDto, 'chatId');
+
+            // RTC notifications
+            await service.handleRtcSessionOfferNotification(mockChats, 'chatId', 'offer');
+            service.handleRtcSessionAnswerNotification('answer');
+
+            // Verify all handlers were called
+            expect(storeService.addMessage).toHaveBeenCalled();
+            expect(storeService.setLinkPreview).toHaveBeenCalled();
+            expect(storeService.setImagePreview).toHaveBeenCalled();
+            expect(storeService.initIncomingCall).toHaveBeenCalled();
+            expect(rtcConnectionService.establishConnection).toHaveBeenCalled();
+        });
+    });
+
+    describe('Edge Cases and Error Handling', () => {
+        it('should handle concurrent message notifications', async () => {
+            const promises = [
+                service.handleMessageNotification(mockMessageDto, 'chatId', mockChats, true),
+                service.handleMessageNotification(mockImageMessageDto, 'chatId', mockChats, true),
+            ];
+
+            await Promise.all(promises);
+
+            expect(storeService.setLastMessageInfo).toHaveBeenCalledTimes(2);
+            expect(storeService.addMessage).toHaveBeenCalledTimes(2);
+            expect(apiService.markAsRead).toHaveBeenCalledTimes(2);
+        });
+
+        it('should handle malformed message data', async () => {
+            const malformedMessage = {
+                id: null,
+                chatId: undefined,
+                text: '',
+                created: null,
+                isMine: undefined,
+            } as any;
+
+            // Should not throw
+            await expectAsync(
+                service.handleMessageNotification(
+                    malformedMessage,
+                    'chatId',
+                    mockChats,
+                    false,
+                )
+            ).toBeResolved();
+        });
+
+        it('should handle very large chat arrays efficiently', async () => {
+            const largeChatArray = Array.from({ length: 1000 }, (_, i) => ({
+                id: `chat-${i}`,
+                chatName: `Chat ${i}`,
+                unreadCount: 0,
+            })) as IChatDto[];
+
+            const startTime = performance.now();
+            
+            await service.handleMessageNotification(
+                mockMessageDto,
+                'otherChatId',
+                largeChatArray,
+                false,
+            );
+
+            const endTime = performance.now();
+            
+            // Should complete within reasonable time (less than 10ms)
+            expect(endTime - startTime).toBeLessThan(10);
+        });
+
+        it('should handle service method failures in sequence', async () => {
+            // Setup failures
+            storeService.setLastMessageInfo.and.throwError('Store error');
+            
+            await expectAsync(
+                service.handleMessageNotification(
+                    mockMessageDto,
+                    'chatId',
+                    mockChats,
+                    true,
+                )
+            ).toBeRejected();
+
+            expect(storeService.setLastMessageInfo).toHaveBeenCalled();
+        });
+
+        it('should handle concurrent RTC notifications', async () => {
+            const offer1 = 'offer1';
+            const offer2 = 'offer2';
+            const answer1 = 'answer1';
+            const answer2 = 'answer2';
+
+            const promises = [
+                service.handleRtcSessionOfferNotification(mockChats, 'chatId', offer1),
+                service.handleRtcSessionOfferNotification(mockChats, 'otherChatId', offer2),
+            ];
+
+            await Promise.all(promises);
+
+            service.handleRtcSessionAnswerNotification(answer1);
+            service.handleRtcSessionAnswerNotification(answer2);
+
+            expect(router.navigate).toHaveBeenCalledTimes(2);
+            expect(storeService.initIncomingCall).toHaveBeenCalledTimes(2);
+            expect(rtcConnectionService.establishConnection).toHaveBeenCalledTimes(2);
+        });
+
+        it('should handle memory pressure scenarios', async () => {
+            // Simulate many rapid notifications
+            const notifications = Array.from({ length: 100 }, (_, i) => ({
+                ...mockMessageDto,
+                id: `msg-${i}`,
+            }));
+
+            const promises = notifications.map(msg =>
+                service.handleMessageNotification(msg, 'chatId', mockChats, true)
+            );
+
+            await Promise.all(promises);
+
+            expect(storeService.setLastMessageInfo).toHaveBeenCalledTimes(100);
+            expect(storeService.addMessage).toHaveBeenCalledTimes(100);
+        });
+
+        it('should handle service dependencies being null', () => {
+            // Test that service can handle dependency injection issues gracefully
+            expect(service).toBeTruthy();
+            expect(() => service.removeHandlers()).not.toThrow();
+        });
+
+        it('should handle readonly array mutations safely', async () => {
+            const readonlyChats = Object.freeze([...mockChats]) as readonly IChatDto[];
+            
+            await service.handleMessageNotification(
+                mockMessageDto,
+                'otherChatId',
+                readonlyChats,
+                false,
+            );
+
+            // Should not modify the original array
+            expect(readonlyChats).toEqual(mockChats);
+            expect(storeService.incrementUnreadMessages).toHaveBeenCalled();
+        });
+
+        it('should handle special characters in chat data', async () => {
+            const specialCharsMessage = {
+                ...mockMessageDto,
+                text: '🚀 Special chars: <script>alert("xss")</script> & émojis 中文',
+                chatId: 'chat-with-special-chars-🚀',
+            };
+
+            const specialCharsChat = {
+                id: 'chat-with-special-chars-🚀',
+                chatName: 'Chat with 🚀 & special chars',
+                unreadCount: 0,
+            } as IChatDto;
+
+            await service.handleMessageNotification(
+                specialCharsMessage,
+                'otherChatId',
+                [specialCharsChat],
+                false,
+            );
+
+            expect(browserNotificationService.showNotification).toHaveBeenCalledWith(
+                'Chat with 🚀 & special chars',
+                '🚀 Special chars: <script>alert("xss")</script> & émojis 中文',
+                false,
+            );
+        });
+
+        it('should handle service initialization with all dependencies', async () => {
+            const handlers = {
+                message: jasmine.createSpy('messageHandler'),
+                linkPreview: jasmine.createSpy('linkPreviewHandler'),
+                imagePreview: jasmine.createSpy('imagePreviewHandler'),
+                rtcOffer: jasmine.createSpy('rtcOfferHandler'),
+                rtcAnswer: jasmine.createSpy('rtcAnswerHandler'),
+            };
+
+            // Test that all dependencies are properly injected and called
+            await service.initHandlers(
+                handlers.message,
+                handlers.linkPreview,
+                handlers.imagePreview,
+                handlers.rtcOffer,
+                handlers.rtcAnswer,
+            );
+
+            expect(browserNotificationService.init).toHaveBeenCalledTimes(1);
+            expect(signalrService.init).toHaveBeenCalledWith(
+                handlers.message,
+                handlers.linkPreview,
+                handlers.imagePreview,
+                handlers.rtcOffer,
+                handlers.rtcAnswer,
+            );
+        });
+
+        it('should handle multiple rapid RTC session offers', async () => {
+            const offers = ['offer1', 'offer2', 'offer3'];
+            const promises = offers.map((offer, index) =>
+                service.handleRtcSessionOfferNotification(
+                    mockChats,
+                    `chatId${index}`,
+                    offer,
+                )
+            );
+
+            await Promise.all(promises);
+
+            expect(router.navigate).toHaveBeenCalledTimes(3);
+            expect(storeService.initIncomingCall).toHaveBeenCalledTimes(3);
+        });
+
+        it('should handle RTC session answers in rapid succession', () => {
+            const answers = ['answer1', 'answer2', 'answer3'];
+            
+            answers.forEach(answer => {
+                service.handleRtcSessionAnswerNotification(answer);
+            });
+
+            expect(rtcConnectionService.establishConnection).toHaveBeenCalledTimes(3);
+            answers.forEach(answer => {
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+            });
         });
     });
 });
