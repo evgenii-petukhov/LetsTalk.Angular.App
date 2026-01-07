@@ -48,8 +48,4 @@ export class ChatComponent implements OnInit, OnDestroy {
     );
     isNotFoundVisible$ = this.store.select(selectSelectedChatIsNotFoundVisible);
     isErrorVisible$ = this.store.select(selectSelectedChatIsErrorVisible);
-
-    onStatusChanged(status: MessageListStatus): void {
-        this.storeService.setSelectedChatMessageListStatus(status);
-    }
 }

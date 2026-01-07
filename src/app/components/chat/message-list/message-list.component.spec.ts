@@ -56,6 +56,7 @@ describe('MessageListComponent', () => {
             'setLastMessageInfo',
             'setSelectedChatId',
             'isChatIdValid',
+            'setSelectedChatMessageListStatus',
         ]);
         idGeneratorService = jasmine.createSpyObj('IdGeneratorService', [
             'isFake',
@@ -165,6 +166,9 @@ describe('MessageListComponent', () => {
             chatId,
             1725113717,
             'message2',
+        );
+        expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
+            MessageListStatus.Success,
         );
 
         // Act
@@ -329,7 +333,6 @@ describe('MessageListComponent', () => {
             component['chatId'] = chatId;
             idGeneratorService.isFake.and.returnValue(true);
             storeService.isChatIdValid.and.resolveTo(true);
-            spyOn(component.statusChanged, 'emit');
 
             // Act
             component['loadMessages']();
@@ -338,7 +341,7 @@ describe('MessageListComponent', () => {
             // Assert
             expect(storeService.isChatIdValid).toHaveBeenCalledWith(chatId);
             expect(component['isMessageListLoaded']).toBe(true);
-            expect(component.statusChanged.emit).toHaveBeenCalledWith(
+            expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
                 MessageListStatus.Success,
             );
         }));
@@ -349,7 +352,6 @@ describe('MessageListComponent', () => {
             component['chatId'] = chatId;
             idGeneratorService.isFake.and.returnValue(true);
             storeService.isChatIdValid.and.resolveTo(false);
-            spyOn(component.statusChanged, 'emit');
 
             // Act
             component['loadMessages']();
@@ -357,7 +359,7 @@ describe('MessageListComponent', () => {
 
             // Assert
             expect(storeService.isChatIdValid).toHaveBeenCalledWith(chatId);
-            expect(component.statusChanged.emit).toHaveBeenCalledWith(
+            expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
                 MessageListStatus.NotFound,
             );
         }));
@@ -377,14 +379,13 @@ describe('MessageListComponent', () => {
             idGeneratorService.isFake.and.returnValue(false);
             const apiError = new ProblemDetails({ status: 404 });
             apiService.getMessages.and.rejectWith(apiError);
-            spyOn(component.statusChanged, 'emit');
 
             // Act
             component['loadMessages']();
             tick();
 
             // Assert
-            expect(component.statusChanged.emit).toHaveBeenCalledWith(
+            expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
                 MessageListStatus.NotFound,
             );
         }));
@@ -402,14 +403,13 @@ describe('MessageListComponent', () => {
                 null,
             );
             apiService.getMessages.and.rejectWith(apiError);
-            spyOn(component.statusChanged, 'emit');
 
             // Act
             component['loadMessages']();
             tick();
 
             // Assert
-            expect(component.statusChanged.emit).toHaveBeenCalledWith(
+            expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
                 MessageListStatus.Error,
             );
         }));
@@ -420,14 +420,13 @@ describe('MessageListComponent', () => {
             component['chatId'] = chatId;
             idGeneratorService.isFake.and.returnValue(false);
             apiService.getMessages.and.rejectWith(new Error('Network error'));
-            spyOn(component.statusChanged, 'emit');
 
             // Act
             component['loadMessages']();
             tick();
 
             // Assert
-            expect(component.statusChanged.emit).toHaveBeenCalledWith(
+            expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
                 MessageListStatus.Error,
             );
         }));
