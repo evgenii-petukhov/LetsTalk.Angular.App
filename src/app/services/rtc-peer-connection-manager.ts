@@ -2,6 +2,19 @@
 import { inject, Injectable } from '@angular/core';
 import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
 
+export const constraints = {
+    video: {
+        width: { ideal: 640, max: 640 },
+        height: { ideal: 360, max: 360 },
+        frameRate: { ideal: 15, max: 15 },
+    },
+    audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+    },
+};
+
 @Injectable({
     providedIn: 'root',
 })
@@ -84,10 +97,7 @@ export class RtcPeerConnectionManager {
         remoteVideo: HTMLVideoElement,
     ): Promise<void> {
         try {
-            this.localMediaStream = await navigator.mediaDevices.getUserMedia({
-                video: true,
-                audio: true,
-            });
+            this.localMediaStream = await navigator.mediaDevices.getUserMedia(constraints);
             this.connectLocalVideo(localVideo);
             this.localMediaStream
                 .getTracks()

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
-import { RtcPeerConnectionManager } from './rtc-peer-connection-manager';
+import { constraints, RtcPeerConnectionManager } from './rtc-peer-connection-manager';
 
 describe('RtcPeerConnectionManager', () => {
     let service: RtcPeerConnectionManager;
@@ -293,10 +293,7 @@ describe('RtcPeerConnectionManager', () => {
             await service.startMediaCapture(mockLocalVideo, mockRemoteVideo);
 
             // Assert
-            expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith({
-                video: true,
-                audio: true,
-            });
+            expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith(constraints);
             expect(mockLocalVideo.srcObject).toBe(mockMediaStream);
             expect(mockConnection.addTrack).toHaveBeenCalledWith(
                 mockTrack,
