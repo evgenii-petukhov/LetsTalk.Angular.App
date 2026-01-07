@@ -518,5 +518,274 @@ describe('RtcPeerConnectionManager', () => {
             expect(mockVideo.srcObject).toBe(mockMediaStream);
         });
 
+        it('should not connect remote video when stream is null', () => {
+            // Arrange
+            const mockVideo = { srcObject: null };
+            service['remoteMediaStream'] = null;
+
+            // Act
+            service['connectRemoteVideo'](mockVideo as HTMLVideoElement);
+
+            // Assert
+            expect(mockVideo.srcObject).toBeNull();
+        });
+
+        it('should finalize ice gathering', () => {
+            // Arrange
+            service['isGathering'] = true;
+            service.onGatheringCompleted = jasmine.createSpy('onGatheringCompleted');
+
+            // Act
+            service['finalizeIceGathering']();
+
+            // Assert
+            expect(service['isGathering']).toBe(false);
+            expect(service.onGatheringCompleted).toHaveBeenCalled();
+        });
+    });
+
+    describe('setVideoEnabled', () => {
+        it('should enable video tracks when enabled is true', () => {
+            // Arrange
+            const mockVideoTrack = { enabled: false, kind: 'video' };
+            mockMediaStream.getVideoTracks = jasmine.createSpy('getVideoTracks').and.returnValue([mockVideoTrack]);
+            service['localMediaStream'] = mockMediaStream;
+
+            // Act
+            service.setVideoEnabled(true);
+
+            // Assert
+            expect(mockMediaStream.getVideoTracks).toHaveBeenCalled();
+            expect(mockVideoTrack.enabled).toBe(true);
+        });
+
+        it('should disable video tracks when enabled is false', () => {
+            // Arrange
+            const mockVideoTrack = { enabled: true, kind: 'video' };
+            mockMediaStream.getVideoTracks = jasmine.createSpy('getVideoTracks').and.returnValue([mockVideoTrack]);
+            service['localMediaStream'] = mockMediaStream;
+
+            // Act
+            service.setVideoEnabled(false);
+
+            // Assert
+            expect(mockMediaStream.getVideoTracks).toHaveBeenCalled();
+            expect(mockVideoTrack.enabled).toBe(false);
+        });
+
+        it('should handle null local media stream', () => {
+            // Arrange
+            service['localMediaStream'] = null;
+
+            // Act & Assert - should not throw
+            expect(() => service.setVideoEnabled(true)).not.toThrow();
+        });
+
+        it('should handle multiple video tracks', () => {
+            // Arrange
+            const mockVideoTrack1 = { enabled: false, kind: 'video' };
+            const mockVideoTrack2 = { enabled: false, kind: 'video' };
+            mockMediaStream.getVideoTracks = jasmine.createSpy('getVideoTracks').and.returnValue([mockVideoTrack1, mockVideoTrack2]);
+            service['localMediaStream'] = mockMediaStream;
+
+            // Act
+            service.setVideoEnabled(true);
+
+            // Assert
+            expect(mockVideoTrack1.enabled).toBe(true);
+            expect(mockVideoTrack2.enabled).toBe(true);
+        });
+    });
+
+    describe('setAudioEnabled', () => {
+        it('should enable audio tracks when enabled is true', () => {
+            // Arrange
+            const mockAudioTrack = { enabled: false, kind: 'audio' };
+            mockMediaStream.getAudioTracks = jasmine.createSpy('getAudioTracks').and.returnValue([mockAudioTrack]);
+            service['localMediaStream'] = mockMediaStream;
+
+            // Act
+            service.setAudioEnabled(true);
+
+            // Assert
+            expect(mockMediaStream.getAudioTracks).toHaveBeenCalled();
+            expect(mockAudioTrack.enabled).toBe(true);
+        });
+
+        it('should disable audio tracks when enabled is false', () => {
+            // Arrange
+            const mockAudioTrack = { enabled: true, kind: 'audio' };
+            mockMediaStream.getAudioTracks = jasmine.createSpy('getAudioTracks').and.returnValue([mockAudioTrack]);
+            service['localMediaStream'] = mockMediaStream;
+
+            // Act
+            service.setAudioEnabled(false);
+
+            // Assert
+            expect(mockMediaStream.getAudioTracks).toHaveBeenCalled();
+            expect(mockAudioTrack.enabled).toBe(false);
+        });
+
+        it('should handle null local media stream', () => {
+            // Arrange
+            service['localMediaStream'] = null;
+
+            // Act & Assert - should not throw
+            expect(() => service.setAudioEnabled(true)).not.toThrow();
+        });
+
+        it('should handle multiple audio tracks', () => {
+            // Arrange
+            const mockAudioTrack1 = { enabled: false, kind: 'audio' };
+            const mockAudioTrack2 = { enabled: false, kind: 'audio' };
+            mockMediaStream.getAudioTracks = jasmine.createSpy('getAudioTracks').and.returnValue([mockAudioTrack1, mockAudioTrack2]);
+            service['localMediaStream'] = mockMediaStream;
+
+            // Act
+            service.setAudioEnabled(true);
+
+            // Assert
+            expect(mockAudioTrack1.enabled).toBe(true);
+            expect(mockAudioTrack2.enabled).toBe(true);
+        });
+    });
+
+    describe('_onConnectionStateChange', () => {
+        it('should call onConnectionStateChange callback with connection state', () => {
+            // Arrange
+            service.onConnectionStateChange = jasmine.createSpy('onConnectionStateChange');
+            Object.defineProperty(mockConnection, 'connectionState', {
+                value: 'connected',
+                writable: true,
+            });
+
+            // Act
+            service['_onConnectionStateChange']();
+
+            // Assert
+            expect(service.onConnectionStateChange).toHaveBeenCalledWith('connected');
+        });
+
+        it('should handle different connection states', () => {
+            // Arrange
+            service.onConnectionStateChange = jasmine.createSpy('onConnectionStateChange');
+            const states: RTCPeerConnectionState[] = ['new', 'connecting', 'connected', 'disconnected', 'failed', 'closed'];
+
+            states.forEach(state => {
+                // Arrange
+                Object.defineProperty(mockConnection, 'connectionState', {
+                    value: state,
+                    writable: true,
+                });
+
+                // Act
+                service['_onConnectionStateChange']();
+
+                // Assert
+                expect(service.onConnectionStateChange).toHaveBeenCalledWith(state);
+            });
+
+            expect(service.onConnectionStateChange).toHaveBeenCalledTimes(states.length);
+        });
+
+        it('should not throw if onConnectionStateChange callback is not set', () => {
+            // Arrange
+            service.onConnectionStateChange = undefined as any;
+
+            // Act & Assert
+            expect(() => service['_onConnectionStateChange']()).not.toThrow();
+        });
+    });
+
+    describe('edge cases and error handling', () => {
+        it('should handle connection setup with null video elements', async () => {
+            // Act & Assert - should not throw
+            await expectAsync(service.startMediaCapture(null as any, null as any)).toBeResolved();
+        });
+
+        it('should handle reconnection with null video elements', () => {
+            // Act & Assert - should not throw
+            expect(() => service.reconnectVideoElements(null as any, null as any)).not.toThrow();
+        });
+
+        it('should handle ice candidate with null candidate gracefully', () => {
+            // Arrange
+            service['isGathering'] = true;
+            service.onGatheringCompleted = jasmine.createSpy('onGatheringCompleted');
+            const mockEvent = { candidate: null } as RTCPeerConnectionIceEvent;
+
+            // Act
+            service['onIceCandidateReceived'](mockEvent);
+
+            // Assert
+            expect(service['isGathering']).toBe(false);
+            expect(service.onGatheringCompleted).toHaveBeenCalled();
+        });
+
+        it('should handle onCandidatesReceived callback being undefined', () => {
+            // Arrange
+            service['isGathering'] = true;
+            service.onCandidatesReceived = undefined as any;
+            const mockRTCCandidate = mockCandidate as RTCIceCandidate;
+            const mockEvent = { candidate: mockRTCCandidate } as RTCPeerConnectionIceEvent;
+            Object.defineProperty(mockConnection, 'localDescription', {
+                value: mockOffer as RTCSessionDescription,
+                writable: true,
+            });
+
+            // Act & Assert - should not throw
+            expect(() => service['onIceCandidateReceived'](mockEvent)).not.toThrow();
+        });
+
+        it('should handle reinitialize when connection is null', () => {
+            // Arrange
+            service['connection'] = null as any;
+
+            // Act & Assert - should not throw
+            expect(() => service.reinitialize()).not.toThrow();
+        });
+
+        it('should handle connectLocalVideo with null video element', () => {
+            // Arrange
+            service['localMediaStream'] = mockMediaStream;
+
+            // Act & Assert - should not throw
+            expect(() => service['connectLocalVideo'](null as any)).not.toThrow();
+        });
+
+        it('should handle connectRemoteVideo with null video element', () => {
+            // Arrange
+            service['remoteMediaStream'] = mockMediaStream;
+
+            // Act & Assert - should not throw
+            expect(() => service['connectRemoteVideo'](null as any)).not.toThrow();
+        });
+    });
+
+    describe('integration scenarios', () => {
+        it('should maintain gathering state through offer creation', async () => {
+            // Arrange
+            expect(service['isGathering']).toBe(true);
+
+            // Act
+            await service.initiateOffer(mockConfig);
+
+            // Assert
+            expect(service['isGathering']).toBe(true);
+            expect(service['localCandidates']).toEqual([]);
+        });
+
+        it('should reset gathering state on reinitialize', () => {
+            // Arrange
+            service['isGathering'] = false;
+            service['localCandidates'] = [mockCandidate as RTCIceCandidate];
+
+            // Act
+            service.reinitialize();
+
+            // Assert
+            expect(service['isGathering']).toBe(true);
+            expect(service['localCandidates']).toEqual([]);
+        });
     });
 });

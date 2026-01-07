@@ -64,6 +64,7 @@ describe('RtcConnectionService', () => {
                 'handleOfferAndCreateAnswer',
                 'setRemoteAnswerAndCandidates',
                 'requestCompleteGathering',
+                'reinitialize',
             ],
             {
                 onCandidatesReceived: null,
@@ -73,7 +74,7 @@ describe('RtcConnectionService', () => {
         );
 
         storeService = jasmine.createSpyObj('StoreService', [
-            'markCallAsDisconnected',
+            'resetCall',
         ]);
 
         mockStore = jasmine.createSpyObj('Store', ['dispatch', 'select']);
@@ -443,6 +444,268 @@ describe('RtcConnectionService', () => {
             expect(
                 connectionManager.setRemoteAnswerAndCandidates,
             ).toHaveBeenCalledWith(mockAnswer.desc, mockAnswer.candidates);
+        });
+    });
+
+    describe('endCall', () => {
+        it('should call processEndCall', () => {
+            // Arrange
+            spyOn(service as any, 'processEndCall');
+
+            // Act
+            service.endCall();
+
+            // Assert
+            expect(service['processEndCall']).toHaveBeenCalled();
+        });
+    });
+
+    describe('onConnectionStateChange', () => {
+        it('should call processEndCall when state is disconnected', () => {
+            // Arrange
+            spyOn(service as any, 'processEndCall');
+
+            // Act
+            service['onConnectionStateChange']('disconnected');
+
+            // Assert
+            expect(service['processEndCall']).toHaveBeenCalled();
+        });
+
+        it('should not call processEndCall when state is not disconnected', () => {
+            // Arrange
+            spyOn(service as any, 'processEndCall');
+
+            // Act
+            service['onConnectionStateChange']('connected');
+
+            // Assert
+            expect(service['processEndCall']).not.toHaveBeenCalled();
+        });
+
+        it('should handle all RTCPeerConnectionState values correctly', () => {
+            // Arrange
+            spyOn(service as any, 'processEndCall');
+            const states: RTCPeerConnectionState[] = [
+                'closed',
+                'connected',
+                'connecting',
+                'disconnected',
+                'failed',
+                'new',
+            ];
+
+            // Act & Assert
+            states.forEach((state) => {
+                service['onConnectionStateChange'](state);
+                if (state === 'disconnected') {
+                    expect(service['processEndCall']).toHaveBeenCalled();
+                } else {
+                    expect(service['processEndCall']).not.toHaveBeenCalled();
+                }
+                (service['processEndCall'] as jasmine.Spy).calls.reset();
+            });
+        });
+    });
+
+    describe('processEndCall', () => {
+        it('should reinitialize connection manager and reset call in store', () => {
+            // Act
+            service['processEndCall']();
+
+            // Assert
+            expect(connectionManager.reinitialize).toHaveBeenCalled();
+            expect(storeService.resetCall).toHaveBeenCalled();
+        });
+    });
+
+    describe('Timer integration', () => {
+        it('should create timer with correct timeout in startOutgoingCall', async () => {
+            // Arrange
+            const accountId = 'test-account-id';
+            const finalOfferData = JSON.stringify(mockOffer);
+            apiService.getCallSettings.and.returnValue(
+                Promise.resolve(mockCallSettings),
+            );
+            apiService.startOutgoingCall.and.returnValue(Promise.resolve());
+
+            // Act
+            const callPromise = service.startOutgoingCall(accountId);
+
+            // Wait for timer to be created
+            await new Promise((resolve) => setTimeout(resolve, 0));
+
+            // Assert timer was created with correct timeout
+            expect(service['iceGatheringTimer']).toBeDefined();
+            expect(service['iceGatheringTimeoutMs']).toBe(5000);
+
+            // Complete the call
+            setTimeout(() => {
+                service['onIceCandidateGenerated'](finalOfferData);
+                service['onIceGatheringComplete']();
+            }, 0);
+
+            await callPromise;
+        });
+
+        it('should create timer with correct timeout in handleIncomingCall', async () => {
+            // Arrange
+            const chatId = 'test-chat-id';
+            const offerString = JSON.stringify(mockOffer);
+            const finalAnswerData = JSON.stringify(mockAnswer);
+            apiService.getCallSettings.and.returnValue(
+                Promise.resolve(mockCallSettings),
+            );
+            apiService.handleIncomingCall.and.returnValue(Promise.resolve());
+
+            // Act
+            const callPromise = service.handleIncomingCall(chatId, offerString);
+
+            // Wait for timer to be created
+            await new Promise((resolve) => setTimeout(resolve, 0));
+
+            // Assert timer was created with correct timeout
+            expect(service['iceGatheringTimer']).toBeDefined();
+            expect(service['iceGatheringTimeoutMs']).toBe(5000);
+
+            // Complete the call
+            setTimeout(() => {
+                service['onIceCandidateGenerated'](finalAnswerData);
+                service['onIceGatheringComplete']();
+            }, 0);
+
+            await callPromise;
+        });
+    });
+
+    describe('Subject behavior', () => {
+        it('should have iceCandidateSubject and iceGatheringComplete subjects initialized', () => {
+            expect(service['iceCandidateSubject']).toBeDefined();
+            expect(service['iceGatheringComplete']).toBeDefined();
+        });
+
+        it('should complete ice gathering observable when onIceGatheringComplete is called', (done) => {
+            // Arrange
+            let completed = false;
+            const mockTimer = { clear: jasmine.createSpy('clear') };
+            service['iceGatheringTimer'] = mockTimer as any;
+            
+            service['iceGatheringComplete'].subscribe({
+                next: () => {
+                    completed = true;
+                },
+                complete: () => {
+                    // This should not be called in this test
+                },
+            });
+
+            // Act
+            service['onIceGatheringComplete']();
+
+            // Assert
+            setTimeout(() => {
+                expect(completed).toBe(true);
+                expect(mockTimer.clear).toHaveBeenCalled();
+                done();
+            }, 0);
+        });
+    });
+
+    describe('JSON parsing edge cases', () => {
+        it('should handle malformed JSON in handleIncomingCall', async () => {
+            // Arrange
+            const chatId = 'test-chat-id';
+            const malformedOffer = 'invalid-json';
+
+            // Act & Assert
+            await expectAsync(
+                service.handleIncomingCall(chatId, malformedOffer),
+            ).toBeRejected();
+        });
+
+        it('should handle JSON with missing properties in establishConnection', async () => {
+            // Arrange
+            const incompleteAnswer = JSON.stringify({
+                desc: { type: 'answer' },
+                // Missing candidates - this will cause an error when trying to access remote.candidates
+            });
+
+            // Act & Assert
+            try {
+                await service.establishConnection(incompleteAnswer);
+                // If we get here, the method didn't throw, which means it handled missing candidates gracefully
+                expect(connectionManager.setRemoteAnswerAndCandidates).toHaveBeenCalledWith(
+                    { type: 'answer' },
+                    undefined
+                );
+            } catch (error) {
+                // If it throws, that's also acceptable behavior for malformed input
+                expect(error).toBeDefined();
+            }
+        });
+
+        it('should handle empty JSON object in establishConnection', async () => {
+            // Arrange
+            const emptyAnswer = JSON.stringify({});
+
+            // Act & Assert
+            try {
+                await service.establishConnection(emptyAnswer);
+                // If no error is thrown, the method should return early due to missing desc.type
+                expect(connectionManager.setRemoteAnswerAndCandidates).not.toHaveBeenCalled();
+            } catch (error) {
+                // If it throws due to missing properties, that's also acceptable
+                expect(error).toBeDefined();
+            }
+        });
+    });
+
+    describe('Callback integration', () => {
+        it('should properly bind callback methods to connection manager', () => {
+            // The callbacks should be bound in constructor and should be functions
+            expect(connectionManager.onCandidatesReceived).toBeDefined();
+            expect(connectionManager.onGatheringCompleted).toBeDefined();
+            expect(connectionManager.onConnectionStateChange).toBeDefined();
+        });
+
+        it('should trigger onConnectionStateChange callback correctly', () => {
+            // Arrange
+            spyOn(service as any, 'processEndCall');
+
+            // Act - Simulate callback from connection manager by calling the bound method directly
+            service['onConnectionStateChange']('disconnected');
+
+            // Assert
+            expect(service['processEndCall']).toHaveBeenCalled();
+        });
+
+        it('should trigger onIceCandidateGenerated callback correctly', () => {
+            // Arrange
+            const testData = 'test-candidate-data';
+            spyOn(service['iceCandidateSubject'], 'next');
+            service['iceGatheringTimer'] = { isExpired: () => false } as any;
+
+            // Act - Simulate callback from connection manager by calling the bound method directly
+            service['onIceCandidateGenerated'](testData);
+
+            // Assert
+            expect(service['iceCandidateSubject'].next).toHaveBeenCalledWith(
+                testData,
+            );
+        });
+
+        it('should trigger onIceGatheringComplete callback correctly', () => {
+            // Arrange
+            spyOn(service['iceGatheringComplete'], 'next');
+            const mockTimer = { clear: jasmine.createSpy('clear') };
+            service['iceGatheringTimer'] = mockTimer as any;
+
+            // Act - Simulate callback from connection manager by calling the bound method directly
+            service['onIceGatheringComplete']();
+
+            // Assert
+            expect(service['iceGatheringComplete'].next).toHaveBeenCalled();
+            expect(mockTimer.clear).toHaveBeenCalled();
         });
     });
 

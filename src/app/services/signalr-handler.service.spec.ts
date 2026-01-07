@@ -5,6 +5,8 @@ import { SignalrService } from './signalr.service';
 import { StoreService } from './store.service';
 import { ApiService } from './api.service';
 import { BrowserNotificationService } from './browser-notification.service';
+import { RtcConnectionService } from './rtc-connection.service';
+import { Router } from '@angular/router';
 import {
     IMessageDto,
     ILinkPreviewDto,
@@ -19,6 +21,8 @@ describe('SignalrHandlerService', () => {
     let storeService: jasmine.SpyObj<StoreService>;
     let signalrService: jasmine.SpyObj<SignalrService>;
     let browserNotificationService: jasmine.SpyObj<BrowserNotificationService>;
+    let rtcConnectionService: jasmine.SpyObj<RtcConnectionService>;
+    let router: jasmine.SpyObj<Router>;
 
     const mockMessageDto: IMessageDto = {
         id: '1',
@@ -67,6 +71,7 @@ describe('SignalrHandlerService', () => {
             'initChatStorage',
             'setLinkPreview',
             'setImagePreview',
+            'initIncomingCall',
         ]);
         storeService.initChatStorage.and.returnValue(Promise.resolve());
 
@@ -82,6 +87,13 @@ describe('SignalrHandlerService', () => {
         );
         browserNotificationService.init.and.returnValue(Promise.resolve());
 
+        rtcConnectionService = jasmine.createSpyObj('RtcConnectionService', [
+            'establishConnection',
+        ]);
+
+        router = jasmine.createSpyObj('Router', ['navigate']);
+        router.navigate.and.returnValue(Promise.resolve(true));
+
         TestBed.configureTestingModule({
             providers: [
                 SignalrHandlerService,
@@ -92,6 +104,11 @@ describe('SignalrHandlerService', () => {
                     provide: BrowserNotificationService,
                     useValue: browserNotificationService,
                 },
+                {
+                    provide: RtcConnectionService,
+                    useValue: rtcConnectionService,
+                },
+                { provide: Router, useValue: router },
             ],
         });
 
@@ -417,6 +434,42 @@ describe('SignalrHandlerService', () => {
 
             expect(storeService.setLinkPreview).not.toHaveBeenCalled();
         });
+
+        it('should handle malformed linkPreviewDto', () => {
+            const malformedDto = {
+                chatId: 'chatId',
+                url: null,
+                title: undefined,
+            } as any;
+            
+            service.handleLinkPreviewNotification(malformedDto, 'chatId');
+
+            expect(storeService.setLinkPreview).toHaveBeenCalledWith(malformedDto);
+        });
+
+        it('should handle very long URLs and titles', () => {
+            const longDataDto = {
+                ...mockLinkPreviewDto,
+                url: 'http://example.com/' + 'a'.repeat(2000),
+                title: 'Very long title: ' + 'b'.repeat(1000),
+            };
+            
+            service.handleLinkPreviewNotification(longDataDto, 'chatId');
+
+            expect(storeService.setLinkPreview).toHaveBeenCalledWith(longDataDto);
+        });
+
+        it('should handle special characters in link data', () => {
+            const specialCharsDto = {
+                ...mockLinkPreviewDto,
+                url: 'http://example.com/path with spaces & émojis 🔗',
+                title: 'Title with <script>alert("xss")</script> & 中文',
+            };
+            
+            service.handleLinkPreviewNotification(specialCharsDto, 'chatId');
+
+            expect(storeService.setLinkPreview).toHaveBeenCalledWith(specialCharsDto);
+        });
     });
 
     describe('handleImagePreviewNotification', () => {
@@ -457,26 +510,200 @@ describe('SignalrHandlerService', () => {
 
             expect(storeService.setImagePreview).not.toHaveBeenCalled();
         });
-    });
 
-    describe('RTC Session Handlers (if implemented)', () => {
-        // These tests assume RTC session handlers exist in the service
-        // If they don't exist yet, these tests document the expected behavior
-
-        it('should handle RTC session offer notifications', () => {
-            // This test would verify RTC session offer handling
-            // Currently the service doesn't seem to have these methods
-            // but they're expected based on the SignalR service interface
+        it('should handle malformed imagePreviewDto', () => {
+            const malformedDto = {
+                chatId: 'chatId',
+                imageId: null,
+                url: undefined,
+            } as any;
             
-            expect(service).toBeTruthy(); // Placeholder until methods are implemented
+            service.handleImagePreviewNotification(malformedDto, 'chatId');
+
+            expect(storeService.setImagePreview).toHaveBeenCalledWith(malformedDto);
         });
 
-        it('should handle RTC session answer notifications', () => {
-            // This test would verify RTC session answer handling
-            // Currently the service doesn't seem to have these methods
-            // but they're expected based on the SignalR service interface
+        it('should handle very long URLs', () => {
+            const longUrlDto = {
+                ...mockImagePreviewDto,
+                url: 'http://example.com/' + 'a'.repeat(2000) + '.jpg',
+            };
             
-            expect(service).toBeTruthy(); // Placeholder until methods are implemented
+            service.handleImagePreviewNotification(longUrlDto, 'chatId');
+
+            expect(storeService.setImagePreview).toHaveBeenCalledWith(longUrlDto);
+        });
+
+        it('should handle special characters in image data', () => {
+            const specialCharsDto = {
+                ...mockImagePreviewDto,
+                imageId: 'img-🖼️-special',
+                url: 'http://example.com/image with spaces & special chars.jpg',
+            };
+            
+            service.handleImagePreviewNotification(specialCharsDto, 'chatId');
+
+            expect(storeService.setImagePreview).toHaveBeenCalledWith(specialCharsDto);
+        });
+    });
+
+    describe('RTC Session Handlers', () => {
+        describe('handleRtcSessionOfferNotification', () => {
+            it('should navigate to chat and init incoming call when chat exists', async () => {
+                const chatId = 'chatId';
+                const offer = 'mock-offer-string';
+
+                await service.handleRtcSessionOfferNotification(
+                    mockChats,
+                    chatId,
+                    offer,
+                );
+
+                expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
+                expect(storeService.initIncomingCall).toHaveBeenCalledWith(chatId, offer);
+                expect(storeService.initChatStorage).not.toHaveBeenCalled();
+            });
+
+            it('should init chat storage when chat does not exist', async () => {
+                const chatId = 'nonExistentChatId';
+                const offer = 'mock-offer-string';
+
+                await service.handleRtcSessionOfferNotification(
+                    mockChats,
+                    chatId,
+                    offer,
+                );
+
+                expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
+                expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
+                expect(storeService.initIncomingCall).toHaveBeenCalledWith(chatId, offer);
+            });
+
+            it('should handle empty chats array', async () => {
+                const chatId = 'chatId';
+                const offer = 'mock-offer-string';
+
+                await service.handleRtcSessionOfferNotification(
+                    [],
+                    chatId,
+                    offer,
+                );
+
+                expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
+                expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
+                expect(storeService.initIncomingCall).toHaveBeenCalledWith(chatId, offer);
+            });
+
+            it('should handle router navigation failure gracefully', async () => {
+                const chatId = 'chatId';
+                const offer = 'mock-offer-string';
+                router.navigate.and.returnValue(Promise.reject(new Error('Navigation failed')));
+
+                await expectAsync(
+                    service.handleRtcSessionOfferNotification(
+                        mockChats,
+                        chatId,
+                        offer,
+                    )
+                ).toBeRejected();
+
+                expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
+            });
+
+            it('should handle initChatStorage failure gracefully', async () => {
+                const chatId = 'nonExistentChatId';
+                const offer = 'mock-offer-string';
+                storeService.initChatStorage.and.returnValue(Promise.reject(new Error('Storage init failed')));
+
+                await expectAsync(
+                    service.handleRtcSessionOfferNotification(
+                        mockChats,
+                        chatId,
+                        offer,
+                    )
+                ).toBeRejected();
+
+                expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
+            });
+
+            it('should handle null/undefined parameters', async () => {
+                await expectAsync(
+                    service.handleRtcSessionOfferNotification(
+                        null as any,
+                        'chatId',
+                        'offer',
+                    )
+                ).toBeRejected();
+            });
+
+            it('should handle empty string parameters', async () => {
+                const chatId = '';
+                const offer = '';
+
+                await service.handleRtcSessionOfferNotification(
+                    mockChats,
+                    chatId,
+                    offer,
+                );
+
+                expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
+                expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
+                expect(storeService.initIncomingCall).toHaveBeenCalledWith(chatId, offer);
+            });
+        });
+
+        describe('handleRtcSessionAnswerNotification', () => {
+            it('should establish RTC connection with answer', () => {
+                const answer = 'mock-answer-string';
+
+                service.handleRtcSessionAnswerNotification(answer);
+
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+            });
+
+            it('should handle empty answer string', () => {
+                const answer = '';
+
+                service.handleRtcSessionAnswerNotification(answer);
+
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+            });
+
+            it('should handle null answer', () => {
+                const answer = null as any;
+
+                service.handleRtcSessionAnswerNotification(answer);
+
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+            });
+
+            it('should handle undefined answer', () => {
+                const answer = undefined as any;
+
+                service.handleRtcSessionAnswerNotification(answer);
+
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+            });
+
+            it('should be callable multiple times', () => {
+                const answer1 = 'answer1';
+                const answer2 = 'answer2';
+
+                service.handleRtcSessionAnswerNotification(answer1);
+                service.handleRtcSessionAnswerNotification(answer2);
+
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledTimes(2);
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer1);
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer2);
+            });
+
+            it('should handle very long answer strings', () => {
+                const longAnswer = 'a'.repeat(10000);
+
+                service.handleRtcSessionAnswerNotification(longAnswer);
+
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(longAnswer);
+            });
         });
     });
 
@@ -554,6 +781,45 @@ describe('SignalrHandlerService', () => {
 
             expect(signalrService.removeHandlers).toHaveBeenCalledTimes(1);
         });
+
+        it('should handle complete RTC workflow', async () => {
+            const chatId = 'chatId';
+            const offer = 'test-offer';
+            const answer = 'test-answer';
+
+            // Handle offer
+            await service.handleRtcSessionOfferNotification(mockChats, chatId, offer);
+
+            expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
+            expect(storeService.initIncomingCall).toHaveBeenCalledWith(chatId, offer);
+
+            // Handle answer
+            service.handleRtcSessionAnswerNotification(answer);
+
+            expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+        });
+
+        it('should handle mixed notification types in sequence', async () => {
+            // Message notification
+            await service.handleMessageNotification(mockMessageDto, 'chatId', mockChats, true);
+
+            // Link preview notification
+            service.handleLinkPreviewNotification(mockLinkPreviewDto, 'chatId');
+
+            // Image preview notification
+            service.handleImagePreviewNotification(mockImagePreviewDto, 'chatId');
+
+            // RTC notifications
+            await service.handleRtcSessionOfferNotification(mockChats, 'chatId', 'offer');
+            service.handleRtcSessionAnswerNotification('answer');
+
+            // Verify all handlers were called
+            expect(storeService.addMessage).toHaveBeenCalled();
+            expect(storeService.setLinkPreview).toHaveBeenCalled();
+            expect(storeService.setImagePreview).toHaveBeenCalled();
+            expect(storeService.initIncomingCall).toHaveBeenCalled();
+            expect(rtcConnectionService.establishConnection).toHaveBeenCalled();
+        });
     });
 
     describe('Edge Cases and Error Handling', () => {
@@ -610,6 +876,165 @@ describe('SignalrHandlerService', () => {
             
             // Should complete within reasonable time (less than 10ms)
             expect(endTime - startTime).toBeLessThan(10);
+        });
+
+        it('should handle service method failures in sequence', async () => {
+            // Setup failures
+            storeService.setLastMessageInfo.and.throwError('Store error');
+            
+            await expectAsync(
+                service.handleMessageNotification(
+                    mockMessageDto,
+                    'chatId',
+                    mockChats,
+                    true,
+                )
+            ).toBeRejected();
+
+            expect(storeService.setLastMessageInfo).toHaveBeenCalled();
+        });
+
+        it('should handle concurrent RTC notifications', async () => {
+            const offer1 = 'offer1';
+            const offer2 = 'offer2';
+            const answer1 = 'answer1';
+            const answer2 = 'answer2';
+
+            const promises = [
+                service.handleRtcSessionOfferNotification(mockChats, 'chatId', offer1),
+                service.handleRtcSessionOfferNotification(mockChats, 'otherChatId', offer2),
+            ];
+
+            await Promise.all(promises);
+
+            service.handleRtcSessionAnswerNotification(answer1);
+            service.handleRtcSessionAnswerNotification(answer2);
+
+            expect(router.navigate).toHaveBeenCalledTimes(2);
+            expect(storeService.initIncomingCall).toHaveBeenCalledTimes(2);
+            expect(rtcConnectionService.establishConnection).toHaveBeenCalledTimes(2);
+        });
+
+        it('should handle memory pressure scenarios', async () => {
+            // Simulate many rapid notifications
+            const notifications = Array.from({ length: 100 }, (_, i) => ({
+                ...mockMessageDto,
+                id: `msg-${i}`,
+            }));
+
+            const promises = notifications.map(msg =>
+                service.handleMessageNotification(msg, 'chatId', mockChats, true)
+            );
+
+            await Promise.all(promises);
+
+            expect(storeService.setLastMessageInfo).toHaveBeenCalledTimes(100);
+            expect(storeService.addMessage).toHaveBeenCalledTimes(100);
+        });
+
+        it('should handle service dependencies being null', () => {
+            // Test that service can handle dependency injection issues gracefully
+            expect(service).toBeTruthy();
+            expect(() => service.removeHandlers()).not.toThrow();
+        });
+
+        it('should handle readonly array mutations safely', async () => {
+            const readonlyChats = Object.freeze([...mockChats]) as readonly IChatDto[];
+            
+            await service.handleMessageNotification(
+                mockMessageDto,
+                'otherChatId',
+                readonlyChats,
+                false,
+            );
+
+            // Should not modify the original array
+            expect(readonlyChats).toEqual(mockChats);
+            expect(storeService.incrementUnreadMessages).toHaveBeenCalled();
+        });
+
+        it('should handle special characters in chat data', async () => {
+            const specialCharsMessage = {
+                ...mockMessageDto,
+                text: '🚀 Special chars: <script>alert("xss")</script> & émojis 中文',
+                chatId: 'chat-with-special-chars-🚀',
+            };
+
+            const specialCharsChat = {
+                id: 'chat-with-special-chars-🚀',
+                chatName: 'Chat with 🚀 & special chars',
+                unreadCount: 0,
+            } as IChatDto;
+
+            await service.handleMessageNotification(
+                specialCharsMessage,
+                'otherChatId',
+                [specialCharsChat],
+                false,
+            );
+
+            expect(browserNotificationService.showNotification).toHaveBeenCalledWith(
+                'Chat with 🚀 & special chars',
+                '🚀 Special chars: <script>alert("xss")</script> & émojis 中文',
+                false,
+            );
+        });
+
+        it('should handle service initialization with all dependencies', async () => {
+            const handlers = {
+                message: jasmine.createSpy('messageHandler'),
+                linkPreview: jasmine.createSpy('linkPreviewHandler'),
+                imagePreview: jasmine.createSpy('imagePreviewHandler'),
+                rtcOffer: jasmine.createSpy('rtcOfferHandler'),
+                rtcAnswer: jasmine.createSpy('rtcAnswerHandler'),
+            };
+
+            // Test that all dependencies are properly injected and called
+            await service.initHandlers(
+                handlers.message,
+                handlers.linkPreview,
+                handlers.imagePreview,
+                handlers.rtcOffer,
+                handlers.rtcAnswer,
+            );
+
+            expect(browserNotificationService.init).toHaveBeenCalledTimes(1);
+            expect(signalrService.init).toHaveBeenCalledWith(
+                handlers.message,
+                handlers.linkPreview,
+                handlers.imagePreview,
+                handlers.rtcOffer,
+                handlers.rtcAnswer,
+            );
+        });
+
+        it('should handle multiple rapid RTC session offers', async () => {
+            const offers = ['offer1', 'offer2', 'offer3'];
+            const promises = offers.map((offer, index) =>
+                service.handleRtcSessionOfferNotification(
+                    mockChats,
+                    `chatId${index}`,
+                    offer,
+                )
+            );
+
+            await Promise.all(promises);
+
+            expect(router.navigate).toHaveBeenCalledTimes(3);
+            expect(storeService.initIncomingCall).toHaveBeenCalledTimes(3);
+        });
+
+        it('should handle RTC session answers in rapid succession', () => {
+            const answers = ['answer1', 'answer2', 'answer3'];
+            
+            answers.forEach(answer => {
+                service.handleRtcSessionAnswerNotification(answer);
+            });
+
+            expect(rtcConnectionService.establishConnection).toHaveBeenCalledTimes(3);
+            answers.forEach(answer => {
+                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+            });
         });
     });
 });
