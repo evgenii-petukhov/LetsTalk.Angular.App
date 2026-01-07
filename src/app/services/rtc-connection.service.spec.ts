@@ -537,7 +537,7 @@ describe('RtcConnectionService', () => {
 
             // Assert timer was created with correct timeout
             expect(service['iceGatheringTimer']).toBeDefined();
-            expect(service['iceGatheringTimeoutMs']).toBe(5000);
+            expect(service['iceGatheringTimeoutMs']).toBe(10000);
 
             // Complete the call
             setTimeout(() => {
@@ -566,7 +566,7 @@ describe('RtcConnectionService', () => {
 
             // Assert timer was created with correct timeout
             expect(service['iceGatheringTimer']).toBeDefined();
-            expect(service['iceGatheringTimeoutMs']).toBe(5000);
+            expect(service['iceGatheringTimeoutMs']).toBe(10000);
 
             // Complete the call
             setTimeout(() => {

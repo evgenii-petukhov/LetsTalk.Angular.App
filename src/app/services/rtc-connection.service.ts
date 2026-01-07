@@ -15,7 +15,7 @@ export class RtcConnectionService {
     private iceCandidateSubject = new Subject<string>();
     private iceGatheringComplete = new Subject<void>();
     private iceGatheringTimer: Timer;
-    private iceGatheringTimeoutMs = 5000;
+    private iceGatheringTimeoutMs = 10000;
 
     constructor() {
         this.connectionManager.onCandidatesReceived =
