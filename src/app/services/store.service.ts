@@ -23,6 +23,8 @@ import { selectAccounts } from '../state/accounts/accounts.selector';
 import { accountsActions } from '../state/accounts/accounts.actions';
 import { firstValueFrom } from 'rxjs';
 import { videoCallActions } from '../state/video-call/video-call.actions';
+import { selectedChatUiActions } from '../state/selected-chat-ui/selected-chat-ui.actions';
+import { MessageListStatus } from '../models/message-list-status';
 
 @Injectable({
     providedIn: 'root',
@@ -161,6 +163,16 @@ export class StoreService {
 
     toggleAudio(): void {
         this.store.dispatch(videoCallActions.toggleAudio());
+    }
+
+    setSelectedChatMessageListStatus(
+        messageListStatus: MessageListStatus,
+    ): void {
+        this.store.dispatch(
+            selectedChatUiActions.setMessageListStatus({
+                messageListStatus,
+            }),
+        );
     }
 
     // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
