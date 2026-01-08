@@ -432,8 +432,8 @@ describe('SignalrService', () => {
 
             // Mock setInterval to capture the retry function
             let retryFunction: Function;
-            spyOn(window, 'setInterval').and.callFake((fn: Function) => {
-                retryFunction = fn;
+            spyOn(window, 'setInterval').and.callFake((callback: TimerHandler, delay?: number) => {
+                retryFunction = callback as Function;
                 return 123 as any;
             });
 

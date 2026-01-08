@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
-import { GRPC_INTERCEPTORS } from '@ngx-grpc/core';
 import { FileStorageService } from './file-storage.service';
 import { TokenStorageService } from './token-storage.service';
 import {
@@ -33,7 +32,6 @@ describe('FileStorageService', () => {
             providers: [
                 FileStorageService,
                 { provide: TokenStorageService, useValue: tokenStorageService },
-                { provide: GRPC_INTERCEPTORS, useValue: mockInterceptors },
             ],
         });
 

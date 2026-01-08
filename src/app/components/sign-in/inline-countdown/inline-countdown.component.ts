@@ -5,6 +5,7 @@ import {
     OnDestroy,
     OnInit,
     Output,
+    signal,
 } from '@angular/core';
 
 @Component({
@@ -14,7 +15,7 @@ import {
 })
 export class InlineCountdownComponent implements OnInit, OnDestroy {
     @Input() startValue: number;
-    value: number;
+    value = signal(0);
     @Output() expired = new EventEmitter<void>();
     private timerId = 0;
 
@@ -27,7 +28,7 @@ export class InlineCountdownComponent implements OnInit, OnDestroy {
     }
 
     private start(): void {
-        this.value = this.startValue;
+        this.value.set(this.startValue);
         this.timerId = window.setInterval(() => this.tick(), 1000);
     }
 
@@ -37,9 +38,9 @@ export class InlineCountdownComponent implements OnInit, OnDestroy {
     }
 
     private tick(): void {
-        --this.value;
+        this.value.update(value => value - 1);
 
-        if (this.value <= 0) {
+        if (this.value() <= 0) {
             this.stop();
         }
     }

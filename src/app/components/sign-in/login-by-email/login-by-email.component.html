@@ -1,12 +1,12 @@
 <div class="centered">
-    <div class="login-text" *ngIf="!isCodeRequested">
+    <div class="login-text" *ngIf="!isCodeRequested()">
         Please, enter your email
     </div>
-    <div class="login-text" *ngIf="isCodeRequested">
+    <div class="login-text" *ngIf="isCodeRequested()">
         Please, enter the 4-digit code we sent to your email
     </div>
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="form-floating mb-3" *ngIf="!isCodeRequested">
+        <div class="form-floating mb-3" *ngIf="!isCodeRequested()">
             <input
                 type="email"
                 id="email"
@@ -22,7 +22,7 @@
             />
             <label for="email">Email</label>
         </div>
-        <div class="form-floating mb-3" *ngIf="isCodeRequested">
+        <div class="form-floating mb-3" *ngIf="isCodeRequested()">
             <input
                 type="text"
                 id="code"
@@ -43,11 +43,11 @@
         </div>
         <div
             class="form-floating mb-3"
-            *ngIf="isCodeRequested && codeValidInSeconds > 0"
+            *ngIf="isCodeRequested() && codeValidInSeconds() > 0"
         >
             Your code will expire in
             <app-inline-countdown
-                [startValue]="codeValidInSeconds"
+                [startValue]="codeValidInSeconds()"
                 (expired)="onTimerExpired()"
             ></app-inline-countdown>
             sec.
@@ -57,17 +57,17 @@
                 type="submit"
                 class="btn btn-primary"
                 [disabled]="
-                    isCodeRequestInProgress || form.controls['email'].invalid
+                    isCodeRequestInProgress() || form.controls['email'].invalid
                 "
-                *ngIf="!isCodeRequested"
+                *ngIf="!isCodeRequested()"
             >
                 Get code
             </button>
             <button
                 type="submit"
                 class="btn btn-primary"
-                [disabled]="isSubmitInProgress || !form.valid"
-                *ngIf="isCodeRequested"
+                [disabled]="isSubmitInProgress() || !form.valid"
+                *ngIf="isCodeRequested()"
             >
                 OK
             </button>

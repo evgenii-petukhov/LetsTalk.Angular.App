@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { errorMessages } from 'src/app/constants/errors';
@@ -13,10 +13,10 @@ import { TokenStorageService } from 'src/app/services/token-storage.service';
     standalone: false,
 })
 export class LoginByEmailComponent {
-    isCodeRequested = false;
-    isCodeRequestInProgress = false;
-    isSubmitInProgress = false;
-    codeValidInSeconds = 0;
+    isCodeRequested = signal(false);
+    isCodeRequestInProgress = signal(false);
+    isSubmitInProgress = signal(false);
+    codeValidInSeconds = signal(0);
 
     private readonly router = inject(Router);
     private readonly fb = inject(FormBuilder);
@@ -42,7 +42,7 @@ export class LoginByEmailComponent {
     }
 
     onTimerExpired(): void {
-        this.isCodeRequested = false;
+        this.isCodeRequested.set(false);
     }
 
     onCodeChange(): void {
@@ -52,7 +52,7 @@ export class LoginByEmailComponent {
     }
 
     private async submit(): Promise<void> {
-        this.isSubmitInProgress = true;
+        this.isSubmitInProgress.set(true);
         try {
             const loginResponseDto = await this.apiService.loginByEmail(
                 this.form.value.email,
@@ -63,22 +63,22 @@ export class LoginByEmailComponent {
         } catch (e) {
             this.errorService.handleError(e, errorMessages.generateCode);
         } finally {
-            this.isSubmitInProgress = false;
+            this.isSubmitInProgress.set(false);
         }
     }
 
     private async requestCode(): Promise<void> {
-        this.isCodeRequestInProgress = true;
+        this.isCodeRequestInProgress.set(true);
         try {
             const data = await this.apiService.generateLoginCode(
                 this.form.value.email,
             );
-            this.isCodeRequested = true;
-            this.isCodeRequestInProgress = false;
-            this.codeValidInSeconds = data.codeValidInSeconds;
+            this.isCodeRequested.set(true);
+            this.isCodeRequestInProgress.set(false);
+            this.codeValidInSeconds.set(data.codeValidInSeconds);
         } catch (e) {
             this.errorService.handleError(e, errorMessages.generateCode);
-            this.isCodeRequestInProgress = false;
+            this.isCodeRequestInProgress.set(false);
         }
     }
 }
