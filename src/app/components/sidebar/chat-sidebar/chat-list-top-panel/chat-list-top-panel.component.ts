@@ -1,4 +1,4 @@
-import { Component, HostBinding, inject, Input, OnInit } from '@angular/core';
+import { Component, HostBinding, inject, Input, OnInit, signal } from '@angular/core';
 import { StoreService } from 'src/app/services/store.service';
 import { IProfileDto } from 'src/app/api-client/api-client';
 
@@ -9,7 +9,7 @@ import { IProfileDto } from 'src/app/api-client/api-client';
     standalone: false,
 })
 export class ChatListTopPanelComponent implements OnInit {
-    account: IProfileDto;
+    account = signal<IProfileDto>(null);
     @Input()
     @HostBinding('class.navigation-active')
     isNavigationActive: boolean = false;
@@ -17,7 +17,8 @@ export class ChatListTopPanelComponent implements OnInit {
     private readonly storeService = inject(StoreService);
 
     async ngOnInit(): Promise<void> {
-        this.account = await this.storeService.getLoggedInUser();
+        const loggedInUser = await this.storeService.getLoggedInUser();
+        this.account.set(loggedInUser);
     }
 
     onLogoutButtonClicked(): void {

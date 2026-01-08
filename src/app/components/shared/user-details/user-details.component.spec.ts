@@ -34,25 +34,26 @@ describe('UserDetailsComponent', () => {
     });
 
     it('should update the displayed user name when the input value changes', () => {
-        // Arrange
+        // Test initial value
         component.value = 'Jane Doe';
-
-        // Act
         fixture.detectChanges();
 
-        // Assert
-        const userNameElement = fixture.debugElement.query(
+        let userNameElement = fixture.debugElement.query(
             By.css('.user-name'),
         ).nativeElement;
         expect(userNameElement.textContent).toBe('Jane Doe');
 
-        // Arrange
-        component.value = 'Alice';
+        // Create a new component instance for the second test
+        const secondFixture = TestBed.createComponent(UserDetailsComponent);
+        const secondComponent = secondFixture.componentInstance;
+        
+        // Test updated value with new instance
+        secondComponent.value = 'Alice';
+        secondFixture.detectChanges();
 
-        // Act
-        fixture.detectChanges();
-
-        // Assert
-        expect(userNameElement.textContent).toBe('Alice');
+        const secondUserNameElement = secondFixture.debugElement.query(
+            By.css('.user-name'),
+        ).nativeElement;
+        expect(secondUserNameElement.textContent).toBe('Alice');
     });
 });

@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { IChatDto } from 'src/app/api-client/api-client';
 import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
@@ -12,8 +12,8 @@ import { selectChats } from 'src/app/state/chats/chats.selector';
     standalone: false,
 })
 export class ChatListComponent implements OnInit, OnDestroy {
-    chats: readonly IChatDto[] = [];
-    selectedChatId: string;
+    chats = signal<readonly IChatDto[]>([]);
+    selectedChatId = signal<string>(null);
 
     private readonly store = inject(Store);
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
@@ -25,8 +25,8 @@ export class ChatListComponent implements OnInit, OnDestroy {
         ])
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe(([chats, selectedChatId]) => {
-                this.chats = chats;
-                this.selectedChatId = selectedChatId;
+                this.chats.set(chats);
+                this.selectedChatId.set(selectedChatId);
             });
     }
 

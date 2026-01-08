@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ChatDto, IAccountDto, IChatDto } from 'src/app/api-client/api-client';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { StoreService } from 'src/app/services/store.service';
@@ -15,7 +15,7 @@ import { Location } from '@angular/common';
     standalone: false,
 })
 export class AccountListComponent implements OnInit, OnDestroy {
-    accounts: readonly IAccountDto[] = [];
+    accounts = signal<readonly IAccountDto[]>([]);
 
     private chats: readonly IChatDto[] = [];
 
@@ -33,7 +33,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe(([chats, accounts]) => {
                 this.chats = chats;
-                this.accounts = accounts;
+                this.accounts.set(accounts);
             });
 
         await this.storeService.initAccountStorage();
