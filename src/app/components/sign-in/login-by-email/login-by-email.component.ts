@@ -30,6 +30,28 @@ export class LoginByEmailComponent {
     });
 
     async onSubmit(): Promise<void> {
+        if (this.form.value.code) {
+            await this.submit();
+        } else {
+            await this.requestCode();
+        }
+    }
+
+    async onBack(): Promise<void> {
+        await this.router.navigate(['chats']);
+    }
+
+    onTimerExpired(): void {
+        this.isCodeRequested = false;
+    }
+
+    onCodeChange(): void {
+        if (this.form.valid) {
+            this.onSubmit();
+        }
+    }
+
+    private async submit(): Promise<void> {
         this.isSubmitInProgress = true;
         try {
             const loginResponseDto = await this.apiService.loginByEmail(
@@ -45,11 +67,7 @@ export class LoginByEmailComponent {
         }
     }
 
-    async onBack(): Promise<void> {
-        await this.router.navigate(['chats']);
-    }
-
-    async onCodeRequested(): Promise<void> {
+    private async requestCode(): Promise<void> {
         this.isCodeRequestInProgress = true;
         try {
             const data = await this.apiService.generateLoginCode(
@@ -61,16 +79,6 @@ export class LoginByEmailComponent {
         } catch (e) {
             this.errorService.handleError(e, errorMessages.generateCode);
             this.isCodeRequestInProgress = false;
-        }
-    }
-
-    onTimerExpired(): void {
-        this.isCodeRequested = false;
-    }
-
-    onCodeChange(): void {
-        if (this.form.valid) {
-            this.onSubmit();
         }
     }
 }
