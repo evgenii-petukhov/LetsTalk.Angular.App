@@ -100,54 +100,67 @@ describe('LoginByEmailComponent', () => {
         expect(codeControl.valid).toBeTrue();
     });
 
-    it('should call onCodeRequested and handle response correctly', async () => {
+    it('should call onSubmit and handle code request correctly', async () => {
         // Arrange
+        component.form.setValue({ email: 'test@example.com', code: '' });
 
         // Act
-        await component.onCodeRequested();
+        await component.onSubmit();
 
         // Assert
+        expect(apiService.generateLoginCode).toHaveBeenCalledWith('test@example.com');
         expect(component.isCodeRequested).toBeTrue();
         expect(component.isCodeRequestInProgress).toBeFalse();
         expect(component.codeValidInSeconds).toBe(60);
     });
 
-    it('should handle code request error correctly', () => {
+    it('should handle code request error correctly', async () => {
         // Arrange
-        apiService.generateLoginCode.and.throwError(new Error('error'));
+        apiService.generateLoginCode.and.rejectWith(new Error('error'));
+        component.form.setValue({ email: 'test@example.com', code: '' });
 
         // Act
-        component.onCodeRequested();
+        await component.onSubmit();
 
         // Assert
+        expect(errorService.handleError).toHaveBeenCalled();
         expect(component.isCodeRequestInProgress).toBeFalse();
     });
 
-    it('should call onSubmit and handle response correctly', async () => {
+    it('should call submit and handle login response correctly', async () => {
         // Arrange
+        component.form.setValue({ email: 'test@example.com', code: '1234' });
+        router.navigate.and.resolveTo(true);
+
+        // Act
+        await component.onSubmit();
+
+        // Assert
+        expect(apiService.loginByEmail).toHaveBeenCalledWith('test@example.com', 1234);
+        expect(tokenStorageService.saveToken).toHaveBeenCalledWith('fakeToken');
+        expect(router.navigate).toHaveBeenCalledWith(['chats']);
+        expect(component.isSubmitInProgress).toBeFalse();
+    });
+
+    it('should handle submit error correctly', async () => {
+        // Arrange
+        apiService.loginByEmail.and.rejectWith(new Error('error'));
         component.form.setValue({ email: 'test@example.com', code: '1234' });
 
         // Act
         await component.onSubmit();
 
         // Assert
-        expect(component.isSubmitInProgress).toBeFalse();
-        expect(tokenStorageService.saveToken).toHaveBeenCalledWith('fakeToken');
-        expect(router.navigate).toHaveBeenCalledWith(['chats']);
-    });
-
-    it('should handle submit error correctly', () => {
-        apiService.loginByEmail.and.throwError(new Error('error'));
-        component.form.setValue({ email: 'test@example.com', code: '1234' });
-        component.onSubmit();
+        expect(errorService.handleError).toHaveBeenCalled();
         expect(component.isSubmitInProgress).toBeFalse();
     });
 
-    it('should navigate to chats on back button click', () => {
+    it('should navigate to chats on back button click', async () => {
         // Arrange
+        router.navigate.and.resolveTo(true);
 
         // Act
-        component.onBack();
+        await component.onBack();
 
         // Assert
         expect(router.navigate).toHaveBeenCalledWith(['chats']);
