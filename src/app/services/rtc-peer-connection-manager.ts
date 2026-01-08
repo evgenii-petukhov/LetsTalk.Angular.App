@@ -14,6 +14,8 @@ export const constraintSets: MediaStreamConstraints[] = [
             echoCancellation: true,
             noiseSuppression: true,
             autoGainControl: true,
+            sampleRate: { ideal: 44100 },
+            channelCount: { ideal: 1 },
         },
     },
     // Standard
@@ -27,6 +29,8 @@ export const constraintSets: MediaStreamConstraints[] = [
             echoCancellation: true,
             noiseSuppression: true,
             autoGainControl: true,
+            sampleRate: { ideal: 44100 },
+            channelCount: { ideal: 1 },
         },
     },
     // Relaxed
@@ -40,6 +44,7 @@ export const constraintSets: MediaStreamConstraints[] = [
             echoCancellation: true,
             noiseSuppression: true,
             autoGainControl: true,
+            channelCount: { ideal: 1 },
         },
     },
     // Basic
