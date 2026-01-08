@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { FileUploadGrpcEndpointClient } from '../protos/file_upload_grpc_web_pb';
 import {
     DownloadImageRequest,
@@ -9,7 +9,6 @@ import {
 } from '../protos/file_upload_pb';
 import { environment } from '../../environments/environment';
 import { TokenStorageService } from './token-storage.service';
-import { GRPC_INTERCEPTORS } from '@ngx-grpc/core';
 import { IImageDto } from '../api-client/api-client';
 
 @Injectable({
@@ -20,13 +19,9 @@ export class FileStorageService {
 
     constructor(
         private tokenStorageService: TokenStorageService,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        @Inject(GRPC_INTERCEPTORS) interceptors: any[],
     ) {
         this.fileUploadService = new FileUploadGrpcEndpointClient(
             environment.services.fileStorage.url,
-            {},
-            { unaryInterceptors: interceptors },
         );
     }
 

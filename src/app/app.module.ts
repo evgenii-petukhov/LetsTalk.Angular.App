@@ -21,7 +21,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { ImageViewerComponent } from './components/image-viewer/image-viewer.component';
 import { httpLogInterceptorProvider } from './providers/http-log-interceptor-provider';
-import { grpcLogInterceptorProvider } from './providers/grpc-log-interceptor-provider';
 import { SharedModule } from './components/shared/shared.module';
 import { SidebarModule } from './components/sidebar/sidebar.module';
 import { SignInModule } from './components/sign-in/sign-in.module';
@@ -51,7 +50,6 @@ import { ChatModule } from './components/chat/chat.module';
     providers: [
         authInterceptorProvider,
         httpLogInterceptorProvider,
-        grpcLogInterceptorProvider,
         apiClientProvider,
         provideHttpClient(withInterceptorsFromDi()),
         {
