@@ -133,7 +133,7 @@ describe('ImageComponent', () => {
 
         // Assert
         expect(component.url()).toBeNull();
-        expect(component.isLoading()).toBeTrue();
+        expect(component.isLoading()).toBeFalse();
         expect(storeService.getImageContent).toHaveBeenCalledWith(imagePreview);
         expect(errorService.handleError).toHaveBeenCalledOnceWith(
             error,

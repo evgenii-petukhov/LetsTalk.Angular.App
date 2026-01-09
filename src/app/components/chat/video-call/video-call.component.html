@@ -2,9 +2,9 @@
 <video #localVideo class="local-video" autoplay muted playsinline></video>
 <div class="controls">
     <div class="controls-inner">
-        <app-media-toggle-button [isMuted]="!captureVideo()" [mode]="'video'"
+        <app-media-toggle-button [isMuted]="!captureVideo" [mode]="'video'"
             (buttonClick)="toggleVideo()"></app-media-toggle-button>
-        <app-media-toggle-button [isMuted]="!captureAudio()" [mode]="'audio'"
+        <app-media-toggle-button [isMuted]="!captureAudio" [mode]="'audio'"
             (buttonClick)="toggleAudio()"></app-media-toggle-button>
         <app-call-button [mode]="'end-call'" (buttonClick)="endCall()"></app-call-button>
     </div>

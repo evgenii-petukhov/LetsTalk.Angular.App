@@ -6,7 +6,8 @@ import {
     OnDestroy,
     QueryList,
     ViewChild,
-    ViewChildren, OnInit,
+    ViewChildren,
+    OnInit,
     signal,
 } from '@angular/core';
 import { ApiService } from '../../../services/api.service';
@@ -34,10 +35,10 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
     messages = signal<readonly Message[]>([]);
 
     private scrollContainer: HTMLDivElement;
-    private chatId: string;
-    private pageIndex = 0;
+    private chatId = signal<string | null>(null);
+    private pageIndex = signal<number>(0);
     private scrollCounter = 0;
-    private isMessageListLoaded = false;
+    private isMessageListLoaded = signal<boolean>(false);
     private previousScrollHeight = 0;
     private scrollSequencePromise = Promise.resolve();
 
@@ -52,11 +53,11 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
             .select(selectSelectedChatId)
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe(async (chatId) => {
-                this.chatId = chatId;
+                this.chatId.set(chatId);
                 this.storeService.initMessages([]);
-                this.pageIndex = 0;
+                this.pageIndex.set(0);
                 this.scrollCounter = 0;
-                this.isMessageListLoaded = false;
+                this.isMessageListLoaded.set(false);
                 await this.loadMessages();
             });
 
@@ -92,7 +93,7 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
 
     async onScroll(): Promise<void> {
         if (
-            this.isMessageListLoaded &&
+            this.isMessageListLoaded() &&
             this.scrollFrame.nativeElement.scrollTop === 0
         ) {
             await this.loadMessages();
@@ -119,20 +120,24 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     private async loadMessages(): Promise<void> {
-        if (this.chatId === null) {
-            this.isMessageListLoaded = true;
+        if (this.chatId() === null) {
+            this.isMessageListLoaded.set(true);
             return;
         }
 
-        if (this.idGeneratorService.isFake(this.chatId)) {
+        if (this.idGeneratorService.isFake(this.chatId())) {
             const isChatIdValid = await this.storeService.isChatIdValid(
-                this.chatId,
+                this.chatId(),
             );
             if (isChatIdValid) {
-                this.isMessageListLoaded = true;
-                this.storeService.setSelectedChatMessageListStatus(MessageListStatus.Success);
+                this.isMessageListLoaded.set(true);
+                this.storeService.setSelectedChatMessageListStatus(
+                    MessageListStatus.Success,
+                );
             } else {
-                this.storeService.setSelectedChatMessageListStatus(MessageListStatus.NotFound);
+                this.storeService.setSelectedChatMessageListStatus(
+                    MessageListStatus.NotFound,
+                );
             }
 
             return;
@@ -141,11 +146,11 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
         this.previousScrollHeight = this.scrollContainer?.scrollHeight ?? 0;
         try {
             const messageDtos = await this.apiService.getMessages(
-                this.chatId,
-                this.pageIndex,
+                this.chatId(),
+                this.pageIndex(),
             );
             this.storeService.addMessages(messageDtos);
-            if (!this.isMessageListLoaded) {
+            if (!this.isMessageListLoaded()) {
                 const lastMessageDate = messageDtos.length
                     ? Math.max(...messageDtos.map((x) => x.created))
                     : 0;
@@ -157,23 +162,29 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
                     : '';
 
                 this.storeService.setLastMessageInfo(
-                    this.chatId,
+                    this.chatId(),
                     lastMessageDate,
                     lastMessageId,
                 );
-                this.isMessageListLoaded = true;
-                this.storeService.setSelectedChatMessageListStatus(MessageListStatus.Success);
+                this.isMessageListLoaded.set(true);
+                this.storeService.setSelectedChatMessageListStatus(
+                    MessageListStatus.Success,
+                );
             }
             if (messageDtos.length === 0) {
                 this.decreaseScrollCounter();
             } else {
-                this.pageIndex++;
+                this.pageIndex.update((index) => index + 1);
             }
         } catch (e) {
             if (e instanceof ProblemDetails && e.status === 404) {
-                this.storeService.setSelectedChatMessageListStatus(MessageListStatus.NotFound);
+                this.storeService.setSelectedChatMessageListStatus(
+                    MessageListStatus.NotFound,
+                );
             } else {
-                this.storeService.setSelectedChatMessageListStatus(MessageListStatus.Error);
+                this.storeService.setSelectedChatMessageListStatus(
+                    MessageListStatus.Error,
+                );
             }
         }
     }

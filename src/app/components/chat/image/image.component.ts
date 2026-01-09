@@ -16,13 +16,13 @@ export class ImageComponent implements OnInit {
     @Input() imagePreview: ImagePreview;
     @Input() imageKey: IImageDto;
     @Input() chatId: string;
-    url = signal<string>(null);
+    url = signal<string | null>(null);
     isLoading = signal(true);
     isSizeUnknown = signal(false);
     width = signal(environment.imageSettings.limits.picturePreview.width);
     height = signal(environment.imageSettings.limits.picturePreview.height);
     sizeLimit = environment.imageSettings.limits.picturePreview;
-    imageKeyParam = signal<string>(null);
+    imageKeyParam = signal<string | null>(null);
 
     private readonly storeService = inject(StoreService);
     private readonly errorService = inject(ErrorService);
@@ -54,6 +54,7 @@ export class ImageComponent implements OnInit {
         } catch (e) {
             this.errorService.handleError(e, errorMessages.downloadImage);
             this.url.set(null);
+            this.isLoading.set(false);
         }
     }
 

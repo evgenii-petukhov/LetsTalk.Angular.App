@@ -119,7 +119,7 @@ describe('MessageComponent', () => {
         component.message = new Message({
             linkPreview: { imageUrl: 'http://example.com/image.jpg' },
         });
-        component.isImageError.set(true);
+        component.isImageError = true;
 
         // Act
         fixture.detectChanges();
@@ -207,6 +207,6 @@ describe('MessageComponent', () => {
         component.onImageError();
 
         // Assert
-        expect(component.isImageError()).toBeTrue();
+        expect(component.isImageError).toBeTrue();
     });
 });

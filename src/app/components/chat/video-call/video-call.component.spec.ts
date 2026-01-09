@@ -211,8 +211,8 @@ describe('VideoCallComponent', () => {
             
             expect(mockConnectionManager.setVideoEnabled).toHaveBeenCalledWith(false);
             expect(mockConnectionManager.setAudioEnabled).toHaveBeenCalledWith(true);
-            expect(component.captureVideo()).toBe(false);
-            expect(component.captureAudio()).toBe(true);
+            expect(component.captureVideo).toBe(false);
+            expect(component.captureAudio).toBe(true);
         });
 
         it('should handle errors gracefully when startMediaCapture fails', async () => {
@@ -298,8 +298,8 @@ describe('VideoCallComponent', () => {
 
     describe('component properties', () => {
         it('should initialize with default values', () => {
-            expect(component.captureVideo()).toBe(true);
-            expect(component.captureAudio()).toBe(true);
+            expect(component.captureVideo).toBe(true);
+            expect(component.captureAudio).toBe(true);
         });
 
         it('should have ViewChild references for video elements', () => {
@@ -357,15 +357,15 @@ describe('VideoCallComponent', () => {
             storeSubject.next(mockVideoCallState);
             await new Promise(resolve => setTimeout(resolve, 0));
             
-            expect(component.captureVideo()).toBe(true);
-            expect(component.captureAudio()).toBe(true);
+            expect(component.captureVideo).toBe(true);
+            expect(component.captureAudio).toBe(true);
             
             // Test incoming call state with different settings
             storeSubject.next(mockIncomingVideoCallState);
             await new Promise(resolve => setTimeout(resolve, 0));
             
-            expect(component.captureVideo()).toBe(false);
-            expect(component.captureAudio()).toBe(true);
+            expect(component.captureVideo).toBe(false);
+            expect(component.captureAudio).toBe(true);
         });
     });
 
@@ -391,8 +391,8 @@ describe('VideoCallComponent', () => {
             await new Promise(resolve => setTimeout(resolve, 0));
             
             // Should not throw errors even with incomplete state
-            expect(component.captureVideo()).toBe(undefined);
-            expect(component.captureAudio()).toBe(undefined);
+            expect(component.captureVideo).toBe(undefined);
+            expect(component.captureAudio).toBe(undefined);
         });
     });
 
