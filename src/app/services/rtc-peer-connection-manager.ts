@@ -3,21 +3,6 @@ import { inject, Injectable } from '@angular/core';
 import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
 
 export const constraintSets: MediaStreamConstraints[] = [
-    // Standard enhanced
-    {
-        video: {
-            width: { ideal: 960, max: 960 },
-            height: { ideal: 540, max: 540 },
-            frameRate: { ideal: 15, max: 30 },
-        },
-        audio: {
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true,
-            sampleRate: { ideal: 44100 },
-            channelCount: { ideal: 1 },
-        },
-    },
     // Standard
     {
         video: {
@@ -37,7 +22,7 @@ export const constraintSets: MediaStreamConstraints[] = [
     {
         video: {
             width: { ideal: 640 },
-            height: { ideal: 360 },
+            height: { ideal: 480 },
             frameRate: { ideal: 15 },
         },
         audio: {
@@ -51,7 +36,7 @@ export const constraintSets: MediaStreamConstraints[] = [
     {
         video: {
             width: { ideal: 640 },
-            height: { ideal: 360 },
+            height: { ideal: 480 },
         },
         audio: {
             echoCancellation: true,

@@ -1,5 +1,5 @@
-<video #localVideo id="localVideo" autoplay muted playsinline></video>
-<video #remoteVideo id="remoteVideo" autoplay playsinline></video>
+<video #remoteVideo class="remote-video" autoplay playsinline></video>
+<video #localVideo class="local-video" autoplay muted playsinline></video>
 <div class="controls">
     <div class="controls-inner">
         <app-media-toggle-button [isMuted]="!captureVideo" [mode]="'video'"
