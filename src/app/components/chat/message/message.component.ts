@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, signal } from '@angular/core';
 import { Message } from 'src/app/models/message';
 
 @Component({
@@ -10,9 +10,9 @@ import { Message } from 'src/app/models/message';
 export class MessageComponent {
     @Input() message: Message;
 
-    isImageError = false;
+    isImageError = signal(false);
 
     onImageError() {
-        this.isImageError = true;
+        this.isImageError.set(true);
     }
 }

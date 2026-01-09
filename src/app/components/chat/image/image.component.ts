@@ -22,15 +22,17 @@ export class ImageComponent implements OnInit {
     width = signal(environment.imageSettings.limits.picturePreview.width);
     height = signal(environment.imageSettings.limits.picturePreview.height);
     sizeLimit = environment.imageSettings.limits.picturePreview;
-    imageKeyParam: string;
+    imageKeyParam = signal<string>(null);
 
     private readonly storeService = inject(StoreService);
     private readonly errorService = inject(ErrorService);
 
     async ngOnInit(): Promise<void> {
-        this.imageKeyParam = this.imageKey
+        const imageKeyParam = this.imageKey
             ? `${this.imageKey.id}_${this.imageKey.fileStorageTypeId}`
             : null;
+
+        this.imageKeyParam.set(imageKeyParam);
 
         try {
             if (!this.imagePreview) {
