@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { errorMessages } from 'src/app/constants/errors';
@@ -17,6 +17,9 @@ export class LoginByEmailComponent {
     isCodeRequestInProgress = signal(false);
     isSubmitInProgress = signal(false);
     codeValidInSeconds = signal(0);
+    isCountDownShown = computed(
+        () => this.isCodeRequested() && this.codeValidInSeconds() > 0,
+    );
 
     private readonly router = inject(Router);
     private readonly fb = inject(FormBuilder);
