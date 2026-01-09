@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { required, validate } from 'src/app/decorators/required.decorator';
 import { IChatDto, IMessageDto } from 'src/app/api-client/api-client';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
@@ -22,8 +22,8 @@ import { Router } from '@angular/router';
     standalone: false,
 })
 export class ComposeAreaComponent implements OnInit, OnDestroy {
-    message = '';
-    isSending = false;
+    message = signal('');
+    isSending = signal(false);
 
     @ViewChild(AutoResizeTextAreaComponent)
     textareaRef: AutoResizeTextAreaComponent;
@@ -55,15 +55,15 @@ export class ComposeAreaComponent implements OnInit, OnDestroy {
 
     @validate
     async onSendMessage(@required message: string): Promise<void> {
-        this.message = '';
-        this.isSending = true;
+        this.message.set('');
+        this.isSending.set(true);
         this.textareaRef?.focus();
         try {
             await this.processSendMessage(this.chat, message);
         } catch (e) {
             this.errorService.handleError(e, errorMessages.sendMessage);
         } finally {
-            this.isSending = false;
+            this.isSending.set(false);
         }
     }
 

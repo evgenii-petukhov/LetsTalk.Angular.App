@@ -697,7 +697,7 @@ describe('MessageListComponent', () => {
             tick();
 
             // Assert
-            expect(component.messages).toBe(messages);
+            expect(component.messages()).toEqual(messages);
         }));
     });
 
@@ -900,7 +900,7 @@ describe('MessageListComponent', () => {
 
         it('should initialize with default values', () => {
             // Assert
-            expect(component.messages).toEqual([]);
+            expect(component.messages()).toEqual([]);
             expect(component['pageIndex']).toBe(0);
             expect(component['scrollCounter']).toBe(0);
             expect(component['isMessageListLoaded']).toBe(false);

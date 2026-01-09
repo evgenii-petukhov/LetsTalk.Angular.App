@@ -111,7 +111,7 @@ describe(ComposeAreaComponent.name, () => {
         // Arrange
         mockSelectSelectedChat.setResult(mockChat);
         const message = 'Hello, world!';
-        component.message = message;
+        component.message.set(message);
         const messageDto = {
             created: 1728849011,
             id: '234',
@@ -137,8 +137,8 @@ describe(ComposeAreaComponent.name, () => {
         );
         expect(errorService.handleError).not.toHaveBeenCalled();
         expect(apiService.createIndividualChat).not.toHaveBeenCalled();
-        expect(component.message).toBe('');
-        expect(component.isSending).toBeFalse();
+        expect(component.message()).toBe('');
+        expect(component.isSending()).toBeFalse();
     });
 
     it('should handle image blob and send a message with image', async () => {
@@ -200,7 +200,7 @@ describe(ComposeAreaComponent.name, () => {
         expect(storeService.addMessage).not.toHaveBeenCalled();
         expect(storeService.setLastMessageInfo).not.toHaveBeenCalled();
         expect(apiService.createIndividualChat).not.toHaveBeenCalled();
-        expect(component.isSending).toBeFalse();
+        expect(component.isSending()).toBeFalse();
     });
 
     it('should create an individual chat if needed and send a message', async () => {

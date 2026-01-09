@@ -2,7 +2,7 @@
     <div class="compose-area__input-group">
         <app-auto-resize-text-area [(text)]="message" (submitted)="onSendMessage($event)"
             #textarea></app-auto-resize-text-area>
-        <app-select-image-button (imageBlobReady)="onImageBlobReady($event)" [ngClass]="message && 'hidden'"></app-select-image-button>
+        <app-select-image-button (imageBlobReady)="onImageBlobReady($event)" [ngClass]="message() && 'hidden'"></app-select-image-button>
     </div>
-    <app-send-button (buttonClick)="onSendMessage(message)" [disabled]="isSending || !message.trim()"></app-send-button>
+    <app-send-button (buttonClick)="onSendMessage(message())" [disabled]="isSending() || !message().trim()"></app-send-button>
 </div>

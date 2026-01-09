@@ -1,7 +1,7 @@
 <div class="messages-container" #scrollFrame (scroll)="onScroll()">
     <ul>
         <li *ngFor="
-                    let message of messages
+                    let message of messages()
                         | visibleOnly : isMessageVisible
                         | orderBy : ['created'] : ['asc']
                 ">

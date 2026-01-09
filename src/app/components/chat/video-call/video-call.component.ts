@@ -4,6 +4,7 @@ import {
     ElementRef,
     inject,
     OnDestroy,
+    signal,
     ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -25,8 +26,8 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
     @ViewChild('remoteVideo', { static: false })
     remoteVideo!: ElementRef<HTMLVideoElement>;
 
-    captureVideo = true;
-    captureAudio = true;
+    captureVideo = signal(true);
+    captureAudio = signal(true);
 
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
     private readonly store = inject(Store);
@@ -75,8 +76,8 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
                     currentState.captureAudio,
                 );
 
-                this.captureVideo = currentState.captureVideo;
-                this.captureAudio = currentState.captureAudio;
+                this.captureVideo.set(currentState.captureVideo);
+                this.captureAudio.set(currentState.captureAudio);
             });
     }
 

@@ -7,6 +7,7 @@ import {
     QueryList,
     ViewChild,
     ViewChildren, OnInit,
+    signal,
 } from '@angular/core';
 import { ApiService } from '../../../services/api.service';
 import { Store } from '@ngrx/store';
@@ -30,7 +31,7 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
     @ViewChild('scrollFrame', { static: false }) scrollFrame: ElementRef;
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     @ViewChildren('scrollItem') itemElements: QueryList<any>;
-    messages: readonly Message[] = [];
+    messages = signal<readonly Message[]>([]);
 
     private scrollContainer: HTMLDivElement;
     private chatId: string;
@@ -63,7 +64,7 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
             .select(selectMessages)
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe(async (messages) => {
-                this.messages = messages;
+                this.messages.set(messages);
             });
     }
 

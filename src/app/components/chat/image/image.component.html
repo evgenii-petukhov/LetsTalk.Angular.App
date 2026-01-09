@@ -1,13 +1,13 @@
-<div class="spinner-container" *ngIf="isLoading; else image" [style.width.px]="width" [style.height.px]="height">
+<div class="spinner-container" *ngIf="isLoading(); else image" [style.width.px]="width" [style.height.px]="height">
     <div class="spinner-border" role="status">
         <span class="sr-only"></span>
     </div>
 </div>
 <ng-template #image>
     <a [routerLink]="['/messenger/chat', chatId, 'image', imageKeyParam]">
-        <img [src]="url" alt="Image" loading="lazy" [style.width.px]="isSizeUnknown ? null : width"
-            [style.height.px]="isSizeUnknown ? null : height"
-            [style.maxWidth.px]="isSizeUnknown ? sizeLimit.width : null"
-            [style.maxHeight.px]="isSizeUnknown ? sizeLimit.height : null" />
+        <img [src]="url()" alt="Image" loading="lazy" [style.width.px]="isSizeUnknown() ? null : width()"
+            [style.height.px]="isSizeUnknown() ? null : height()"
+            [style.maxWidth.px]="isSizeUnknown() ? sizeLimit.width : null"
+            [style.maxHeight.px]="isSizeUnknown() ? sizeLimit.height : null" />
     </a>
 </ng-template>

@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, Input, OnDestroy, OnInit, signal } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { IChatDto } from 'src/app/api-client/api-client';
@@ -17,7 +17,7 @@ import { Router } from '@angular/router';
     standalone: false,
 })
 export class ChatHeaderComponent implements OnInit, OnDestroy {
-    chat: IChatDto;
+    chat = signal<IChatDto>(null);
     faPhone = faPhone;
     @Input() backButton: BackButtonStatus;
 
@@ -33,7 +33,7 @@ export class ChatHeaderComponent implements OnInit, OnDestroy {
             .select(selectSelectedChat)
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe((chat) => {
-                this.chat = chat;
+                this.chat.set(chat);
             });
     }
 
@@ -44,14 +44,15 @@ export class ChatHeaderComponent implements OnInit, OnDestroy {
 
     async onCallClicked(): Promise<void> {
         let chatId: string;
-        if (this.shouldCreateIndividualChat(this.chat)) {
+        if (this.shouldCreateIndividualChat(this.chat())) {
+            const chat = this.chat();
             chatId = await this.handleIndividualChatCreation(
-                this.chat.id,
-                this.chat.accountIds[0],
+                chat.id,
+                chat.accountIds[0],
             );
         }
 
-        this.storeService.initOutgoingCall(chatId ?? this.chat.id);
+        this.storeService.initOutgoingCall(chatId ?? this.chat().id);
     }
 
     private shouldCreateIndividualChat(chat: IChatDto): boolean {
