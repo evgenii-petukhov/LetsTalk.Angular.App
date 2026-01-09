@@ -16,8 +16,7 @@ import { Location } from '@angular/common';
 })
 export class AccountListComponent implements OnInit, OnDestroy {
     accounts = signal<readonly IAccountDto[]>([]);
-
-    private chats: readonly IChatDto[] = [];
+    private chats = signal<readonly IChatDto[]>([]);
 
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
     private readonly store = inject(Store);
@@ -32,7 +31,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
         ])
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe(([chats, accounts]) => {
-                this.chats = chats;
+                this.chats.set(chats);
                 this.accounts.set(accounts);
             });
 
@@ -45,7 +44,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
     }
 
     async onAccountSelected(account: IAccountDto): Promise<void> {
-        const chat = this.chats.find(
+        const chat = this.chats().find(
             (chat) => chat.isIndividual && chat.accountIds[0] === account.id,
         );
         if (chat) {
