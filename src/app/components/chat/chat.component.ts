@@ -1,4 +1,5 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 import { MessageListStatus } from 'src/app/models/message-list-status';
@@ -23,6 +24,22 @@ export class ChatComponent implements OnInit, OnDestroy {
     private readonly store = inject(Store);
     private readonly storeService = inject(StoreService);
 
+    isCallInProgress = toSignal(
+        this.store.select(selectSelectedChatIsCallInProgress),
+    );
+    isMessageListVisible = toSignal(
+        this.store.select(selectSelectedChatIsMessageListVisible),
+    );
+    isComposeAreaVisible = toSignal(
+        this.store.select(selectSelectedChatIsComposeAreaVisible),
+    );
+    isNotFoundVisible = toSignal(
+        this.store.select(selectSelectedChatIsNotFoundVisible),
+    );
+    isErrorVisible = toSignal(
+        this.store.select(selectSelectedChatIsErrorVisible),
+    );
+
     ngOnInit(): void {
         this.store
             .select(selectSelectedChatId)
@@ -38,14 +55,4 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.unsubscribe$.next();
         this.unsubscribe$.complete();
     }
-
-    isCallInProgress$ = this.store.select(selectSelectedChatIsCallInProgress);
-    isMessageListVisible$ = this.store.select(
-        selectSelectedChatIsMessageListVisible,
-    );
-    isComposeAreaVisible$ = this.store.select(
-        selectSelectedChatIsComposeAreaVisible,
-    );
-    isNotFoundVisible$ = this.store.select(selectSelectedChatIsNotFoundVisible);
-    isErrorVisible$ = this.store.select(selectSelectedChatIsErrorVisible);
 }

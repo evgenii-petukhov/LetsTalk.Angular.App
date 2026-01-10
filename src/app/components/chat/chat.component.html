@@ -1,20 +1,20 @@
 <router-outlet></router-outlet>
 <div class="chat-container">
     <app-chat-header
-        [backButton]="(isNotFoundVisible$ | async) || (isErrorVisible$ | async) ? 'visibleWithText' : 'visible'"></app-chat-header>
-    @if (isMessageListVisible$ | async) {
+        [backButton]="isNotFoundVisible() || isErrorVisible() ? 'visibleWithText' : 'visible'"></app-chat-header>
+    @if (isMessageListVisible()) {
         <app-message-list></app-message-list>
     }
-    @if (isComposeAreaVisible$ | async) {
+    @if (isComposeAreaVisible()) {
         <app-compose-area></app-compose-area>
     }
-    @if (isNotFoundVisible$ | async) {
+    @if (isNotFoundVisible()) {
         <app-not-found></app-not-found>
     }
-    @if (isErrorVisible$ | async) {
+    @if (isErrorVisible()) {
         <app-error></app-error>
     }
-    @if (isCallInProgress$ | async) {
-        <app-video-call *ngIf=""></app-video-call>
+    @if (isCallInProgress()) {
+        <app-video-call></app-video-call>
     }
 </div>
