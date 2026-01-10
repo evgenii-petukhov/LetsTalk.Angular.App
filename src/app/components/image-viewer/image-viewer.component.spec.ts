@@ -60,8 +60,8 @@ describe('ImageViewerComponent', () => {
         fixture.detectChanges();
 
         // Assert
-        expect(component.backgroundImage).toBe('image-url');
-        expect(component.isVisible).toBeTrue();
+        expect(component.backgroundImage()).toBe('image-url');
+        expect(component.isVisible()).toBeTrue();
 
         const imageElement = fixture.debugElement.query(By.css('img'));
         expect(imageElement.nativeElement.src).toContain('image-url');
@@ -83,7 +83,7 @@ describe('ImageViewerComponent', () => {
         await component.ngOnInit();
 
         // Assert
-        expect(component.isVisible).toBeFalse();
+        expect(component.isVisible()).toBeFalse();
         expect(storeService.getImageContent).toHaveBeenCalledWith(imageKey);
         expect(errorService.handleError).toHaveBeenCalledWith(
             error,
@@ -98,7 +98,7 @@ describe('ImageViewerComponent', () => {
         await component.ngOnInit();
 
         // Assert
-        expect(component.isVisible).toBeFalse();
+        expect(component.isVisible()).toBeFalse();
         expect(storeService.getImageContent).not.toHaveBeenCalled();
         expect(errorService.handleError).not.toHaveBeenCalled();
     });
@@ -110,7 +110,7 @@ describe('ImageViewerComponent', () => {
         component.close();
 
         // Assert
-        expect(component.isVisible).toBeFalse();
+        expect(component.isVisible()).toBeFalse();
         expect(errorService.handleError).not.toHaveBeenCalled();
     });
 });

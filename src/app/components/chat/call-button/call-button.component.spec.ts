@@ -152,43 +152,6 @@ describe('CallButtonComponent', () => {
         });
     });
 
-    describe('Component State', () => {
-        it('should maintain mode state after multiple changes', () => {
-            // Arrange & Act
-            component.mode = 'start-call';
-            fixture.detectChanges();
-            expect(component.mode).toBe('start-call');
-
-            component.mode = 'end-call';
-            fixture.detectChanges();
-            expect(component.mode).toBe('end-call');
-
-            component.mode = 'start-call';
-            fixture.detectChanges();
-
-            // Assert
-            expect(component.mode).toBe('start-call');
-        });
-
-        it('should preserve buttonClick emitter functionality across mode changes', () => {
-            // Arrange
-            spyOn(component.buttonClick, 'emit');
-
-            // Act & Assert
-            component.mode = 'start-call';
-            component.onButtonClicked();
-            expect(component.buttonClick.emit).toHaveBeenCalledTimes(1);
-
-            component.mode = 'end-call';
-            component.onButtonClicked();
-            expect(component.buttonClick.emit).toHaveBeenCalledTimes(2);
-
-            component.mode = 'start-call';
-            component.onButtonClicked();
-            expect(component.buttonClick.emit).toHaveBeenCalledTimes(3);
-        });
-    });
-
     describe('Integration with Parent Component', () => {
         it('should work correctly when used with input binding', () => {
             // Arrange

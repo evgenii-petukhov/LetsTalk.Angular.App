@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ChatDto, IAccountDto, IChatDto } from 'src/app/api-client/api-client';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { StoreService } from 'src/app/services/store.service';
@@ -15,9 +15,8 @@ import { Location } from '@angular/common';
     standalone: false,
 })
 export class AccountListComponent implements OnInit, OnDestroy {
-    accounts: readonly IAccountDto[] = [];
-
-    private chats: readonly IChatDto[] = [];
+    accounts = signal<readonly IAccountDto[]>([]);
+    private chats = signal<readonly IChatDto[]>([]);
 
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
     private readonly store = inject(Store);
@@ -32,8 +31,8 @@ export class AccountListComponent implements OnInit, OnDestroy {
         ])
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe(([chats, accounts]) => {
-                this.chats = chats;
-                this.accounts = accounts;
+                this.chats.set(chats);
+                this.accounts.set(accounts);
             });
 
         await this.storeService.initAccountStorage();
@@ -45,7 +44,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
     }
 
     async onAccountSelected(account: IAccountDto): Promise<void> {
-        const chat = this.chats.find(
+        const chat = this.chats().find(
             (chat) => chat.isIndividual && chat.accountIds[0] === account.id,
         );
         if (chat) {

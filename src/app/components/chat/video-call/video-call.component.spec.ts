@@ -78,9 +78,17 @@ describe('VideoCallComponent', () => {
 
         mockStore.select.and.returnValue(storeSubject.asObservable());
 
-        // Mock video elements
+        // Mock video elements with proper attributes to match template
         const mockLocalVideo = document.createElement('video');
+        mockLocalVideo.className = 'local-video';
+        mockLocalVideo.autoplay = true;
+        mockLocalVideo.muted = true;
+        mockLocalVideo.setAttribute('playsinline', '');
+        
         const mockRemoteVideo = document.createElement('video');
+        mockRemoteVideo.className = 'remote-video';
+        mockRemoteVideo.autoplay = true;
+        mockRemoteVideo.setAttribute('playsinline', '');
         
         component.localVideo = { nativeElement: mockLocalVideo } as any;
         component.remoteVideo = { nativeElement: mockRemoteVideo } as any;
@@ -139,10 +147,13 @@ describe('VideoCallComponent', () => {
             
             await new Promise(resolve => setTimeout(resolve, 0));
             
-            expect(mockConnectionManager.reconnectVideoElements).toHaveBeenCalledWith(
-                component.localVideo.nativeElement,
-                component.remoteVideo.nativeElement
-            );
+            expect(mockConnectionManager.reconnectVideoElements).toHaveBeenCalledTimes(1);
+            const callArgs = mockConnectionManager.reconnectVideoElements.calls.argsFor(0);
+            expect(callArgs.length).toBe(2);
+            expect(callArgs[0]).toBeInstanceOf(HTMLVideoElement);
+            expect(callArgs[1]).toBeInstanceOf(HTMLVideoElement);
+            expect(callArgs[0].className).toContain('local-video');
+            expect(callArgs[1].className).toContain('remote-video');
         });
 
         it('should start media capture and handle incoming call when media is not captured and call is incoming', async () => {
@@ -156,10 +167,13 @@ describe('VideoCallComponent', () => {
             
             await new Promise(resolve => setTimeout(resolve, 0));
             
-            expect(mockConnectionManager.startMediaCapture).toHaveBeenCalledWith(
-                component.localVideo.nativeElement,
-                component.remoteVideo.nativeElement
-            );
+            expect(mockConnectionManager.startMediaCapture).toHaveBeenCalledTimes(1);
+            const callArgs = mockConnectionManager.startMediaCapture.calls.argsFor(0);
+            expect(callArgs.length).toBe(2);
+            expect(callArgs[0]).toBeInstanceOf(HTMLVideoElement);
+            expect(callArgs[1]).toBeInstanceOf(HTMLVideoElement);
+            expect(callArgs[0].className).toContain('local-video');
+            expect(callArgs[1].className).toContain('remote-video');
             expect(mockRtcConnectionService.handleIncomingCall).toHaveBeenCalledWith(
                 mockIncomingVideoCallState.chatId,
                 mockIncomingVideoCallState.offer
@@ -177,10 +191,13 @@ describe('VideoCallComponent', () => {
             
             await new Promise(resolve => setTimeout(resolve, 0));
             
-            expect(mockConnectionManager.startMediaCapture).toHaveBeenCalledWith(
-                component.localVideo.nativeElement,
-                component.remoteVideo.nativeElement
-            );
+            expect(mockConnectionManager.startMediaCapture).toHaveBeenCalledTimes(1);
+            const callArgs = mockConnectionManager.startMediaCapture.calls.argsFor(0);
+            expect(callArgs.length).toBe(2);
+            expect(callArgs[0]).toBeInstanceOf(HTMLVideoElement);
+            expect(callArgs[1]).toBeInstanceOf(HTMLVideoElement);
+            expect(callArgs[0].className).toContain('local-video');
+            expect(callArgs[1].className).toContain('remote-video');
             expect(mockRtcConnectionService.startOutgoingCall).toHaveBeenCalledWith(
                 mockVideoCallState.chatId
             );

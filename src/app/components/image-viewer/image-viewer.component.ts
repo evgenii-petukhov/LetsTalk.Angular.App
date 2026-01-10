@@ -5,6 +5,7 @@ import {
     inject,
     OnDestroy,
     OnInit,
+    signal,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IImageDto } from 'src/app/api-client/api-client';
@@ -21,8 +22,13 @@ import { Subject, takeUntil } from 'rxjs';
     standalone: false,
 })
 export class ImageViewerComponent implements OnInit, OnDestroy {
-    backgroundImage: string;
-    @HostBinding('class.visible') isVisible: boolean = false;
+    backgroundImage = signal<string>('');
+    isVisible = signal<boolean>(false);
+    
+    @HostBinding('class.visible') 
+    get visible() { 
+        return this.isVisible(); 
+    }
 
     private imageKey: IImageDto;
     
@@ -63,8 +69,8 @@ export class ImageViewerComponent implements OnInit, OnDestroy {
             const image = await this.storeService.getImageContent(
                 this.imageKey,
             );
-            this.backgroundImage = image.content;
-            this.isVisible = true;
+            this.backgroundImage.set(image.content);
+            this.isVisible.set(true);
         } catch (error) {
             this.errorService.handleError(error, errorMessages.downloadImage);
             this.resetViewer();
@@ -72,8 +78,8 @@ export class ImageViewerComponent implements OnInit, OnDestroy {
     }
 
     private resetViewer(): void {
-        this.backgroundImage = '';
-        this.isVisible = false;
+        this.backgroundImage.set('');
+        this.isVisible.set(false);
         this.location.back();
     }
 }

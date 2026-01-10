@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
-import { GRPC_INTERCEPTORS } from '@ngx-grpc/core';
 import { FileStorageService } from './file-storage.service';
 import { TokenStorageService } from './token-storage.service';
 import {
@@ -15,7 +14,6 @@ import { IImageDto } from '../api-client/api-client';
 describe('FileStorageService', () => {
     let service: FileStorageService;
     let tokenStorageService: jasmine.SpyObj<TokenStorageService>;
-    let mockInterceptors: any[];
 
     const mockToken = 'Bearer mock-token';
     const mockImageKey: IImageDto = {
@@ -27,13 +25,11 @@ describe('FileStorageService', () => {
         tokenStorageService = jasmine.createSpyObj('TokenStorageService', [
             'getToken',
         ]);
-        mockInterceptors = [];
 
         TestBed.configureTestingModule({
             providers: [
                 FileStorageService,
                 { provide: TokenStorageService, useValue: tokenStorageService },
-                { provide: GRPC_INTERCEPTORS, useValue: mockInterceptors },
             ],
         });
 

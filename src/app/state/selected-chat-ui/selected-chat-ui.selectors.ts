@@ -9,7 +9,7 @@ export const selectSelectedChatUi =
 
 export const selectSelectedChatMessageListStatus = createSelector(
     selectSelectedChatUi,
-    (state) => state.messageListStatus,
+    (state) => state?.messageListStatus ?? MessageListStatus.Unknown,
 );
 
 export const selectSelectedChatIsCallInProgress = createSelector(

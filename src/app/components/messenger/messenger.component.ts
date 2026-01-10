@@ -4,6 +4,7 @@ import {
     inject,
     OnDestroy,
     OnInit,
+    signal,
 } from '@angular/core';
 import {
     IChatDto,
@@ -22,7 +23,6 @@ import {
     takeUntil,
 } from 'rxjs';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
-import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
 import { selectChats } from 'src/app/state/chats/chats.selector';
 import { SignalrHandlerService } from 'src/app/services/signalr-handler.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
@@ -36,11 +36,10 @@ import { RtcSessionSettings } from 'src/app/models/rtc-sessions-settings';
     standalone: false,
 })
 export class MessengerComponent implements OnInit, OnDestroy {
-    isSidebarShown = false;
-    selectedChatId: string;
+    isSidebarShown = signal(false);
 
     private chats: readonly IChatDto[] = [];
-    private selectedChat: IChatDto;
+    private selectedChat: IChatDto | null = null;
     private isWindowActive = true;
 
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
@@ -50,8 +49,6 @@ export class MessengerComponent implements OnInit, OnDestroy {
     private readonly activatedRoute = inject(ActivatedRoute);
     private readonly router = inject(Router);
     private readonly idGeneratorService = inject(IdGeneratorService);
-
-    selectedChatId$ = this.store.select(selectSelectedChatId);
 
     @HostListener('document:visibilitychange', ['$event'])
     onVisibilityChange(event: Event): void {
@@ -73,7 +70,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
             )
             .subscribe((params) => {
                 const chatId = params['id'];
-                this.isSidebarShown = !chatId;
+                this.isSidebarShown.set(!chatId);
                 this.storeService.setSelectedChatId(chatId);
 
                 if (this.chats && !this.idGeneratorService.isFake(chatId)) {

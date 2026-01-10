@@ -275,8 +275,8 @@ describe('MessageListComponent', () => {
 
         it('should load messages when scrolled to top and message list is loaded', fakeAsync(async () => {
             // Arrange
-            component['isMessageListLoaded'] = true;
-            component['chatId'] = 'test-chat';
+            component['isMessageListLoaded'].set(true);
+            component['chatId'].set('test-chat');
             apiService.getMessages.and.resolveTo([]);
 
             // Act
@@ -289,7 +289,7 @@ describe('MessageListComponent', () => {
 
         it('should not load messages when not scrolled to top', fakeAsync(async () => {
             // Arrange
-            component['isMessageListLoaded'] = true;
+            component['isMessageListLoaded'].set(true);
             component['scrollFrame'].nativeElement.scrollTop = 100;
 
             // Act
@@ -302,7 +302,7 @@ describe('MessageListComponent', () => {
 
         it('should not load messages when message list is not loaded', fakeAsync(async () => {
             // Arrange
-            component['isMessageListLoaded'] = false;
+            component['isMessageListLoaded'].set(false);
 
             // Act
             await component.onScroll();
@@ -316,15 +316,15 @@ describe('MessageListComponent', () => {
     describe('loadMessages with null chatId', () => {
         it('should set isMessageListLoaded to true when chatId is null', fakeAsync(() => {
             // Arrange
-            component['chatId'] = null;
-            component['isMessageListLoaded'] = false;
+            component['chatId'].set(null);
+            component['isMessageListLoaded'].set(false);
 
             // Act
             component['loadMessages']();
             tick();
 
             // Assert
-            expect(component['isMessageListLoaded']).toBe(true);
+            expect(component['isMessageListLoaded']()).toBe(true);
             expect(apiService.getMessages).not.toHaveBeenCalled();
         }));
     });
@@ -333,7 +333,7 @@ describe('MessageListComponent', () => {
         it('should set Success status when fake chatId is valid', fakeAsync(() => {
             // Arrange
             const chatId = 'fake-chat-id';
-            component['chatId'] = chatId;
+            component['chatId'].set(chatId);
             idGeneratorService.isFake.and.returnValue(true);
             storeService.isChatIdValid.and.resolveTo(true);
 
@@ -343,7 +343,7 @@ describe('MessageListComponent', () => {
 
             // Assert
             expect(storeService.isChatIdValid).toHaveBeenCalledWith(chatId);
-            expect(component['isMessageListLoaded']).toBe(true);
+            expect(component['isMessageListLoaded']()).toBe(true);
             expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
                 MessageListStatus.Success,
             );
@@ -352,7 +352,7 @@ describe('MessageListComponent', () => {
         it('should set NotFound status when fake chatId is invalid', fakeAsync(() => {
             // Arrange
             const chatId = 'fake-chat-id';
-            component['chatId'] = chatId;
+            component['chatId'].set(chatId);
             idGeneratorService.isFake.and.returnValue(true);
             storeService.isChatIdValid.and.resolveTo(false);
 
@@ -378,7 +378,7 @@ describe('MessageListComponent', () => {
         it('should set NotFound status when API returns 404', fakeAsync(() => {
             // Arrange
             const chatId = 'real-chat-id';
-            component['chatId'] = chatId;
+            component['chatId'].set(chatId);
             idGeneratorService.isFake.and.returnValue(false);
             const apiError = new ProblemDetails({ status: 404 });
             apiService.getMessages.and.rejectWith(apiError);
@@ -396,7 +396,7 @@ describe('MessageListComponent', () => {
         it('should set Error status when API returns other error', fakeAsync(() => {
             // Arrange
             const chatId = 'real-chat-id';
-            component['chatId'] = chatId;
+            component['chatId'].set(chatId);
             idGeneratorService.isFake.and.returnValue(false);
             const apiError = new ApiException(
                 'Server error',
@@ -420,7 +420,7 @@ describe('MessageListComponent', () => {
         it('should set Error status when non-API error occurs', fakeAsync(() => {
             // Arrange
             const chatId = 'real-chat-id';
-            component['chatId'] = chatId;
+            component['chatId'].set(chatId);
             idGeneratorService.isFake.and.returnValue(false);
             apiService.getMessages.and.rejectWith(new Error('Network error'));
 
@@ -440,17 +440,17 @@ describe('MessageListComponent', () => {
             component['scrollContainer'] = {
                 scrollHeight: 100,
             } as HTMLDivElement;
-            component['pageIndex'] = 0;
+            component['pageIndex'].set(0);
             component['scrollCounter'] = 0;
-            component['isMessageListLoaded'] = false;
+            component['isMessageListLoaded'].set(false);
         });
 
         it('should increment pageIndex when messages are returned', fakeAsync(() => {
             // Arrange
             const chatId = 'real-chat-id';
-            component['chatId'] = chatId;
-            component['pageIndex'] = 0;
-            component['isMessageListLoaded'] = true; // Set to true to avoid status emission
+            component['chatId'].set(chatId);
+            component['pageIndex'].set(0);
+            component['isMessageListLoaded'].set(true); // Set to true to avoid status emission
             idGeneratorService.isFake.and.returnValue(false);
             const messageDtos = [
                 { id: 'msg1', text: 'Hello', created: 123456 },
@@ -462,7 +462,7 @@ describe('MessageListComponent', () => {
             tick();
 
             // Assert
-            expect(component['pageIndex']).toBe(1);
+            expect(component['pageIndex']()).toBe(1);
         }));
 
         it('should not increment pageIndex when no messages are returned', fakeAsync(() => {
@@ -489,14 +489,14 @@ describe('MessageListComponent', () => {
             tick();
 
             // Reset pageIndex to test pagination behavior
-            const initialPageIndex = component['pageIndex']; // Should be 1 after initial load
+            const initialPageIndex = component['pageIndex'](); // Should be 1 after initial load
 
             // Act - call loadMessages again (simulating pagination)
             component['loadMessages']();
             tick();
 
             // Assert
-            expect(component['pageIndex']).toBe(initialPageIndex); // Should not increment when no messages
+            expect(component['pageIndex']()).toBe(initialPageIndex); // Should not increment when no messages
         }));
     });
 
@@ -643,10 +643,10 @@ describe('MessageListComponent', () => {
             tick();
 
             // Assert
-            expect(component['chatId']).toBe(newChatId);
-            expect(component['pageIndex']).toBe(0);
+            expect(component['chatId']()).toBe(newChatId);
+            expect(component['pageIndex']()).toBe(0);
             expect(component['scrollCounter']).toBe(0);
-            expect(component['isMessageListLoaded']).toBe(true);
+            expect(component['isMessageListLoaded']()).toBe(true);
             expect(storeService.initMessages).toHaveBeenCalledWith([]);
         }));
     });
@@ -676,10 +676,10 @@ describe('MessageListComponent', () => {
             tick();
 
             // Assert
-            expect(component['chatId']).toBe(chatId);
-            expect(component['pageIndex']).toBe(0);
+            expect(component['chatId']()).toBe(chatId);
+            expect(component['pageIndex']()).toBe(0);
             expect(component['scrollCounter']).toBe(0);
-            expect(component['isMessageListLoaded']).toBe(true);
+            expect(component['isMessageListLoaded']()).toBe(true);
             expect(storeService.initMessages).toHaveBeenCalledWith([]);
         }));
 
@@ -697,7 +697,7 @@ describe('MessageListComponent', () => {
             tick();
 
             // Assert
-            expect(component.messages).toBe(messages);
+            expect(component.messages()).toEqual(messages);
         }));
     });
 
@@ -711,8 +711,8 @@ describe('MessageListComponent', () => {
         it('should set Success status on initial successful load', fakeAsync(() => {
             // Arrange
             const chatId = 'real-chat-id';
-            component['chatId'] = chatId;
-            component['isMessageListLoaded'] = false;
+            component['chatId'].set(chatId);
+            component['isMessageListLoaded'].set(false);
             idGeneratorService.isFake.and.returnValue(false);
             const messageDtos = [
                 { id: 'msg1', text: 'Hello', created: 123456 },
@@ -728,14 +728,14 @@ describe('MessageListComponent', () => {
             expect(storeService.setSelectedChatMessageListStatus).toHaveBeenCalledWith(
                 MessageListStatus.Success,
             );
-            expect(component['isMessageListLoaded']).toBe(true);
+            expect(component['isMessageListLoaded']()).toBe(true);
         }));
 
         it('should not set status on pagination load', fakeAsync(() => {
             // Arrange
             const chatId = 'real-chat-id';
-            component['chatId'] = chatId;
-            component['isMessageListLoaded'] = true; // Already loaded
+            component['chatId'].set(chatId);
+            component['isMessageListLoaded'].set(true); // Already loaded
             idGeneratorService.isFake.and.returnValue(false);
             const messageDtos = [
                 { id: 'msg3', text: 'More', created: 123458 }
@@ -753,8 +753,8 @@ describe('MessageListComponent', () => {
         it('should calculate lastMessageInfo correctly', fakeAsync(() => {
             // Arrange
             const chatId = 'real-chat-id';
-            component['chatId'] = chatId;
-            component['isMessageListLoaded'] = false;
+            component['chatId'].set(chatId);
+            component['isMessageListLoaded'].set(false);
             idGeneratorService.isFake.and.returnValue(false);
             const messageDtos = [
                 { id: 'msg1', text: 'Hello', created: 123456 },
@@ -778,8 +778,8 @@ describe('MessageListComponent', () => {
         it('should handle empty message response on initial load', fakeAsync(() => {
             // Arrange
             const chatId = 'real-chat-id';
-            component['chatId'] = chatId;
-            component['isMessageListLoaded'] = false;
+            component['chatId'].set(chatId);
+            component['isMessageListLoaded'].set(false);
             idGeneratorService.isFake.and.returnValue(false);
             apiService.getMessages.and.resolveTo([]);
 
@@ -846,15 +846,15 @@ describe('MessageListComponent', () => {
 
         it('should handle null chatId in loadMessages', fakeAsync(() => {
             // Arrange
-            component['chatId'] = null;
-            component['isMessageListLoaded'] = false;
+            component['chatId'].set(null);
+            component['isMessageListLoaded'].set(false);
 
             // Act
             component['loadMessages']();
             tick();
 
             // Assert
-            expect(component['isMessageListLoaded']).toBe(true);
+            expect(component['isMessageListLoaded']()).toBe(true);
             expect(apiService.getMessages).not.toHaveBeenCalled();
             expect(storeService.setSelectedChatMessageListStatus).not.toHaveBeenCalled();
         }));
@@ -862,8 +862,8 @@ describe('MessageListComponent', () => {
         it('should handle messages with same timestamp in lastMessageInfo calculation', fakeAsync(() => {
             // Arrange
             const chatId = 'real-chat-id';
-            component['chatId'] = chatId;
-            component['isMessageListLoaded'] = false;
+            component['chatId'].set(chatId);
+            component['isMessageListLoaded'].set(false);
             idGeneratorService.isFake.and.returnValue(false);
             const messageDtos = [
                 { id: 'msg1', text: 'Hello', created: 123456 },
@@ -900,10 +900,10 @@ describe('MessageListComponent', () => {
 
         it('should initialize with default values', () => {
             // Assert
-            expect(component.messages).toEqual([]);
-            expect(component['pageIndex']).toBe(0);
+            expect(component.messages()).toEqual([]);
+            expect(component['pageIndex']()).toBe(0);
             expect(component['scrollCounter']).toBe(0);
-            expect(component['isMessageListLoaded']).toBe(false);
+            expect(component['isMessageListLoaded']()).toBe(false);
             expect(component['previousScrollHeight']).toBe(0);
         });
     });

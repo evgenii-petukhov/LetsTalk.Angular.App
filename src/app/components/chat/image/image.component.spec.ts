@@ -61,8 +61,8 @@ describe('ImageComponent', () => {
         const expectedWidth = expectedScale * imagePreview.width!;
         const expectedHeight = expectedScale * imagePreview.height!;
 
-        expect(component.width).toBe(expectedWidth);
-        expect(component.height).toBe(expectedHeight);
+        expect(component.width()).toBe(expectedWidth);
+        expect(component.height()).toBe(expectedHeight);
 
         expect(storeService.getImageContent).toHaveBeenCalledOnceWith(
             imagePreview,
@@ -82,11 +82,11 @@ describe('ImageComponent', () => {
         await component.ngOnInit();
 
         // Assert
-        expect(component.isSizeUnknown).toBeTrue();
-        expect(component.width).toBe(
+        expect(component.isSizeUnknown()).toBeTrue();
+        expect(component.width()).toBe(
             environment.imageSettings.limits.picturePreview.width,
         );
-        expect(component.height).toBe(
+        expect(component.height()).toBe(
             environment.imageSettings.limits.picturePreview.height,
         );
         expect(storeService.getImageContent).toHaveBeenCalledOnceWith(
@@ -113,8 +113,8 @@ describe('ImageComponent', () => {
         await fixture.whenStable();
 
         // Assert
-        expect(component.url).toBe(imageContent);
-        expect(component.isLoading).toBeFalse();
+        expect(component.url()).toBe(imageContent);
+        expect(component.isLoading()).toBeFalse();
         expect(storeService.getImageContent).toHaveBeenCalledWith(imagePreview);
         expect(errorService.handleError).not.toHaveBeenCalled();
     });
@@ -132,8 +132,8 @@ describe('ImageComponent', () => {
         await fixture.whenStable();
 
         // Assert
-        expect(component.url).toBeNull();
-        expect(component.isLoading).toBeTrue();
+        expect(component.url()).toBeNull();
+        expect(component.isLoading()).toBeFalse();
         expect(storeService.getImageContent).toHaveBeenCalledWith(imagePreview);
         expect(errorService.handleError).toHaveBeenCalledOnceWith(
             error,
@@ -170,8 +170,8 @@ describe('ImageComponent', () => {
         const expectedWidth = Math.round(expectedScale * 200);
         const expectedHeight = Math.round(expectedScale * 300);
 
-        expect(component.width).toBe(expectedWidth);
-        expect(component.height).toBe(expectedHeight);
+        expect(component.width()).toBe(expectedWidth);
+        expect(component.height()).toBe(expectedHeight);
         expect(storeService.getImageContent).not.toHaveBeenCalled();
         expect(errorService.handleError).not.toHaveBeenCalled();
     });

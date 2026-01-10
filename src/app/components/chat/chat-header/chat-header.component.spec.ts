@@ -193,18 +193,18 @@ describe('ChatHeaderComponent', () => {
         expect(storeService.initOutgoingCall).toHaveBeenCalledWith(individualChat.id);
     });
 
-    it('should unsubscribe on destroy', () => {
+    it('should handle null chat gracefully when onCallClicked', async () => {
         // Arrange
-        const component = fixture.componentInstance;
-        const unsubscribeSpy = spyOn(component['unsubscribe$'], 'next');
-        const completeSpy = spyOn(component['unsubscribe$'], 'complete');
+        mockSelectSelectedChat.setResult(null);
+        store.refreshState();
+        fixture.detectChanges();
 
         // Act
-        component.ngOnDestroy();
+        await fixture.componentInstance.onCallClicked();
 
         // Assert
-        expect(unsubscribeSpy).toHaveBeenCalled();
-        expect(completeSpy).toHaveBeenCalled();
+        expect(storeService.initOutgoingCall).not.toHaveBeenCalled();
+        expect(apiService.createIndividualChat).not.toHaveBeenCalled();
     });
 
     function getAvatarElement() {

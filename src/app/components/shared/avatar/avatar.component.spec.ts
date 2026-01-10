@@ -52,11 +52,11 @@ describe('AvatarComponent', () => {
 
             // Act
             component.urlOptions = value;
-            await component.ngOnChanges();
+            component.ngOnChanges();
             fixture.detectChanges();
 
             // Assert
-            expect(component.backgroundImage).toBe(`url('${defaultUrl}')`);
+            expect(component.backgroundImage()).toBe(`url('${defaultUrl}')`);
             expect(storeService.getImageContent).not.toHaveBeenCalledTimes(1);
             expect(errorService.handleError).not.toHaveBeenCalledTimes(1);
         });
@@ -67,11 +67,11 @@ describe('AvatarComponent', () => {
 
         // Act
         component.urlOptions = [url];
-        await component.ngOnChanges();
+        component.ngOnChanges();
         fixture.detectChanges();
 
         // Assert
-        expect(component.backgroundImage).toBe(
+        expect(component.backgroundImage()).toBe(
             `url('${url}'), url('${defaultUrl}')`,
         );
         expect(storeService.getImageContent).not.toHaveBeenCalledTimes(1);
@@ -84,11 +84,12 @@ describe('AvatarComponent', () => {
 
         // Act
         component.urlOptions = [imageKey];
-        await component.ngOnChanges();
+        component.ngOnChanges();
+        await fixture.whenStable();
         fixture.detectChanges();
 
         // Assert
-        expect(component.backgroundImage).toContain(
+        expect(component.backgroundImage()).toContain(
             `url('${mockImage.content}')`,
         );
         expect(storeService.getImageContent).toHaveBeenCalledOnceWith(imageKey);
@@ -101,11 +102,11 @@ describe('AvatarComponent', () => {
 
         // Act
         component.urlOptions = [url, imageKey];
-        await component.ngOnChanges();
+        component.ngOnChanges();
         fixture.detectChanges();
 
         // Assert
-        expect(component.backgroundImage).toBe(
+        expect(component.backgroundImage()).toBe(
             `url('${url}'), url('${defaultUrl}')`,
         );
         expect(storeService.getImageContent).not.toHaveBeenCalledTimes(1);
@@ -118,11 +119,12 @@ describe('AvatarComponent', () => {
 
         // Act
         component.urlOptions = [imageKey, url];
-        await component.ngOnChanges();
+        component.ngOnChanges();
+        await fixture.whenStable();
         fixture.detectChanges();
 
         // Assert
-        expect(component.backgroundImage).toBe(`url('${mockImage.content}')`);
+        expect(component.backgroundImage()).toBe(`url('${mockImage.content}')`);
         expect(storeService.getImageContent).toHaveBeenCalledOnceWith(imageKey);
         expect(errorService.handleError).not.toHaveBeenCalledTimes(1);
     });
@@ -134,11 +136,12 @@ describe('AvatarComponent', () => {
 
         // Act
         component.urlOptions = [imageKey];
-        await component.ngOnChanges();
+        component.ngOnChanges();
+        await fixture.whenStable();
         fixture.detectChanges();
 
         // Assert
-        expect(component.backgroundImage).toBe(`url('${defaultUrl}')`);
+        expect(component.backgroundImage()).toBe(`url('${defaultUrl}')`);
         expect(storeService.getImageContent).toHaveBeenCalledOnceWith(imageKey);
         expect(errorService.handleError).toHaveBeenCalledOnceWith(
             error,

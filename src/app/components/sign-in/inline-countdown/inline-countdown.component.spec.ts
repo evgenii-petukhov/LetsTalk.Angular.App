@@ -27,7 +27,7 @@ describe('InlineCountdownComponent', () => {
         tick(5000);
 
         // Assert
-        expect(component.value).toBe(0);
+        expect(component.value()).toBe(0);
 
         component.ngOnDestroy();
         flush();
@@ -41,10 +41,10 @@ describe('InlineCountdownComponent', () => {
         tick(1000);
 
         // Assert
-        expect(component.value).toBe(4);
+        expect(component.value()).toBe(4);
 
         tick(1000);
-        expect(component.value).toBe(3);
+        expect(component.value()).toBe(3);
 
         component.ngOnDestroy();
         flush();
@@ -59,7 +59,7 @@ describe('InlineCountdownComponent', () => {
         tick(5000);
 
         // Assert
-        expect(component.value).toBe(0);
+        expect(component.value()).toBe(0);
         expect(window.clearInterval).toHaveBeenCalled();
 
         component.ngOnDestroy();

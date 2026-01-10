@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnChanges } from '@angular/core';
+import { Component, inject, Input, OnChanges, signal } from '@angular/core';
 import { IImageDto } from 'src/app/api-client/api-client';
 import { errorMessages } from 'src/app/constants/errors';
 import { ErrorService } from 'src/app/services/error.service';
@@ -12,7 +12,7 @@ import { StoreService } from 'src/app/services/store.service';
 })
 export class AvatarComponent implements OnChanges {
     @Input() urlOptions: (string | IImageDto)[] | null = null;
-    backgroundImage: string = '';
+    backgroundImage = signal('');
 
     private readonly defaultPhotoUrl = 'images/empty-avatar.svg';
     private readonly storeService = inject(StoreService);
@@ -60,6 +60,6 @@ export class AvatarComponent implements OnChanges {
     }
 
     private setBackgroundImage(...urls: string[]): void {
-        this.backgroundImage = urls.map((url) => `url('${url}')`).join(', ');
+        this.backgroundImage.set(urls.map((url) => `url('${url}')`).join(', '));
     }
 }

@@ -1,13 +1,10 @@
 <div>
     <ul>
-        <li *ngFor="
-                let chat of chats
-                    | orderBy
-                        : ['unreadCount', 'lastMessageDate', 'chatName']
-                        : ['desc', 'desc', 'asc']
-            " [ngClass]="selectedChatId === chat.id && 'selected'">
-            <app-chat-list-item [chat]="chat">
-            </app-chat-list-item>
-        </li>
+        @for (chat of chats() | orderBy : ['unreadCount', 'lastMessageDate', 'chatName'] : ['desc', 'desc', 'asc']; track chat.id) {
+            <li [ngClass]="selectedChatId() === chat.id && 'selected'">
+                <app-chat-list-item [chat]="chat">
+                </app-chat-list-item>
+            </li>
+        }
     </ul>
 </div>
