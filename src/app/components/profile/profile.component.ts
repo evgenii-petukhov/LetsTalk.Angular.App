@@ -1,4 +1,11 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+    Component,
+    computed,
+    inject,
+    OnDestroy,
+    OnInit,
+    signal,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { StoreService } from 'src/app/services/store.service';
 import { ApiService } from 'src/app/services/api.service';
@@ -11,6 +18,7 @@ import { ErrorService } from 'src/app/services/error.service';
 import { errorMessages } from 'src/app/constants/errors';
 import { ImageUploadService } from 'src/app/services/image-upload.service';
 import { Location } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 // https://angular.io/guide/reactive-forms
 // https://angular.io/guide/form-validation
@@ -23,8 +31,9 @@ import { Location } from '@angular/common';
     standalone: false,
 })
 export class ProfileComponent implements OnInit, OnDestroy {
-    isSending = false;
-    email = '';
+    isSending = signal(false);
+    email = signal('');
+    selectedPhotoUrl = signal<string | null>(null);
 
     private readonly fb = inject(FormBuilder);
     private readonly storeService = inject(StoreService);
@@ -34,7 +43,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private readonly errorService = inject(ErrorService);
     private readonly location = inject(Location);
 
-    account$ = this.store.select(selectLoggedInUser);
+    private loggedInUser = toSignal(this.store.select(selectLoggedInUser), {
+        initialValue: null,
+    });
+    avatarUrls = computed(() => {
+        const loggedInUser = this.loggedInUser();
+        return [
+            this.selectedPhotoUrl(),
+            loggedInUser?.image,
+            loggedInUser?.photoUrl,
+        ];
+    });
     form = this.fb.group({
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
@@ -50,20 +69,24 @@ export class ProfileComponent implements OnInit, OnDestroy {
             lastName: account.lastName,
             photoUrl: null,
         });
-        this.email = account.email;
+        this.email.set(account.email);
     }
 
     ngOnDestroy(): void {
-        URL.revokeObjectURL(this.form.value.photoUrl);
+        const photoUrl = this.selectedPhotoUrl();
+        if (photoUrl) {
+            URL.revokeObjectURL(photoUrl);
+        }
     }
 
     async onSubmit(): Promise<void> {
-        this.isSending = true;
+        this.isSending.set(true);
         const sizeLimits = environment.imageSettings.limits.avatar;
         try {
-            const image = this.form.value.photoUrl
+            const photoUrl = this.selectedPhotoUrl();
+            const image = photoUrl
                 ? await this.imageUploadService.resizeAndUploadImage(
-                      this.form.value.photoUrl,
+                      photoUrl,
                       sizeLimits.width,
                       sizeLimits.height,
                       ImageRoles.AVATAR,
@@ -88,6 +111,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             this.form.patchValue({
                 photoUrl: base64,
             });
+            this.selectedPhotoUrl.set(base64);
         }
     }
 
@@ -100,7 +124,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             );
             this.storeService.setLoggedInUser(profileDto);
             this.location.back();
-            this.isSending = false;
+            this.isSending.set(false);
         } catch (e) {
             this.handleSubmitError(e, errorMessages.saveProfile);
         }
@@ -109,6 +133,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private handleSubmitError(e: any, defaultMessage: string) {
         this.errorService.handleError(e, defaultMessage);
-        this.isSending = false;
+        this.isSending.set(false);
     }
 }

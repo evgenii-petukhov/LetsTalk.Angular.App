@@ -74,7 +74,7 @@ describe('ProfileComponent', () => {
             lastName: 'Doe',
             photoUrl: null,
         });
-        expect(component.email).toBe('john.doe@example.com');
+        expect(component.email()).toBe('john.doe@example.com');
     });
 
     it('should handle avatar selection and set the photoUrl in the form', async () => {
@@ -82,13 +82,15 @@ describe('ProfileComponent', () => {
         const file = new File([''], 'avatar.png', { type: 'image/png' });
 
         spyOn(file, 'arrayBuffer').and.resolveTo(new ArrayBuffer(8));
+        spyOn(URL, 'createObjectURL').and.returnValue('mockObjectUrl');
 
         // Act
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await component.onAvatarSelected({ target: { files: [file] } } as any);
 
         // Assert
-        expect(component.form.value.photoUrl).not.toBeNull();
+        expect(component.form.value.photoUrl).toBe('mockObjectUrl');
+        expect(component.selectedPhotoUrl()).toBe('mockObjectUrl');
     });
 
     it('should submit the form and navigate to chats on success', async () => {
@@ -98,6 +100,7 @@ describe('ProfileComponent', () => {
             lastName: 'Doe',
             photoUrl: 'mockBase64Url',
         });
+        component.selectedPhotoUrl.set('mockBase64Url');
 
         const uploadResponse = new UploadImageResponse();
         imageUploadService.resizeAndUploadImage.and.resolveTo(uploadResponse);
@@ -118,11 +121,38 @@ describe('ProfileComponent', () => {
             ImageRoles.AVATAR,
         );
         expect(errorService.handleError).not.toHaveBeenCalled();
-        expect(component.isSending).toBeFalse();
+        expect(component.isSending()).toBeFalse();
         expect(apiService.saveProfile).toHaveBeenCalledOnceWith(
             'John',
             'Doe',
             uploadResponse,
+        );
+        expect(storeService.setLoggedInUser).toHaveBeenCalledWith(profile);
+    });
+
+    it('should submit the form without image when no photo is selected', async () => {
+        // Arrange
+        component.form.setValue({
+            firstName: 'John',
+            lastName: 'Doe',
+            photoUrl: null,
+        });
+        component.selectedPhotoUrl.set(null);
+
+        const profile = new ProfileDto();
+        apiService.saveProfile.and.resolveTo(profile);
+
+        // Act
+        await component.onSubmit();
+
+        // Assert
+        expect(imageUploadService.resizeAndUploadImage).not.toHaveBeenCalled();
+        expect(errorService.handleError).not.toHaveBeenCalled();
+        expect(component.isSending()).toBeFalse();
+        expect(apiService.saveProfile).toHaveBeenCalledOnceWith(
+            'John',
+            'Doe',
+            null,
         );
         expect(storeService.setLoggedInUser).toHaveBeenCalledWith(profile);
     });
@@ -134,6 +164,7 @@ describe('ProfileComponent', () => {
             lastName: 'Doe',
             photoUrl: 'mockBase64Url',
         });
+        component.selectedPhotoUrl.set('mockBase64Url');
 
         const error = new Error('error');
         imageUploadService.resizeAndUploadImage.and.throwError(error);
@@ -142,14 +173,13 @@ describe('ProfileComponent', () => {
         await component.onSubmit();
 
         // Assert
-        expect(component.isSending).toBeFalse();
+        expect(component.isSending()).toBeFalse();
         expect(errorService.handleError).toHaveBeenCalledOnceWith(
             error,
             errorMessages.uploadImage,
         );
         expect(apiService.saveProfile).not.toHaveBeenCalled();
         expect(storeService.setLoggedInUser).not.toHaveBeenCalled();
-        expect(router.navigate).not.toHaveBeenCalled();
     });
 
     it('should handle errors on form submission', async () => {
@@ -159,6 +189,7 @@ describe('ProfileComponent', () => {
             lastName: 'Doe',
             photoUrl: 'mockBase64Url',
         });
+        component.selectedPhotoUrl.set('mockBase64Url');
 
         const uploadResponse = new UploadImageResponse();
         imageUploadService.resizeAndUploadImage.and.resolveTo(uploadResponse);
@@ -178,7 +209,7 @@ describe('ProfileComponent', () => {
             512,
             ImageRoles.AVATAR,
         );
-        expect(component.isSending).toBeFalse();
+        expect(component.isSending()).toBeFalse();
         expect(apiService.saveProfile).toHaveBeenCalledOnceWith(
             'John',
             'Doe',
@@ -189,19 +220,17 @@ describe('ProfileComponent', () => {
             errorMessages.saveProfile,
         );
         expect(storeService.setLoggedInUser).not.toHaveBeenCalled();
-        expect(router.navigate).not.toHaveBeenCalled();
     });
 
     it('should revoke object URL on destroy', () => {
         // Arrange
         spyOn(URL, 'revokeObjectURL');
+        component.selectedPhotoUrl.set('mockPhotoUrl');
 
         // Act
         component.ngOnDestroy();
 
         // Assert
-        expect(URL.revokeObjectURL).toHaveBeenCalledWith(
-            component.form.value.photoUrl,
-        );
+        expect(URL.revokeObjectURL).toHaveBeenCalledWith('mockPhotoUrl');
     });
 });
