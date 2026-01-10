@@ -38,7 +38,7 @@ describe('UserDetailsComponent', () => {
         component.value = 'Jane Doe';
         fixture.detectChanges();
 
-        let userNameElement = fixture.debugElement.query(
+        const userNameElement = fixture.debugElement.query(
             By.css('.user-name'),
         ).nativeElement;
         expect(userNameElement.textContent).toBe('Jane Doe');

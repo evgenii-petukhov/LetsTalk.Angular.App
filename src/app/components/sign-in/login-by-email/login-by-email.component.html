@@ -1,46 +1,59 @@
 <div class="centered">
-    <div class="login-text" *ngIf="!isCodeRequested()">
-        Please, enter your email
-    </div>
-    <div class="login-text" *ngIf="isCodeRequested()">
-        Please, enter the 4-digit code we sent to your email
-    </div>
+    @if (!isCodeRequested()) {
+        <div class="login-text">
+            Please, enter your email
+        </div>
+    }
+    @if (isCodeRequested()) {
+        <div class="login-text">
+            Please, enter the 4-digit code we sent to your email
+        </div>
+    }
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="form-floating mb-3" *ngIf="!isCodeRequested()">
-            <input type="email" id="email" class="form-control" placeholder="Email" formControlName="email" [ngClass]="
-                    form.controls['email'].invalid &&
-                    (form.controls['email'].touched ||
-                        form.controls['email'].dirty) &&
-                    'is-invalid'
-                " />
-            <label for="email">Email</label>
-        </div>
-        <div class="form-floating mb-3" *ngIf="isCodeRequested()">
-            <input type="text" id="code" class="form-control" placeholder="Code" formControlName="code"
-                autocomplete="off" (input)="onCodeChange()" [disabled]="form.controls['email'].valid" [ngClass]="
-                    form.controls['code'].invalid &&
-                    (form.controls['code'].touched ||
-                        form.controls['code'].dirty) &&
-                    'is-invalid'
-                " />
-            <label for="code">Code</label>
-        </div>
-        <div class="form-floating mb-3" *ngIf="isCountDownShown()">
-            Your code will expire in
-            <app-inline-countdown [startValue]="codeValidInSeconds()"
-                (expired)="onTimerExpired()"></app-inline-countdown>
-            sec.
-        </div>
+        @if (!isCodeRequested()) {
+            <div class="form-floating mb-3">
+                <input type="email" id="email" class="form-control" placeholder="Email" formControlName="email" [ngClass]="
+                        form.controls['email'].invalid &&
+                        (form.controls['email'].touched ||
+                            form.controls['email'].dirty) &&
+                        'is-invalid'
+                    " />
+                <label for="email">Email</label>
+            </div>
+        }
+        @if (isCodeRequested()) {
+            <div class="form-floating mb-3">
+                <input type="text" id="code" class="form-control" placeholder="Code" formControlName="code"
+                    autocomplete="off" (input)="onCodeChange()" [disabled]="form.controls['email'].valid" [ngClass]="
+                        form.controls['code'].invalid &&
+                        (form.controls['code'].touched ||
+                            form.controls['code'].dirty) &&
+                        'is-invalid'
+                    " />
+                <label for="code">Code</label>
+            </div>
+        }
+        @if (isCountDownShown()) {
+            <div class="form-floating mb-3">
+                Your code will expire in
+                <app-inline-countdown [startValue]="codeValidInSeconds()"
+                    (expired)="onTimerExpired()"></app-inline-countdown>
+                sec.
+            </div>
+        }
         <div class="form-floating mb-3 login-buttons">
-            <button type="submit" class="btn btn-primary" [disabled]="
-                    isCodeRequestInProgress() || form.controls['email'].invalid
-                " *ngIf="!isCodeRequested()">
-                Get code
-            </button>
-            <button type="submit" class="btn btn-primary" [disabled]="isSubmitInProgress() || !form.valid"
-                *ngIf="isCodeRequested()">
-                OK
-            </button>
+            @if (!isCodeRequested()) {
+                <button type="submit" class="btn btn-primary" [disabled]="
+                        isCodeRequestInProgress() || form.controls['email'].invalid
+                    ">
+                    Get code
+                </button>
+            }
+            @if (isCodeRequested()) {
+                <button type="submit" class="btn btn-primary" [disabled]="isSubmitInProgress() || !form.valid">
+                    OK
+                </button>
+            }
             <button type="button" class="btn btn-outline-primary" (click)="onBack()">
                 Cancel
             </button>

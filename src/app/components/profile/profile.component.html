@@ -4,7 +4,7 @@
         <div class="form-floating mb-3">
             <div class="avatar-container">
                 <div class="avatar-border">
-                    <app-avatar class="avatar" [urlOptions]="avatarUrls()">
+                    <app-avatar class="avatar" [urlOptions]="urlOptions()">
                         <div class="avatar-upload">
                             <div class="avatar-upload-text">
                                 <fa-icon [icon]="faUpload"></fa-icon>
@@ -25,10 +25,12 @@
                 [ngClass]="form.controls['lastName'].invalid && 'is-invalid'" />
             <label for="lastname">Last name</label>
         </div>
-        <div class="form-floating mb-3" *ngIf="email()">
-            <input type="text" class="form-control" [value]="email()" disabled />
-            <label for="lastname">Email</label>
-        </div>
+        @if (email()) {
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" [value]="email()" disabled />
+                <label for="lastname">Email</label>
+            </div>
+        }
         <div class="form-floating mb-3 profile-buttons">
             <button type="submit" class="btn btn-primary" [disabled]="isSending() || !form.valid">
                 OK

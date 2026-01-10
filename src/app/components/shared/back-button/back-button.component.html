@@ -1,4 +1,6 @@
 <button class="back" (click)="onButtonClicked()">
     <fa-icon [icon]="faChevronLeft" [title]="'Back'"></fa-icon>
-    <span *ngIf="showText">Back</span>
+    @if (showText) {
+        <span>Back</span>
+    }
 </button>

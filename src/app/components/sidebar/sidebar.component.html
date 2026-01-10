@@ -1,2 +1,6 @@
-<app-chat-sidebar *ngIf="isChatListShown()"></app-chat-sidebar>
-<app-account-sidebar *ngIf="isAccountListShown()"></app-account-sidebar>
+@if (isChatListShown()) {
+    <app-chat-sidebar></app-chat-sidebar>
+}
+@if (isAccountListShown()) {
+    <app-account-sidebar></app-account-sidebar>
+}

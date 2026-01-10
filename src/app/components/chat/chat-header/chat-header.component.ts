@@ -1,4 +1,4 @@
-import { Component, inject, Input, signal } from '@angular/core';
+import { Component, computed, inject, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
 import { IChatDto } from 'src/app/api-client/api-client';
@@ -27,6 +27,10 @@ export class ChatHeaderComponent {
     private readonly router = inject(Router);
 
     chat = toSignal(this.store.select(selectSelectedChat), { initialValue: null });
+    urlOptions = computed(() => {
+        const chat = this.chat();
+        return chat && [chat.image, chat.photoUrl];
+    });
 
     async onCallClicked(): Promise<void> {
         const chat = this.chat();

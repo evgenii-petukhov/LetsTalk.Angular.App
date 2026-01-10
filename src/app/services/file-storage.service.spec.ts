@@ -14,7 +14,6 @@ import { IImageDto } from '../api-client/api-client';
 describe('FileStorageService', () => {
     let service: FileStorageService;
     let tokenStorageService: jasmine.SpyObj<TokenStorageService>;
-    let mockInterceptors: any[];
 
     const mockToken = 'Bearer mock-token';
     const mockImageKey: IImageDto = {
@@ -26,7 +25,6 @@ describe('FileStorageService', () => {
         tokenStorageService = jasmine.createSpyObj('TokenStorageService', [
             'getToken',
         ]);
-        mockInterceptors = [];
 
         TestBed.configureTestingModule({
             providers: [

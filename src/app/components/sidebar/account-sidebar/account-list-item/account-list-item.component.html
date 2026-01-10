@@ -1,4 +1,6 @@
-<a href="#" *ngIf="account" (click)="onAccountSelected()">
-    <app-avatar [urlOptions]="[account.image, account.photoUrl]"></app-avatar>
-    <app-user-details [value]="account.firstName + ' ' + account.lastName"></app-user-details>
-</a>
+@if (account) {
+    <a href="#" (click)="onAccountSelected()">
+        <app-avatar [urlOptions]="[account.image, account.photoUrl]"></app-avatar>
+        <app-user-details [value]="account.firstName + ' ' + account.lastName"></app-user-details>
+    </a>
+}

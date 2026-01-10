@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { FileUploadGrpcEndpointClient } from '../protos/file_upload_grpc_web_pb';
 import {
     DownloadImageRequest,
@@ -15,15 +15,10 @@ import { IImageDto } from '../api-client/api-client';
     providedIn: 'root',
 })
 export class FileStorageService {
-    private fileUploadService: FileUploadGrpcEndpointClient;
-
-    constructor(
-        private tokenStorageService: TokenStorageService,
-    ) {
-        this.fileUploadService = new FileUploadGrpcEndpointClient(
-            environment.services.fileStorage.url,
-        );
-    }
+    private tokenStorageService = inject(TokenStorageService);
+    private fileUploadService = new FileUploadGrpcEndpointClient(
+        environment.services.fileStorage.url,
+    );
 
     async uploadImageAsBlob(
         blob: Blob,
@@ -47,7 +42,7 @@ export class FileStorageService {
                 (err, resp) => {
                     if (err) reject(err);
                     else resolve(resp);
-                }
+                },
             );
         });
     }
@@ -63,7 +58,7 @@ export class FileStorageService {
                 (err, resp) => {
                     if (err) reject(err);
                     else resolve(resp);
-                }
+                },
             );
         });
     }

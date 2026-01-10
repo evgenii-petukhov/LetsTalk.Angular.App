@@ -1,4 +1,4 @@
-import { Component, HostBinding, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, computed, HostBinding, inject, Input, OnInit, signal } from '@angular/core';
 import { StoreService } from 'src/app/services/store.service';
 import { IProfileDto } from 'src/app/api-client/api-client';
 
@@ -13,6 +13,10 @@ export class ChatListTopPanelComponent implements OnInit {
     @Input()
     @HostBinding('class.navigation-active')
     isNavigationActive: boolean = false;
+    urlOptions = computed(() => {
+        const account = this.account();
+        return account && [account.image, account.photoUrl]
+    });
 
     private readonly storeService = inject(StoreService);
 

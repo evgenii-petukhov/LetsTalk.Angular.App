@@ -46,7 +46,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private loggedInUser = toSignal(this.store.select(selectLoggedInUser), {
         initialValue: null,
     });
-    avatarUrls = computed(() => {
+    urlOptions = computed(() => {
         const loggedInUser = this.loggedInUser();
         return [
             this.selectedPhotoUrl(),

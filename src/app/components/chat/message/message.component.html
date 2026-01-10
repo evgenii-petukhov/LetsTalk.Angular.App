@@ -8,42 +8,48 @@
     }"
 >
     <div class="bubble-inner-container">
-        <a
-            [href]="message.linkPreview.url"
-            target="_blank"
-            class="link-preview"
-            *ngIf="message.linkPreview"
-        >
-            <div
-                class="link-preview-image"
-                *ngIf="message.linkPreview.imageUrl && !isImageError"
+        @if (message.linkPreview) {
+            <a
+                [href]="message.linkPreview.url"
+                target="_blank"
+                class="link-preview"
             >
-                <img
-                    [src]="message.linkPreview.imageUrl"
-                    (error)="onImageError()"
-                    referrerpolicy="no-referrer"
-                    alt="Site preview"
-                    loading="lazy"
-                />
-            </div>
-            <div class="link-preview-text-container">
-                <div class="link-preview-text" [title]="message.linkPreview.title">
-                    {{ message.linkPreview.title }}
+            @if (message.linkPreview.imageUrl && !isImageError) {
+                <div
+                    class="link-preview-image"
+                >
+                    <img
+                        [src]="message.linkPreview.imageUrl"
+                        (error)="onImageError()"
+                        referrerpolicy="no-referrer"
+                        alt="Site preview"
+                        loading="lazy"
+                    />
                 </div>
+            }
+
+                <div class="link-preview-text-container">
+                    <div class="link-preview-text" [title]="message.linkPreview.title">
+                        {{ message.linkPreview.title }}
+                    </div>
+                </div>
+            </a>
+        }
+        @if (message.textHtml) {
+            <div
+                class="content"
+                [innerHTML]="message.textHtml"
+            ></div>
+        }
+        @if (message.image) {
+            <div class="content">
+                <app-image
+                    [imagePreview]="message.imagePreview"
+                    [imageKey]="message.image"
+                    [chatId]="message.chatId"
+                ></app-image>
             </div>
-        </a>
-        <div
-            class="content"
-            [innerHTML]="message.textHtml"
-            *ngIf="message.textHtml"
-        ></div>
-        <div class="content" *ngIf="message.image">
-            <app-image
-                [imagePreview]="message.imagePreview"
-                [imageKey]="message.image"
-                [chatId]="message.chatId"
-            ></app-image>
-        </div>
+        }
         <div
             class="time"
             title="{{ message.created | date: 'HH:mm, d MMMM y' }}"
