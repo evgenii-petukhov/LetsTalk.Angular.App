@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AccountListItemComponent } from './account-list-item.component';
-import { IAccountDto, ImageDto } from 'src/app/api-client/api-client';
+import { IAccountDto, ImageDto } from '../../../../api-client/api-client';
 import { By } from '@angular/platform-browser';
 import { AvatarStubComponent } from '../../../shared/avatar/avatar.component.stub';
 import { UserDetailsStubComponent } from '../../../shared/user-details/user-details.component.stub';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('AccountListItemComponent', () => {
     let component: AccountListItemComponent;
@@ -59,7 +60,7 @@ describe('AccountListItemComponent', () => {
 
     it('should emit an event when onAccountSelected is called', () => {
         // Arrange
-        spyOn(component.accountSelected, 'emit');
+        vi.spyOn(component.accountSelected, 'emit');
 
         // Act
         component.account = account;
@@ -68,14 +69,15 @@ describe('AccountListItemComponent', () => {
         component.onAccountSelected();
 
         // Assert
-        expect(component.accountSelected.emit).toHaveBeenCalledOnceWith(
-            account,
-        );
+        expect(component.accountSelected.emit).toHaveBeenCalledTimes(1);
+
+        // Assert
+        expect(component.accountSelected.emit).toHaveBeenCalledWith(account);
     });
 
     it('should emit an event when link element is clicked', () => {
         // Arrange
-        spyOn(component.accountSelected, 'emit');
+        vi.spyOn(component.accountSelected, 'emit');
 
         // Act
         component.account = account;
@@ -86,8 +88,9 @@ describe('AccountListItemComponent', () => {
             .triggerEventHandler('click', null);
 
         // Assert
-        expect(component.accountSelected.emit).toHaveBeenCalledOnceWith(
-            account,
-        );
+        expect(component.accountSelected.emit).toHaveBeenCalledTimes(1);
+
+        // Assert
+        expect(component.accountSelected.emit).toHaveBeenCalledWith(account);
     });
 });

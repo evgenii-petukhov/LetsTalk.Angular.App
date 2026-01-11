@@ -1,3 +1,11 @@
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type MockedObject,
+} from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { ImageUploadService } from './image-upload.service';
 import { ImageService } from './image.service';
@@ -6,16 +14,20 @@ import { ImageRoles, UploadImageResponse } from '../protos/file_upload_pb';
 
 describe('ImageUploadService', () => {
     let service: ImageUploadService;
-    let imageService: jasmine.SpyObj<ImageService>;
-    let fileStorageService: jasmine.SpyObj<FileStorageService>;
+    let imageService: MockedObject<ImageService>;
+    let fileStorageService: MockedObject<FileStorageService>;
 
     beforeEach(() => {
-        imageService = jasmine.createSpyObj('ImageService', [
-            'resizeBase64Image',
-        ]);
-        fileStorageService = jasmine.createSpyObj('FileStorageService', [
-            'uploadImageAsBlob',
-        ]);
+        imageService = {
+            resizeBase64Image: vi
+                .fn()
+                .mockName('ImageService.resizeBase64Image'),
+        };
+        fileStorageService = {
+            uploadImageAsBlob: vi
+                .fn()
+                .mockName('FileStorageService.uploadImageAsBlob'),
+        } as MockedObject<FileStorageService>;
 
         TestBed.configureTestingModule({
             providers: [
@@ -48,8 +60,10 @@ describe('ImageUploadService', () => {
             uploadResponse.setImageFormat(1);
             uploadResponse.setSignature('signature');
 
-            imageService.resizeBase64Image.and.resolveTo(blob);
-            fileStorageService.uploadImageAsBlob.and.resolveTo(uploadResponse);
+            imageService.resizeBase64Image.mockResolvedValue(blob);
+            fileStorageService.uploadImageAsBlob.mockResolvedValue(
+                uploadResponse,
+            );
 
             // Act
             const result = await service.resizeAndUploadImage(
@@ -60,14 +74,21 @@ describe('ImageUploadService', () => {
             );
 
             // Assert
-            expect(imageService.resizeBase64Image).toHaveBeenCalledOnceWith(
+            expect(imageService.resizeBase64Image).toHaveBeenCalledTimes(1);
+
+            // Assert
+            expect(imageService.resizeBase64Image).toHaveBeenCalledWith(
                 photoUrl,
                 width,
                 height,
             );
-            expect(
-                fileStorageService.uploadImageAsBlob,
-            ).toHaveBeenCalledOnceWith(blob, imageRole);
+            expect(fileStorageService.uploadImageAsBlob).toHaveBeenCalledTimes(
+                1,
+            );
+            expect(fileStorageService.uploadImageAsBlob).toHaveBeenCalledWith(
+                blob,
+                imageRole,
+            );
             expect(result).toEqual(uploadResponse);
         });
 
@@ -85,7 +106,9 @@ describe('ImageUploadService', () => {
             uploadResponse.setImageFormat(1);
             uploadResponse.setSignature('signature');
 
-            fileStorageService.uploadImageAsBlob.and.resolveTo(uploadResponse);
+            fileStorageService.uploadImageAsBlob.mockResolvedValue(
+                uploadResponse,
+            );
 
             // Act
             const result = await service.resizeAndUploadImage(
@@ -97,9 +120,13 @@ describe('ImageUploadService', () => {
 
             // Assert
             expect(imageService.resizeBase64Image).not.toHaveBeenCalled();
-            expect(
-                fileStorageService.uploadImageAsBlob,
-            ).toHaveBeenCalledOnceWith(null, imageRole);
+            expect(fileStorageService.uploadImageAsBlob).toHaveBeenCalledTimes(
+                1,
+            );
+            expect(fileStorageService.uploadImageAsBlob).toHaveBeenCalledWith(
+                null,
+                imageRole,
+            );
             expect(result).toEqual(uploadResponse);
         });
     });

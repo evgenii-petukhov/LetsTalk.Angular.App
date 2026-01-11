@@ -1,20 +1,21 @@
+import { vi, type Mock } from "vitest";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Timer } from './timer';
 
 describe('Timer', () => {
-    let callback: jasmine.Spy;
+    let callback: Mock;
     let timer: Timer;
 
     beforeEach(() => {
-        callback = jasmine.createSpy('callback');
-        jasmine.clock().install();
+        callback = vi.fn();
+        vi.useFakeTimers();
     });
 
     afterEach(() => {
         if (timer) {
             timer.clear();
         }
-        jasmine.clock().uninstall();
+        vi.useRealTimers();
     });
 
     describe('constructor', () => {
@@ -78,11 +79,11 @@ describe('Timer', () => {
             expect(timer.isActive()).toBe(true);
             expect(timer.isExpired()).toBe(false);
 
-            jasmine.clock().tick(999);
+            vi.advanceTimersByTime(999);
             expect(callback).not.toHaveBeenCalled();
             expect(timer.isActive()).toBe(true);
 
-            jasmine.clock().tick(1);
+            vi.advanceTimersByTime(1);
             expect(callback).toHaveBeenCalledTimes(1);
             expect(timer.isActive()).toBe(false);
             expect(timer.isExpired()).toBe(true);
@@ -94,7 +95,7 @@ describe('Timer', () => {
             expect(callback).not.toHaveBeenCalled();
             expect(timer.isActive()).toBe(true);
 
-            jasmine.clock().tick(0);
+            vi.advanceTimersByTime(0);
             expect(callback).toHaveBeenCalledTimes(1);
             expect(timer.isActive()).toBe(false);
             expect(timer.isExpired()).toBe(true);
@@ -103,23 +104,25 @@ describe('Timer', () => {
         it('should execute callback only once', () => {
             timer = new Timer(callback, 1000);
 
-            jasmine.clock().tick(1000);
+            vi.advanceTimersByTime(1000);
             expect(callback).toHaveBeenCalledTimes(1);
 
-            jasmine.clock().tick(1000);
+            vi.advanceTimersByTime(1000);
             expect(callback).toHaveBeenCalledTimes(1);
         });
 
         it('should handle callback errors gracefully', () => {
-            const errorCallback = jasmine.createSpy('errorCallback').and.throwError('Test error');
-            spyOn(console, 'error');
+            const errorCallback = vi.fn().mockImplementation(() => {
+                throw new Error('Test error');
+            });
+            vi.spyOn(console, 'error');
 
             timer = new Timer(errorCallback, 1000);
 
-            jasmine.clock().tick(1000);
+            vi.advanceTimersByTime(1000);
 
             expect(errorCallback).toHaveBeenCalledTimes(1);
-            expect(console.error).toHaveBeenCalledWith(jasmine.any(Error));
+            expect(console.error).toHaveBeenCalledWith(expect.any(Error));
             expect(timer.isExpired()).toBe(true);
             expect(timer.isActive()).toBe(false);
         });
@@ -130,7 +133,7 @@ describe('Timer', () => {
 
             expect(initialTimerId).not.toBeNull();
 
-            jasmine.clock().tick(1000);
+            vi.advanceTimersByTime(1000);
 
             expect((timer as any).timerId).toBeNull();
             expect(timer.isActive()).toBe(false);
@@ -150,7 +153,7 @@ describe('Timer', () => {
             expect(timer.isExpired()).toBe(false);
             expect((timer as any).timerId).toBeNull();
 
-            jasmine.clock().tick(1000);
+            vi.advanceTimersByTime(1000);
             expect(callback).not.toHaveBeenCalled();
         });
 
@@ -168,7 +171,7 @@ describe('Timer', () => {
         it('should be safe to call clear() on already expired timer', () => {
             timer = new Timer(callback, 1000);
 
-            jasmine.clock().tick(1000);
+            vi.advanceTimersByTime(1000);
             expect(timer.isExpired()).toBe(true);
 
             expect(() => timer.clear()).not.toThrow();
@@ -178,9 +181,9 @@ describe('Timer', () => {
         it('should prevent callback execution when cleared before expiration', () => {
             timer = new Timer(callback, 1000);
 
-            jasmine.clock().tick(500);
+            vi.advanceTimersByTime(500);
             timer.clear();
-            jasmine.clock().tick(500);
+            vi.advanceTimersByTime(500);
 
             expect(callback).not.toHaveBeenCalled();
             expect(timer.isActive()).toBe(false);
@@ -198,14 +201,14 @@ describe('Timer', () => {
         it('should return false for active timer', () => {
             timer = new Timer(callback, 1000);
 
-            jasmine.clock().tick(500);
+            vi.advanceTimersByTime(500);
             expect(timer.isExpired()).toBe(false);
         });
 
         it('should return true after timer expires', () => {
             timer = new Timer(callback, 1000);
 
-            jasmine.clock().tick(1000);
+            vi.advanceTimersByTime(1000);
             expect(timer.isExpired()).toBe(true);
         });
 
@@ -219,10 +222,10 @@ describe('Timer', () => {
         it('should remain true after timer has expired', () => {
             timer = new Timer(callback, 1000);
 
-            jasmine.clock().tick(1000);
+            vi.advanceTimersByTime(1000);
             expect(timer.isExpired()).toBe(true);
 
-            jasmine.clock().tick(1000);
+            vi.advanceTimersByTime(1000);
             expect(timer.isExpired()).toBe(true);
         });
     });
@@ -237,17 +240,17 @@ describe('Timer', () => {
         it('should return true while timer is running', () => {
             timer = new Timer(callback, 1000);
 
-            jasmine.clock().tick(500);
+            vi.advanceTimersByTime(500);
             expect(timer.isActive()).toBe(true);
 
-            jasmine.clock().tick(499);
+            vi.advanceTimersByTime(499);
             expect(timer.isActive()).toBe(true);
         });
 
         it('should return false after timer expires', () => {
             timer = new Timer(callback, 1000);
 
-            jasmine.clock().tick(1000);
+            vi.advanceTimersByTime(1000);
             expect(timer.isActive()).toBe(false);
         });
 
@@ -261,7 +264,7 @@ describe('Timer', () => {
         it('should return false for expired timer even after clearing', () => {
             timer = new Timer(callback, 1000);
 
-            jasmine.clock().tick(1000);
+            vi.advanceTimersByTime(1000);
             expect(timer.isActive()).toBe(false);
 
             timer.clear();
@@ -301,7 +304,7 @@ describe('Timer', () => {
 
             expect(timer.isActive()).toBe(true);
 
-            jasmine.clock().tick(1);
+            vi.advanceTimersByTime(1);
 
             expect(callback).toHaveBeenCalledTimes(1);
             expect(timer.isExpired()).toBe(true);
@@ -315,11 +318,11 @@ describe('Timer', () => {
             expect(timer.isActive()).toBe(true);
             expect(timer.isExpired()).toBe(false);
 
-            jasmine.clock().tick(longDelay - 1);
+            vi.advanceTimersByTime(longDelay - 1);
             expect(callback).not.toHaveBeenCalled();
             expect(timer.isActive()).toBe(true);
 
-            jasmine.clock().tick(1);
+            vi.advanceTimersByTime(1);
             expect(callback).toHaveBeenCalledTimes(1);
             expect(timer.isExpired()).toBe(true);
         });
@@ -332,40 +335,42 @@ describe('Timer', () => {
             expect(timer.isExpired()).toBe(false);
 
             // Mid-execution
-            jasmine.clock().tick(500);
+            vi.advanceTimersByTime(500);
             expect(timer.isActive()).toBe(true);
             expect(timer.isExpired()).toBe(false);
 
             // Just before expiration
-            jasmine.clock().tick(499);
+            vi.advanceTimersByTime(499);
             expect(timer.isActive()).toBe(true);
             expect(timer.isExpired()).toBe(false);
 
             // After expiration
-            jasmine.clock().tick(1);
+            vi.advanceTimersByTime(1);
             expect(timer.isActive()).toBe(false);
             expect(timer.isExpired()).toBe(true);
         });
 
         it('should handle callback that throws different types of errors', () => {
-            spyOn(console, 'error');
+            vi.spyOn(console, 'error');
 
             // String error
-            const stringErrorCallback = jasmine.createSpy('stringErrorCallback').and.throwError('String error');
+            const stringErrorCallback = vi.fn().mockImplementation(() => {
+                throw new Error('String error');
+            });
             timer = new Timer(stringErrorCallback, 100);
-            jasmine.clock().tick(100);
+            vi.advanceTimersByTime(100);
 
-            expect(console.error).toHaveBeenCalledWith(jasmine.any(Error));
+            expect(console.error).toHaveBeenCalledWith(expect.any(Error));
             expect(timer.isExpired()).toBe(true);
 
             timer.clear();
 
             // Object error
-            const objectErrorCallback = jasmine.createSpy('objectErrorCallback').and.callFake(() => {
+            const objectErrorCallback = vi.fn().mockImplementation(() => {
                 throw { message: 'Object error' };
             });
             timer = new Timer(objectErrorCallback, 100);
-            jasmine.clock().tick(100);
+            vi.advanceTimersByTime(100);
 
             expect(console.error).toHaveBeenCalledWith({ message: 'Object error' });
             expect(timer.isExpired()).toBe(true);
@@ -373,7 +378,7 @@ describe('Timer', () => {
 
         it('should work correctly with callback that modifies timer state', () => {
             let callbackExecuted = false;
-            const selfModifyingCallback = jasmine.createSpy('selfModifyingCallback').and.callFake(() => {
+            const selfModifyingCallback = vi.fn().mockImplementation(() => {
                 callbackExecuted = true;
                 // Callback tries to clear the timer (should be safe)
                 timer.clear();
@@ -381,7 +386,7 @@ describe('Timer', () => {
 
             timer = new Timer(selfModifyingCallback, 1000);
 
-            jasmine.clock().tick(1000);
+            vi.advanceTimersByTime(1000);
 
             expect(selfModifyingCallback).toHaveBeenCalledTimes(1);
             expect(callbackExecuted).toBe(true);
@@ -406,7 +411,7 @@ describe('Timer', () => {
         it('should clean up after natural expiration', () => {
             timer = new Timer(callback, 1000);
 
-            jasmine.clock().tick(1000);
+            vi.advanceTimersByTime(1000);
 
             expect((timer as any).timerId).toBeNull();
             expect(callback).toHaveBeenCalledTimes(1);

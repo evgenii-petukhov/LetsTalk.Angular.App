@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SendButtonComponent } from './send-button.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { By } from '@angular/platform-browser';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe(SendButtonComponent.name, () => {
     let component: SendButtonComponent;
@@ -37,7 +38,7 @@ describe(SendButtonComponent.name, () => {
 
     it('should emit buttonClick when the button is clicked', () => {
         // Arrange
-        spyOn(component.buttonClick, 'emit');
+        vi.spyOn(component.buttonClick, 'emit');
 
         // Act
         const buttonElement = fixture.debugElement.query(
@@ -60,7 +61,7 @@ describe(SendButtonComponent.name, () => {
         const buttonElement = fixture.debugElement.query(
             By.css('button'),
         ).nativeElement;
-        expect(buttonElement.disabled).toBeTrue();
+        expect(buttonElement.disabled).toBe(true);
     });
 
     it('should enable the button when the disabled input is false', () => {
@@ -74,6 +75,6 @@ describe(SendButtonComponent.name, () => {
         const buttonElement = fixture.debugElement.query(
             By.css('button'),
         ).nativeElement;
-        expect(buttonElement.disabled).toBeFalse();
+        expect(buttonElement.disabled).toBe(false);
     });
 });

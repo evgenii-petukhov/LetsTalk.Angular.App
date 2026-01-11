@@ -8,10 +8,10 @@ import {
 } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { pairwise, startWith, Subject, takeUntil } from 'rxjs';
-import { RtcConnectionService } from 'src/app/services/rtc-connection.service';
-import { RtcPeerConnectionManager } from 'src/app/services/rtc-peer-connection-manager';
-import { StoreService } from 'src/app/services/store.service';
-import { selectVideoCall } from 'src/app/state/video-call/video-call.selectors';
+import { RtcConnectionService } from '../../../services/rtc-connection.service';
+import { RtcPeerConnectionManager } from '../../../services/rtc-peer-connection-manager';
+import { StoreService } from '../../../services/store.service';
+import { selectVideoCall } from '../../../state/video-call/video-call.selectors';
 
 @Component({
     selector: 'app-video-call',
@@ -46,37 +46,41 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
 
                 if (currentState === null) return;
 
-                if (this.connectionManager.isMediaCaptured) {
-                    this.connectionManager.reconnectVideoElements(
-                        this.localVideo.nativeElement,
-                        this.remoteVideo.nativeElement,
-                    );
-                } else {
-                    await this.connectionManager.startMediaCapture(
-                        this.localVideo.nativeElement,
-                        this.remoteVideo.nativeElement,
-                    );
-                    if (currentState.type === 'incoming') {
-                        await this.rtcConnectionService.handleIncomingCall(
-                            currentState.chatId,
-                            currentState.offer,
+                try {
+                    if (this.connectionManager.isMediaCaptured) {
+                        this.connectionManager.reconnectVideoElements(
+                            this.localVideo.nativeElement,
+                            this.remoteVideo.nativeElement,
                         );
                     } else {
-                        await this.rtcConnectionService.startOutgoingCall(
-                            currentState.chatId,
+                        await this.connectionManager.startMediaCapture(
+                            this.localVideo.nativeElement,
+                            this.remoteVideo.nativeElement,
                         );
+                        if (currentState.type === 'incoming') {
+                            await this.rtcConnectionService.handleIncomingCall(
+                                currentState.chatId,
+                                currentState.offer,
+                            );
+                        } else {
+                            await this.rtcConnectionService.startOutgoingCall(
+                                currentState.chatId,
+                            );
+                        }
                     }
+
+                    this.connectionManager.setVideoEnabled(
+                        currentState.captureVideo,
+                    );
+                    this.connectionManager.setAudioEnabled(
+                        currentState.captureAudio,
+                    );
+
+                    this.captureVideo = currentState.captureVideo;
+                    this.captureAudio = currentState.captureAudio;
+                } catch (error) {
+                    console.error('Video call error:', error);
                 }
-
-                this.connectionManager.setVideoEnabled(
-                    currentState.captureVideo,
-                );
-                this.connectionManager.setAudioEnabled(
-                    currentState.captureAudio,
-                );
-
-                this.captureVideo = currentState.captureVideo;
-                this.captureAudio = currentState.captureAudio;
             });
     }
 

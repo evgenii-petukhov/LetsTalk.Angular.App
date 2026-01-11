@@ -1,24 +1,32 @@
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type MockedObject,
+} from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { ToastrService } from 'ngx-toastr';
 import { BrowserNotificationService } from './browser-notification.service';
 
 describe('BrowserNotificationService', () => {
     let service: BrowserNotificationService;
-    let toastrService: jasmine.SpyObj<ToastrService>;
+    let toastrService: MockedObject<ToastrService>;
 
     const mockServiceWorkerRegistration = {
-        showNotification: jasmine.createSpy('showNotification'),
+        showNotification: vi.fn(),
     };
 
     beforeEach(async () => {
-        toastrService = jasmine.createSpyObj('ToastrService', ['info']);
+        toastrService = {
+            info: vi.fn().mockName('ToastrService.info'),
+        } as MockedObject<ToastrService>;
 
         Object.defineProperty(navigator, 'serviceWorker', {
             writable: true,
             value: {
-                register: jasmine
-                    .createSpy('register')
-                    .and.returnValue(Promise.resolve()),
+                register: vi.fn().mockReturnValue(Promise.resolve()),
                 ready: Promise.resolve(mockServiceWorkerRegistration),
             },
         });
@@ -39,7 +47,7 @@ describe('BrowserNotificationService', () => {
 
     it('should register service worker on init and set isServiceWorkerRegistered to true', async () => {
         // Arrange
-        spyOn(console, 'log');
+        vi.spyOn(console, 'log');
 
         // Act
         await service.init();
@@ -49,7 +57,7 @@ describe('BrowserNotificationService', () => {
             'notification_sw.js',
         );
         expect(console.log).toHaveBeenCalledWith('serviceWorker success');
-        expect(service['isServiceWorkerRegistered']).toBeTrue();
+        expect(service['isServiceWorkerRegistered']).toBe(true);
     });
 
     it('should log error if service worker registration fails', async () => {
@@ -57,13 +65,11 @@ describe('BrowserNotificationService', () => {
         Object.defineProperty(navigator, 'serviceWorker', {
             writable: true,
             value: {
-                register: jasmine
-                    .createSpy('register')
-                    .and.returnValue(Promise.reject()),
+                register: vi.fn().mockReturnValue(Promise.reject()),
             },
         });
 
-        spyOn(console, 'log');
+        vi.spyOn(console, 'log');
 
         // Act
         await service.init();
@@ -73,15 +79,15 @@ describe('BrowserNotificationService', () => {
             'notification_sw.js',
         );
         expect(console.log).toHaveBeenCalledWith('serviceWorker error');
-        expect(service['isServiceWorkerRegistered']).toBeFalse();
+        expect(service['isServiceWorkerRegistered']).toBe(false);
     });
 
     it('should show notification if permission is granted and service worker is registered', async () => {
         // Arrange
-        spyOn(Notification, 'requestPermission').and.returnValue(
+        vi.spyOn(Notification, 'requestPermission').mockReturnValue(
             Promise.resolve('granted'),
         );
-        spyOn(console, 'log');
+        vi.spyOn(console, 'log');
 
         // Act
         await service.init();
@@ -92,7 +98,7 @@ describe('BrowserNotificationService', () => {
             'notification_sw.js',
         );
         expect(console.log).toHaveBeenCalledWith('serviceWorker success');
-        expect(service['isServiceWorkerRegistered']).toBeTrue();
+        expect(service['isServiceWorkerRegistered']).toBe(true);
         expect(
             mockServiceWorkerRegistration.showNotification,
         ).toHaveBeenCalledWith('Test Title', {
@@ -102,10 +108,10 @@ describe('BrowserNotificationService', () => {
 
     it('should fallback to window notification if service worker is not registered', async () => {
         // Arrange
-        spyOn(Notification, 'requestPermission').and.returnValue(
+        vi.spyOn(Notification, 'requestPermission').mockReturnValue(
             Promise.resolve('granted'),
         );
-        const notificationSpy = spyOn(window, 'Notification');
+        const notificationSpy = vi.spyOn(window, 'Notification');
 
         // Act
         await service.showNotification('Test Title', 'Test Message', false);
@@ -118,7 +124,7 @@ describe('BrowserNotificationService', () => {
 
     it('should use Toastr if permission is denied and window is active', async () => {
         // Arrange
-        spyOn(Notification, 'requestPermission').and.returnValue(
+        vi.spyOn(Notification, 'requestPermission').mockReturnValue(
             Promise.resolve('denied'),
         );
 
@@ -134,7 +140,7 @@ describe('BrowserNotificationService', () => {
 
     it('should not show anything if permission is denied and window is not active', async () => {
         // Arrange
-        spyOn(Notification, 'requestPermission').and.returnValue(
+        vi.spyOn(Notification, 'requestPermission').mockReturnValue(
             Promise.resolve('denied'),
         );
 

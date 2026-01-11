@@ -1,7 +1,15 @@
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type MockedObject,
+} from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MessengerComponent } from './messenger.component';
-import { SignalrHandlerService } from 'src/app/services/signalr-handler.service';
-import { StoreService } from 'src/app/services/store.service';
+import { SignalrHandlerService } from '../../services/signalr-handler.service';
+import { StoreService } from '../../services/store.service';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import {
@@ -9,34 +17,57 @@ import {
     IMessageDto,
     ILinkPreviewDto,
     IImagePreviewDto,
-} from 'src/app/api-client/api-client';
-import { selectChats } from 'src/app/state/chats/chats.selector';
+} from '../../api-client/api-client';
+import { selectChats } from '../../state/chats/chats.selector';
 import { StubChatComponent } from '../chat/chat.component.stub';
 import { StubImageViewerComponent } from '../image-viewer/image-viewer.component.stub';
 import { StubSidebarComponent } from '../sidebar/sidebar.component.stub';
 import { ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { RouterTestingModule } from '@angular/router/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('MessengerComponent', () => {
     let component: MessengerComponent;
     let fixture: ComponentFixture<MessengerComponent>;
-    let signalrHandlerService: jasmine.SpyObj<SignalrHandlerService>;
-    let storeService: jasmine.SpyObj<StoreService>;
-    let store: jasmine.SpyObj<Store>;
+    let signalrHandlerService: MockedObject<SignalrHandlerService>;
+    let storeService: MockedObject<StoreService>;
+    let store: MockedObject<Store>;
 
     beforeEach(async () => {
-        signalrHandlerService = jasmine.createSpyObj('SignalrHandlerService', [
-            'initHandlers',
-            'removeHandlers',
-            'handleMessageNotification',
-            'handleLinkPreviewNotification',
-            'handleImagePreviewNotification',
-        ]);
-        storeService = jasmine.createSpyObj('StoreService', [
-            'markAllAsRead',
-            'initChatStorage',
-            'setSelectedChatId',
-        ]);
-        store = jasmine.createSpyObj('Store', ['select']);
+        signalrHandlerService = {
+            initHandlers: vi
+                .fn()
+                .mockName('SignalrHandlerService.initHandlers'),
+            removeHandlers: vi
+                .fn()
+                .mockName('SignalrHandlerService.removeHandlers'),
+            handleMessageNotification: vi
+                .fn()
+                .mockName('SignalrHandlerService.handleMessageNotification'),
+            handleLinkPreviewNotification: vi
+                .fn()
+                .mockName(
+                    'SignalrHandlerService.handleLinkPreviewNotification',
+                ),
+            handleImagePreviewNotification: vi
+                .fn()
+                .mockName(
+                    'SignalrHandlerService.handleImagePreviewNotification',
+                ),
+        } as MockedObject<SignalrHandlerService>;
+
+        storeService = {
+            markAllAsRead: vi.fn().mockName('StoreService.markAllAsRead'),
+            initChatStorage: vi.fn().mockName('StoreService.initChatStorage'),
+            setSelectedChatId: vi
+                .fn()
+                .mockName('StoreService.setSelectedChatId'),
+        } as MockedObject<StoreService>;
+
+        store = {
+            select: vi.fn().mockName('Store.select'),
+        } as MockedObject<Store>;
 
         await TestBed.configureTestingModule({
             declarations: [
@@ -45,6 +76,7 @@ describe('MessengerComponent', () => {
                 StubSidebarComponent,
                 StubChatComponent,
             ],
+            imports: [CommonModule, RouterTestingModule],
             providers: [
                 {
                     provide: SignalrHandlerService,
@@ -52,14 +84,18 @@ describe('MessengerComponent', () => {
                 },
                 { provide: StoreService, useValue: storeService },
                 { provide: Store, useValue: store },
-                { provide: ActivatedRoute, useValue: { firstChild: null, params: of({}) } }
+                {
+                    provide: ActivatedRoute,
+                    useValue: { firstChild: null, params: of({}) },
+                },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
 
         fixture = TestBed.createComponent(MessengerComponent);
         component = fixture.componentInstance;
 
-        store.select.and.callFake((selector) => {
+        store.select.mockImplementation((selector) => {
             if (selector === selectChats) {
                 return of([]);
             }
@@ -91,7 +127,10 @@ describe('MessengerComponent', () => {
         component.onVisibilityChange({ target: document } as any);
 
         // Assert
-        expect(storeService.markAllAsRead).toHaveBeenCalledOnceWith(
+        expect(storeService.markAllAsRead).toHaveBeenCalledTimes(1);
+
+        // Assert
+        expect(storeService.markAllAsRead).toHaveBeenCalledWith(
             component['selectedChat'],
         );
     });
@@ -116,7 +155,12 @@ describe('MessengerComponent', () => {
         // Assert
         expect(
             signalrHandlerService.handleMessageNotification,
-        ).toHaveBeenCalledOnceWith(messageDto, undefined, [], true);
+        ).toHaveBeenCalledTimes(1);
+
+        // Assert
+        expect(
+            signalrHandlerService.handleMessageNotification,
+        ).toHaveBeenCalledWith(messageDto, undefined, [], true);
     });
 
     it('should handle link preview notification', () => {
@@ -129,7 +173,12 @@ describe('MessengerComponent', () => {
         // Assert
         expect(
             signalrHandlerService.handleLinkPreviewNotification,
-        ).toHaveBeenCalledOnceWith(linkPreviewDto, undefined);
+        ).toHaveBeenCalledTimes(1);
+
+        // Assert
+        expect(
+            signalrHandlerService.handleLinkPreviewNotification,
+        ).toHaveBeenCalledWith(linkPreviewDto, undefined);
     });
 
     it('should handle image preview notification', () => {
@@ -142,6 +191,11 @@ describe('MessengerComponent', () => {
         // Assert
         expect(
             signalrHandlerService.handleImagePreviewNotification,
-        ).toHaveBeenCalledOnceWith(imagePreviewDto, undefined);
+        ).toHaveBeenCalledTimes(1);
+
+        // Assert
+        expect(
+            signalrHandlerService.handleImagePreviewNotification,
+        ).toHaveBeenCalledWith(imagePreviewDto, undefined);
     });
 });

@@ -3,7 +3,7 @@ import {
     IImagePreviewDto,
     ILinkPreviewDto,
     IMessageDto,
-} from 'src/app/api-client/api-client';
+} from '../../api-client/api-client';
 
 export const messagesActions = createActionGroup({
     source: 'Messages',

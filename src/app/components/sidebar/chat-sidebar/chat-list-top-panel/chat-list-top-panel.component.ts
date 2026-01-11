@@ -1,6 +1,6 @@
 import { Component, computed, HostBinding, inject, Input, OnInit, signal } from '@angular/core';
-import { StoreService } from 'src/app/services/store.service';
-import { IProfileDto } from 'src/app/api-client/api-client';
+import { StoreService } from '../../../../services/store.service';
+import { IProfileDto } from '../../../../api-client/api-client';
 
 @Component({
     selector: 'app-chat-list-top-panel',

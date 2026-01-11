@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { ImageService } from './image.service';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('ImageService', () => {
     let service: ImageService;
 
-    let mockCanvas: HTMLCanvasElement;
+    let mockCanvas: any;
     let mockContext: CanvasRenderingContext2D;
     let mockBlob: Blob;
 
@@ -14,31 +16,68 @@ describe('ImageService', () => {
         });
         service = TestBed.inject(ImageService);
 
-        mockCanvas = document.createElement('canvas');
+        // Create a proper mock canvas that tracks width and height
+        mockCanvas = {
+            _width: 0,
+            _height: 0,
+            get width() {
+                return this._width;
+            },
+            set width(value) {
+                this._width = value;
+            },
+            get height() {
+                return this._height;
+            },
+            set height(value) {
+                this._height = value;
+            },
+            getContext: vi.fn(),
+            toBlob: vi.fn(),
+        };
+
         mockContext = {
-            drawImage: jasmine.createSpy('drawImage'),
+            drawImage: vi.fn(),
         } as unknown as CanvasRenderingContext2D;
 
-        spyOn(mockCanvas, 'getContext').and.returnValue(mockContext);
+        mockCanvas.getContext.mockReturnValue(mockContext);
 
-        spyOn(document, 'createElement').and.callFake((element: string) => {
-            if (element === 'canvas') {
-                return mockCanvas;
-            }
-            if (element === 'img') {
-                const img = new Image();
-                setTimeout(() => {
-                    Object.defineProperty(img, 'width', { value: 300 });
-                    Object.defineProperty(img, 'height', { value: 200 });
-                    img.dispatchEvent(new Event('load'));
-                }, 0);
-                return img;
-            }
-            return document.createElement(element);
-        });
+        vi.spyOn(document, 'createElement').mockImplementation(
+            (element: string) => {
+                if (element === 'canvas') {
+                    return mockCanvas;
+                }
+                if (element === 'img') {
+                    const img = {
+                        addEventListener: vi.fn(
+                            (event: string, handler: () => void) => {
+                                if (event === 'load') {
+                                    setTimeout(() => {
+                                        Object.defineProperty(img, 'width', {
+                                            value: 300,
+                                            writable: true,
+                                        });
+                                        Object.defineProperty(img, 'height', {
+                                            value: 200,
+                                            writable: true,
+                                        });
+                                        handler();
+                                    }, 0);
+                                }
+                            },
+                        ),
+                        src: '',
+                        width: 300,
+                        height: 200,
+                    };
+                    return img as any;
+                }
+                return document.createElement(element);
+            },
+        );
 
         mockBlob = new Blob();
-        spyOn(mockCanvas, 'toBlob').and.callFake(
+        mockCanvas.toBlob.mockImplementation(
             (callback: (blob: Blob) => void) => {
                 callback(mockBlob);
             },
@@ -69,7 +108,7 @@ describe('ImageService', () => {
             expect(mockCanvas.height).toBeLessThanOrEqual(maxHeight);
             expect(mockContext.drawImage).toHaveBeenCalled();
             expect(mockCanvas.toBlob).toHaveBeenCalledWith(
-                jasmine.any(Function),
+                expect.any(Function),
                 'image/webp',
             );
         });

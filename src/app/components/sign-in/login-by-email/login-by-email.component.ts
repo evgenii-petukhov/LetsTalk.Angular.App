@@ -1,10 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { errorMessages } from 'src/app/constants/errors';
-import { ApiService } from 'src/app/services/api.service';
-import { ErrorService } from 'src/app/services/error.service';
-import { TokenStorageService } from 'src/app/services/token-storage.service';
+import { errorMessages } from '../../../constants/errors';
+import { ApiService } from '../../../services/api.service';
+import { ErrorService } from '../../../services/error.service';
+import { TokenStorageService } from '../../../services/token-storage.service';
 
 @Component({
     selector: 'app-login-by-email',

@@ -1,16 +1,24 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type MockedObject,
+} from 'vitest';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ImageComponent } from './image.component';
-import { StoreService } from 'src/app/services/store.service';
-import { ImagePreview } from 'src/app/models/image-preview';
-import { environment } from 'src/environments/environment';
-import { ErrorService } from 'src/app/services/error.service';
-import { errorMessages } from 'src/app/constants/errors';
+import { StoreService } from '../../../services/store.service';
+import { ImagePreview } from '../../../models/image-preview';
+import { environment } from '../../../../environments/environment';
+import { ErrorService } from '../../../services/error.service';
+import { errorMessages } from '../../../constants/errors';
 
 describe('ImageComponent', () => {
     let component: ImageComponent;
     let fixture: ComponentFixture<ImageComponent>;
-    let storeService: jasmine.SpyObj<StoreService>;
-    let errorService: jasmine.SpyObj<ErrorService>;
+    let storeService: MockedObject<StoreService>;
+    let errorService: MockedObject<ErrorService>;
 
     const imagePreview = {
         id: 'imagePreview1',
@@ -23,13 +31,15 @@ describe('ImageComponent', () => {
         height: 100,
     };
 
-    beforeEach(waitForAsync(() => {
-        storeService = jasmine.createSpyObj('StoreService', [
-            'getImageContent',
-        ]);
-        errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
+    beforeEach(async () => {
+        storeService = {
+            getImageContent: vi.fn().mockName('StoreService.getImageContent'),
+        } as MockedObject<StoreService>;
+        errorService = {
+            handleError: vi.fn().mockName('ErrorService.handleError'),
+        } as MockedObject<ErrorService>;
 
-        TestBed.configureTestingModule({
+        await TestBed.configureTestingModule({
             declarations: [ImageComponent],
             providers: [
                 { provide: StoreService, useValue: storeService },
@@ -39,7 +49,7 @@ describe('ImageComponent', () => {
 
         fixture = TestBed.createComponent(ImageComponent);
         component = fixture.componentInstance;
-    }));
+    });
 
     it('should create', () => {
         expect(component).toBeTruthy();
@@ -64,9 +74,9 @@ describe('ImageComponent', () => {
         expect(component.width()).toBe(expectedWidth);
         expect(component.height()).toBe(expectedHeight);
 
-        expect(storeService.getImageContent).toHaveBeenCalledOnceWith(
-            imagePreview,
-        );
+        expect(storeService.getImageContent).toHaveBeenCalledTimes(1);
+
+        expect(storeService.getImageContent).toHaveBeenCalledWith(imagePreview);
         expect(errorService.handleError).not.toHaveBeenCalled();
     });
 
@@ -82,14 +92,15 @@ describe('ImageComponent', () => {
         await component.ngOnInit();
 
         // Assert
-        expect(component.isSizeUnknown()).toBeTrue();
+        expect(component.isSizeUnknown()).toBe(true);
         expect(component.width()).toBe(
             environment.imageSettings.limits.picturePreview.width,
         );
         expect(component.height()).toBe(
             environment.imageSettings.limits.picturePreview.height,
         );
-        expect(storeService.getImageContent).toHaveBeenCalledOnceWith(
+        expect(storeService.getImageContent).toHaveBeenCalledTimes(1);
+        expect(storeService.getImageContent).toHaveBeenCalledWith(
             imagePreviewUnknownSize,
         );
         expect(errorService.handleError).not.toHaveBeenCalled();
@@ -98,7 +109,7 @@ describe('ImageComponent', () => {
     it('should load image content on init if imagePreview is provided', async () => {
         // Arrange
         const imageContent = 'data:image/png;base64,someBase64Data';
-        storeService.getImageContent.and.resolveTo({
+        storeService.getImageContent.mockResolvedValue({
             content: imageContent,
             width: 200,
             height: 200,
@@ -110,11 +121,11 @@ describe('ImageComponent', () => {
 
         // Act
         await component.ngOnInit();
-        await fixture.whenStable();
+        fixture.detectChanges();
 
         // Assert
         expect(component.url()).toBe(imageContent);
-        expect(component.isLoading()).toBeFalse();
+        expect(component.isLoading()).toBe(false);
         expect(storeService.getImageContent).toHaveBeenCalledWith(imagePreview);
         expect(errorService.handleError).not.toHaveBeenCalled();
     });
@@ -125,17 +136,18 @@ describe('ImageComponent', () => {
         component.imagePreview.width = 100;
 
         const error = new Error('Sample error');
-        storeService.getImageContent.and.rejectWith(error);
+        storeService.getImageContent.mockRejectedValue(error);
 
         // Act
         await component.ngOnInit();
-        await fixture.whenStable();
+        fixture.detectChanges();
 
         // Assert
         expect(component.url()).toBeNull();
-        expect(component.isLoading()).toBeFalse();
+        expect(component.isLoading()).toBe(false);
         expect(storeService.getImageContent).toHaveBeenCalledWith(imagePreview);
-        expect(errorService.handleError).toHaveBeenCalledOnceWith(
+        expect(errorService.handleError).toHaveBeenCalledTimes(1);
+        expect(errorService.handleError).toHaveBeenCalledWith(
             error,
             errorMessages.downloadImage,
         );

@@ -4,6 +4,7 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
 import { AutoResizeTextAreaComponent } from './auto-resize-text-area.component';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('AutoResizeTextAreaComponent', () => {
     let component: AutoResizeTextAreaComponent;
@@ -80,7 +81,7 @@ describe('AutoResizeTextAreaComponent', () => {
 
     describe('focus() method', () => {
         it('should set textarea height to auto and focus the element', () => {
-            spyOn(textareaElement, 'focus');
+            vi.spyOn(textareaElement, 'focus');
 
             component.focus();
 
@@ -91,7 +92,7 @@ describe('AutoResizeTextAreaComponent', () => {
 
     describe('onTextChanged() method', () => {
         beforeEach(() => {
-            spyOn(component.textChange, 'emit');
+            vi.spyOn(component.textChange, 'emit');
         });
 
         it('should reset height to auto and then set to scrollHeight', () => {
@@ -130,7 +131,7 @@ describe('AutoResizeTextAreaComponent', () => {
         });
 
         it('should be called when ngModelChange is triggered', () => {
-            spyOn(component, 'onTextChanged');
+            vi.spyOn(component, 'onTextChanged');
 
             textareaElement.value = 'Changed text';
             textareaElement.dispatchEvent(new Event('input'));
@@ -142,7 +143,7 @@ describe('AutoResizeTextAreaComponent', () => {
 
     describe('submit() method', () => {
         it('should emit submitted event with current text', () => {
-            spyOn(component.submitted, 'emit');
+            vi.spyOn(component.submitted, 'emit');
             component.text = 'Submit this text';
 
             component.submit();
@@ -153,7 +154,7 @@ describe('AutoResizeTextAreaComponent', () => {
         });
 
         it('should be called when Ctrl+Enter is pressed', () => {
-            spyOn(component, 'submit');
+            vi.spyOn(component, 'submit');
 
             const keydownEvent = new KeyboardEvent('keydown', {
                 key: 'Enter',
@@ -232,7 +233,7 @@ describe('AutoResizeTextAreaComponent', () => {
 
     describe('Edge Cases', () => {
         it('should handle empty text', () => {
-            spyOn(component.textChange, 'emit');
+            vi.spyOn(component.textChange, 'emit');
             component.text = '';
 
             component.onTextChanged();
@@ -241,7 +242,7 @@ describe('AutoResizeTextAreaComponent', () => {
         });
 
         it('should handle submit with empty text', () => {
-            spyOn(component.submitted, 'emit');
+            vi.spyOn(component.submitted, 'emit');
             component.text = '';
 
             component.submit();
@@ -251,7 +252,7 @@ describe('AutoResizeTextAreaComponent', () => {
 
         it('should handle very long text', () => {
             const longText = 'a'.repeat(1000);
-            spyOn(component.textChange, 'emit');
+            vi.spyOn(component.textChange, 'emit');
             component.text = longText;
 
             component.onTextChanged();

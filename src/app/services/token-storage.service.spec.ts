@@ -1,17 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { TokenStorageService } from './token-storage.service';
 
 describe('TokenStorageService', () => {
     let service: TokenStorageService;
-    let localStorageSpy: jasmine.SpyObj<Storage>;
 
     beforeEach(() => {
-        localStorageSpy = jasmine.createSpyObj('Storage', [
-            'getItem',
-            'setItem',
-        ]);
-
-        spyOnProperty(window, 'localStorage').and.returnValue(localStorageSpy);
+        // Clear all mocks before each test
+        vi.clearAllMocks();
 
         TestBed.configureTestingModule({
             providers: [TokenStorageService],
@@ -32,7 +29,7 @@ describe('TokenStorageService', () => {
             service.saveToken(token);
 
             // Assert
-            expect(localStorageSpy.setItem).toHaveBeenCalledWith(
+            expect(window.localStorage.setItem).toHaveBeenCalledWith(
                 'auth-token',
                 token,
             );
@@ -43,13 +40,15 @@ describe('TokenStorageService', () => {
         it('should return the token from localStorage', () => {
             // Arrange
             const token = 'sample-token';
-            localStorageSpy.getItem.and.returnValue(token);
+            (window.localStorage.getItem as any).mockReturnValue(token);
 
             // Act
             const result = service.getToken();
 
             // Assert
-            expect(localStorageSpy.getItem).toHaveBeenCalledWith('auth-token');
+            expect(window.localStorage.getItem).toHaveBeenCalledWith(
+                'auth-token',
+            );
             expect(result).toBe(token);
         });
     });
@@ -57,24 +56,26 @@ describe('TokenStorageService', () => {
     describe('isLoggedIn', () => {
         it('should return true if a token exists', () => {
             // Arrange
-            localStorageSpy.getItem.and.returnValue('sample-token');
+            (window.localStorage.getItem as any).mockReturnValue(
+                'sample-token',
+            );
 
             // Act
             const result = service.isLoggedIn();
 
             // Assert
-            expect(result).toBeTrue();
+            expect(result).toBe(true);
         });
 
         it('should return false if no token exists', () => {
             // Arrange
-            localStorageSpy.getItem.and.returnValue(null);
+            (window.localStorage.getItem as any).mockReturnValue(null);
 
             // Act
             const result = service.isLoggedIn();
 
             // Assert
-            expect(result).toBeFalse();
+            expect(result).toBe(false);
         });
     });
 });

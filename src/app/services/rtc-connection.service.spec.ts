@@ -1,3 +1,12 @@
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type Mock,
+    type MockedObject,
+} from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
@@ -9,10 +18,10 @@ import { CallSettingsDto } from '../api-client/api-client';
 
 describe('RtcConnectionService', () => {
     let service: RtcConnectionService;
-    let apiService: jasmine.SpyObj<ApiService>;
-    let connectionManager: jasmine.SpyObj<RtcPeerConnectionManager>;
-    let storeService: jasmine.SpyObj<StoreService>;
-    let mockStore: jasmine.SpyObj<Store>;
+    let apiService: MockedObject<ApiService>;
+    let connectionManager: MockedObject<RtcPeerConnectionManager>;
+    let storeService: MockedObject<StoreService>;
+    let mockStore: MockedObject<Store>;
 
     const mockCallSettings = {
         iceServerConfiguration: JSON.stringify({
@@ -51,33 +60,47 @@ describe('RtcConnectionService', () => {
     };
 
     beforeEach(() => {
-        apiService = jasmine.createSpyObj('ApiService', [
-            'getCallSettings',
-            'startOutgoingCall',
-            'handleIncomingCall',
-        ]);
+        apiService = {
+            getCallSettings: vi.fn().mockName('ApiService.getCallSettings'),
+            startOutgoingCall: vi.fn().mockName('ApiService.startOutgoingCall'),
+            handleIncomingCall: vi
+                .fn()
+                .mockName('ApiService.handleIncomingCall'),
+        } as MockedObject<ApiService>;
 
-        connectionManager = jasmine.createSpyObj(
-            'RtcPeerConnectionManager',
-            [
-                'initiateOffer',
-                'handleOfferAndCreateAnswer',
-                'setRemoteAnswerAndCandidates',
-                'requestCompleteGathering',
-                'reinitialize',
-            ],
-            {
-                onCandidatesReceived: null,
-                onGatheringCompleted: null,
-                onConnectionStateChange: null,
-            },
-        );
+        connectionManager = {
+            initiateOffer: vi
+                .fn()
+                .mockName('RtcPeerConnectionManager.initiateOffer'),
+            handleOfferAndCreateAnswer: vi
+                .fn()
+                .mockName(
+                    'RtcPeerConnectionManager.handleOfferAndCreateAnswer',
+                ),
+            setRemoteAnswerAndCandidates: vi
+                .fn()
+                .mockName(
+                    'RtcPeerConnectionManager.setRemoteAnswerAndCandidates',
+                ),
+            requestCompleteGathering: vi
+                .fn()
+                .mockName('RtcPeerConnectionManager.requestCompleteGathering'),
+            reinitialize: vi
+                .fn()
+                .mockName('RtcPeerConnectionManager.reinitialize'),
+            onCandidatesReceived: null,
+            onGatheringCompleted: null,
+            onConnectionStateChange: null,
+        } as MockedObject<RtcPeerConnectionManager>;
 
-        storeService = jasmine.createSpyObj('StoreService', [
-            'resetCall',
-        ]);
+        storeService = {
+            resetCall: vi.fn().mockName('StoreService.resetCall'),
+        } as MockedObject<StoreService>;
 
-        mockStore = jasmine.createSpyObj('Store', ['dispatch', 'select']);
+        mockStore = {
+            dispatch: vi.fn().mockName('Store.dispatch'),
+            select: vi.fn().mockName('Store.select'),
+        } as MockedObject<Store>;
 
         TestBed.configureTestingModule({
             providers: [
@@ -107,10 +130,10 @@ describe('RtcConnectionService', () => {
 
     describe('startOutgoingCall', () => {
         beforeEach(() => {
-            apiService.getCallSettings.and.returnValue(
+            apiService.getCallSettings.mockReturnValue(
                 Promise.resolve(mockCallSettings),
             );
-            apiService.startOutgoingCall.and.returnValue(Promise.resolve());
+            apiService.startOutgoingCall.mockReturnValue(Promise.resolve());
         });
 
         it('should start outgoing call successfully', async () => {
@@ -156,8 +179,8 @@ describe('RtcConnectionService', () => {
 
             // Mock the timer to be expired
             service['iceGatheringTimer'] = {
-                isExpired: jasmine.createSpy('isExpired').and.returnValue(true),
-                clear: jasmine.createSpy('clear'),
+                isExpired: vi.fn().mockReturnValue(true),
+                clear: vi.fn(),
             } as any;
 
             // Simulate ice candidate generation with expired timer
@@ -180,10 +203,10 @@ describe('RtcConnectionService', () => {
 
     describe('handleIncomingCall', () => {
         beforeEach(() => {
-            apiService.getCallSettings.and.returnValue(
+            apiService.getCallSettings.mockReturnValue(
                 Promise.resolve(mockCallSettings),
             );
-            apiService.handleIncomingCall.and.returnValue(Promise.resolve());
+            apiService.handleIncomingCall.mockReturnValue(Promise.resolve());
         });
 
         it('should handle incoming call successfully', async () => {
@@ -235,8 +258,8 @@ describe('RtcConnectionService', () => {
 
             // Mock the timer to be expired
             service['iceGatheringTimer'] = {
-                isExpired: jasmine.createSpy('isExpired').and.returnValue(true),
-                clear: jasmine.createSpy('clear'),
+                isExpired: vi.fn().mockReturnValue(true),
+                clear: vi.fn(),
             } as any;
 
             // Simulate ice candidate generation with expired timer
@@ -296,9 +319,9 @@ describe('RtcConnectionService', () => {
             const malformedJson = 'invalid-json';
 
             // Act & Assert
-            await expectAsync(
+            await expect(
                 service.establishConnection(malformedJson),
-            ).toBeRejected();
+            ).rejects.toThrow();
         });
     });
 
@@ -306,7 +329,7 @@ describe('RtcConnectionService', () => {
         it('should emit ice candidate data', () => {
             // Arrange
             const testData = 'test-ice-candidate-data';
-            spyOn(service['iceCandidateSubject'], 'next');
+            vi.spyOn(service['iceCandidateSubject'], 'next');
 
             // Mock timer as not expired
             service['iceGatheringTimer'] = { isExpired: () => false } as any;
@@ -352,8 +375,8 @@ describe('RtcConnectionService', () => {
     describe('onIceGatheringComplete', () => {
         it('should emit gathering complete signal and clear timer', () => {
             // Arrange
-            spyOn(service['iceGatheringComplete'], 'next');
-            const mockTimer = { clear: jasmine.createSpy('clear') };
+            vi.spyOn(service['iceGatheringComplete'], 'next');
+            const mockTimer = { clear: vi.fn() };
             service['iceGatheringTimer'] = mockTimer as any;
 
             // Act
@@ -370,10 +393,10 @@ describe('RtcConnectionService', () => {
             // Arrange
             const accountId = 'test-account-id';
             const finalOfferData = JSON.stringify(mockOffer);
-            apiService.getCallSettings.and.returnValue(
+            apiService.getCallSettings.mockReturnValue(
                 Promise.resolve(mockCallSettings),
             );
-            apiService.startOutgoingCall.and.returnValue(Promise.resolve());
+            apiService.startOutgoingCall.mockReturnValue(Promise.resolve());
 
             // Act - Start the call
             const callPromise = service.startOutgoingCall(accountId);
@@ -403,10 +426,10 @@ describe('RtcConnectionService', () => {
             const chatId = 'test-chat-id';
             const offerString = JSON.stringify(mockOffer);
             const finalAnswerData = JSON.stringify(mockAnswer);
-            apiService.getCallSettings.and.returnValue(
+            apiService.getCallSettings.mockReturnValue(
                 Promise.resolve(mockCallSettings),
             );
-            apiService.handleIncomingCall.and.returnValue(Promise.resolve());
+            apiService.handleIncomingCall.mockReturnValue(Promise.resolve());
 
             // Act - Handle the incoming call
             const callPromise = service.handleIncomingCall(chatId, offerString);
@@ -450,7 +473,7 @@ describe('RtcConnectionService', () => {
     describe('endCall', () => {
         it('should call processEndCall', () => {
             // Arrange
-            spyOn(service as any, 'processEndCall');
+            vi.spyOn(service as any, 'processEndCall');
 
             // Act
             service.endCall();
@@ -463,7 +486,7 @@ describe('RtcConnectionService', () => {
     describe('onConnectionStateChange', () => {
         it('should call processEndCall when state is disconnected', () => {
             // Arrange
-            spyOn(service as any, 'processEndCall');
+            vi.spyOn(service as any, 'processEndCall');
 
             // Act
             service['onConnectionStateChange']('disconnected');
@@ -474,7 +497,7 @@ describe('RtcConnectionService', () => {
 
         it('should not call processEndCall when state is not disconnected', () => {
             // Arrange
-            spyOn(service as any, 'processEndCall');
+            vi.spyOn(service as any, 'processEndCall');
 
             // Act
             service['onConnectionStateChange']('connected');
@@ -485,7 +508,7 @@ describe('RtcConnectionService', () => {
 
         it('should handle all RTCPeerConnectionState values correctly', () => {
             // Arrange
-            spyOn(service as any, 'processEndCall');
+            vi.spyOn(service as any, 'processEndCall');
             const states: RTCPeerConnectionState[] = [
                 'closed',
                 'connected',
@@ -503,7 +526,7 @@ describe('RtcConnectionService', () => {
                 } else {
                     expect(service['processEndCall']).not.toHaveBeenCalled();
                 }
-                (service['processEndCall'] as jasmine.Spy).calls.reset();
+                (service['processEndCall'] as Mock).mockClear();
             });
         });
     });
@@ -524,10 +547,10 @@ describe('RtcConnectionService', () => {
             // Arrange
             const accountId = 'test-account-id';
             const finalOfferData = JSON.stringify(mockOffer);
-            apiService.getCallSettings.and.returnValue(
+            apiService.getCallSettings.mockReturnValue(
                 Promise.resolve(mockCallSettings),
             );
-            apiService.startOutgoingCall.and.returnValue(Promise.resolve());
+            apiService.startOutgoingCall.mockReturnValue(Promise.resolve());
 
             // Act
             const callPromise = service.startOutgoingCall(accountId);
@@ -553,10 +576,10 @@ describe('RtcConnectionService', () => {
             const chatId = 'test-chat-id';
             const offerString = JSON.stringify(mockOffer);
             const finalAnswerData = JSON.stringify(mockAnswer);
-            apiService.getCallSettings.and.returnValue(
+            apiService.getCallSettings.mockReturnValue(
                 Promise.resolve(mockCallSettings),
             );
-            apiService.handleIncomingCall.and.returnValue(Promise.resolve());
+            apiService.handleIncomingCall.mockReturnValue(Promise.resolve());
 
             // Act
             const callPromise = service.handleIncomingCall(chatId, offerString);
@@ -584,12 +607,12 @@ describe('RtcConnectionService', () => {
             expect(service['iceGatheringComplete']).toBeDefined();
         });
 
-        it('should complete ice gathering observable when onIceGatheringComplete is called', (done) => {
+        it('should complete ice gathering observable when onIceGatheringComplete is called', async () => {
             // Arrange
             let completed = false;
-            const mockTimer = { clear: jasmine.createSpy('clear') };
+            const mockTimer = { clear: vi.fn() };
             service['iceGatheringTimer'] = mockTimer as any;
-            
+
             service['iceGatheringComplete'].subscribe({
                 next: () => {
                     completed = true;
@@ -606,7 +629,6 @@ describe('RtcConnectionService', () => {
             setTimeout(() => {
                 expect(completed).toBe(true);
                 expect(mockTimer.clear).toHaveBeenCalled();
-                done();
             }, 0);
         });
     });
@@ -618,9 +640,9 @@ describe('RtcConnectionService', () => {
             const malformedOffer = 'invalid-json';
 
             // Act & Assert
-            await expectAsync(
+            await expect(
                 service.handleIncomingCall(chatId, malformedOffer),
-            ).toBeRejected();
+            ).rejects.toThrow();
         });
 
         it('should handle JSON with missing properties in establishConnection', async () => {
@@ -634,10 +656,9 @@ describe('RtcConnectionService', () => {
             try {
                 await service.establishConnection(incompleteAnswer);
                 // If we get here, the method didn't throw, which means it handled missing candidates gracefully
-                expect(connectionManager.setRemoteAnswerAndCandidates).toHaveBeenCalledWith(
-                    { type: 'answer' },
-                    undefined
-                );
+                expect(
+                    connectionManager.setRemoteAnswerAndCandidates,
+                ).toHaveBeenCalledWith({ type: 'answer' }, undefined);
             } catch (error) {
                 // If it throws, that's also acceptable behavior for malformed input
                 expect(error).toBeDefined();
@@ -652,7 +673,9 @@ describe('RtcConnectionService', () => {
             try {
                 await service.establishConnection(emptyAnswer);
                 // If no error is thrown, the method should return early due to missing desc.type
-                expect(connectionManager.setRemoteAnswerAndCandidates).not.toHaveBeenCalled();
+                expect(
+                    connectionManager.setRemoteAnswerAndCandidates,
+                ).not.toHaveBeenCalled();
             } catch (error) {
                 // If it throws due to missing properties, that's also acceptable
                 expect(error).toBeDefined();
@@ -670,7 +693,7 @@ describe('RtcConnectionService', () => {
 
         it('should trigger onConnectionStateChange callback correctly', () => {
             // Arrange
-            spyOn(service as any, 'processEndCall');
+            vi.spyOn(service as any, 'processEndCall');
 
             // Act - Simulate callback from connection manager by calling the bound method directly
             service['onConnectionStateChange']('disconnected');
@@ -682,7 +705,7 @@ describe('RtcConnectionService', () => {
         it('should trigger onIceCandidateGenerated callback correctly', () => {
             // Arrange
             const testData = 'test-candidate-data';
-            spyOn(service['iceCandidateSubject'], 'next');
+            vi.spyOn(service['iceCandidateSubject'], 'next');
             service['iceGatheringTimer'] = { isExpired: () => false } as any;
 
             // Act - Simulate callback from connection manager by calling the bound method directly
@@ -696,8 +719,8 @@ describe('RtcConnectionService', () => {
 
         it('should trigger onIceGatheringComplete callback correctly', () => {
             // Arrange
-            spyOn(service['iceGatheringComplete'], 'next');
-            const mockTimer = { clear: jasmine.createSpy('clear') };
+            vi.spyOn(service['iceGatheringComplete'], 'next');
+            const mockTimer = { clear: vi.fn() };
             service['iceGatheringTimer'] = mockTimer as any;
 
             // Act - Simulate callback from connection manager by calling the bound method directly
@@ -714,12 +737,12 @@ describe('RtcConnectionService', () => {
             // Arrange
             const accountId = 'test-account-id';
             const error = new Error('API Error');
-            apiService.getCallSettings.and.returnValue(Promise.reject(error));
+            apiService.getCallSettings.mockReturnValue(Promise.reject(error));
 
             // Act & Assert
-            await expectAsync(
-                service.startOutgoingCall(accountId),
-            ).toBeRejectedWith(error);
+            await expect(service.startOutgoingCall(accountId)).rejects.toEqual(
+                error,
+            );
         });
 
         it('should handle API errors in handleIncomingCall', async () => {
@@ -727,27 +750,29 @@ describe('RtcConnectionService', () => {
             const chatId = 'test-chat-id';
             const offerString = JSON.stringify(mockOffer);
             const error = new Error('API Error');
-            apiService.getCallSettings.and.returnValue(Promise.reject(error));
+            apiService.getCallSettings.mockReturnValue(Promise.reject(error));
 
             // Act & Assert
-            await expectAsync(
+            await expect(
                 service.handleIncomingCall(chatId, offerString),
-            ).toBeRejectedWith(error);
+            ).rejects.toEqual(error);
         });
 
         it('should handle connection manager errors', async () => {
             // Arrange
             const accountId = 'test-account-id';
             const error = new Error('Connection Manager Error');
-            apiService.getCallSettings.and.returnValue(
+            apiService.getCallSettings.mockReturnValue(
                 Promise.resolve(mockCallSettings),
             );
-            connectionManager.initiateOffer.and.throwError(error);
+            connectionManager.initiateOffer.mockImplementation(() => {
+                throw error;
+            });
 
             // Act & Assert
-            await expectAsync(
-                service.startOutgoingCall(accountId),
-            ).toBeRejectedWith(error);
+            await expect(service.startOutgoingCall(accountId)).rejects.toEqual(
+                error,
+            );
         });
     });
 });

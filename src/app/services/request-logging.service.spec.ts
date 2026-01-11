@@ -1,9 +1,10 @@
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { RequestLoggingService } from './request-logging.service';
 
 describe('RequestLoggingService', () => {
     let service: RequestLoggingService;
-    let consoleSpy: jasmine.Spy;
+    let consoleSpy: Mock;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -11,7 +12,7 @@ describe('RequestLoggingService', () => {
         });
         service = TestBed.inject(RequestLoggingService);
 
-        consoleSpy = spyOn(console, 'log').and.callThrough();
+        consoleSpy = vi.spyOn(console, 'log');
     });
 
     it('should be created', () => {

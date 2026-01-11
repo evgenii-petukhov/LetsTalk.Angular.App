@@ -1,40 +1,52 @@
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type MockedObject,
+} from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoginByEmailComponent } from './login-by-email.component';
-import { ApiService } from 'src/app/services/api.service';
-import { ErrorService } from 'src/app/services/error.service';
-import { TokenStorageService } from 'src/app/services/token-storage.service';
+import { ApiService } from '../../../services/api.service';
+import { ErrorService } from '../../../services/error.service';
+import { TokenStorageService } from '../../../services/token-storage.service';
 import { InlineCountdownStubComponent } from '../inline-countdown/inline-countdown.component.stub';
 import {
     GenerateLoginCodeResponseDto,
     LoginResponseDto,
-} from 'src/app/api-client/api-client';
+} from '../../../api-client/api-client';
 
 describe('LoginByEmailComponent', () => {
     let component: LoginByEmailComponent;
     let fixture: ComponentFixture<LoginByEmailComponent>;
-    let apiService: jasmine.SpyObj<ApiService>;
-    let tokenStorageService: jasmine.SpyObj<TokenStorageService>;
-    let errorService: jasmine.SpyObj<ErrorService>;
-    let router: jasmine.SpyObj<Router>;
+    let apiService: MockedObject<ApiService>;
+    let tokenStorageService: MockedObject<TokenStorageService>;
+    let errorService: MockedObject<ErrorService>;
+    let router: MockedObject<Router>;
 
     beforeEach(async () => {
-        apiService = jasmine.createSpyObj('ApiService', [
-            'loginByEmail',
-            'generateLoginCode',
-        ]);
-        apiService.loginByEmail.and.resolveTo(
+        apiService = {
+            loginByEmail: vi.fn().mockName('ApiService.loginByEmail'),
+            generateLoginCode: vi.fn().mockName('ApiService.generateLoginCode'),
+        } as MockedObject<ApiService>;
+        apiService.loginByEmail.mockResolvedValue(
             new LoginResponseDto({ token: 'fakeToken' }),
         );
-        apiService.generateLoginCode.and.resolveTo(
+        apiService.generateLoginCode.mockResolvedValue(
             new GenerateLoginCodeResponseDto({ codeValidInSeconds: 60 }),
         );
-        tokenStorageService = jasmine.createSpyObj('TokenStorageService', [
-            'saveToken',
-        ]);
-        errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
-        router = jasmine.createSpyObj('Router', ['navigate']);
+        tokenStorageService = {
+            saveToken: vi.fn().mockName('TokenStorageService.saveToken'),
+        } as MockedObject<TokenStorageService>;
+        errorService = {
+            handleError: vi.fn().mockName('ErrorService.handleError'),
+        } as MockedObject<ErrorService>;
+        router = {
+            navigate: vi.fn().mockName('Router.navigate'),
+        } as MockedObject<Router>;
 
         await TestBed.configureTestingModule({
             declarations: [LoginByEmailComponent, InlineCountdownStubComponent],
@@ -62,8 +74,8 @@ describe('LoginByEmailComponent', () => {
         // Act
 
         // Assert
-        expect(component.form.contains('email')).toBeTrue();
-        expect(component.form.contains('code')).toBeTrue();
+        expect(component.form.contains('email')).toBe(true);
+        expect(component.form.contains('code')).toBe(true);
     });
 
     it('should make the email control required and validate email format', () => {
@@ -74,13 +86,13 @@ describe('LoginByEmailComponent', () => {
         emailControl.setValue('');
 
         // Assert
-        expect(emailControl.valid).toBeFalse();
+        expect(emailControl.valid).toBe(false);
 
         // Act
         emailControl.setValue('test@example.com');
 
         // Assert
-        expect(emailControl.valid).toBeTrue();
+        expect(emailControl.valid).toBe(true);
     });
 
     it('should make the code control required and validate code format', () => {
@@ -91,13 +103,13 @@ describe('LoginByEmailComponent', () => {
         codeControl.setValue('');
 
         // Assert
-        expect(codeControl.valid).toBeFalse();
+        expect(codeControl.valid).toBe(false);
 
         // Act
         codeControl.setValue('1234');
 
         // Assert
-        expect(codeControl.valid).toBeTrue();
+        expect(codeControl.valid).toBe(true);
     });
 
     it('should call onSubmit and handle code request correctly', async () => {
@@ -108,15 +120,17 @@ describe('LoginByEmailComponent', () => {
         await component.onSubmit();
 
         // Assert
-        expect(apiService.generateLoginCode).toHaveBeenCalledWith('test@example.com');
-        expect(component.isCodeRequested()).toBeTrue();
-        expect(component.isCodeRequestInProgress()).toBeFalse();
+        expect(apiService.generateLoginCode).toHaveBeenCalledWith(
+            'test@example.com',
+        );
+        expect(component.isCodeRequested()).toBe(true);
+        expect(component.isCodeRequestInProgress()).toBe(false);
         expect(component.codeValidInSeconds()).toBe(60);
     });
 
     it('should handle code request error correctly', async () => {
         // Arrange
-        apiService.generateLoginCode.and.rejectWith(new Error('error'));
+        apiService.generateLoginCode.mockRejectedValue(new Error('error'));
         component.form.setValue({ email: 'test@example.com', code: '' });
 
         // Act
@@ -124,27 +138,30 @@ describe('LoginByEmailComponent', () => {
 
         // Assert
         expect(errorService.handleError).toHaveBeenCalled();
-        expect(component.isCodeRequestInProgress()).toBeFalse();
+        expect(component.isCodeRequestInProgress()).toBe(false);
     });
 
     it('should call submit and handle login response correctly', async () => {
         // Arrange
         component.form.setValue({ email: 'test@example.com', code: '1234' });
-        router.navigate.and.resolveTo(true);
+        router.navigate.mockResolvedValue(true);
 
         // Act
         await component.onSubmit();
 
         // Assert
-        expect(apiService.loginByEmail).toHaveBeenCalledWith('test@example.com', 1234);
+        expect(apiService.loginByEmail).toHaveBeenCalledWith(
+            'test@example.com',
+            1234,
+        );
         expect(tokenStorageService.saveToken).toHaveBeenCalledWith('fakeToken');
         expect(router.navigate).toHaveBeenCalledWith(['chats']);
-        expect(component.isSubmitInProgress()).toBeFalse();
+        expect(component.isSubmitInProgress()).toBe(false);
     });
 
     it('should handle submit error correctly', async () => {
         // Arrange
-        apiService.loginByEmail.and.rejectWith(new Error('error'));
+        apiService.loginByEmail.mockRejectedValue(new Error('error'));
         component.form.setValue({ email: 'test@example.com', code: '1234' });
 
         // Act
@@ -152,12 +169,12 @@ describe('LoginByEmailComponent', () => {
 
         // Assert
         expect(errorService.handleError).toHaveBeenCalled();
-        expect(component.isSubmitInProgress()).toBeFalse();
+        expect(component.isSubmitInProgress()).toBe(false);
     });
 
     it('should navigate to chats on back button click', async () => {
         // Arrange
-        router.navigate.and.resolveTo(true);
+        router.navigate.mockResolvedValue(true);
 
         // Act
         await component.onBack();
@@ -173,7 +190,7 @@ describe('LoginByEmailComponent', () => {
         component.onTimerExpired();
 
         // Assert
-        expect(component.isCodeRequested()).toBeFalse();
+        expect(component.isCodeRequested()).toBe(false);
     });
 
     it('should display the countdown timer if code is requested and valid in seconds is greater than 0', () => {
@@ -193,7 +210,7 @@ describe('LoginByEmailComponent', () => {
 
     it('should call onSubmit when the code is valid and form is valid', () => {
         // Arrange
-        spyOn(component, 'onSubmit');
+        vi.spyOn(component, 'onSubmit');
         component.form.get('email').setValue('test@example.com');
         component.form.get('code').setValue('1234');
 
@@ -206,7 +223,7 @@ describe('LoginByEmailComponent', () => {
 
     it('should call onSubmit when valid code is entered and form is valid (input event raised)', () => {
         // Arrange
-        spyOn(component, 'onSubmit');
+        vi.spyOn(component, 'onSubmit');
         component.isCodeRequested.set(true);
         component.form.get('email').setValue('test@example.com');
         fixture.detectChanges();

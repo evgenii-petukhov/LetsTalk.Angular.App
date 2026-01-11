@@ -1,13 +1,23 @@
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type MockedObject,
+} from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { ErrorService } from './error.service';
 import { ToastrService } from 'ngx-toastr';
 
 describe('ErrorService', () => {
     let service: ErrorService;
-    let toastrService: jasmine.SpyObj<ToastrService>;
+    let toastrService: MockedObject<ToastrService>;
 
     beforeEach(() => {
-        toastrService = jasmine.createSpyObj('ToastrService', ['error']);
+        toastrService = {
+            error: vi.fn().mockName('ToastrService.error'),
+        } as MockedObject<ToastrService>;
 
         TestBed.configureTestingModule({
             providers: [
@@ -41,7 +51,8 @@ describe('ErrorService', () => {
 
         // Assert
         const expectedMessage = 'Error1, Error2, Error3';
-        expect(toastrService.error).toHaveBeenCalledOnceWith(
+        expect(toastrService.error).toHaveBeenCalledTimes(1);
+        expect(toastrService.error).toHaveBeenCalledWith(
             expectedMessage,
             'Error',
         );
@@ -59,7 +70,10 @@ describe('ErrorService', () => {
         service.handleError(errorResponse, defaultMessage);
 
         // Assert
-        expect(toastrService.error).toHaveBeenCalledOnceWith(
+        expect(toastrService.error).toHaveBeenCalledTimes(1);
+
+        // Assert
+        expect(toastrService.error).toHaveBeenCalledWith(
             defaultMessage,
             'Error',
         );

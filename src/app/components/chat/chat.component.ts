@@ -2,16 +2,16 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
-import { MessageListStatus } from 'src/app/models/message-list-status';
-import { StoreService } from 'src/app/services/store.service';
+import { MessageListStatus } from '../../models/message-list-status';
+import { StoreService } from '../../services/store.service';
 import {
     selectSelectedChatIsCallInProgress,
     selectSelectedChatIsComposeAreaVisible,
     selectSelectedChatIsErrorVisible,
     selectSelectedChatIsMessageListVisible,
     selectSelectedChatIsNotFoundVisible,
-} from 'src/app/state/selected-chat-ui/selected-chat-ui.selectors';
-import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
+} from '../../state/selected-chat-ui/selected-chat-ui.selectors';
+import { selectSelectedChatId } from '../../state/selected-chat/selected-chat-id.selectors';
 
 @Component({
     selector: 'app-chat',

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SelectImageButtonComponent } from './select-image-button.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { By } from '@angular/platform-browser';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('SelectImageButtonComponent', () => {
     let component: SelectImageButtonComponent;
@@ -37,7 +38,7 @@ describe('SelectImageButtonComponent', () => {
 
     it('should emit imageBlobReady when a file is selected', () => {
         // Arrange
-        spyOn(component.imageBlobReady, 'emit');
+        vi.spyOn(component.imageBlobReady, 'emit');
 
         const inputElement = fixture.debugElement.query(
             By.css('input[type="file"]'),

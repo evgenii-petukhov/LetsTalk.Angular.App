@@ -7,16 +7,16 @@ import {
     signal,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { StoreService } from 'src/app/services/store.service';
-import { ApiService } from 'src/app/services/api.service';
+import { StoreService } from '../../services/store.service';
+import { ApiService } from '../../services/api.service';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
-import { selectLoggedInUser } from 'src/app/state/logged-in-user/logged-in-user.selectors';
+import { selectLoggedInUser } from '../../state/logged-in-user/logged-in-user.selectors';
 import { Store } from '@ngrx/store';
-import { environment } from 'src/environments/environment';
-import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
-import { ErrorService } from 'src/app/services/error.service';
-import { errorMessages } from 'src/app/constants/errors';
-import { ImageUploadService } from 'src/app/services/image-upload.service';
+import { environment } from '../../../environments/environment';
+import { ImageRoles, UploadImageResponse } from '../../protos/file_upload_pb';
+import { ErrorService } from '../../services/error.service';
+import { errorMessages } from '../../constants/errors';
+import { ImageUploadService } from '../../services/image-upload.service';
 import { Location } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 

@@ -1,3 +1,11 @@
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type MockedObject,
+} from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { ApiService } from './api.service';
 import {
@@ -22,7 +30,7 @@ import { of } from 'rxjs';
 
 describe('ApiService', () => {
     let service: ApiService;
-    let apiClient: jasmine.SpyObj<ApiClient>;
+    let apiClient: MockedObject<ApiClient>;
 
     const mockMessage = new MessageDto({
         id: '1',
@@ -44,21 +52,23 @@ describe('ApiService', () => {
     const mockChats = [mockChat];
 
     beforeEach(() => {
-        apiClient = jasmine.createSpyObj('ApiClient', [
-            'emailLogin',
-            'chatAll',
-            'account',
-            'messageAll',
-            'profileGET',
-            'profilePUT',
-            'message',
-            'chat',
-            'markAsRead',
-            'generateLoginCode',
-            'startOutgoingCall',
-            'handleIncomingCall',
-            'callSettings',
-        ]);
+        apiClient = {
+            emailLogin: vi.fn().mockName('ApiClient.emailLogin'),
+            chatAll: vi.fn().mockName('ApiClient.chatAll'),
+            account: vi.fn().mockName('ApiClient.account'),
+            messageAll: vi.fn().mockName('ApiClient.messageAll'),
+            profileGET: vi.fn().mockName('ApiClient.profileGET'),
+            profilePUT: vi.fn().mockName('ApiClient.profilePUT'),
+            message: vi.fn().mockName('ApiClient.message'),
+            chat: vi.fn().mockName('ApiClient.chat'),
+            markAsRead: vi.fn().mockName('ApiClient.markAsRead'),
+            generateLoginCode: vi.fn().mockName('ApiClient.generateLoginCode'),
+            startOutgoingCall: vi.fn().mockName('ApiClient.startOutgoingCall'),
+            handleIncomingCall: vi
+                .fn()
+                .mockName('ApiClient.handleIncomingCall'),
+            callSettings: vi.fn().mockName('ApiClient.callSettings'),
+        } as MockedObject<ApiClient>;
 
         TestBed.configureTestingModule({
             providers: [
@@ -77,21 +87,21 @@ describe('ApiService', () => {
     it('should login by email', async () => {
         // Arrange
         const mockResponse = new LoginResponseDto({ success: true });
-        apiClient.emailLogin.and.returnValue(of(mockResponse));
+        apiClient.emailLogin.mockReturnValue(of(mockResponse));
 
         // Act
         const result = await service.loginByEmail('test@example.com', 123456);
 
         // Assert
         expect(apiClient.emailLogin).toHaveBeenCalledWith(
-            jasmine.any(EmailLoginRequest),
+            expect.any(EmailLoginRequest),
         );
         expect(result).toEqual(mockResponse);
     });
 
     it('should get chats', async () => {
         // Arrange
-        apiClient.chatAll.and.returnValue(of(mockChats));
+        apiClient.chatAll.mockReturnValue(of(mockChats));
 
         // Act
         const result = await service.getChats();
@@ -109,7 +119,7 @@ describe('ApiService', () => {
                 firstName: 'John',
             }),
         ];
-        apiClient.account.and.returnValue(of(mockAccounts));
+        apiClient.account.mockReturnValue(of(mockAccounts));
 
         // Act
         const result = await service.getAccounts();
@@ -121,7 +131,7 @@ describe('ApiService', () => {
 
     it('should get messages', async () => {
         // Arrange
-        apiClient.messageAll.and.returnValue(of(mockMessages));
+        apiClient.messageAll.mockReturnValue(of(mockMessages));
 
         // Act
         const result = await service.getMessages('chatId', 0);
@@ -133,7 +143,7 @@ describe('ApiService', () => {
 
     it('should get profile', async () => {
         // Arrange
-        apiClient.profileGET.and.returnValue(of(mockProfile));
+        apiClient.profileGET.mockReturnValue(of(mockProfile));
 
         // Act
         const result = await service.getProfile();
@@ -152,49 +162,49 @@ describe('ApiService', () => {
         mockImage.setImageFormat(1);
         mockImage.setSignature('signature');
 
-        apiClient.profilePUT.and.returnValue(of(mockProfile));
+        apiClient.profilePUT.mockReturnValue(of(mockProfile));
 
         // Act
         const result = await service.saveProfile('John', 'Doe', mockImage);
 
         // Assert
         expect(apiClient.profilePUT).toHaveBeenCalledWith(
-            jasmine.any(UpdateProfileRequest),
+            expect.any(UpdateProfileRequest),
         );
         expect(result).toEqual(mockProfile);
     });
 
     it('should send a message', async () => {
         // Arrange
-        apiClient.message.and.returnValue(of(mockMessage));
+        apiClient.message.mockReturnValue(of(mockMessage));
 
         // Act
         const result = await service.sendMessage('chatId', 'Hello');
 
         // Assert
         expect(apiClient.message).toHaveBeenCalledWith(
-            jasmine.any(CreateMessageRequest),
+            expect.any(CreateMessageRequest),
         );
         expect(result).toEqual(mockMessage);
     });
 
     it('should create individual chat', async () => {
         // Arrange
-        apiClient.chat.and.returnValue(of(mockChat));
+        apiClient.chat.mockReturnValue(of(mockChat));
 
         // Act
         const result = await service.createIndividualChat('accountId');
 
         // Assert
         expect(apiClient.chat).toHaveBeenCalledWith(
-            jasmine.any(CreateIndividualChatRequest),
+            expect.any(CreateIndividualChatRequest),
         );
         expect(result).toEqual(mockChat);
     });
 
     it('should mark message as read', async () => {
         // Arrange
-        apiClient.markAsRead.and.returnValue(of(undefined));
+        apiClient.markAsRead.mockReturnValue(of(undefined));
 
         // Act
         const result = await service.markAsRead('chatId', 'messageId');
@@ -210,42 +220,42 @@ describe('ApiService', () => {
     it('should generate login code', async () => {
         // Arrange
         const mockResponse = new GenerateLoginCodeResponseDto();
-        apiClient.generateLoginCode.and.returnValue(of(mockResponse));
+        apiClient.generateLoginCode.mockReturnValue(of(mockResponse));
 
         // Act
         const result = await service.generateLoginCode('test@example.com');
 
         // Assert
         expect(apiClient.generateLoginCode).toHaveBeenCalledWith(
-            jasmine.any(GenerateLoginCodeRequest),
+            expect.any(GenerateLoginCodeRequest),
         );
         expect(result).toEqual(mockResponse);
     });
 
     it('should start outgoing call', async () => {
         // Arrange
-        apiClient.startOutgoingCall.and.returnValue(of(undefined));
+        apiClient.startOutgoingCall.mockReturnValue(of(undefined));
 
         // Act
         const result = await service.startOutgoingCall('chatId', 'offer-sdp');
 
         // Assert
         expect(apiClient.startOutgoingCall).toHaveBeenCalledWith(
-            jasmine.any(StartOutgoingCallRequest),
+            expect.any(StartOutgoingCallRequest),
         );
         expect(result).toBeUndefined();
     });
 
     it('should handle incoming call', async () => {
         // Arrange
-        apiClient.handleIncomingCall.and.returnValue(of(undefined));
+        apiClient.handleIncomingCall.mockReturnValue(of(undefined));
 
         // Act
         const result = await service.handleIncomingCall('chatId', 'answer-sdp');
 
         // Assert
         expect(apiClient.handleIncomingCall).toHaveBeenCalledWith(
-            jasmine.any(HandleIncomingCallRequest),
+            expect.any(HandleIncomingCallRequest),
         );
         expect(result).toBeUndefined();
     });
@@ -253,7 +263,7 @@ describe('ApiService', () => {
     it('should get call settings', async () => {
         // Arrange
         const mockCallSettings = new CallSettingsDto();
-        apiClient.callSettings.and.returnValue(of(mockCallSettings));
+        apiClient.callSettings.mockReturnValue(of(mockCallSettings));
 
         // Act
         const result = await service.getCallSettings();

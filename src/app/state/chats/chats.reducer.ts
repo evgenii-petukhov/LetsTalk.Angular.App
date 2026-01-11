@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { ChatDto, IChatDto } from 'src/app/api-client/api-client';
+import { ChatDto, IChatDto } from '../../api-client/api-client';
 import { chatsActions } from './chats.actions';
 
 export const initialState: readonly IChatDto[] = null;

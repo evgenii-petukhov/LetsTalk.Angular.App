@@ -1,3 +1,11 @@
+import {
+    vi,
+    type MockedObject,
+    describe,
+    it,
+    beforeEach,
+    expect,
+} from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ComposeAreaComponent } from './compose-area.component';
 import {
@@ -7,30 +15,34 @@ import {
     StoreModule,
 } from '@ngrx/store';
 import { FormsModule } from '@angular/forms';
-import { ApiService } from 'src/app/services/api.service';
-import { ErrorService } from 'src/app/services/error.service';
-import { StoreService } from 'src/app/services/store.service';
-import { IdGeneratorService } from 'src/app/services/id-generator.service';
-import { ImageUploadService } from 'src/app/services/image-upload.service';
-import { UploadImageResponse } from 'src/app/protos/file_upload_pb';
-import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
-import { IChatDto, ImageDto, IMessageDto } from 'src/app/api-client/api-client';
+import { ApiService } from '../../../services/api.service';
+import { ErrorService } from '../../../services/error.service';
+import { StoreService } from '../../../services/store.service';
+import { IdGeneratorService } from '../../../services/id-generator.service';
+import { ImageUploadService } from '../../../services/image-upload.service';
+import { UploadImageResponse } from '../../../protos/file_upload_pb';
+import { selectSelectedChat } from '../../../state/selected-chat/selected-chat.selector';
+import {
+    IChatDto,
+    ImageDto,
+    IMessageDto,
+} from '../../../api-client/api-client';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { SendMessageButtonStubComponent } from '../send-button/send-button.component.stub';
 import { SelectImageButtonStubComponent } from '../select-image-button/select-image-button.component.stub';
-import { errorMessages } from 'src/app/constants/errors';
+import { errorMessages } from '../../../constants/errors';
 import { AutoResizeTextAreaStubComponent } from '../auto-resize-text-area/auto-resize-text-area.component.stub';
 import { Router } from '@angular/router';
 
 describe(ComposeAreaComponent.name, () => {
     let component: ComposeAreaComponent;
     let fixture: ComponentFixture<ComposeAreaComponent>;
-    let apiService: jasmine.SpyObj<ApiService>;
-    let errorService: jasmine.SpyObj<ErrorService>;
-    let imageUploadService: jasmine.SpyObj<ImageUploadService>;
-    let storeService: jasmine.SpyObj<StoreService>;
-    let idGeneratorService: jasmine.SpyObj<IdGeneratorService>;
-    let router: jasmine.SpyObj<Router>;
+    let apiService: MockedObject<ApiService>;
+    let errorService: MockedObject<ErrorService>;
+    let imageUploadService: MockedObject<ImageUploadService>;
+    let storeService: MockedObject<StoreService>;
+    let idGeneratorService: MockedObject<IdGeneratorService>;
+    let router: MockedObject<Router>;
     let store: MockStore;
     let mockSelectSelectedChat: MemoizedSelector<
         object,
@@ -54,24 +66,34 @@ describe(ComposeAreaComponent.name, () => {
     };
 
     beforeEach(async () => {
-        apiService = jasmine.createSpyObj('ApiService', [
-            'sendMessage',
-            'createIndividualChat',
-        ]);
-        errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
-        storeService = jasmine.createSpyObj('StoreService', [
-            'addMessage',
-            'setLastMessageInfo',
-            'updateChatId',
-        ]);
-        idGeneratorService = jasmine.createSpyObj('IdGeneratorService', [
-            'isFake',
-        ]);
-        imageUploadService = jasmine.createSpyObj('ImageUploadService', [
-            'resizeAndUploadImage',
-        ]);
-        router = jasmine.createSpyObj('Router', ['navigate']);
-        router.navigate.and.resolveTo(true);
+        apiService = {
+            sendMessage: vi.fn().mockName('ApiService.sendMessage'),
+            createIndividualChat: vi
+                .fn()
+                .mockName('ApiService.createIndividualChat'),
+        } as MockedObject<ApiService>;
+        errorService = {
+            handleError: vi.fn().mockName('ErrorService.handleError'),
+        } as MockedObject<ErrorService>;
+        storeService = {
+            addMessage: vi.fn().mockName('StoreService.addMessage'),
+            setLastMessageInfo: vi
+                .fn()
+                .mockName('StoreService.setLastMessageInfo'),
+            updateChatId: vi.fn().mockName('StoreService.updateChatId'),
+        } as MockedObject<StoreService>;
+        idGeneratorService = {
+            isFake: vi.fn().mockName('IdGeneratorService.isFake'),
+        } as MockedObject<IdGeneratorService>;
+        imageUploadService = {
+            resizeAndUploadImage: vi
+                .fn()
+                .mockName('ImageUploadService.resizeAndUploadImage'),
+        } as MockedObject<ImageUploadService>;
+        router = {
+            navigate: vi.fn().mockName('Router.navigate'),
+        } as MockedObject<Router>;
+        router.navigate.mockResolvedValue(true);
 
         await TestBed.configureTestingModule({
             declarations: [
@@ -116,7 +138,7 @@ describe(ComposeAreaComponent.name, () => {
             created: 1728849011,
             id: '234',
         } as IMessageDto;
-        apiService.sendMessage.and.resolveTo(messageDto);
+        apiService.sendMessage.mockResolvedValue(messageDto);
 
         // Act
         store.refreshState();
@@ -129,8 +151,10 @@ describe(ComposeAreaComponent.name, () => {
             message,
             undefined,
         );
-        expect(storeService.addMessage).toHaveBeenCalledOnceWith(messageDto);
-        expect(storeService.setLastMessageInfo).toHaveBeenCalledOnceWith(
+        expect(storeService.addMessage).toHaveBeenCalledTimes(1);
+        expect(storeService.addMessage).toHaveBeenCalledWith(messageDto);
+        expect(storeService.setLastMessageInfo).toHaveBeenCalledTimes(1);
+        expect(storeService.setLastMessageInfo).toHaveBeenCalledWith(
             mockChat.id,
             messageDto.created,
             messageDto.id,
@@ -138,7 +162,7 @@ describe(ComposeAreaComponent.name, () => {
         expect(errorService.handleError).not.toHaveBeenCalled();
         expect(apiService.createIndividualChat).not.toHaveBeenCalled();
         expect(component.message()).toBe('');
-        expect(component.isSending()).toBeFalse();
+        expect(component.isSending()).toBe(false);
     });
 
     it('should handle image blob and send a message with image', async () => {
@@ -146,16 +170,16 @@ describe(ComposeAreaComponent.name, () => {
         mockSelectSelectedChat.setResult(mockChat);
         const blob = new Blob(['image-data']);
         const mockImageResponse = new UploadImageResponse();
-        imageUploadService.resizeAndUploadImage.and.resolveTo(
+        imageUploadService.resizeAndUploadImage.mockResolvedValue(
             mockImageResponse,
         );
         const messageDto = {
             created: 1728849011,
             id: '234',
         } as IMessageDto;
-        apiService.sendMessage.and.resolveTo(messageDto);
+        apiService.sendMessage.mockResolvedValue(messageDto);
 
-        const revokeObjectURLSpy = spyOn(URL, 'revokeObjectURL');
+        const revokeObjectURLSpy = vi.spyOn(URL, 'revokeObjectURL');
 
         // Act
         store.refreshState();
@@ -169,8 +193,10 @@ describe(ComposeAreaComponent.name, () => {
             undefined,
             mockImageResponse,
         );
-        expect(storeService.addMessage).toHaveBeenCalledOnceWith(messageDto);
-        expect(storeService.setLastMessageInfo).toHaveBeenCalledOnceWith(
+        expect(storeService.addMessage).toHaveBeenCalledTimes(1);
+        expect(storeService.addMessage).toHaveBeenCalledWith(messageDto);
+        expect(storeService.setLastMessageInfo).toHaveBeenCalledTimes(1);
+        expect(storeService.setLastMessageInfo).toHaveBeenCalledWith(
             mockChat.id,
             messageDto.created,
             messageDto.id,
@@ -185,7 +211,9 @@ describe(ComposeAreaComponent.name, () => {
         // Arrange
         mockSelectSelectedChat.setResult(mockChat);
         const error = new Error('Test Error');
-        apiService.sendMessage.and.throwError(error);
+        apiService.sendMessage.mockImplementation(() => {
+            throw error;
+        });
 
         // Act
         store.refreshState();
@@ -193,30 +221,33 @@ describe(ComposeAreaComponent.name, () => {
         await component.onSendMessage('test');
 
         // Assert
-        expect(errorService.handleError).toHaveBeenCalledOnceWith(
+        expect(errorService.handleError).toHaveBeenCalledTimes(1);
+
+        // Assert
+        expect(errorService.handleError).toHaveBeenCalledWith(
             error,
             errorMessages.sendMessage,
         );
         expect(storeService.addMessage).not.toHaveBeenCalled();
         expect(storeService.setLastMessageInfo).not.toHaveBeenCalled();
         expect(apiService.createIndividualChat).not.toHaveBeenCalled();
-        expect(component.isSending()).toBeFalse();
+        expect(component.isSending()).toBe(false);
     });
 
     it('should create an individual chat if needed and send a message', async () => {
         // Arrange
         const individualChat = { ...mockChat, isIndividual: true };
         mockSelectSelectedChat.setResult(individualChat);
-        idGeneratorService.isFake.and.returnValue(true);
+        idGeneratorService.isFake.mockReturnValue(true);
 
         const createdChat = { ...individualChat, id: 'real-chat-id' };
-        apiService.createIndividualChat.and.resolveTo(createdChat);
+        apiService.createIndividualChat.mockResolvedValue(createdChat);
 
         const messageDto = {
             created: 1728849011,
             id: '234',
         } as IMessageDto;
-        apiService.sendMessage.and.resolveTo(messageDto);
+        apiService.sendMessage.mockResolvedValue(messageDto);
 
         // Act
         store.refreshState();
@@ -247,8 +278,8 @@ describe(ComposeAreaComponent.name, () => {
 
     it('should unsubscribe from store on destroy', () => {
         // Arrange
-        const unsubscribeSpy = spyOn(component['unsubscribe$'], 'next');
-        const completeSpy = spyOn(component['unsubscribe$'], 'complete');
+        const unsubscribeSpy = vi.spyOn(component['unsubscribe$'], 'next');
+        const completeSpy = vi.spyOn(component['unsubscribe$'], 'complete');
 
         // Act
         component.ngOnDestroy();

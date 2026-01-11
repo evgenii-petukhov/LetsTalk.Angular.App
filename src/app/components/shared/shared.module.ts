@@ -4,7 +4,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { BackButtonComponent } from './back-button/back-button.component';
 import { AvatarComponent } from './avatar/avatar.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
-import { OrderByPipe } from 'src/app/pipes/orderby';
+import { OrderByPipe } from '../../pipes/orderby';
 import { TopPanelComponent } from './top-panel/top-panel.component';
 
 @NgModule({

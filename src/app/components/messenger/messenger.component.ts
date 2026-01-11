@@ -11,9 +11,9 @@ import {
     IImagePreviewDto,
     ILinkPreviewDto,
     IMessageDto,
-} from 'src/app/api-client/api-client';
+} from '../../api-client/api-client';
 import { Store } from '@ngrx/store';
-import { StoreService } from 'src/app/services/store.service';
+import { StoreService } from '../../services/store.service';
 import {
     combineLatest,
     filter,
@@ -22,12 +22,12 @@ import {
     Subject,
     takeUntil,
 } from 'rxjs';
-import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
-import { selectChats } from 'src/app/state/chats/chats.selector';
-import { SignalrHandlerService } from 'src/app/services/signalr-handler.service';
+import { selectSelectedChat } from '../../state/selected-chat/selected-chat.selector';
+import { selectChats } from '../../state/chats/chats.selector';
+import { SignalrHandlerService } from '../../services/signalr-handler.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { IdGeneratorService } from 'src/app/services/id-generator.service';
-import { RtcSessionSettings } from 'src/app/models/rtc-sessions-settings';
+import { IdGeneratorService } from '../../services/id-generator.service';
+import { RtcSessionSettings } from '../../models/rtc-sessions-settings';
 
 @Component({
     selector: 'app-messenger',

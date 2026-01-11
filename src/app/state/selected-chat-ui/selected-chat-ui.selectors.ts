@@ -1,8 +1,8 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { SelectedChatUiState } from 'src/app/models/selected-chat-ui-state';
+import { SelectedChatUiState } from '../../models/selected-chat-ui-state';
 import { selectSelectedChatId } from '../selected-chat/selected-chat-id.selectors';
 import { selectVideoCall } from '../video-call/video-call.selectors';
-import { MessageListStatus } from 'src/app/models/message-list-status';
+import { MessageListStatus } from '../../models/message-list-status';
 
 export const selectSelectedChatUi =
     createFeatureSelector<SelectedChatUiState>('selectedChatUi');

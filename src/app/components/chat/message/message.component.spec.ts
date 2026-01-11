@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MessageComponent } from './message.component';
-import { Message } from 'src/app/models/message';
-import { ImagePreview } from 'src/app/models/image-preview';
+import { Message } from '../../../models/message';
+import { ImagePreview } from '../../../models/image-preview';
 import { By } from '@angular/platform-browser';
 import { ImageStubComponent } from '../image/image.component.stub';
-import { IImageDto, ImageDto } from 'src/app/api-client/api-client';
+import { IImageDto, ImageDto } from '../../../api-client/api-client';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('MessageComponent', () => {
     let component: MessageComponent;
@@ -39,7 +40,7 @@ describe('MessageComponent', () => {
 
         // Assert
         const bubbleElement = fixture.debugElement.query(By.css('.bubble'));
-        expect(bubbleElement.classes['btm-right']).toBeTrue();
+        expect(bubbleElement.classes['btm-right']).toBe(true);
     });
 
     it('should apply "btm-left" class when message.isMine is false', () => {
@@ -51,7 +52,7 @@ describe('MessageComponent', () => {
 
         // Assert
         const bubbleElement = fixture.debugElement.query(By.css('.bubble'));
-        expect(bubbleElement.classes['btm-left']).toBeTrue();
+        expect(bubbleElement.classes['btm-left']).toBe(true);
     });
 
     it('should apply "extra-padding" class when message.textHtml is present and message.isMine is false or message.linkPreview is not present', () => {
@@ -66,7 +67,7 @@ describe('MessageComponent', () => {
 
         // Assert
         const bubbleElement = fixture.debugElement.query(By.css('.bubble'));
-        expect(bubbleElement.classes['extra-padding']).toBeTrue();
+        expect(bubbleElement.classes['extra-padding']).toBe(true);
     });
 
     it('should not apply "extra-padding" class when message.linkPreview is present', () => {
@@ -207,6 +208,6 @@ describe('MessageComponent', () => {
         component.onImageError();
 
         // Assert
-        expect(component.isImageError).toBeTrue();
+        expect(component.isImageError).toBe(true);
     });
 });

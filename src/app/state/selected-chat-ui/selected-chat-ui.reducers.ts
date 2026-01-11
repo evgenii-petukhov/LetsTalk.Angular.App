@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { SelectedChatUiState } from 'src/app/models/selected-chat-ui-state';
+import { SelectedChatUiState } from '../../models/selected-chat-ui-state';
 import { selectedChatUiActions } from './selected-chat-ui.actions';
 
 export const initialState: SelectedChatUiState | null = null;

@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { VideoCallState } from 'src/app/models/video-call-state';
+import { VideoCallState } from '../../models/video-call-state';
 import { videoCallActions } from './video-call.actions';
 
 export const initialState: VideoCallState | null = null;
