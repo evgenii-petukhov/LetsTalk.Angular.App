@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     beforeEach,
     describe,
@@ -14,7 +15,7 @@ import { By } from '@angular/platform-browser';
 import { errorMessages } from '../../constants/errors';
 import { IImageDto } from '../../api-client/api-client';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Location } from '@angular/common';
 
 describe('ImageViewerComponent', () => {

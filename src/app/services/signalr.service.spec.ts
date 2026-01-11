@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     afterEach,
     beforeEach,
@@ -8,7 +9,6 @@ import {
     type Mock,
     type MockedObject,
 } from 'vitest';
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { HubConnectionBuilder } from '@microsoft/signalr';
 import { SignalrService } from './signalr.service';
@@ -484,7 +484,7 @@ describe('SignalrService', () => {
             const setIntervalSpy = vi
                 .spyOn(window, 'setInterval')
                 .mockImplementation(
-                    (callback: TimerHandler, delay?: number) => {
+                    (callback: TimerHandler) => {
                         retryFunction = callback as Function;
                         return 123 as any;
                     },

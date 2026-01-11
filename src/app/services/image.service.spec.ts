@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { ImageService } from './image.service';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
