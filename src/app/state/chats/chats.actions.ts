@@ -1,5 +1,5 @@
 import { createActionGroup, props } from '@ngrx/store';
-import { IChatDto } from 'src/app/api-client/api-client';
+import { IChatDto } from '../../api-client/api-client';
 
 export const chatsActions = createActionGroup({
     source: 'Chats',

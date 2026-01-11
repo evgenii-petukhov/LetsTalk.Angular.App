@@ -11,6 +11,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import { MediaToggleButtonComponent } from './media-toggle-button.component';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('MediaToggleButtonComponent', () => {
     let component: MediaToggleButtonComponent;
@@ -86,7 +87,7 @@ describe('MediaToggleButtonComponent', () => {
 
     describe('Button click functionality', () => {
         it('should emit buttonClick event when button is clicked', () => {
-            spyOn(component.buttonClick, 'emit');
+            vi.spyOn(component.buttonClick, 'emit');
 
             const button = fixture.debugElement.query(By.css('button'));
             button.nativeElement.click();
@@ -95,7 +96,7 @@ describe('MediaToggleButtonComponent', () => {
         });
 
         it('should call onButtonClicked when button is clicked', () => {
-            spyOn(component, 'onButtonClicked');
+            vi.spyOn(component, 'onButtonClicked');
 
             const button = fixture.debugElement.query(By.css('button'));
             button.nativeElement.click();
@@ -104,7 +105,7 @@ describe('MediaToggleButtonComponent', () => {
         });
 
         it('should emit buttonClick event when onButtonClicked is called directly', () => {
-            spyOn(component.buttonClick, 'emit');
+            vi.spyOn(component.buttonClick, 'emit');
 
             component.onButtonClicked();
 

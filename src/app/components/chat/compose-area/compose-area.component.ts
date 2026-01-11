@@ -7,19 +7,19 @@ import {
     computed,
     ViewChild,
 } from '@angular/core';
-import { required, validate } from 'src/app/decorators/required.decorator';
-import { IChatDto, IMessageDto } from 'src/app/api-client/api-client';
-import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
+import { required, validate } from '../../../decorators/required.decorator';
+import { IChatDto, IMessageDto } from '../../../api-client/api-client';
+import { selectSelectedChat } from '../../../state/selected-chat/selected-chat.selector';
 import { Subject, takeUntil } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { IdGeneratorService } from 'src/app/services/id-generator.service';
-import { ApiService } from 'src/app/services/api.service';
-import { StoreService } from 'src/app/services/store.service';
-import { errorMessages } from 'src/app/constants/errors';
-import { ErrorService } from 'src/app/services/error.service';
-import { environment } from 'src/environments/environment';
-import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
-import { ImageUploadService } from 'src/app/services/image-upload.service';
+import { IdGeneratorService } from '../../../services/id-generator.service';
+import { ApiService } from '../../../services/api.service';
+import { StoreService } from '../../../services/store.service';
+import { errorMessages } from '../../../constants/errors';
+import { ErrorService } from '../../../services/error.service';
+import { environment } from '../../../../environments/environment';
+import { ImageRoles, UploadImageResponse } from '../../../protos/file_upload_pb';
+import { ImageUploadService } from '../../../services/image-upload.service';
 import { AutoResizeTextAreaComponent } from '../auto-resize-text-area/auto-resize-text-area.component';
 import { Router } from '@angular/router';
 

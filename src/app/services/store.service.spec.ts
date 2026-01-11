@@ -1,3 +1,11 @@
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type MockedObject,
+} from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
@@ -23,12 +31,13 @@ import { messagesActions } from '../state/messages/messages.actions';
 import { selectedChatIdActions } from '../state/selected-chat/selected-chat-id.actions';
 import { videoCallActions } from '../state/video-call/video-call.actions';
 import { selectedChatUiActions } from '../state/selected-chat-ui/selected-chat-ui.actions';
+import { DownloadImageResponse } from '../protos/file_upload_pb';
 
 describe('StoreService', () => {
     let service: StoreService;
-    let store: jasmine.SpyObj<Store>;
-    let apiService: jasmine.SpyObj<ApiService>;
-    let fileStorageService: jasmine.SpyObj<FileStorageService>;
+    let store: MockedObject<Store>;
+    let apiService: MockedObject<ApiService>;
+    let fileStorageService: MockedObject<FileStorageService>;
 
     const imageKey: IImageDto = {
         id: 'image-id',
@@ -54,21 +63,24 @@ describe('StoreService', () => {
         id: 'profileId',
         image: new ImageDto({
             id: 'imageId',
-            fileStorageTypeId: 1
+            fileStorageTypeId: 1,
         }),
     };
 
     beforeEach(() => {
-        store = jasmine.createSpyObj('Store', ['dispatch', 'select']);
-        apiService = jasmine.createSpyObj('ApiService', [
-            'markAsRead',
-            'getChats',
-            'getAccounts',
-            'getProfile',
-        ]);
-        fileStorageService = jasmine.createSpyObj('FileStorageService', [
-            'download',
-        ]);
+        store = {
+            dispatch: vi.fn().mockName('Store.dispatch'),
+            select: vi.fn().mockName('Store.select'),
+        } as MockedObject<Store>;
+        apiService = {
+            markAsRead: vi.fn().mockName('ApiService.markAsRead'),
+            getChats: vi.fn().mockName('ApiService.getChats'),
+            getAccounts: vi.fn().mockName('ApiService.getAccounts'),
+            getProfile: vi.fn().mockName('ApiService.getProfile'),
+        } as MockedObject<ApiService>;
+        fileStorageService = {
+            download: vi.fn().mockName('FileStorageService.download'),
+        } as MockedObject<FileStorageService>;
 
         TestBed.configureTestingModule({
             providers: [
@@ -80,11 +92,11 @@ describe('StoreService', () => {
         });
 
         service = TestBed.inject(StoreService);
-        store = TestBed.inject(Store) as jasmine.SpyObj<Store>;
-        apiService = TestBed.inject(ApiService) as jasmine.SpyObj<ApiService>;
+        store = TestBed.inject(Store) as MockedObject<Store>;
+        apiService = TestBed.inject(ApiService) as MockedObject<ApiService>;
         fileStorageService = TestBed.inject(
             FileStorageService,
-        ) as jasmine.SpyObj<FileStorageService>;
+        ) as MockedObject<FileStorageService>;
     });
 
     describe('markAllAsRead', () => {
@@ -96,7 +108,7 @@ describe('StoreService', () => {
                 lastMessageDate: 1234567890,
             };
 
-            apiService.markAsRead.and.resolveTo();
+            apiService.markAsRead.mockResolvedValue();
 
             await service.markAllAsRead(chat);
 
@@ -116,7 +128,7 @@ describe('StoreService', () => {
     describe('initChatStorage', () => {
         it('should initialize chat storage with API response if force is true', async () => {
             const mockChats = [{ id: '1' }] as IChatDto[];
-            apiService.getChats.and.resolveTo(mockChats);
+            apiService.getChats.mockResolvedValue(mockChats);
 
             await service.initChatStorage(true);
 
@@ -128,7 +140,7 @@ describe('StoreService', () => {
 
         it('should initialize chat storage with store value if force is false', async () => {
             const mockChats = [{ id: '1' }] as IChatDto[];
-            store.select.and.returnValue(of(mockChats));
+            store.select.mockReturnValue(of(mockChats));
 
             await service.initChatStorage(false);
 
@@ -138,8 +150,8 @@ describe('StoreService', () => {
 
         it('should initialize chat storage with API response if store is empty and force is false', async () => {
             const mockChats = [{ id: '1' }] as IChatDto[];
-            store.select.and.returnValue(of(null));
-            apiService.getChats.and.resolveTo(mockChats);
+            store.select.mockReturnValue(of(null));
+            apiService.getChats.mockResolvedValue(mockChats);
 
             await service.initChatStorage(false);
 
@@ -153,7 +165,7 @@ describe('StoreService', () => {
     describe('initAccountStorage', () => {
         it('should initialize account storage with store value if available', async () => {
             const mockAccounts = [account] as IProfileDto[];
-            store.select.and.returnValue(of(mockAccounts));
+            store.select.mockReturnValue(of(mockAccounts));
 
             await service.initAccountStorage();
 
@@ -163,8 +175,8 @@ describe('StoreService', () => {
 
         it('should initialize account storage with API response if store is empty', async () => {
             const mockAccounts = [account] as IProfileDto[];
-            store.select.and.returnValue(of(null));
-            apiService.getAccounts.and.resolveTo(mockAccounts);
+            store.select.mockReturnValue(of(null));
+            apiService.getAccounts.mockResolvedValue(mockAccounts);
 
             await service.initAccountStorage();
 
@@ -300,9 +312,9 @@ describe('StoreService', () => {
             const mockChats = [
                 { id: '1' },
                 { id: '2' },
-                { id: '3' }
+                { id: '3' },
             ] as IChatDto[];
-            store.select.and.returnValue(of(mockChats));
+            store.select.mockReturnValue(of(mockChats));
 
             const result = await service.isChatIdValid('2');
 
@@ -313,9 +325,9 @@ describe('StoreService', () => {
             const mockChats = [
                 { id: '1' },
                 { id: '2' },
-                { id: '3' }
+                { id: '3' },
             ] as IChatDto[];
-            store.select.and.returnValue(of(mockChats));
+            store.select.mockReturnValue(of(mockChats));
 
             const result = await service.isChatIdValid('nonexistent');
 
@@ -323,7 +335,7 @@ describe('StoreService', () => {
         });
 
         it('should return false if chats array is null', async () => {
-            store.select.and.returnValue(of(null));
+            store.select.mockReturnValue(of(null));
 
             const result = await service.isChatIdValid('1');
 
@@ -331,7 +343,7 @@ describe('StoreService', () => {
         });
 
         it('should return false if chats array is undefined', async () => {
-            store.select.and.returnValue(of(undefined));
+            store.select.mockReturnValue(of(undefined));
 
             const result = await service.isChatIdValid('1');
 
@@ -339,7 +351,7 @@ describe('StoreService', () => {
         });
 
         it('should return false if chats array is empty', async () => {
-            store.select.and.returnValue(of([]));
+            store.select.mockReturnValue(of([]));
 
             const result = await service.isChatIdValid('1');
 
@@ -349,7 +361,7 @@ describe('StoreService', () => {
 
     describe('getLoggedInUser', () => {
         it('should return logged in user from store if exists', async () => {
-            store.select.and.returnValue(of(account));
+            store.select.mockReturnValue(of(account));
 
             const user = await service.getLoggedInUser();
 
@@ -358,8 +370,8 @@ describe('StoreService', () => {
         });
 
         it('should fetch logged in user from API if not in store', async () => {
-            store.select.and.returnValue(of(null));
-            apiService.getProfile.and.resolveTo(account);
+            store.select.mockReturnValue(of(null));
+            apiService.getProfile.mockResolvedValue(account);
 
             const user = await service.getLoggedInUser();
 
@@ -379,7 +391,7 @@ describe('StoreService', () => {
                 width: 100,
                 height: 100,
             };
-            store.select.and.returnValue(of([mockImage]));
+            store.select.mockReturnValue(of([mockImage]));
 
             const image = await service.getImageContent(imageKey);
 
@@ -388,20 +400,22 @@ describe('StoreService', () => {
         });
 
         it('should download image if not in store', async () => {
-            const mockResponse = jasmine.createSpyObj('DownloadImageResponse', [
-                'getContent',
-                'getWidth',
-                'getHeight',
-            ]);
+            const mockResponse = {
+                getContent: vi
+                    .fn()
+                    .mockName('DownloadImageResponse.getContent'),
+                getWidth: vi.fn().mockName('DownloadImageResponse.getWidth'),
+                getHeight: vi.fn().mockName('DownloadImageResponse.getHeight'),
+            } as MockedObject<DownloadImageResponse>;
             const mockContent = new Uint8Array([97, 98, 99]); // 'abc' in Uint8Array
-            mockResponse.getContent.and.returnValue(mockContent);
-            mockResponse.getWidth.and.returnValue(100);
-            mockResponse.getHeight.and.returnValue(100);
+            mockResponse.getContent.mockReturnValue(mockContent);
+            mockResponse.getWidth.mockReturnValue(100);
+            mockResponse.getHeight.mockReturnValue(100);
 
-            store.select.and.returnValue(of([]));
-            fileStorageService.download.and.resolveTo(mockResponse);
+            store.select.mockReturnValue(of([]));
+            fileStorageService.download.mockResolvedValue(mockResponse);
             const imageUrl = 'data:image/png;base64,...';
-            spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);
+            vi.spyOn(URL, 'createObjectURL').mockReturnValue(imageUrl);
 
             const image = await service.getImageContent(imageKey);
 
@@ -550,8 +564,8 @@ describe('StoreService', () => {
                 lastMessageDate: 1234567890,
             };
 
-            apiService.markAsRead.and.resolveTo();
-            spyOn(service, 'setLastMessageInfo');
+            apiService.markAsRead.mockResolvedValue();
+            vi.spyOn(service, 'setLastMessageInfo');
 
             await service.markAllAsRead(chat);
 
@@ -565,20 +579,22 @@ describe('StoreService', () => {
 
     describe('getImageContent edge cases', () => {
         it('should handle string content type from download response', async () => {
-            const mockResponse = jasmine.createSpyObj('DownloadImageResponse', [
-                'getContent',
-                'getWidth',
-                'getHeight',
-            ]);
+            const mockResponse = {
+                getContent: vi
+                    .fn()
+                    .mockName('DownloadImageResponse.getContent'),
+                getWidth: vi.fn().mockName('DownloadImageResponse.getWidth'),
+                getHeight: vi.fn().mockName('DownloadImageResponse.getHeight'),
+            } as MockedObject<DownloadImageResponse>;
             const mockContent = 'string-content';
-            mockResponse.getContent.and.returnValue(mockContent);
-            mockResponse.getWidth.and.returnValue(150);
-            mockResponse.getHeight.and.returnValue(200);
+            mockResponse.getContent.mockReturnValue(mockContent);
+            mockResponse.getWidth.mockReturnValue(150);
+            mockResponse.getHeight.mockReturnValue(200);
 
-            store.select.and.returnValue(of([]));
-            fileStorageService.download.and.resolveTo(mockResponse);
+            store.select.mockReturnValue(of([]));
+            fileStorageService.download.mockResolvedValue(mockResponse);
             const imageUrl = 'data:image/png;base64,string-content';
-            spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);
+            vi.spyOn(URL, 'createObjectURL').mockReturnValue(imageUrl);
 
             const image = await service.getImageContent(imageKey);
 
@@ -589,20 +605,22 @@ describe('StoreService', () => {
         });
 
         it('should throw error for unsupported content type', async () => {
-            const mockResponse = jasmine.createSpyObj('DownloadImageResponse', [
-                'getContent',
-                'getWidth',
-                'getHeight',
-            ]);
+            const mockResponse = {
+                getContent: vi
+                    .fn()
+                    .mockName('DownloadImageResponse.getContent'),
+                getWidth: vi.fn().mockName('DownloadImageResponse.getWidth'),
+                getHeight: vi.fn().mockName('DownloadImageResponse.getHeight'),
+            };
             const mockContent = { unsupported: 'type' }; // Unsupported type
-            mockResponse.getContent.and.returnValue(mockContent);
+            mockResponse.getContent.mockReturnValue(mockContent);
 
-            store.select.and.returnValue(of([]));
-            fileStorageService.download.and.resolveTo(mockResponse);
+            store.select.mockReturnValue(of([]));
+            fileStorageService.download.mockResolvedValue(mockResponse as any);
 
             try {
                 await service.getImageContent(imageKey);
-                fail('Expected error to be thrown');
+                throw new Error('Expected error to be thrown');
             } catch (error) {
                 expect(error.message).toBe('Unsupported content type');
             }
@@ -615,7 +633,7 @@ describe('StoreService', () => {
                 width: 300,
                 height: 400,
             };
-            store.select.and.returnValue(of([cachedImage]));
+            store.select.mockReturnValue(of([cachedImage]));
 
             const result = await service.getImageContent(imageKey);
 
@@ -624,20 +642,22 @@ describe('StoreService', () => {
         });
 
         it('should handle empty image cache array', async () => {
-            const mockResponse = jasmine.createSpyObj('DownloadImageResponse', [
-                'getContent',
-                'getWidth',
-                'getHeight',
-            ]);
+            const mockResponse = {
+                getContent: vi
+                    .fn()
+                    .mockName('DownloadImageResponse.getContent'),
+                getWidth: vi.fn().mockName('DownloadImageResponse.getWidth'),
+                getHeight: vi.fn().mockName('DownloadImageResponse.getHeight'),
+            };
             const mockContent = new Uint8Array([1, 2, 3]);
-            mockResponse.getContent.and.returnValue(mockContent);
-            mockResponse.getWidth.and.returnValue(100);
-            mockResponse.getHeight.and.returnValue(100);
+            mockResponse.getContent.mockReturnValue(mockContent);
+            mockResponse.getWidth.mockReturnValue(100);
+            mockResponse.getHeight.mockReturnValue(100);
 
-            store.select.and.returnValue(of([])); // Empty array
-            fileStorageService.download.and.resolveTo(mockResponse);
+            store.select.mockReturnValue(of([])); // Empty array
+            fileStorageService.download.mockResolvedValue(mockResponse as any);
             const imageUrl = 'data:image/png;base64,generated';
-            spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);
+            vi.spyOn(URL, 'createObjectURL').mockReturnValue(imageUrl);
 
             const image = await service.getImageContent(imageKey);
 
@@ -646,20 +666,22 @@ describe('StoreService', () => {
         });
 
         it('should handle null image cache', async () => {
-            const mockResponse = jasmine.createSpyObj('DownloadImageResponse', [
-                'getContent',
-                'getWidth',
-                'getHeight',
-            ]);
+            const mockResponse = {
+                getContent: vi
+                    .fn()
+                    .mockName('DownloadImageResponse.getContent'),
+                getWidth: vi.fn().mockName('DownloadImageResponse.getWidth'),
+                getHeight: vi.fn().mockName('DownloadImageResponse.getHeight'),
+            };
             const mockContent = new Uint8Array([1, 2, 3]);
-            mockResponse.getContent.and.returnValue(mockContent);
-            mockResponse.getWidth.and.returnValue(100);
-            mockResponse.getHeight.and.returnValue(100);
+            mockResponse.getContent.mockReturnValue(mockContent);
+            mockResponse.getWidth.mockReturnValue(100);
+            mockResponse.getHeight.mockReturnValue(100);
 
-            store.select.and.returnValue(of(null)); // Null cache
-            fileStorageService.download.and.resolveTo(mockResponse);
+            store.select.mockReturnValue(of(null)); // Null cache
+            fileStorageService.download.mockResolvedValue(mockResponse as any);
             const imageUrl = 'data:image/png;base64,generated';
-            spyOn(URL, 'createObjectURL').and.returnValue(imageUrl);
+            vi.spyOn(URL, 'createObjectURL').mockReturnValue(imageUrl);
 
             const image = await service.getImageContent(imageKey);
 

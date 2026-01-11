@@ -1,12 +1,12 @@
 import { Component, computed, inject, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
-import { IChatDto } from 'src/app/api-client/api-client';
-import { BackButtonStatus } from 'src/app/models/back-button-status';
+import { selectSelectedChat } from '../../../state/selected-chat/selected-chat.selector';
+import { IChatDto } from '../../../api-client/api-client';
+import { BackButtonStatus } from '../../../models/back-button-status';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
-import { StoreService } from 'src/app/services/store.service';
-import { IdGeneratorService } from 'src/app/services/id-generator.service';
-import { ApiService } from 'src/app/services/api.service';
+import { StoreService } from '../../../services/store.service';
+import { IdGeneratorService } from '../../../services/id-generator.service';
+import { ApiService } from '../../../services/api.service';
 import { Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 

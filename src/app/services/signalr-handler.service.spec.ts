@@ -1,3 +1,12 @@
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type Mock,
+    type MockedObject,
+} from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { SignalrHandlerService } from './signalr-handler.service';
@@ -17,12 +26,12 @@ import {
 
 describe('SignalrHandlerService', () => {
     let service: SignalrHandlerService;
-    let apiService: jasmine.SpyObj<ApiService>;
-    let storeService: jasmine.SpyObj<StoreService>;
-    let signalrService: jasmine.SpyObj<SignalrService>;
-    let browserNotificationService: jasmine.SpyObj<BrowserNotificationService>;
-    let rtcConnectionService: jasmine.SpyObj<RtcConnectionService>;
-    let router: jasmine.SpyObj<Router>;
+    let apiService: MockedObject<ApiService>;
+    let storeService: MockedObject<StoreService>;
+    let signalrService: MockedObject<SignalrService>;
+    let browserNotificationService: MockedObject<BrowserNotificationService>;
+    let rtcConnectionService: MockedObject<RtcConnectionService>;
+    let router: MockedObject<Router>;
 
     const mockMessageDto: IMessageDto = {
         id: '1',
@@ -61,38 +70,50 @@ describe('SignalrHandlerService', () => {
 
     beforeEach(() => {
         // Create spies with return values
-        apiService = jasmine.createSpyObj('ApiService', ['markAsRead']);
-        apiService.markAsRead.and.returnValue(Promise.resolve());
+        apiService = {
+            markAsRead: vi.fn().mockName('ApiService.markAsRead'),
+        } as MockedObject<ApiService>;
+        apiService.markAsRead.mockReturnValue(Promise.resolve());
 
-        storeService = jasmine.createSpyObj('StoreService', [
-            'setLastMessageInfo',
-            'addMessage',
-            'incrementUnreadMessages',
-            'initChatStorage',
-            'setLinkPreview',
-            'setImagePreview',
-            'initIncomingCall',
-        ]);
-        storeService.initChatStorage.and.returnValue(Promise.resolve());
+        storeService = {
+            setLastMessageInfo: vi
+                .fn()
+                .mockName('StoreService.setLastMessageInfo'),
+            addMessage: vi.fn().mockName('StoreService.addMessage'),
+            incrementUnreadMessages: vi
+                .fn()
+                .mockName('StoreService.incrementUnreadMessages'),
+            initChatStorage: vi.fn().mockName('StoreService.initChatStorage'),
+            setLinkPreview: vi.fn().mockName('StoreService.setLinkPreview'),
+            setImagePreview: vi.fn().mockName('StoreService.setImagePreview'),
+            initIncomingCall: vi.fn().mockName('StoreService.initIncomingCall'),
+        } as MockedObject<StoreService>;
+        storeService.initChatStorage.mockReturnValue(Promise.resolve());
 
-        signalrService = jasmine.createSpyObj('SignalrService', [
-            'init',
-            'removeHandlers',
-        ]);
-        signalrService.init.and.returnValue(Promise.resolve());
+        signalrService = {
+            init: vi.fn().mockName('SignalrService.init'),
+            removeHandlers: vi.fn().mockName('SignalrService.removeHandlers'),
+        } as MockedObject<SignalrService>;
+        signalrService.init.mockReturnValue(Promise.resolve());
 
-        browserNotificationService = jasmine.createSpyObj(
-            'BrowserNotificationService',
-            ['init', 'showNotification'],
-        );
-        browserNotificationService.init.and.returnValue(Promise.resolve());
+        browserNotificationService = {
+            init: vi.fn().mockName('BrowserNotificationService.init'),
+            showNotification: vi
+                .fn()
+                .mockName('BrowserNotificationService.showNotification'),
+        } as MockedObject<BrowserNotificationService>;
+        browserNotificationService.init.mockReturnValue(Promise.resolve());
 
-        rtcConnectionService = jasmine.createSpyObj('RtcConnectionService', [
-            'establishConnection',
-        ]);
+        rtcConnectionService = {
+            establishConnection: vi
+                .fn()
+                .mockName('RtcConnectionService.establishConnection'),
+        } as MockedObject<RtcConnectionService>;
 
-        router = jasmine.createSpyObj('Router', ['navigate']);
-        router.navigate.and.returnValue(Promise.resolve(true));
+        router = {
+            navigate: vi.fn().mockName('Router.navigate'),
+        } as MockedObject<Router>;
+        router.navigate.mockReturnValue(Promise.resolve(true));
 
         TestBed.configureTestingModule({
             providers: [
@@ -120,18 +141,18 @@ describe('SignalrHandlerService', () => {
     });
 
     describe('initHandlers', () => {
-        let handleMessageNotification: jasmine.Spy;
-        let handleLinkPreviewNotification: jasmine.Spy;
-        let handleImagePreviewNotification: jasmine.Spy;
-        let handleRtcSessionOfferNotification: jasmine.Spy;
-        let handleRtcSessionAnswerNotification: jasmine.Spy;
+        let handleMessageNotification: Mock;
+        let handleLinkPreviewNotification: Mock;
+        let handleImagePreviewNotification: Mock;
+        let handleRtcSessionOfferNotification: Mock;
+        let handleRtcSessionAnswerNotification: Mock;
 
         beforeEach(() => {
-            handleMessageNotification = jasmine.createSpy('handleMessageNotification');
-            handleLinkPreviewNotification = jasmine.createSpy('handleLinkPreviewNotification');
-            handleImagePreviewNotification = jasmine.createSpy('handleImagePreviewNotification');
-            handleRtcSessionOfferNotification = jasmine.createSpy('handleRtcSessionOfferNotification');
-            handleRtcSessionAnswerNotification = jasmine.createSpy('handleRtcSessionAnswerNotification');
+            handleMessageNotification = vi.fn();
+            handleLinkPreviewNotification = vi.fn();
+            handleImagePreviewNotification = vi.fn();
+            handleRtcSessionOfferNotification = vi.fn();
+            handleRtcSessionAnswerNotification = vi.fn();
         });
 
         it('should initialize browser notifications and SignalR handlers', async () => {
@@ -154,33 +175,37 @@ describe('SignalrHandlerService', () => {
         });
 
         it('should handle browser notification initialization failure gracefully', async () => {
-            browserNotificationService.init.and.returnValue(Promise.reject(new Error('Notification init failed')));
+            browserNotificationService.init.mockReturnValue(
+                Promise.reject(new Error('Notification init failed')),
+            );
 
-            await expectAsync(
+            await expect(
                 service.initHandlers(
                     handleMessageNotification,
                     handleLinkPreviewNotification,
                     handleImagePreviewNotification,
                     handleRtcSessionOfferNotification,
                     handleRtcSessionAnswerNotification,
-                )
-            ).toBeRejected();
+                ),
+            ).rejects.toThrow();
 
             expect(browserNotificationService.init).toHaveBeenCalledTimes(1);
         });
 
         it('should handle SignalR initialization failure gracefully', async () => {
-            signalrService.init.and.returnValue(Promise.reject(new Error('SignalR init failed')));
+            signalrService.init.mockReturnValue(
+                Promise.reject(new Error('SignalR init failed')),
+            );
 
-            await expectAsync(
+            await expect(
                 service.initHandlers(
                     handleMessageNotification,
                     handleLinkPreviewNotification,
                     handleImagePreviewNotification,
                     handleRtcSessionOfferNotification,
                     handleRtcSessionAnswerNotification,
-                )
-            ).toBeRejected();
+                ),
+            ).rejects.toThrow();
 
             expect(signalrService.init).toHaveBeenCalledTimes(1);
         });
@@ -215,7 +240,9 @@ describe('SignalrHandlerService', () => {
                 mockMessageDto.created,
                 mockMessageDto.id,
             );
-            expect(storeService.addMessage).toHaveBeenCalledWith(mockMessageDto);
+            expect(storeService.addMessage).toHaveBeenCalledWith(
+                mockMessageDto,
+            );
         });
 
         it('should not process further if message is mine', async () => {
@@ -236,7 +263,9 @@ describe('SignalrHandlerService', () => {
             expect(storeService.addMessage).toHaveBeenCalledWith(myMessageDto);
             expect(apiService.markAsRead).not.toHaveBeenCalled();
             expect(storeService.incrementUnreadMessages).not.toHaveBeenCalled();
-            expect(browserNotificationService.showNotification).not.toHaveBeenCalled();
+            expect(
+                browserNotificationService.showNotification,
+            ).not.toHaveBeenCalled();
         });
 
         it('should mark message as read if window is active and chatId matches selectedChatId', async () => {
@@ -252,7 +281,9 @@ describe('SignalrHandlerService', () => {
                 mockMessageDto.id,
             );
             expect(storeService.incrementUnreadMessages).not.toHaveBeenCalled();
-            expect(browserNotificationService.showNotification).not.toHaveBeenCalled();
+            expect(
+                browserNotificationService.showNotification,
+            ).not.toHaveBeenCalled();
         });
 
         it('should increment unread messages and show notification if chatId does not match selectedChatId', async () => {
@@ -264,12 +295,12 @@ describe('SignalrHandlerService', () => {
             );
 
             expect(storeService.addMessage).not.toHaveBeenCalled();
-            expect(storeService.incrementUnreadMessages).toHaveBeenCalledWith(mockMessageDto.chatId);
-            expect(browserNotificationService.showNotification).toHaveBeenCalledWith(
-                'Chat 1',
-                mockMessageDto.text,
-                false,
+            expect(storeService.incrementUnreadMessages).toHaveBeenCalledWith(
+                mockMessageDto.chatId,
             );
+            expect(
+                browserNotificationService.showNotification,
+            ).toHaveBeenCalledWith('Chat 1', mockMessageDto.text, false);
         });
 
         it('should show "Image" notification for image messages', async () => {
@@ -280,16 +311,17 @@ describe('SignalrHandlerService', () => {
                 false,
             );
 
-            expect(browserNotificationService.showNotification).toHaveBeenCalledWith(
-                'Chat 1',
-                'Image',
-                false,
-            );
+            expect(
+                browserNotificationService.showNotification,
+            ).toHaveBeenCalledWith('Chat 1', 'Image', false);
         });
 
         it('should initialize chat storage if chat is not found', async () => {
-            const messageWithUnknownChat = { ...mockMessageDto, chatId: 'nonExistentChatId' };
-            
+            const messageWithUnknownChat = {
+                ...mockMessageDto,
+                chatId: 'nonExistentChatId',
+            };
+
             await service.handleMessageNotification(
                 messageWithUnknownChat,
                 'selectedChatId', // Different from message chatId
@@ -299,7 +331,9 @@ describe('SignalrHandlerService', () => {
 
             expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
             expect(storeService.incrementUnreadMessages).not.toHaveBeenCalled();
-            expect(browserNotificationService.showNotification).not.toHaveBeenCalled();
+            expect(
+                browserNotificationService.showNotification,
+            ).not.toHaveBeenCalled();
         });
 
         it('should handle empty chats array', async () => {
@@ -320,16 +354,18 @@ describe('SignalrHandlerService', () => {
         });
 
         it('should handle markAsRead API failure gracefully', async () => {
-            apiService.markAsRead.and.returnValue(Promise.reject(new Error('API Error')));
+            apiService.markAsRead.mockReturnValue(
+                Promise.reject(new Error('API Error')),
+            );
 
-            await expectAsync(
+            await expect(
                 service.handleMessageNotification(
                     mockMessageDto,
                     'chatId',
                     mockChats,
                     true,
-                )
-            ).toBeRejected();
+                ),
+            ).rejects.toThrow();
 
             expect(apiService.markAsRead).toHaveBeenCalledWith(
                 mockMessageDto.chatId,
@@ -338,18 +374,23 @@ describe('SignalrHandlerService', () => {
         });
 
         it('should handle initChatStorage failure gracefully', async () => {
-            storeService.initChatStorage.and.returnValue(Promise.reject(new Error('Storage Error')));
-            
-            const messageWithUnknownChat = { ...mockMessageDto, chatId: 'nonExistentChatId' };
+            storeService.initChatStorage.mockReturnValue(
+                Promise.reject(new Error('Storage Error')),
+            );
 
-            await expectAsync(
+            const messageWithUnknownChat = {
+                ...mockMessageDto,
+                chatId: 'nonExistentChatId',
+            };
+
+            await expect(
                 service.handleMessageNotification(
                     messageWithUnknownChat,
                     'selectedChatId', // Different from message chatId
                     mockChats, // mockChats doesn't contain 'nonExistentChatId'
                     false,
-                )
-            ).toBeRejected();
+                ),
+            ).rejects.toThrow();
 
             expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
         });
@@ -359,16 +400,16 @@ describe('SignalrHandlerService', () => {
                 mockMessageDto,
                 'otherChatId',
                 mockChats,
-                true, // Window is active but different chat
+                true,
             );
 
             expect(apiService.markAsRead).not.toHaveBeenCalled();
-            expect(storeService.incrementUnreadMessages).toHaveBeenCalledWith(mockMessageDto.chatId);
-            expect(browserNotificationService.showNotification).toHaveBeenCalledWith(
-                'Chat 1',
-                mockMessageDto.text,
-                true, // Window is active
+            expect(storeService.incrementUnreadMessages).toHaveBeenCalledWith(
+                mockMessageDto.chatId,
             );
+            expect(
+                browserNotificationService.showNotification,
+            ).toHaveBeenCalledWith('Chat 1', mockMessageDto.text, true);
         });
 
         it('should handle null/undefined message properties', async () => {
@@ -388,7 +429,9 @@ describe('SignalrHandlerService', () => {
                 false,
             );
 
-            expect(browserNotificationService.showNotification).toHaveBeenCalledWith(
+            expect(
+                browserNotificationService.showNotification,
+            ).toHaveBeenCalledWith(
                 'Chat 1',
                 null, // Should handle null text
                 false,
@@ -400,23 +443,34 @@ describe('SignalrHandlerService', () => {
         it('should set link preview if chatId matches selectedChatId', () => {
             service.handleLinkPreviewNotification(mockLinkPreviewDto, 'chatId');
 
-            expect(storeService.setLinkPreview).toHaveBeenCalledWith(mockLinkPreviewDto);
+            expect(storeService.setLinkPreview).toHaveBeenCalledWith(
+                mockLinkPreviewDto,
+            );
         });
 
         it('should not set link preview if chatId does not match selectedChatId', () => {
-            service.handleLinkPreviewNotification(mockLinkPreviewDto, 'otherChatId');
+            service.handleLinkPreviewNotification(
+                mockLinkPreviewDto,
+                'otherChatId',
+            );
 
             expect(storeService.setLinkPreview).not.toHaveBeenCalled();
         });
 
         it('should handle null selectedChatId', () => {
-            service.handleLinkPreviewNotification(mockLinkPreviewDto, null as any);
+            service.handleLinkPreviewNotification(
+                mockLinkPreviewDto,
+                null as any,
+            );
 
             expect(storeService.setLinkPreview).not.toHaveBeenCalled();
         });
 
         it('should handle undefined selectedChatId', () => {
-            service.handleLinkPreviewNotification(mockLinkPreviewDto, undefined as any);
+            service.handleLinkPreviewNotification(
+                mockLinkPreviewDto,
+                undefined as any,
+            );
 
             expect(storeService.setLinkPreview).not.toHaveBeenCalled();
         });
@@ -428,8 +482,11 @@ describe('SignalrHandlerService', () => {
         });
 
         it('should handle null linkPreviewDto chatId', () => {
-            const nullChatIdDto = { ...mockLinkPreviewDto, chatId: null as any };
-            
+            const nullChatIdDto = {
+                ...mockLinkPreviewDto,
+                chatId: null as any,
+            };
+
             service.handleLinkPreviewNotification(nullChatIdDto, 'chatId');
 
             expect(storeService.setLinkPreview).not.toHaveBeenCalled();
@@ -441,10 +498,12 @@ describe('SignalrHandlerService', () => {
                 url: null,
                 title: undefined,
             } as any;
-            
+
             service.handleLinkPreviewNotification(malformedDto, 'chatId');
 
-            expect(storeService.setLinkPreview).toHaveBeenCalledWith(malformedDto);
+            expect(storeService.setLinkPreview).toHaveBeenCalledWith(
+                malformedDto,
+            );
         });
 
         it('should handle very long URLs and titles', () => {
@@ -453,10 +512,12 @@ describe('SignalrHandlerService', () => {
                 url: 'http://example.com/' + 'a'.repeat(2000),
                 title: 'Very long title: ' + 'b'.repeat(1000),
             };
-            
+
             service.handleLinkPreviewNotification(longDataDto, 'chatId');
 
-            expect(storeService.setLinkPreview).toHaveBeenCalledWith(longDataDto);
+            expect(storeService.setLinkPreview).toHaveBeenCalledWith(
+                longDataDto,
+            );
         });
 
         it('should handle special characters in link data', () => {
@@ -465,34 +526,50 @@ describe('SignalrHandlerService', () => {
                 url: 'http://example.com/path with spaces & émojis 🔗',
                 title: 'Title with <script>alert("xss")</script> & 中文',
             };
-            
+
             service.handleLinkPreviewNotification(specialCharsDto, 'chatId');
 
-            expect(storeService.setLinkPreview).toHaveBeenCalledWith(specialCharsDto);
+            expect(storeService.setLinkPreview).toHaveBeenCalledWith(
+                specialCharsDto,
+            );
         });
     });
 
     describe('handleImagePreviewNotification', () => {
         it('should set image preview if chatId matches selectedChatId', () => {
-            service.handleImagePreviewNotification(mockImagePreviewDto, 'chatId');
+            service.handleImagePreviewNotification(
+                mockImagePreviewDto,
+                'chatId',
+            );
 
-            expect(storeService.setImagePreview).toHaveBeenCalledWith(mockImagePreviewDto);
+            expect(storeService.setImagePreview).toHaveBeenCalledWith(
+                mockImagePreviewDto,
+            );
         });
 
         it('should not set image preview if chatId does not match selectedChatId', () => {
-            service.handleImagePreviewNotification(mockImagePreviewDto, 'otherChatId');
+            service.handleImagePreviewNotification(
+                mockImagePreviewDto,
+                'otherChatId',
+            );
 
             expect(storeService.setImagePreview).not.toHaveBeenCalled();
         });
 
         it('should handle null selectedChatId', () => {
-            service.handleImagePreviewNotification(mockImagePreviewDto, null as any);
+            service.handleImagePreviewNotification(
+                mockImagePreviewDto,
+                null as any,
+            );
 
             expect(storeService.setImagePreview).not.toHaveBeenCalled();
         });
 
         it('should handle undefined selectedChatId', () => {
-            service.handleImagePreviewNotification(mockImagePreviewDto, undefined as any);
+            service.handleImagePreviewNotification(
+                mockImagePreviewDto,
+                undefined as any,
+            );
 
             expect(storeService.setImagePreview).not.toHaveBeenCalled();
         });
@@ -504,8 +581,11 @@ describe('SignalrHandlerService', () => {
         });
 
         it('should handle null imagePreviewDto chatId', () => {
-            const nullChatIdDto = { ...mockImagePreviewDto, chatId: null as any };
-            
+            const nullChatIdDto = {
+                ...mockImagePreviewDto,
+                chatId: null as any,
+            };
+
             service.handleImagePreviewNotification(nullChatIdDto, 'chatId');
 
             expect(storeService.setImagePreview).not.toHaveBeenCalled();
@@ -517,10 +597,12 @@ describe('SignalrHandlerService', () => {
                 imageId: null,
                 url: undefined,
             } as any;
-            
+
             service.handleImagePreviewNotification(malformedDto, 'chatId');
 
-            expect(storeService.setImagePreview).toHaveBeenCalledWith(malformedDto);
+            expect(storeService.setImagePreview).toHaveBeenCalledWith(
+                malformedDto,
+            );
         });
 
         it('should handle very long URLs', () => {
@@ -528,10 +610,12 @@ describe('SignalrHandlerService', () => {
                 ...mockImagePreviewDto,
                 url: 'http://example.com/' + 'a'.repeat(2000) + '.jpg',
             };
-            
+
             service.handleImagePreviewNotification(longUrlDto, 'chatId');
 
-            expect(storeService.setImagePreview).toHaveBeenCalledWith(longUrlDto);
+            expect(storeService.setImagePreview).toHaveBeenCalledWith(
+                longUrlDto,
+            );
         });
 
         it('should handle special characters in image data', () => {
@@ -540,10 +624,12 @@ describe('SignalrHandlerService', () => {
                 imageId: 'img-🖼️-special',
                 url: 'http://example.com/image with spaces & special chars.jpg',
             };
-            
+
             service.handleImagePreviewNotification(specialCharsDto, 'chatId');
 
-            expect(storeService.setImagePreview).toHaveBeenCalledWith(specialCharsDto);
+            expect(storeService.setImagePreview).toHaveBeenCalledWith(
+                specialCharsDto,
+            );
         });
     });
 
@@ -559,8 +645,14 @@ describe('SignalrHandlerService', () => {
                     offer,
                 );
 
-                expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
-                expect(storeService.initIncomingCall).toHaveBeenCalledWith(chatId, offer);
+                expect(router.navigate).toHaveBeenCalledWith([
+                    '/messenger/chat',
+                    chatId,
+                ]);
+                expect(storeService.initIncomingCall).toHaveBeenCalledWith(
+                    chatId,
+                    offer,
+                );
                 expect(storeService.initChatStorage).not.toHaveBeenCalled();
             });
 
@@ -575,8 +667,14 @@ describe('SignalrHandlerService', () => {
                 );
 
                 expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
-                expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
-                expect(storeService.initIncomingCall).toHaveBeenCalledWith(chatId, offer);
+                expect(router.navigate).toHaveBeenCalledWith([
+                    '/messenger/chat',
+                    chatId,
+                ]);
+                expect(storeService.initIncomingCall).toHaveBeenCalledWith(
+                    chatId,
+                    offer,
+                );
             });
 
             it('should handle empty chats array', async () => {
@@ -590,50 +688,63 @@ describe('SignalrHandlerService', () => {
                 );
 
                 expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
-                expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
-                expect(storeService.initIncomingCall).toHaveBeenCalledWith(chatId, offer);
+                expect(router.navigate).toHaveBeenCalledWith([
+                    '/messenger/chat',
+                    chatId,
+                ]);
+                expect(storeService.initIncomingCall).toHaveBeenCalledWith(
+                    chatId,
+                    offer,
+                );
             });
 
             it('should handle router navigation failure gracefully', async () => {
                 const chatId = 'chatId';
                 const offer = 'mock-offer-string';
-                router.navigate.and.returnValue(Promise.reject(new Error('Navigation failed')));
+                router.navigate.mockReturnValue(
+                    Promise.reject(new Error('Navigation failed')),
+                );
 
-                await expectAsync(
+                await expect(
                     service.handleRtcSessionOfferNotification(
                         mockChats,
                         chatId,
                         offer,
-                    )
-                ).toBeRejected();
+                    ),
+                ).rejects.toThrow();
 
-                expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
+                expect(router.navigate).toHaveBeenCalledWith([
+                    '/messenger/chat',
+                    chatId,
+                ]);
             });
 
             it('should handle initChatStorage failure gracefully', async () => {
                 const chatId = 'nonExistentChatId';
                 const offer = 'mock-offer-string';
-                storeService.initChatStorage.and.returnValue(Promise.reject(new Error('Storage init failed')));
+                storeService.initChatStorage.mockReturnValue(
+                    Promise.reject(new Error('Storage init failed')),
+                );
 
-                await expectAsync(
+                await expect(
                     service.handleRtcSessionOfferNotification(
                         mockChats,
                         chatId,
                         offer,
-                    )
-                ).toBeRejected();
+                    ),
+                ).rejects.toThrow();
 
                 expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
             });
 
             it('should handle null/undefined parameters', async () => {
-                await expectAsync(
+                await expect(
                     service.handleRtcSessionOfferNotification(
                         null as any,
                         'chatId',
                         'offer',
-                    )
-                ).toBeRejected();
+                    ),
+                ).rejects.toThrow();
             });
 
             it('should handle empty string parameters', async () => {
@@ -647,8 +758,14 @@ describe('SignalrHandlerService', () => {
                 );
 
                 expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
-                expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
-                expect(storeService.initIncomingCall).toHaveBeenCalledWith(chatId, offer);
+                expect(router.navigate).toHaveBeenCalledWith([
+                    '/messenger/chat',
+                    chatId,
+                ]);
+                expect(storeService.initIncomingCall).toHaveBeenCalledWith(
+                    chatId,
+                    offer,
+                );
             });
         });
 
@@ -658,7 +775,9 @@ describe('SignalrHandlerService', () => {
 
                 service.handleRtcSessionAnswerNotification(answer);
 
-                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+                expect(
+                    rtcConnectionService.establishConnection,
+                ).toHaveBeenCalledWith(answer);
             });
 
             it('should handle empty answer string', () => {
@@ -666,7 +785,9 @@ describe('SignalrHandlerService', () => {
 
                 service.handleRtcSessionAnswerNotification(answer);
 
-                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+                expect(
+                    rtcConnectionService.establishConnection,
+                ).toHaveBeenCalledWith(answer);
             });
 
             it('should handle null answer', () => {
@@ -674,7 +795,9 @@ describe('SignalrHandlerService', () => {
 
                 service.handleRtcSessionAnswerNotification(answer);
 
-                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+                expect(
+                    rtcConnectionService.establishConnection,
+                ).toHaveBeenCalledWith(answer);
             });
 
             it('should handle undefined answer', () => {
@@ -682,7 +805,9 @@ describe('SignalrHandlerService', () => {
 
                 service.handleRtcSessionAnswerNotification(answer);
 
-                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+                expect(
+                    rtcConnectionService.establishConnection,
+                ).toHaveBeenCalledWith(answer);
             });
 
             it('should be callable multiple times', () => {
@@ -692,9 +817,15 @@ describe('SignalrHandlerService', () => {
                 service.handleRtcSessionAnswerNotification(answer1);
                 service.handleRtcSessionAnswerNotification(answer2);
 
-                expect(rtcConnectionService.establishConnection).toHaveBeenCalledTimes(2);
-                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer1);
-                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer2);
+                expect(
+                    rtcConnectionService.establishConnection,
+                ).toHaveBeenCalledTimes(2);
+                expect(
+                    rtcConnectionService.establishConnection,
+                ).toHaveBeenCalledWith(answer1);
+                expect(
+                    rtcConnectionService.establishConnection,
+                ).toHaveBeenCalledWith(answer2);
             });
 
             it('should handle very long answer strings', () => {
@@ -702,7 +833,9 @@ describe('SignalrHandlerService', () => {
 
                 service.handleRtcSessionAnswerNotification(longAnswer);
 
-                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(longAnswer);
+                expect(
+                    rtcConnectionService.establishConnection,
+                ).toHaveBeenCalledWith(longAnswer);
             });
         });
     });
@@ -722,13 +855,17 @@ describe('SignalrHandlerService', () => {
                 mockMessageDto.created,
                 mockMessageDto.id,
             );
-            expect(storeService.addMessage).toHaveBeenCalledWith(mockMessageDto);
+            expect(storeService.addMessage).toHaveBeenCalledWith(
+                mockMessageDto,
+            );
             expect(apiService.markAsRead).toHaveBeenCalledWith(
                 mockMessageDto.chatId,
                 mockMessageDto.id,
             );
             expect(storeService.incrementUnreadMessages).not.toHaveBeenCalled();
-            expect(browserNotificationService.showNotification).not.toHaveBeenCalled();
+            expect(
+                browserNotificationService.showNotification,
+            ).not.toHaveBeenCalled();
         });
 
         it('should handle complete message workflow for inactive window and different chat', async () => {
@@ -747,21 +884,21 @@ describe('SignalrHandlerService', () => {
             );
             expect(storeService.addMessage).not.toHaveBeenCalled();
             expect(apiService.markAsRead).not.toHaveBeenCalled();
-            expect(storeService.incrementUnreadMessages).toHaveBeenCalledWith(mockMessageDto.chatId);
-            expect(browserNotificationService.showNotification).toHaveBeenCalledWith(
-                'Chat 1',
-                mockMessageDto.text,
-                false,
+            expect(storeService.incrementUnreadMessages).toHaveBeenCalledWith(
+                mockMessageDto.chatId,
             );
+            expect(
+                browserNotificationService.showNotification,
+            ).toHaveBeenCalledWith('Chat 1', mockMessageDto.text, false);
         });
 
         it('should handle service initialization and cleanup lifecycle', async () => {
             const handlers = {
-                message: jasmine.createSpy('messageHandler'),
-                linkPreview: jasmine.createSpy('linkPreviewHandler'),
-                imagePreview: jasmine.createSpy('imagePreviewHandler'),
-                rtcOffer: jasmine.createSpy('rtcOfferHandler'),
-                rtcAnswer: jasmine.createSpy('rtcAnswerHandler'),
+                message: vi.fn(),
+                linkPreview: vi.fn(),
+                imagePreview: vi.fn(),
+                rtcOffer: vi.fn(),
+                rtcAnswer: vi.fn(),
             };
 
             // Initialize
@@ -788,29 +925,53 @@ describe('SignalrHandlerService', () => {
             const answer = 'test-answer';
 
             // Handle offer
-            await service.handleRtcSessionOfferNotification(mockChats, chatId, offer);
+            await service.handleRtcSessionOfferNotification(
+                mockChats,
+                chatId,
+                offer,
+            );
 
-            expect(router.navigate).toHaveBeenCalledWith(['/messenger/chat', chatId]);
-            expect(storeService.initIncomingCall).toHaveBeenCalledWith(chatId, offer);
+            expect(router.navigate).toHaveBeenCalledWith([
+                '/messenger/chat',
+                chatId,
+            ]);
+            expect(storeService.initIncomingCall).toHaveBeenCalledWith(
+                chatId,
+                offer,
+            );
 
             // Handle answer
             service.handleRtcSessionAnswerNotification(answer);
 
-            expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+            expect(
+                rtcConnectionService.establishConnection,
+            ).toHaveBeenCalledWith(answer);
         });
 
         it('should handle mixed notification types in sequence', async () => {
             // Message notification
-            await service.handleMessageNotification(mockMessageDto, 'chatId', mockChats, true);
+            await service.handleMessageNotification(
+                mockMessageDto,
+                'chatId',
+                mockChats,
+                true,
+            );
 
             // Link preview notification
             service.handleLinkPreviewNotification(mockLinkPreviewDto, 'chatId');
 
             // Image preview notification
-            service.handleImagePreviewNotification(mockImagePreviewDto, 'chatId');
+            service.handleImagePreviewNotification(
+                mockImagePreviewDto,
+                'chatId',
+            );
 
             // RTC notifications
-            await service.handleRtcSessionOfferNotification(mockChats, 'chatId', 'offer');
+            await service.handleRtcSessionOfferNotification(
+                mockChats,
+                'chatId',
+                'offer',
+            );
             service.handleRtcSessionAnswerNotification('answer');
 
             // Verify all handlers were called
@@ -825,8 +986,18 @@ describe('SignalrHandlerService', () => {
     describe('Edge Cases and Error Handling', () => {
         it('should handle concurrent message notifications', async () => {
             const promises = [
-                service.handleMessageNotification(mockMessageDto, 'chatId', mockChats, true),
-                service.handleMessageNotification(mockImageMessageDto, 'chatId', mockChats, true),
+                service.handleMessageNotification(
+                    mockMessageDto,
+                    'chatId',
+                    mockChats,
+                    true,
+                ),
+                service.handleMessageNotification(
+                    mockImageMessageDto,
+                    'chatId',
+                    mockChats,
+                    true,
+                ),
             ];
 
             await Promise.all(promises);
@@ -846,14 +1017,14 @@ describe('SignalrHandlerService', () => {
             } as any;
 
             // Should not throw
-            await expectAsync(
+            await expect(
                 service.handleMessageNotification(
                     malformedMessage,
                     'chatId',
                     mockChats,
                     false,
-                )
-            ).toBeResolved();
+                ),
+            ).resolves.not.toThrow();
         });
 
         it('should handle very large chat arrays efficiently', async () => {
@@ -864,7 +1035,7 @@ describe('SignalrHandlerService', () => {
             })) as IChatDto[];
 
             const startTime = performance.now();
-            
+
             await service.handleMessageNotification(
                 mockMessageDto,
                 'otherChatId',
@@ -873,23 +1044,25 @@ describe('SignalrHandlerService', () => {
             );
 
             const endTime = performance.now();
-            
+
             // Should complete within reasonable time (less than 10ms)
             expect(endTime - startTime).toBeLessThan(10);
         });
 
         it('should handle service method failures in sequence', async () => {
             // Setup failures
-            storeService.setLastMessageInfo.and.throwError('Store error');
-            
-            await expectAsync(
+            storeService.setLastMessageInfo.mockImplementation(() => {
+                throw new Error('Store error');
+            });
+
+            await expect(
                 service.handleMessageNotification(
                     mockMessageDto,
                     'chatId',
                     mockChats,
                     true,
-                )
-            ).toBeRejected();
+                ),
+            ).rejects.toThrow();
 
             expect(storeService.setLastMessageInfo).toHaveBeenCalled();
         });
@@ -901,8 +1074,16 @@ describe('SignalrHandlerService', () => {
             const answer2 = 'answer2';
 
             const promises = [
-                service.handleRtcSessionOfferNotification(mockChats, 'chatId', offer1),
-                service.handleRtcSessionOfferNotification(mockChats, 'otherChatId', offer2),
+                service.handleRtcSessionOfferNotification(
+                    mockChats,
+                    'chatId',
+                    offer1,
+                ),
+                service.handleRtcSessionOfferNotification(
+                    mockChats,
+                    'otherChatId',
+                    offer2,
+                ),
             ];
 
             await Promise.all(promises);
@@ -912,7 +1093,9 @@ describe('SignalrHandlerService', () => {
 
             expect(router.navigate).toHaveBeenCalledTimes(2);
             expect(storeService.initIncomingCall).toHaveBeenCalledTimes(2);
-            expect(rtcConnectionService.establishConnection).toHaveBeenCalledTimes(2);
+            expect(
+                rtcConnectionService.establishConnection,
+            ).toHaveBeenCalledTimes(2);
         });
 
         it('should handle memory pressure scenarios', async () => {
@@ -922,8 +1105,13 @@ describe('SignalrHandlerService', () => {
                 id: `msg-${i}`,
             }));
 
-            const promises = notifications.map(msg =>
-                service.handleMessageNotification(msg, 'chatId', mockChats, true)
+            const promises = notifications.map((msg) =>
+                service.handleMessageNotification(
+                    msg,
+                    'chatId',
+                    mockChats,
+                    true,
+                ),
             );
 
             await Promise.all(promises);
@@ -939,8 +1127,10 @@ describe('SignalrHandlerService', () => {
         });
 
         it('should handle readonly array mutations safely', async () => {
-            const readonlyChats = Object.freeze([...mockChats]) as readonly IChatDto[];
-            
+            const readonlyChats = Object.freeze([
+                ...mockChats,
+            ]) as readonly IChatDto[];
+
             await service.handleMessageNotification(
                 mockMessageDto,
                 'otherChatId',
@@ -973,7 +1163,9 @@ describe('SignalrHandlerService', () => {
                 false,
             );
 
-            expect(browserNotificationService.showNotification).toHaveBeenCalledWith(
+            expect(
+                browserNotificationService.showNotification,
+            ).toHaveBeenCalledWith(
                 'Chat with 🚀 & special chars',
                 '🚀 Special chars: <script>alert("xss")</script> & émojis 中文',
                 false,
@@ -982,11 +1174,11 @@ describe('SignalrHandlerService', () => {
 
         it('should handle service initialization with all dependencies', async () => {
             const handlers = {
-                message: jasmine.createSpy('messageHandler'),
-                linkPreview: jasmine.createSpy('linkPreviewHandler'),
-                imagePreview: jasmine.createSpy('imagePreviewHandler'),
-                rtcOffer: jasmine.createSpy('rtcOfferHandler'),
-                rtcAnswer: jasmine.createSpy('rtcAnswerHandler'),
+                message: vi.fn(),
+                linkPreview: vi.fn(),
+                imagePreview: vi.fn(),
+                rtcOffer: vi.fn(),
+                rtcAnswer: vi.fn(),
             };
 
             // Test that all dependencies are properly injected and called
@@ -1015,7 +1207,7 @@ describe('SignalrHandlerService', () => {
                     mockChats,
                     `chatId${index}`,
                     offer,
-                )
+                ),
             );
 
             await Promise.all(promises);
@@ -1026,14 +1218,18 @@ describe('SignalrHandlerService', () => {
 
         it('should handle RTC session answers in rapid succession', () => {
             const answers = ['answer1', 'answer2', 'answer3'];
-            
-            answers.forEach(answer => {
+
+            answers.forEach((answer) => {
                 service.handleRtcSessionAnswerNotification(answer);
             });
 
-            expect(rtcConnectionService.establishConnection).toHaveBeenCalledTimes(3);
-            answers.forEach(answer => {
-                expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(answer);
+            expect(
+                rtcConnectionService.establishConnection,
+            ).toHaveBeenCalledTimes(3);
+            answers.forEach((answer) => {
+                expect(
+                    rtcConnectionService.establishConnection,
+                ).toHaveBeenCalledWith(answer);
             });
         });
     });

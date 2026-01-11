@@ -12,14 +12,14 @@ import {
 } from '@angular/core';
 import { ApiService } from '../../../services/api.service';
 import { Store } from '@ngrx/store';
-import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
-import { selectMessages } from 'src/app/state/messages/messages.selector';
-import { StoreService } from 'src/app/services/store.service';
-import { Message } from 'src/app/models/message';
+import { selectSelectedChatId } from '../../../state/selected-chat/selected-chat-id.selectors';
+import { selectMessages } from '../../../state/messages/messages.selector';
+import { StoreService } from '../../../services/store.service';
+import { Message } from '../../../models/message';
 import { Subject, takeUntil } from 'rxjs';
-import { IdGeneratorService } from 'src/app/services/id-generator.service';
-import { ProblemDetails } from 'src/app/api-client/api-client';
-import { MessageListStatus } from 'src/app/models/message-list-status';
+import { IdGeneratorService } from '../../../services/id-generator.service';
+import { ProblemDetails } from '../../../api-client/api-client';
+import { MessageListStatus } from '../../../models/message-list-status';
 
 @Component({
     selector: 'app-message-list',

@@ -1,26 +1,36 @@
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type MockedObject,
+} from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DefaultProjectorFn, MemoizedSelector, Store } from '@ngrx/store';
 import { ChatHeaderComponent } from './chat-header.component';
-import { StoreService } from 'src/app/services/store.service';
-import { OrderByPipe } from 'src/app/pipes/orderby';
+import { StoreService } from '../../../services/store.service';
+import { OrderByPipe } from '../../../pipes/orderby';
 import { AvatarStubComponent } from '../../shared/avatar/avatar.component.stub';
+import { TopPanelStubComponent } from '../../shared/top-panel/top-panel.component.stub';
+import { CallButtonStubComponent } from '../call-button/call-button.component.stub';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { By } from '@angular/platform-browser';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { IChatDto, ImageDto } from 'src/app/api-client/api-client';
-import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
+import { IChatDto, ImageDto } from '../../../api-client/api-client';
+import { selectSelectedChat } from '../../../state/selected-chat/selected-chat.selector';
 import { UserDetailsStubComponent } from '../../shared/user-details/user-details.component.stub';
-import { ApiService } from 'src/app/services/api.service';
-import { IdGeneratorService } from 'src/app/services/id-generator.service';
+import { ApiService } from '../../../services/api.service';
+import { IdGeneratorService } from '../../../services/id-generator.service';
 import { Router } from '@angular/router';
 
 describe('ChatHeaderComponent', () => {
     let fixture: ComponentFixture<ChatHeaderComponent>;
     let store: MockStore;
-    let storeService: jasmine.SpyObj<StoreService>;
-    let apiService: jasmine.SpyObj<ApiService>;
-    let idGeneratorService: jasmine.SpyObj<IdGeneratorService>;
-    let router: jasmine.SpyObj<Router>;
+    let storeService: MockedObject<StoreService>;
+    let apiService: MockedObject<ApiService>;
+    let idGeneratorService: MockedObject<IdGeneratorService>;
+    let router: MockedObject<Router>;
     let mockSelectSelectedChat: MemoizedSelector<
         object,
         IChatDto,
@@ -52,24 +62,32 @@ describe('ChatHeaderComponent', () => {
     } as IChatDto;
 
     beforeEach(async () => {
-        storeService = jasmine.createSpyObj('StoreService', [
-            'setSelectedChatId',
-            'initOutgoingCall',
-            'updateChatId',
-        ]);
-        apiService = jasmine.createSpyObj('ApiService', [
-            'createIndividualChat',
-        ]);
-        idGeneratorService = jasmine.createSpyObj('IdGeneratorService', [
-            'isFake',
-        ]);
-        router = jasmine.createSpyObj('Router', ['navigate']);
-        router.navigate.and.resolveTo(true);
+        storeService = {
+            setSelectedChatId: vi
+                .fn()
+                .mockName('StoreService.setSelectedChatId'),
+            initOutgoingCall: vi.fn().mockName('StoreService.initOutgoingCall'),
+            updateChatId: vi.fn().mockName('StoreService.updateChatId'),
+        } as MockedObject<StoreService>;
+        apiService = {
+            createIndividualChat: vi
+                .fn()
+                .mockName('ApiService.createIndividualChat'),
+        } as MockedObject<ApiService>;
+        idGeneratorService = {
+            isFake: vi.fn().mockName('IdGeneratorService.isFake'),
+        } as MockedObject<IdGeneratorService>;
+        router = {
+            navigate: vi.fn().mockName('Router.navigate'),
+        } as MockedObject<Router>;
+        router.navigate.mockResolvedValue(true);
 
         await TestBed.configureTestingModule({
             declarations: [
                 ChatHeaderComponent,
                 AvatarStubComponent,
+                TopPanelStubComponent,
+                CallButtonStubComponent,
                 UserDetailsStubComponent,
                 OrderByPipe,
             ],
@@ -149,8 +167,8 @@ describe('ChatHeaderComponent', () => {
         const createdChat = { ...individualChat, id: 'real-chat-id' };
 
         mockSelectSelectedChat.setResult(individualChat);
-        idGeneratorService.isFake.and.returnValue(true);
-        apiService.createIndividualChat.and.resolveTo(createdChat);
+        idGeneratorService.isFake.mockReturnValue(true);
+        apiService.createIndividualChat.mockResolvedValue(createdChat);
 
         store.refreshState();
         fixture.detectChanges();
@@ -170,7 +188,9 @@ describe('ChatHeaderComponent', () => {
             '/messenger/chat',
             createdChat.id,
         ]);
-        expect(storeService.initOutgoingCall).toHaveBeenCalledWith(createdChat.id);
+        expect(storeService.initOutgoingCall).toHaveBeenCalledWith(
+            createdChat.id,
+        );
     });
 
     it('should not create individual chat when chat is individual but id is not fake', async () => {
@@ -178,7 +198,7 @@ describe('ChatHeaderComponent', () => {
         const individualChat = { ...mockChat, isIndividual: true };
 
         mockSelectSelectedChat.setResult(individualChat);
-        idGeneratorService.isFake.and.returnValue(false);
+        idGeneratorService.isFake.mockReturnValue(false);
 
         store.refreshState();
         fixture.detectChanges();
@@ -190,7 +210,9 @@ describe('ChatHeaderComponent', () => {
         expect(apiService.createIndividualChat).not.toHaveBeenCalled();
         expect(storeService.updateChatId).not.toHaveBeenCalled();
         expect(router.navigate).not.toHaveBeenCalled();
-        expect(storeService.initOutgoingCall).toHaveBeenCalledWith(individualChat.id);
+        expect(storeService.initOutgoingCall).toHaveBeenCalledWith(
+            individualChat.id,
+        );
     });
 
     it('should handle null chat gracefully when onCallClicked', async () => {

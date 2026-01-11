@@ -1,15 +1,23 @@
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type MockedObject,
+} from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AvatarComponent } from './avatar.component';
-import { StoreService } from 'src/app/services/store.service';
-import { ErrorService } from 'src/app/services/error.service';
-import { errorMessages } from 'src/app/constants/errors';
-import { IImageDto } from 'src/app/api-client/api-client';
+import { StoreService } from '../../../services/store.service';
+import { ErrorService } from '../../../services/error.service';
+import { errorMessages } from '../../../constants/errors';
+import { IImageDto } from '../../../api-client/api-client';
 
 describe('AvatarComponent', () => {
     let component: AvatarComponent;
     let fixture: ComponentFixture<AvatarComponent>;
-    let storeService: jasmine.SpyObj<StoreService>;
-    let errorService: jasmine.SpyObj<ErrorService>;
+    let storeService: MockedObject<StoreService>;
+    let errorService: MockedObject<ErrorService>;
 
     const imageKey: IImageDto = {
         id: 'image-id',
@@ -24,10 +32,12 @@ describe('AvatarComponent', () => {
     };
 
     beforeEach(async () => {
-        storeService = jasmine.createSpyObj('StoreService', [
-            'getImageContent',
-        ]);
-        errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
+        storeService = {
+            getImageContent: vi.fn().mockName('StoreService.getImageContent'),
+        } as MockedObject<StoreService>;
+        errorService = {
+            handleError: vi.fn().mockName('ErrorService.handleError'),
+        } as MockedObject<ErrorService>;
 
         await TestBed.configureTestingModule({
             declarations: [AvatarComponent],
@@ -80,7 +90,7 @@ describe('AvatarComponent', () => {
 
     it('should display background image from image ID', async () => {
         // Arrange
-        storeService.getImageContent.and.resolveTo(mockImage);
+        storeService.getImageContent.mockResolvedValue(mockImage);
 
         // Act
         component.urlOptions = [imageKey];
@@ -92,13 +102,14 @@ describe('AvatarComponent', () => {
         expect(component.backgroundImage()).toContain(
             `url('${mockImage.content}')`,
         );
-        expect(storeService.getImageContent).toHaveBeenCalledOnceWith(imageKey);
+        expect(storeService.getImageContent).toHaveBeenCalledTimes(1);
+        expect(storeService.getImageContent).toHaveBeenCalledWith(imageKey);
         expect(errorService.handleError).not.toHaveBeenCalledTimes(1);
     });
 
     it('should display background image from URL and image ID', async () => {
         // Arrange
-        storeService.getImageContent.and.resolveTo(mockImage);
+        storeService.getImageContent.mockResolvedValue(mockImage);
 
         // Act
         component.urlOptions = [url, imageKey];
@@ -115,7 +126,7 @@ describe('AvatarComponent', () => {
 
     it('should display background image from image ID and URL', async () => {
         // Arrange
-        storeService.getImageContent.and.resolveTo(mockImage);
+        storeService.getImageContent.mockResolvedValue(mockImage);
 
         // Act
         component.urlOptions = [imageKey, url];
@@ -125,14 +136,17 @@ describe('AvatarComponent', () => {
 
         // Assert
         expect(component.backgroundImage()).toBe(`url('${mockImage.content}')`);
-        expect(storeService.getImageContent).toHaveBeenCalledOnceWith(imageKey);
+        expect(storeService.getImageContent).toHaveBeenCalledTimes(1);
+        expect(storeService.getImageContent).toHaveBeenCalledWith(imageKey);
         expect(errorService.handleError).not.toHaveBeenCalledTimes(1);
     });
 
     it('should display default background image if getImageContent fails', async () => {
         // Arrange
         const error = new Error('error');
-        storeService.getImageContent.and.throwError(error);
+        storeService.getImageContent.mockImplementation(() => {
+            throw error;
+        });
 
         // Act
         component.urlOptions = [imageKey];
@@ -142,8 +156,10 @@ describe('AvatarComponent', () => {
 
         // Assert
         expect(component.backgroundImage()).toBe(`url('${defaultUrl}')`);
-        expect(storeService.getImageContent).toHaveBeenCalledOnceWith(imageKey);
-        expect(errorService.handleError).toHaveBeenCalledOnceWith(
+        expect(storeService.getImageContent).toHaveBeenCalledTimes(1);
+        expect(storeService.getImageContent).toHaveBeenCalledWith(imageKey);
+        expect(errorService.handleError).toHaveBeenCalledTimes(1);
+        expect(errorService.handleError).toHaveBeenCalledWith(
             error,
             errorMessages.downloadImage,
         );

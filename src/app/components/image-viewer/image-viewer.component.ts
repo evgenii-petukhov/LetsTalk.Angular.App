@@ -8,10 +8,10 @@ import {
     signal,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IImageDto } from 'src/app/api-client/api-client';
-import { errorMessages } from 'src/app/constants/errors';
-import { ErrorService } from 'src/app/services/error.service';
-import { StoreService } from 'src/app/services/store.service';
+import { IImageDto } from '../../api-client/api-client';
+import { errorMessages } from '../../constants/errors';
+import { ErrorService } from '../../services/error.service';
+import { StoreService } from '../../services/store.service';
 import { Location } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 

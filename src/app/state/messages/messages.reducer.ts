@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { Message } from 'src/app/models/message';
+import { Message } from '../../models/message';
 import { messagesActions } from './messages.actions';
 
 export const initialState: readonly Message[] = [];

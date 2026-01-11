@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { IdGeneratorService } from './id-generator.service';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('IdGeneratorService', () => {
     let service: IdGeneratorService;
@@ -38,8 +39,8 @@ describe('IdGeneratorService', () => {
             // Act
 
             // Assert
-            expect(service.isFake('-1')).toBeTrue();
-            expect(service.isFake('-123')).toBeTrue();
+            expect(service.isFake('-1')).toBe(true);
+            expect(service.isFake('-123')).toBe(true);
         });
 
         it('should return false for positive numbers in string form', () => {
@@ -48,8 +49,8 @@ describe('IdGeneratorService', () => {
             // Act
 
             // Assert
-            expect(service.isFake('1')).toBeFalse();
-            expect(service.isFake('123')).toBeFalse();
+            expect(service.isFake('1')).toBe(false);
+            expect(service.isFake('123')).toBe(false);
         });
 
         it('should return false for non-numeric strings', () => {
@@ -58,8 +59,8 @@ describe('IdGeneratorService', () => {
             // Act
 
             // Assert
-            expect(service.isFake('abc')).toBeFalse();
-            expect(service.isFake('')).toBeFalse();
+            expect(service.isFake('abc')).toBe(false);
+            expect(service.isFake('')).toBe(false);
         });
 
         it('should return false for zero', () => {
@@ -68,7 +69,7 @@ describe('IdGeneratorService', () => {
             // Act
 
             // Assert
-            expect(service.isFake('0')).toBeFalse();
+            expect(service.isFake('0')).toBe(false);
         });
     });
 });

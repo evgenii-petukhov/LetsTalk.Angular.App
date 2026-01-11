@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IImageDto } from 'src/app/api-client/api-client';
+import { IImageDto } from '../../../api-client/api-client';
 
 @Component({
     selector: 'app-avatar',

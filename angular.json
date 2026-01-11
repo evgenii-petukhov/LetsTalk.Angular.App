@@ -115,20 +115,10 @@
                     }
                 },
                 "test": {
-                    "builder": "@angular-devkit/build-angular:karma",
+                    "builder": "@angular/build:unit-test",
                     "options": {
-                        "main": "src/test.ts",
-                        "polyfills": ["zone.js"],
-                        "tsConfig": "tsconfig.spec.json",
-                        "karmaConfig": "karma.conf.js",
-                        "assets": ["src/favicon.ico", "src/assets"],
-                        "styles": ["src/styles.scss"],
-                        "scripts": [],
-                        "codeCoverageExclude": [
-                            "src/app/api-client/**",
-                            "src/app/protos/**",
-                            "src/app/components/**/*.stub.ts"
-                        ]
+                        "runner": "vitest",
+                        "runnerConfig": "vitest.config.ts"
                     }
                 },
                 "lint": {

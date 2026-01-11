@@ -1,22 +1,30 @@
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type MockedObject,
+} from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChatListComponent } from './chat-list.component';
 import { DefaultProjectorFn, MemoizedSelector, Store } from '@ngrx/store';
-import { StoreService } from 'src/app/services/store.service';
-import { IdGeneratorService } from 'src/app/services/id-generator.service';
-import { IChatDto } from 'src/app/api-client/api-client';
-import { OrderByPipe } from 'src/app/pipes/orderby';
+import { StoreService } from '../../../../services/store.service';
+import { IdGeneratorService } from '../../../../services/id-generator.service';
+import { IChatDto } from '../../../../api-client/api-client';
+import { OrderByPipe } from '../../../../pipes/orderby';
 import { ChatListItemStubComponent } from '../chat-list-item/chat-list-item.component.stub';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { selectChats } from 'src/app/state/chats/chats.selector';
-import { selectSelectedChatId } from 'src/app/state/selected-chat/selected-chat-id.selectors';
+import { selectChats } from '../../../../state/chats/chats.selector';
+import { selectSelectedChatId } from '../../../../state/selected-chat/selected-chat-id.selectors';
 import { By } from '@angular/platform-browser';
 
 describe('ChatListComponent', () => {
     let component: ChatListComponent;
     let fixture: ComponentFixture<ChatListComponent>;
     let store: MockStore;
-    let storeService: jasmine.SpyObj<StoreService>;
-    let idGeneratorService: jasmine.SpyObj<IdGeneratorService>;
+    let storeService: MockedObject<StoreService>;
+    let idGeneratorService: MockedObject<IdGeneratorService>;
     let mockSelectSelectedChatId: MemoizedSelector<
         object,
         string,
@@ -29,13 +37,15 @@ describe('ChatListComponent', () => {
     >;
 
     beforeEach(async () => {
-        storeService = jasmine.createSpyObj('StoreService', [
-            'setSelectedChatId',
-            'markAllAsRead',
-        ]);
-        idGeneratorService = jasmine.createSpyObj('IdGeneratorService', [
-            'isFake',
-        ]);
+        storeService = {
+            setSelectedChatId: vi
+                .fn()
+                .mockName('StoreService.setSelectedChatId'),
+            markAllAsRead: vi.fn().mockName('StoreService.markAllAsRead'),
+        } as MockedObject<StoreService>;
+        idGeneratorService = {
+            isFake: vi.fn().mockName('IdGeneratorService.isFake'),
+        } as MockedObject<IdGeneratorService>;
 
         await TestBed.configureTestingModule({
             declarations: [

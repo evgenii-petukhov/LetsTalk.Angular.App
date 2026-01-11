@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IChatDto } from 'src/app/api-client/api-client';
+import { IChatDto } from '../../../../api-client/api-client';
 
 @Component({
     selector: 'app-chat-list-item',

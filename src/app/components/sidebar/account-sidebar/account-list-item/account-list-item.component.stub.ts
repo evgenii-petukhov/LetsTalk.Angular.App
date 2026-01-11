@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IAccountDto } from 'src/app/api-client/api-client';
+import { IAccountDto } from '../../../../api-client/api-client';
 
 @Component({
     selector: 'app-account-list-item',

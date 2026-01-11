@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BackButtonComponent } from './back-button.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { By } from '@angular/platform-browser';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('BackButtonComponent', () => {
     let component: BackButtonComponent;
@@ -35,7 +36,7 @@ describe('BackButtonComponent', () => {
 
     it('should emit the buttonClick event when the button is clicked', () => {
         // Arrange
-        spyOn(component.buttonClick, 'emit');
+        vi.spyOn(component.buttonClick, 'emit');
 
         // Act
         const button = fixture.debugElement.query(

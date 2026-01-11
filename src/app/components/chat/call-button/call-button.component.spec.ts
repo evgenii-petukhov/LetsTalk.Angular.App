@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CallButtonComponent } from './call-button.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { By } from '@angular/platform-browser';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('CallButtonComponent', () => {
     let component: CallButtonComponent;
@@ -52,7 +53,7 @@ describe('CallButtonComponent', () => {
     describe('Output Events', () => {
         it('should emit buttonClick event when onButtonClicked is called', () => {
             // Arrange
-            spyOn(component.buttonClick, 'emit');
+            vi.spyOn(component.buttonClick, 'emit');
 
             // Act
             component.onButtonClicked();
@@ -63,7 +64,7 @@ describe('CallButtonComponent', () => {
 
         it('should emit buttonClick event without parameters', () => {
             // Arrange
-            spyOn(component.buttonClick, 'emit');
+            vi.spyOn(component.buttonClick, 'emit');
 
             // Act
             component.onButtonClicked();
@@ -74,7 +75,7 @@ describe('CallButtonComponent', () => {
 
         it('should emit buttonClick event when button is clicked in template', () => {
             // Arrange
-            spyOn(component.buttonClick, 'emit');
+            vi.spyOn(component.buttonClick, 'emit');
             fixture.detectChanges();
 
             // Find the button element (assuming it has a button tag or specific selector)
@@ -132,7 +133,7 @@ describe('CallButtonComponent', () => {
     describe('Event Handling', () => {
         it('should call onButtonClicked when component receives click event', () => {
             // Arrange
-            spyOn(component, 'onButtonClicked');
+            vi.spyOn(component, 'onButtonClicked');
             fixture.detectChanges();
 
             // Act
@@ -165,12 +166,11 @@ describe('CallButtonComponent', () => {
             expect(component.mode).toBe(testMode);
         });
 
-        it('should work correctly when used with output binding', (done) => {
+        it('should work correctly when used with output binding', async () => {
             // Arrange
             component.buttonClick.subscribe(() => {
                 // Assert
                 expect(true).toBe(true); // Event was emitted successfully
-                done();
             });
 
             // Act
@@ -181,7 +181,7 @@ describe('CallButtonComponent', () => {
     describe('Edge Cases', () => {
         it('should handle rapid successive clicks', () => {
             // Arrange
-            spyOn(component.buttonClick, 'emit');
+            vi.spyOn(component.buttonClick, 'emit');
 
             // Act
             component.onButtonClicked();
@@ -195,7 +195,7 @@ describe('CallButtonComponent', () => {
         it('should maintain functionality after multiple interactions', () => {
             // Arrange
             const originalMode = component.mode;
-            spyOn(component.buttonClick, 'emit');
+            vi.spyOn(component.buttonClick, 'emit');
 
             // Act
             component.onButtonClicked();

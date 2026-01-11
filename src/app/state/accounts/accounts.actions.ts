@@ -1,5 +1,5 @@
 import { createActionGroup, props } from '@ngrx/store';
-import { IAccountDto } from 'src/app/api-client/api-client';
+import { IAccountDto } from '../../api-client/api-client';
 
 export const accountsActions = createActionGroup({
     source: 'Accounts',

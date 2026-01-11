@@ -1,15 +1,23 @@
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type MockedObject,
+} from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChatListTopPanelComponent } from './chat-list-top-panel.component';
-import { StoreService } from 'src/app/services/store.service';
+import { StoreService } from '../../../../services/store.service';
 import { BackButtonStubComponent } from '../../../shared/back-button/back-button.component.stub';
 import { AvatarStubComponent } from '../../../shared/avatar/avatar.component.stub';
 import { LogoutButtonStubComponent } from '../logout-button/logout-button.component.stub';
 import { UserDetailsStubComponent } from '../../../shared/user-details/user-details.component.stub';
 import { By } from '@angular/platform-browser';
-import { ImageDto } from 'src/app/api-client/api-client';
+import { ImageDto } from '../../../../api-client/api-client';
 import { provideRouter } from '@angular/router';
 import { Component, Input } from '@angular/core';
-import { BackButtonStatus } from 'src/app/models/back-button-status';
+import { BackButtonStatus } from '../../../../models/back-button-status';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -18,18 +26,19 @@ import { RouterModule } from '@angular/router';
     standalone: false,
 })
 class TopPanelStubComponent {
-    @Input() backButton: BackButtonStatus;
+    @Input()
+    backButton: BackButtonStatus;
 }
 
 describe('ChatListTopPanelComponent', () => {
     let component: ChatListTopPanelComponent;
     let fixture: ComponentFixture<ChatListTopPanelComponent>;
-    let storeService: jasmine.SpyObj<StoreService>;
+    let storeService: MockedObject<StoreService>;
 
     beforeEach(async () => {
-        storeService = jasmine.createSpyObj('StoreService', [
-            'getLoggedInUser',
-        ]);
+        storeService = {
+            getLoggedInUser: vi.fn().mockName('StoreService.getLoggedInUser'),
+        } as MockedObject<StoreService>;
 
         await TestBed.configureTestingModule({
             declarations: [
@@ -43,7 +52,7 @@ describe('ChatListTopPanelComponent', () => {
             imports: [RouterModule],
             providers: [
                 { provide: StoreService, useValue: storeService },
-                provideRouter([])
+                provideRouter([]),
             ],
         }).compileComponents();
 
@@ -66,7 +75,7 @@ describe('ChatListTopPanelComponent', () => {
             photoUrl: 'url',
         };
 
-        storeService.getLoggedInUser.and.resolveTo(profile);
+        storeService.getLoggedInUser.mockResolvedValue(profile);
 
         // Act
         await component.ngOnInit();
@@ -85,7 +94,7 @@ describe('ChatListTopPanelComponent', () => {
 
         // Assert
         const hostElement = fixture.debugElement.nativeElement;
-        expect(hostElement.classList.contains('navigation-active')).toBeFalse();
+        expect(hostElement.classList.contains('navigation-active')).toBe(false);
 
         const backButton = fixture.debugElement.query(
             By.directive(BackButtonStubComponent),
@@ -118,7 +127,7 @@ describe('ChatListTopPanelComponent', () => {
 
         // Assert
         const hostElement = fixture.debugElement.nativeElement;
-        expect(hostElement.classList.contains('navigation-active')).toBeTrue();
+        expect(hostElement.classList.contains('navigation-active')).toBe(true);
     });
 
     it('should not apply navigation-active CSS class when isNavigationActive is false', () => {
@@ -130,7 +139,7 @@ describe('ChatListTopPanelComponent', () => {
 
         // Assert
         const hostElement = fixture.debugElement.nativeElement;
-        expect(hostElement.classList.contains('navigation-active')).toBeFalse();
+        expect(hostElement.classList.contains('navigation-active')).toBe(false);
     });
 
     it('should pass correct urlOptions to avatar when account has image and photoUrl', () => {
@@ -184,7 +193,7 @@ describe('ChatListTopPanelComponent', () => {
 
     it('should call onLogoutButtonClicked method when logout button is clicked', () => {
         // Arrange
-        spyOn(component, 'onLogoutButtonClicked');
+        vi.spyOn(component, 'onLogoutButtonClicked');
 
         // Act
         component.onLogoutButtonClicked();
@@ -195,8 +204,8 @@ describe('ChatListTopPanelComponent', () => {
 
     it('should trigger logout when logout button emits buttonClick event', () => {
         // Arrange
-        spyOn(component, 'onLogoutButtonClicked');
-        
+        vi.spyOn(component, 'onLogoutButtonClicked');
+
         // Act
         fixture.detectChanges();
 
@@ -224,11 +233,11 @@ describe('ChatListTopPanelComponent', () => {
     it('should handle ngOnInit error gracefully', async () => {
         // Arrange
         const error = new Error('Service error');
-        storeService.getLoggedInUser.and.rejectWith(error);
-        spyOn(console, 'error'); // Prevent error from showing in test output
+        storeService.getLoggedInUser.mockRejectedValue(error);
+        vi.spyOn(console, 'error'); // Prevent error from showing in test output
 
         // Act & Assert
-        await expectAsync(component.ngOnInit()).toBeRejected();
+        await expect(component.ngOnInit()).rejects.toThrow();
         expect(storeService.getLoggedInUser).toHaveBeenCalled();
     });
 
@@ -238,12 +247,12 @@ describe('ChatListTopPanelComponent', () => {
             component.isNavigationActive = false;
             fixture.detectChanges();
             await fixture.whenStable();
-            
+
             expect(
                 fixture.debugElement.nativeElement.classList.contains(
                     'navigation-active',
                 ),
-            ).toBeFalse();
+            ).toBe(false);
 
             // Create new component instance to test true state
             const fixture2 = TestBed.createComponent(ChatListTopPanelComponent);
@@ -256,7 +265,7 @@ describe('ChatListTopPanelComponent', () => {
                 fixture2.debugElement.nativeElement.classList.contains(
                     'navigation-active',
                 ),
-            ).toBeTrue();
+            ).toBe(true);
         });
     });
 

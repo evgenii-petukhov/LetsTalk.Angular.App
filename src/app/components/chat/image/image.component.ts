@@ -1,10 +1,10 @@
 import { Component, inject, Input, OnInit, signal } from '@angular/core';
-import { IImageDto } from 'src/app/api-client/api-client';
-import { errorMessages } from 'src/app/constants/errors';
-import { ImagePreview } from 'src/app/models/image-preview';
-import { ErrorService } from 'src/app/services/error.service';
-import { StoreService } from 'src/app/services/store.service';
-import { environment } from 'src/environments/environment';
+import { IImageDto } from '../../../api-client/api-client';
+import { errorMessages } from '../../../constants/errors';
+import { ImagePreview } from '../../../models/image-preview';
+import { ErrorService } from '../../../services/error.service';
+import { StoreService } from '../../../services/store.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
     selector: 'app-image',

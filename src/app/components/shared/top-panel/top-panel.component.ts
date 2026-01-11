@@ -1,6 +1,6 @@
 import { Component, inject, Input } from '@angular/core';
 import { Location } from '@angular/common';
-import { BackButtonStatus } from 'src/app/models/back-button-status';
+import { BackButtonStatus } from '../../../models/back-button-status';
 
 @Component({
     selector: 'app-top-panel',

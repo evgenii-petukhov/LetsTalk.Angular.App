@@ -1,38 +1,54 @@
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type MockedObject,
+} from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProfileComponent } from './profile.component';
 import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { StoreService } from 'src/app/services/store.service';
-import { ApiService } from 'src/app/services/api.service';
-import { ErrorService } from 'src/app/services/error.service';
-import { ImageRoles, UploadImageResponse } from 'src/app/protos/file_upload_pb';
-import { ProfileDto } from 'src/app/api-client/api-client';
+import { StoreService } from '../../services/store.service';
+import { ApiService } from '../../services/api.service';
+import { ErrorService } from '../../services/error.service';
+import { ImageRoles, UploadImageResponse } from '../../protos/file_upload_pb';
+import { ProfileDto } from '../../api-client/api-client';
 import { provideMockStore } from '@ngrx/store/testing';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AvatarStubComponent } from '../shared/avatar/avatar.component.stub';
-import { ImageUploadService } from 'src/app/services/image-upload.service';
-import { errorMessages } from 'src/app/constants/errors';
+import { ImageUploadService } from '../../services/image-upload.service';
+import { errorMessages } from '../../constants/errors';
 
 describe('ProfileComponent', () => {
     let component: ProfileComponent;
     let fixture: ComponentFixture<ProfileComponent>;
-    let storeService: jasmine.SpyObj<StoreService>;
-    let apiService: jasmine.SpyObj<ApiService>;
-    let router: jasmine.SpyObj<Router>;
-    let imageUploadService: jasmine.SpyObj<ImageUploadService>;
-    let errorService: jasmine.SpyObj<ErrorService>;
+    let storeService: MockedObject<StoreService>;
+    let apiService: MockedObject<ApiService>;
+    let router: MockedObject<Router>;
+    let imageUploadService: MockedObject<ImageUploadService>;
+    let errorService: MockedObject<ErrorService>;
 
     beforeEach(async () => {
-        storeService = jasmine.createSpyObj('StoreService', [
-            'getLoggedInUser',
-            'setLoggedInUser',
-        ]);
-        apiService = jasmine.createSpyObj('ApiService', ['saveProfile']);
-        router = jasmine.createSpyObj('Router', ['navigate']);
-        imageUploadService = jasmine.createSpyObj('ImageUploadService', [
-            'resizeAndUploadImage',
-        ]);
-        errorService = jasmine.createSpyObj('ErrorService', ['handleError']);
+        storeService = {
+            getLoggedInUser: vi.fn().mockName('StoreService.getLoggedInUser'),
+            setLoggedInUser: vi.fn().mockName('StoreService.setLoggedInUser'),
+        } as MockedObject<StoreService>;
+        apiService = {
+            saveProfile: vi.fn().mockName('ApiService.saveProfile'),
+        } as MockedObject<ApiService>;
+        router = {
+            navigate: vi.fn().mockName('Router.navigate'),
+        } as MockedObject<Router>;
+        imageUploadService = {
+            resizeAndUploadImage: vi
+                .fn()
+                .mockName('ImageUploadService.resizeAndUploadImage'),
+        } as MockedObject<ImageUploadService>;
+        errorService = {
+            handleError: vi.fn().mockName('ErrorService.handleError'),
+        } as MockedObject<ErrorService>;
 
         await TestBed.configureTestingModule({
             declarations: [ProfileComponent, AvatarStubComponent],
@@ -63,7 +79,7 @@ describe('ProfileComponent', () => {
             lastName: 'Doe',
             email: 'john.doe@example.com',
         };
-        storeService.getLoggedInUser.and.resolveTo(account);
+        storeService.getLoggedInUser.mockResolvedValue(account);
 
         // Act
         await component.ngOnInit();
@@ -81,8 +97,8 @@ describe('ProfileComponent', () => {
         // Arrange
         const file = new File([''], 'avatar.png', { type: 'image/png' });
 
-        spyOn(file, 'arrayBuffer').and.resolveTo(new ArrayBuffer(8));
-        spyOn(URL, 'createObjectURL').and.returnValue('mockObjectUrl');
+        // No need to spy on arrayBuffer since our mock File already implements it
+        vi.spyOn(URL, 'createObjectURL').mockReturnValue('mockObjectUrl');
 
         // Act
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -103,26 +119,32 @@ describe('ProfileComponent', () => {
         component.selectedPhotoUrl.set('mockBase64Url');
 
         const uploadResponse = new UploadImageResponse();
-        imageUploadService.resizeAndUploadImage.and.resolveTo(uploadResponse);
+        imageUploadService.resizeAndUploadImage.mockResolvedValue(
+            uploadResponse,
+        );
 
         const profile = new ProfileDto();
-        apiService.saveProfile.and.resolveTo(profile);
+        apiService.saveProfile.mockResolvedValue(profile);
 
         // Act
         await component.onSubmit();
 
         // Assert
-        expect(
-            imageUploadService.resizeAndUploadImage,
-        ).toHaveBeenCalledOnceWith(
+        expect(imageUploadService.resizeAndUploadImage).toHaveBeenCalledTimes(
+            1,
+        );
+
+        // Assert
+        expect(imageUploadService.resizeAndUploadImage).toHaveBeenCalledWith(
             'mockBase64Url',
             512,
             512,
             ImageRoles.AVATAR,
         );
         expect(errorService.handleError).not.toHaveBeenCalled();
-        expect(component.isSending()).toBeFalse();
-        expect(apiService.saveProfile).toHaveBeenCalledOnceWith(
+        expect(component.isSending()).toBe(false);
+        expect(apiService.saveProfile).toHaveBeenCalledTimes(1);
+        expect(apiService.saveProfile).toHaveBeenCalledWith(
             'John',
             'Doe',
             uploadResponse,
@@ -140,7 +162,7 @@ describe('ProfileComponent', () => {
         component.selectedPhotoUrl.set(null);
 
         const profile = new ProfileDto();
-        apiService.saveProfile.and.resolveTo(profile);
+        apiService.saveProfile.mockResolvedValue(profile);
 
         // Act
         await component.onSubmit();
@@ -148,8 +170,9 @@ describe('ProfileComponent', () => {
         // Assert
         expect(imageUploadService.resizeAndUploadImage).not.toHaveBeenCalled();
         expect(errorService.handleError).not.toHaveBeenCalled();
-        expect(component.isSending()).toBeFalse();
-        expect(apiService.saveProfile).toHaveBeenCalledOnceWith(
+        expect(component.isSending()).toBe(false);
+        expect(apiService.saveProfile).toHaveBeenCalledTimes(1);
+        expect(apiService.saveProfile).toHaveBeenCalledWith(
             'John',
             'Doe',
             null,
@@ -167,14 +190,17 @@ describe('ProfileComponent', () => {
         component.selectedPhotoUrl.set('mockBase64Url');
 
         const error = new Error('error');
-        imageUploadService.resizeAndUploadImage.and.throwError(error);
+        imageUploadService.resizeAndUploadImage.mockImplementation(() => {
+            throw error;
+        });
 
         // Act
         await component.onSubmit();
 
         // Assert
-        expect(component.isSending()).toBeFalse();
-        expect(errorService.handleError).toHaveBeenCalledOnceWith(
+        expect(component.isSending()).toBe(false);
+        expect(errorService.handleError).toHaveBeenCalledTimes(1);
+        expect(errorService.handleError).toHaveBeenCalledWith(
             error,
             errorMessages.uploadImage,
         );
@@ -192,30 +218,39 @@ describe('ProfileComponent', () => {
         component.selectedPhotoUrl.set('mockBase64Url');
 
         const uploadResponse = new UploadImageResponse();
-        imageUploadService.resizeAndUploadImage.and.resolveTo(uploadResponse);
+        imageUploadService.resizeAndUploadImage.mockResolvedValue(
+            uploadResponse,
+        );
 
         const error = new Error('error');
-        apiService.saveProfile.and.throwError(error);
+        apiService.saveProfile.mockImplementation(() => {
+            throw error;
+        });
 
         // Act
         await component.onSubmit();
 
         // Assert
-        expect(
-            imageUploadService.resizeAndUploadImage,
-        ).toHaveBeenCalledOnceWith(
+        expect(imageUploadService.resizeAndUploadImage).toHaveBeenCalledTimes(
+            1,
+        );
+
+        // Assert
+        expect(imageUploadService.resizeAndUploadImage).toHaveBeenCalledWith(
             'mockBase64Url',
             512,
             512,
             ImageRoles.AVATAR,
         );
-        expect(component.isSending()).toBeFalse();
-        expect(apiService.saveProfile).toHaveBeenCalledOnceWith(
+        expect(component.isSending()).toBe(false);
+        expect(apiService.saveProfile).toHaveBeenCalledTimes(1);
+        expect(apiService.saveProfile).toHaveBeenCalledWith(
             'John',
             'Doe',
             uploadResponse,
         );
-        expect(errorService.handleError).toHaveBeenCalledOnceWith(
+        expect(errorService.handleError).toHaveBeenCalledTimes(1);
+        expect(errorService.handleError).toHaveBeenCalledWith(
             error,
             errorMessages.saveProfile,
         );
@@ -224,7 +259,7 @@ describe('ProfileComponent', () => {
 
     it('should revoke object URL on destroy', () => {
         // Arrange
-        spyOn(URL, 'revokeObjectURL');
+        vi.spyOn(URL, 'revokeObjectURL');
         component.selectedPhotoUrl.set('mockPhotoUrl');
 
         // Act

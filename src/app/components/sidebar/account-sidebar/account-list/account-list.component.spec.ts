@@ -1,22 +1,34 @@
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type MockedObject,
+} from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AccountListComponent } from './account-list.component';
 import { DefaultProjectorFn, MemoizedSelector, Store } from '@ngrx/store';
 import { By } from '@angular/platform-browser';
-import { OrderByPipe } from 'src/app/pipes/orderby';
-import { StoreService } from 'src/app/services/store.service';
-import { IdGeneratorService } from 'src/app/services/id-generator.service';
-import { IAccountDto, IChatDto, ImageDto } from 'src/app/api-client/api-client';
+import { OrderByPipe } from '../../../../pipes/orderby';
+import { StoreService } from '../../../../services/store.service';
+import { IdGeneratorService } from '../../../../services/id-generator.service';
+import {
+    IAccountDto,
+    IChatDto,
+    ImageDto,
+} from '../../../../api-client/api-client';
 import { AccountListItemStubComponent } from '../account-list-item/account-list-item.component.stub';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { selectChats } from 'src/app/state/chats/chats.selector';
-import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
+import { selectChats } from '../../../../state/chats/chats.selector';
+import { selectAccounts } from '../../../../state/accounts/accounts.selector';
 
 describe('AccountListComponent', () => {
     let component: AccountListComponent;
     let fixture: ComponentFixture<AccountListComponent>;
     let store: MockStore;
-    let storeService: jasmine.SpyObj<StoreService>;
-    let idGeneratorService: jasmine.SpyObj<IdGeneratorService>;
+    let storeService: MockedObject<StoreService>;
+    let idGeneratorService: MockedObject<IdGeneratorService>;
     let mockSelectChats: MemoizedSelector<
         object,
         readonly IChatDto[],
@@ -57,15 +69,17 @@ describe('AccountListComponent', () => {
     };
 
     beforeEach(async () => {
-        storeService = jasmine.createSpyObj('StoreService', [
-            'initAccountStorage',
-            'markAllAsRead',
-            'addChat',
-        ]);
-        idGeneratorService = jasmine.createSpyObj('IdGeneratorService', [
-            'getNextFakeId',
-        ]);
-        idGeneratorService.getNextFakeId.and.returnValue(1);
+        storeService = {
+            initAccountStorage: vi
+                .fn()
+                .mockName('StoreService.initAccountStorage'),
+            markAllAsRead: vi.fn().mockName('StoreService.markAllAsRead'),
+            addChat: vi.fn().mockName('StoreService.addChat'),
+        } as MockedObject<StoreService>;
+        idGeneratorService = {
+            getNextFakeId: vi.fn().mockName('IdGeneratorService.getNextFakeId'),
+        } as MockedObject<IdGeneratorService>;
+        idGeneratorService.getNextFakeId.mockReturnValue(1);
 
         await TestBed.configureTestingModule({
             declarations: [
@@ -133,7 +147,8 @@ describe('AccountListComponent', () => {
 
         // Assert
         expect(storeService.initAccountStorage).toHaveBeenCalledTimes(1);
-        expect(storeService.markAllAsRead).toHaveBeenCalledOnceWith(chat1);
+        expect(storeService.markAllAsRead).toHaveBeenCalledTimes(1);
+        expect(storeService.markAllAsRead).toHaveBeenCalledWith(chat1);
         expect(idGeneratorService.getNextFakeId).not.toHaveBeenCalledTimes(1);
         expect(storeService.addChat).not.toHaveBeenCalledTimes(1);
     });
@@ -143,7 +158,7 @@ describe('AccountListComponent', () => {
         const newChatId = -1;
         mockSelectAccounts.setResult([account1]);
         mockSelectChats.setResult([]);
-        idGeneratorService.getNextFakeId.and.returnValue(newChatId);
+        idGeneratorService.getNextFakeId.mockReturnValue(newChatId);
 
         // Act
         store.refreshState();

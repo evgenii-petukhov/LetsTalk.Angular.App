@@ -1,3 +1,13 @@
+import {
+    afterEach,
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+    type Mock,
+    type MockedObject,
+} from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { HubConnectionBuilder } from '@microsoft/signalr';
@@ -12,7 +22,7 @@ import { RtcSessionSettings } from '../models/rtc-sessions-settings';
 
 describe('SignalrService', () => {
     let service: SignalrService;
-    let mockTokenStorageService: jasmine.SpyObj<TokenStorageService>;
+    let mockTokenStorageService: MockedObject<TokenStorageService>;
     let mockHubConnection: any;
 
     const mockToken = 'test-token';
@@ -37,37 +47,39 @@ describe('SignalrService', () => {
     const mockRtcSessionSettings: RtcSessionSettings = {
         sessionId: 'session-123',
         offer: 'mock-offer-data',
-        answer: 'mock-answer-data'
+        answer: 'mock-answer-data',
     } as RtcSessionSettings;
 
     beforeEach(() => {
         // Create spies for HubConnection
         mockHubConnection = {
-            start: jasmine.createSpy('start').and.returnValue(Promise.resolve()),
-            stop: jasmine.createSpy('stop').and.returnValue(Promise.resolve()),
-            invoke: jasmine.createSpy('invoke').and.returnValue(Promise.resolve()),
-            on: jasmine.createSpy('on'),
-            off: jasmine.createSpy('off'),
-            onreconnected: jasmine.createSpy('onreconnected'),
+            start: vi.fn().mockReturnValue(Promise.resolve()),
+            stop: vi.fn().mockReturnValue(Promise.resolve()),
+            invoke: vi.fn().mockReturnValue(Promise.resolve()),
+            on: vi.fn(),
+            off: vi.fn(),
+            onreconnected: vi.fn(),
         };
 
         // Create spy for TokenStorageService
-        mockTokenStorageService = jasmine.createSpyObj('TokenStorageService', [
-            'getToken',
-        ]);
-        mockTokenStorageService.getToken.and.returnValue(mockToken);
+        mockTokenStorageService = {
+            getToken: vi.fn().mockName('TokenStorageService.getToken'),
+        } as MockedObject<TokenStorageService>;
+        mockTokenStorageService.getToken.mockReturnValue(mockToken);
 
         // Mock HubConnectionBuilder
-        spyOn(HubConnectionBuilder.prototype, 'withUrl').and.returnValue(
+        vi.spyOn(HubConnectionBuilder.prototype, 'withUrl').mockReturnValue(
             HubConnectionBuilder.prototype,
         );
-        spyOn(HubConnectionBuilder.prototype, 'withAutomaticReconnect').and.returnValue(
+        vi.spyOn(
             HubConnectionBuilder.prototype,
-        );
-        spyOn(HubConnectionBuilder.prototype, 'configureLogging').and.returnValue(
+            'withAutomaticReconnect',
+        ).mockReturnValue(HubConnectionBuilder.prototype);
+        vi.spyOn(
             HubConnectionBuilder.prototype,
-        );
-        spyOn(HubConnectionBuilder.prototype, 'build').and.returnValue(
+            'configureLogging',
+        ).mockReturnValue(HubConnectionBuilder.prototype);
+        vi.spyOn(HubConnectionBuilder.prototype, 'build').mockReturnValue(
             mockHubConnection,
         );
 
@@ -104,26 +116,26 @@ describe('SignalrService', () => {
     });
 
     describe('init', () => {
-        let messageHandler: jasmine.Spy;
-        let linkPreviewHandler: jasmine.Spy;
-        let imagePreviewHandler: jasmine.Spy;
-        let rtcSessionOfferHandler: jasmine.Spy;
-        let rtcSessionAnswerHandler: jasmine.Spy;
+        let messageHandler: Mock;
+        let linkPreviewHandler: Mock;
+        let imagePreviewHandler: Mock;
+        let rtcSessionOfferHandler: Mock;
+        let rtcSessionAnswerHandler: Mock;
 
         beforeEach(() => {
-            messageHandler = jasmine.createSpy('messageHandler').and.returnValue(Promise.resolve());
-            linkPreviewHandler = jasmine.createSpy('linkPreviewHandler');
-            imagePreviewHandler = jasmine.createSpy('imagePreviewHandler');
-            rtcSessionOfferHandler = jasmine.createSpy('rtcSessionOfferHandler');
-            rtcSessionAnswerHandler = jasmine.createSpy('rtcSessionAnswerHandler');
+            messageHandler = vi.fn().mockReturnValue(Promise.resolve());
+            linkPreviewHandler = vi.fn();
+            imagePreviewHandler = vi.fn();
+            rtcSessionOfferHandler = vi.fn();
+            rtcSessionAnswerHandler = vi.fn();
 
             // Reset spies for each test
-            mockHubConnection.start.and.returnValue(Promise.resolve());
-            mockHubConnection.invoke.and.returnValue(Promise.resolve());
-            mockHubConnection.start.calls.reset();
-            mockHubConnection.invoke.calls.reset();
-            mockHubConnection.on.calls.reset();
-            mockHubConnection.onreconnected.calls.reset();
+            mockHubConnection.start.mockReturnValue(Promise.resolve());
+            mockHubConnection.invoke.mockReturnValue(Promise.resolve());
+            mockHubConnection.start.mockClear();
+            mockHubConnection.invoke.mockClear();
+            mockHubConnection.on.mockClear();
+            mockHubConnection.onreconnected.mockClear();
         });
 
         it('should initialize successfully when connection is established', async () => {
@@ -132,7 +144,7 @@ describe('SignalrService', () => {
                 linkPreviewHandler,
                 imagePreviewHandler,
                 rtcSessionOfferHandler,
-                rtcSessionAnswerHandler
+                rtcSessionAnswerHandler,
             );
 
             expect(mockHubConnection.start).toHaveBeenCalled();
@@ -142,10 +154,10 @@ describe('SignalrService', () => {
             );
             expect(mockHubConnection.on).toHaveBeenCalledWith(
                 'SendNotificationAsync',
-                jasmine.any(Function),
+                expect.any(Function),
             );
             expect(mockHubConnection.onreconnected).toHaveBeenCalledWith(
-                jasmine.any(Function),
+                expect.any(Function),
             );
         });
 
@@ -156,11 +168,11 @@ describe('SignalrService', () => {
                 linkPreviewHandler,
                 imagePreviewHandler,
                 rtcSessionOfferHandler,
-                rtcSessionAnswerHandler
+                rtcSessionAnswerHandler,
             );
 
             // Reset spies
-            mockHubConnection.start.calls.reset();
+            mockHubConnection.start.mockClear();
 
             // Second initialization attempt
             await service.init(
@@ -168,16 +180,18 @@ describe('SignalrService', () => {
                 linkPreviewHandler,
                 imagePreviewHandler,
                 rtcSessionOfferHandler,
-                rtcSessionAnswerHandler
+                rtcSessionAnswerHandler,
             );
 
             expect(mockHubConnection.start).not.toHaveBeenCalled();
         });
 
         it('should set up retry timer when connection fails', async () => {
-            const setIntervalSpy = spyOn(window, 'setInterval').and.returnValue(123 as any);
+            const setIntervalSpy = vi
+                .spyOn(window, 'setInterval')
+                .mockReturnValue(123 as any);
 
-            mockHubConnection.start.and.returnValue(
+            mockHubConnection.start.mockReturnValue(
                 Promise.reject(new Error('Connection failed')),
             );
 
@@ -186,12 +200,12 @@ describe('SignalrService', () => {
                 linkPreviewHandler,
                 imagePreviewHandler,
                 rtcSessionOfferHandler,
-                rtcSessionAnswerHandler
+                rtcSessionAnswerHandler,
             );
 
             expect(setIntervalSpy).toHaveBeenCalledWith(
-                jasmine.any(Function),
-                jasmine.any(Number),
+                expect.any(Function),
+                expect.any(Number),
             );
         });
 
@@ -201,11 +215,12 @@ describe('SignalrService', () => {
                 linkPreviewHandler,
                 imagePreviewHandler,
                 rtcSessionOfferHandler,
-                rtcSessionAnswerHandler
+                rtcSessionAnswerHandler,
             );
 
             // Get the notification handler that was registered
-            const notificationHandler = mockHubConnection.on.calls.argsFor(0)[1];
+            const notificationHandler = vi.mocked(mockHubConnection.on).mock
+                .calls[0][1];
 
             // Simulate receiving a message notification
             await notificationHandler(mockMessageDto, 'MessageDto');
@@ -219,10 +234,11 @@ describe('SignalrService', () => {
                 linkPreviewHandler,
                 imagePreviewHandler,
                 rtcSessionOfferHandler,
-                rtcSessionAnswerHandler
+                rtcSessionAnswerHandler,
             );
 
-            const notificationHandler = mockHubConnection.on.calls.argsFor(0)[1];
+            const notificationHandler = vi.mocked(mockHubConnection.on).mock
+                .calls[0][1];
             notificationHandler(mockLinkPreviewDto, 'LinkPreviewDto');
 
             expect(linkPreviewHandler).toHaveBeenCalledWith(mockLinkPreviewDto);
@@ -234,13 +250,16 @@ describe('SignalrService', () => {
                 linkPreviewHandler,
                 imagePreviewHandler,
                 rtcSessionOfferHandler,
-                rtcSessionAnswerHandler
+                rtcSessionAnswerHandler,
             );
 
-            const notificationHandler = mockHubConnection.on.calls.argsFor(0)[1];
+            const notificationHandler = vi.mocked(mockHubConnection.on).mock
+                .calls[0][1];
             notificationHandler(mockImagePreviewDto, 'ImagePreviewDto');
 
-            expect(imagePreviewHandler).toHaveBeenCalledWith(mockImagePreviewDto);
+            expect(imagePreviewHandler).toHaveBeenCalledWith(
+                mockImagePreviewDto,
+            );
         });
 
         it('should handle RTC session offer notifications correctly', async () => {
@@ -249,13 +268,16 @@ describe('SignalrService', () => {
                 linkPreviewHandler,
                 imagePreviewHandler,
                 rtcSessionOfferHandler,
-                rtcSessionAnswerHandler
+                rtcSessionAnswerHandler,
             );
 
-            const notificationHandler = mockHubConnection.on.calls.argsFor(0)[1];
+            const notificationHandler = vi.mocked(mockHubConnection.on).mock
+                .calls[0][1];
             notificationHandler(mockRtcSessionSettings, 'RtcSessionOffer');
 
-            expect(rtcSessionOfferHandler).toHaveBeenCalledWith(mockRtcSessionSettings);
+            expect(rtcSessionOfferHandler).toHaveBeenCalledWith(
+                mockRtcSessionSettings,
+            );
         });
 
         it('should handle RTC session answer notifications correctly', async () => {
@@ -264,13 +286,16 @@ describe('SignalrService', () => {
                 linkPreviewHandler,
                 imagePreviewHandler,
                 rtcSessionOfferHandler,
-                rtcSessionAnswerHandler
+                rtcSessionAnswerHandler,
             );
 
-            const notificationHandler = mockHubConnection.on.calls.argsFor(0)[1];
+            const notificationHandler = vi.mocked(mockHubConnection.on).mock
+                .calls[0][1];
             notificationHandler(mockRtcSessionSettings, 'RtcSessionAnswer');
 
-            expect(rtcSessionAnswerHandler).toHaveBeenCalledWith(mockRtcSessionSettings);
+            expect(rtcSessionAnswerHandler).toHaveBeenCalledWith(
+                mockRtcSessionSettings,
+            );
         });
 
         it('should handle unknown notification types gracefully', async () => {
@@ -279,10 +304,11 @@ describe('SignalrService', () => {
                 linkPreviewHandler,
                 imagePreviewHandler,
                 rtcSessionOfferHandler,
-                rtcSessionAnswerHandler
+                rtcSessionAnswerHandler,
             );
 
-            const notificationHandler = mockHubConnection.on.calls.argsFor(0)[1];
+            const notificationHandler = vi.mocked(mockHubConnection.on).mock
+                .calls[0][1];
 
             // This should not throw an error
             expect(() => {
@@ -296,10 +322,11 @@ describe('SignalrService', () => {
                 linkPreviewHandler,
                 imagePreviewHandler,
                 rtcSessionOfferHandler,
-                rtcSessionAnswerHandler
+                rtcSessionAnswerHandler,
             );
 
-            const notificationHandler = mockHubConnection.on.calls.argsFor(0)[1];
+            const notificationHandler = vi.mocked(mockHubConnection.on).mock
+                .calls[0][1];
 
             // Override handler mapping to test null handler
             (service as any).handlerMapping = {
@@ -307,7 +334,7 @@ describe('SignalrService', () => {
                 LinkPreviewDto: linkPreviewHandler,
                 ImagePreviewDto: imagePreviewHandler,
                 RtcSessionOffer: rtcSessionOfferHandler,
-                RtcSessionAnswer: rtcSessionAnswerHandler
+                RtcSessionAnswer: rtcSessionAnswerHandler,
             };
 
             // This should not throw an error
@@ -321,16 +348,20 @@ describe('SignalrService', () => {
         it('should remove handlers and stop connection', () => {
             service.removeHandlers();
 
-            expect(mockHubConnection.off).toHaveBeenCalledWith('SendNotificationAsync');
+            expect(mockHubConnection.off).toHaveBeenCalledWith(
+                'SendNotificationAsync',
+            );
             expect(mockHubConnection.stop).toHaveBeenCalled();
         });
 
         it('should reset initialization state', async () => {
-            const testMessageHandler = jasmine.createSpy('messageHandler').and.returnValue(Promise.resolve());
-            const testLinkPreviewHandler = jasmine.createSpy('linkPreviewHandler');
-            const testImagePreviewHandler = jasmine.createSpy('imagePreviewHandler');
-            const testRtcOfferHandler = jasmine.createSpy('rtcOfferHandler');
-            const testRtcAnswerHandler = jasmine.createSpy('rtcAnswerHandler');
+            const testMessageHandler = vi
+                .fn()
+                .mockReturnValue(Promise.resolve());
+            const testLinkPreviewHandler = vi.fn();
+            const testImagePreviewHandler = vi.fn();
+            const testRtcOfferHandler = vi.fn();
+            const testRtcAnswerHandler = vi.fn();
 
             // Initialize first
             await service.init(
@@ -338,14 +369,14 @@ describe('SignalrService', () => {
                 testLinkPreviewHandler,
                 testImagePreviewHandler,
                 testRtcOfferHandler,
-                testRtcAnswerHandler
+                testRtcAnswerHandler,
             );
 
             // Remove handlers
             service.removeHandlers();
 
             // Reset spies
-            mockHubConnection.start.calls.reset();
+            mockHubConnection.start.mockClear();
 
             // Should be able to initialize again
             await service.init(
@@ -353,7 +384,7 @@ describe('SignalrService', () => {
                 testLinkPreviewHandler,
                 testImagePreviewHandler,
                 testRtcOfferHandler,
-                testRtcAnswerHandler
+                testRtcAnswerHandler,
             );
 
             expect(mockHubConnection.start).toHaveBeenCalled();
@@ -362,67 +393,85 @@ describe('SignalrService', () => {
 
     describe('reconnection handling', () => {
         it('should authorize on reconnection', async () => {
-            const testMessageHandler = jasmine.createSpy('messageHandler').and.returnValue(Promise.resolve());
-            const testLinkPreviewHandler = jasmine.createSpy('linkPreviewHandler');
-            const testImagePreviewHandler = jasmine.createSpy('imagePreviewHandler');
-            const testRtcOfferHandler = jasmine.createSpy('rtcOfferHandler');
-            const testRtcAnswerHandler = jasmine.createSpy('rtcAnswerHandler');
+            const testMessageHandler = vi
+                .fn()
+                .mockReturnValue(Promise.resolve());
+            const testLinkPreviewHandler = vi.fn();
+            const testImagePreviewHandler = vi.fn();
+            const testRtcOfferHandler = vi.fn();
+            const testRtcAnswerHandler = vi.fn();
 
             await service.init(
                 testMessageHandler,
                 testLinkPreviewHandler,
                 testImagePreviewHandler,
                 testRtcOfferHandler,
-                testRtcAnswerHandler
+                testRtcAnswerHandler,
             );
 
             // Get the reconnection handler
-            const reconnectionHandler = mockHubConnection.onreconnected.calls.argsFor(0)[0];
+            const reconnectionHandler = vi.mocked(
+                mockHubConnection.onreconnected,
+            ).mock.calls[0][0];
 
             // Reset invoke spy to track reconnection authorization
-            mockHubConnection.invoke.calls.reset();
+            mockHubConnection.invoke.mockClear();
 
             // Simulate reconnection
             await reconnectionHandler();
 
-            expect(mockHubConnection.invoke).toHaveBeenCalledWith('AuthorizeAsync', mockToken);
+            expect(mockHubConnection.invoke).toHaveBeenCalledWith(
+                'AuthorizeAsync',
+                mockToken,
+            );
         });
 
         it('should handle reconnection authorization errors gracefully', async () => {
-            const testMessageHandler = jasmine.createSpy('messageHandler').and.returnValue(Promise.resolve());
-            const testLinkPreviewHandler = jasmine.createSpy('linkPreviewHandler');
-            const testImagePreviewHandler = jasmine.createSpy('imagePreviewHandler');
-            const testRtcOfferHandler = jasmine.createSpy('rtcOfferHandler');
-            const testRtcAnswerHandler = jasmine.createSpy('rtcAnswerHandler');
+            const testMessageHandler = vi
+                .fn()
+                .mockReturnValue(Promise.resolve());
+            const testLinkPreviewHandler = vi.fn();
+            const testImagePreviewHandler = vi.fn();
+            const testRtcOfferHandler = vi.fn();
+            const testRtcAnswerHandler = vi.fn();
 
             await service.init(
                 testMessageHandler,
                 testLinkPreviewHandler,
                 testImagePreviewHandler,
                 testRtcOfferHandler,
-                testRtcAnswerHandler
+                testRtcAnswerHandler,
             );
 
-            const reconnectionHandler = mockHubConnection.onreconnected.calls.argsFor(0)[0];
-            
+            const reconnectionHandler = vi.mocked(
+                mockHubConnection.onreconnected,
+            ).mock.calls[0][0];
+
             // Make authorization fail on reconnection
-            mockHubConnection.invoke.and.returnValue(Promise.reject(new Error('Auth failed')));
+            mockHubConnection.invoke.mockReturnValue(
+                Promise.reject(new Error('Auth failed')),
+            );
 
             // Should not throw - the actual service doesn't handle this error, so it will reject
-            await expectAsync(reconnectionHandler()).toBeRejected();
+            await expect(reconnectionHandler()).rejects.toThrow();
         });
     });
 
     describe('retry mechanism', () => {
+        beforeEach(() => {
+            // Clear all spies before each test in this describe block
+            vi.clearAllMocks();
+        });
+
         it('should retry connection setup on failure', async () => {
-            const messageHandler = jasmine.createSpy('messageHandler').and.returnValue(Promise.resolve());
-            const linkPreviewHandler = jasmine.createSpy('linkPreviewHandler');
-            const imagePreviewHandler = jasmine.createSpy('imagePreviewHandler');
-            const rtcOfferHandler = jasmine.createSpy('rtcOfferHandler');
-            const rtcAnswerHandler = jasmine.createSpy('rtcAnswerHandler');
+            const messageHandler = vi.fn().mockReturnValue(Promise.resolve());
+            const linkPreviewHandler = vi.fn();
+            const imagePreviewHandler = vi.fn();
+            const rtcOfferHandler = vi.fn();
+            const rtcAnswerHandler = vi.fn();
 
             let callCount = 0;
-            mockHubConnection.start.and.callFake(() => {
+            mockHubConnection.start.mockImplementation(() => {
                 callCount++;
                 if (callCount === 1) {
                     return Promise.reject(new Error('Connection failed'));
@@ -432,15 +481,25 @@ describe('SignalrService', () => {
 
             // Mock setInterval to capture the retry function
             let retryFunction: Function;
-            spyOn(window, 'setInterval').and.callFake((callback: TimerHandler, delay?: number) => {
-                retryFunction = callback as Function;
-                return 123 as any;
-            });
+            const setIntervalSpy = vi
+                .spyOn(window, 'setInterval')
+                .mockImplementation(
+                    (callback: TimerHandler, delay?: number) => {
+                        retryFunction = callback as Function;
+                        return 123 as any;
+                    },
+                );
 
-            await service.init(messageHandler, linkPreviewHandler, imagePreviewHandler, rtcOfferHandler, rtcAnswerHandler);
+            await service.init(
+                messageHandler,
+                linkPreviewHandler,
+                imagePreviewHandler,
+                rtcOfferHandler,
+                rtcAnswerHandler,
+            );
 
             // Initial connection should have failed and set up retry
-            expect(window.setInterval).toHaveBeenCalled();
+            expect(setIntervalSpy).toHaveBeenCalled();
             expect(mockHubConnection.start).toHaveBeenCalledTimes(1);
 
             // Manually trigger retry
@@ -449,45 +508,63 @@ describe('SignalrService', () => {
         });
 
         it('should clear retry timer when connection succeeds', async () => {
-            const clearIntervalSpy = spyOn(window, 'clearInterval');
-            const setIntervalSpy = spyOn(window, 'setInterval').and.returnValue(123 as any);
+            const clearIntervalSpy = vi.spyOn(window, 'clearInterval');
+            const setIntervalSpy = vi
+                .spyOn(window, 'setInterval')
+                .mockReturnValue(123 as any);
 
-            const messageHandler = jasmine.createSpy('messageHandler').and.returnValue(Promise.resolve());
-            const linkPreviewHandler = jasmine.createSpy('linkPreviewHandler');
-            const imagePreviewHandler = jasmine.createSpy('imagePreviewHandler');
-            const rtcOfferHandler = jasmine.createSpy('rtcOfferHandler');
-            const rtcAnswerHandler = jasmine.createSpy('rtcAnswerHandler');
+            const messageHandler = vi.fn().mockReturnValue(Promise.resolve());
+            const linkPreviewHandler = vi.fn();
+            const imagePreviewHandler = vi.fn();
+            const rtcOfferHandler = vi.fn();
+            const rtcAnswerHandler = vi.fn();
 
-            // First call fails
-            mockHubConnection.start.and.returnValue(Promise.reject(new Error('Connection failed')));
+            // First call fails, then succeeds
+            let callCount = 0;
+            mockHubConnection.start.mockImplementation(() => {
+                callCount++;
+                if (callCount === 1) {
+                    return Promise.reject(new Error('Connection failed'));
+                }
+                return Promise.resolve();
+            });
 
-            await service.init(messageHandler, linkPreviewHandler, imagePreviewHandler, rtcOfferHandler, rtcAnswerHandler);
+            await service.init(
+                messageHandler,
+                linkPreviewHandler,
+                imagePreviewHandler,
+                rtcOfferHandler,
+                rtcAnswerHandler,
+            );
 
             expect(setIntervalSpy).toHaveBeenCalled();
 
-            // Now make connection succeed and test that timer is cleared
-            mockHubConnection.start.and.returnValue(Promise.resolve());
-
-            // Get the retry function and call it
-            const retryFunction = setIntervalSpy.calls.argsFor(0)[0];
+            // Get the retry function and call it - this should succeed and clear the timer
+            const retryFunction = vi.mocked(setIntervalSpy).mock.calls[0][0];
             await retryFunction();
 
             expect(clearIntervalSpy).toHaveBeenCalledWith(123);
         });
 
         it('should not set up retry timer if connection succeeds initially', async () => {
-            const setIntervalSpy = spyOn(window, 'setInterval');
+            const setIntervalSpy = vi.spyOn(window, 'setInterval');
 
-            const messageHandler = jasmine.createSpy('messageHandler').and.returnValue(Promise.resolve());
-            const linkPreviewHandler = jasmine.createSpy('linkPreviewHandler');
-            const imagePreviewHandler = jasmine.createSpy('imagePreviewHandler');
-            const rtcOfferHandler = jasmine.createSpy('rtcOfferHandler');
-            const rtcAnswerHandler = jasmine.createSpy('rtcAnswerHandler');
+            const messageHandler = vi.fn().mockReturnValue(Promise.resolve());
+            const linkPreviewHandler = vi.fn();
+            const imagePreviewHandler = vi.fn();
+            const rtcOfferHandler = vi.fn();
+            const rtcAnswerHandler = vi.fn();
 
-            // Connection succeeds
-            mockHubConnection.start.and.returnValue(Promise.resolve());
+            // Connection succeeds immediately
+            mockHubConnection.start.mockReturnValue(Promise.resolve());
 
-            await service.init(messageHandler, linkPreviewHandler, imagePreviewHandler, rtcOfferHandler, rtcAnswerHandler);
+            await service.init(
+                messageHandler,
+                linkPreviewHandler,
+                imagePreviewHandler,
+                rtcOfferHandler,
+                rtcAnswerHandler,
+            );
 
             expect(setIntervalSpy).not.toHaveBeenCalled();
         });
@@ -495,46 +572,71 @@ describe('SignalrService', () => {
 
     describe('error handling', () => {
         it('should handle authorization errors gracefully', async () => {
-            const messageHandler = jasmine.createSpy('messageHandler').and.returnValue(Promise.resolve());
-            const linkPreviewHandler = jasmine.createSpy('linkPreviewHandler');
-            const imagePreviewHandler = jasmine.createSpy('imagePreviewHandler');
-            const rtcOfferHandler = jasmine.createSpy('rtcOfferHandler');
-            const rtcAnswerHandler = jasmine.createSpy('rtcAnswerHandler');
+            const messageHandler = vi.fn().mockReturnValue(Promise.resolve());
+            const linkPreviewHandler = vi.fn();
+            const imagePreviewHandler = vi.fn();
+            const rtcOfferHandler = vi.fn();
+            const rtcAnswerHandler = vi.fn();
 
-            mockHubConnection.start.and.returnValue(Promise.resolve());
-            mockHubConnection.invoke.and.returnValue(Promise.reject(new Error('Auth failed')));
+            mockHubConnection.start.mockReturnValue(Promise.resolve());
+            mockHubConnection.invoke.mockReturnValue(
+                Promise.reject(new Error('Auth failed')),
+            );
 
             // Should not throw
-            await expectAsync(
-                service.init(messageHandler, linkPreviewHandler, imagePreviewHandler, rtcOfferHandler, rtcAnswerHandler),
-            ).toBeResolved();
+            await expect(
+                service.init(
+                    messageHandler,
+                    linkPreviewHandler,
+                    imagePreviewHandler,
+                    rtcOfferHandler,
+                    rtcAnswerHandler,
+                ),
+            ).resolves.not.toThrow();
         });
 
         it('should handle connection start errors gracefully', async () => {
-            const messageHandler = jasmine.createSpy('messageHandler').and.returnValue(Promise.resolve());
-            const linkPreviewHandler = jasmine.createSpy('linkPreviewHandler');
-            const imagePreviewHandler = jasmine.createSpy('imagePreviewHandler');
-            const rtcOfferHandler = jasmine.createSpy('rtcOfferHandler');
-            const rtcAnswerHandler = jasmine.createSpy('rtcAnswerHandler');
+            const messageHandler = vi.fn().mockReturnValue(Promise.resolve());
+            const linkPreviewHandler = vi.fn();
+            const imagePreviewHandler = vi.fn();
+            const rtcOfferHandler = vi.fn();
+            const rtcAnswerHandler = vi.fn();
 
-            mockHubConnection.start.and.returnValue(Promise.reject(new Error('Start failed')));
+            mockHubConnection.start.mockReturnValue(
+                Promise.reject(new Error('Start failed')),
+            );
 
             // Should not throw
-            await expectAsync(
-                service.init(messageHandler, linkPreviewHandler, imagePreviewHandler, rtcOfferHandler, rtcAnswerHandler),
-            ).toBeResolved();
+            await expect(
+                service.init(
+                    messageHandler,
+                    linkPreviewHandler,
+                    imagePreviewHandler,
+                    rtcOfferHandler,
+                    rtcAnswerHandler,
+                ),
+            ).resolves.not.toThrow();
         });
 
         it('should handle message handler errors gracefully', async () => {
-            const messageHandler = jasmine.createSpy('messageHandler').and.returnValue(Promise.reject(new Error('Handler failed')));
-            const linkPreviewHandler = jasmine.createSpy('linkPreviewHandler');
-            const imagePreviewHandler = jasmine.createSpy('imagePreviewHandler');
-            const rtcOfferHandler = jasmine.createSpy('rtcOfferHandler');
-            const rtcAnswerHandler = jasmine.createSpy('rtcAnswerHandler');
+            const messageHandler = vi
+                .fn()
+                .mockReturnValue(Promise.reject(new Error('Handler failed')));
+            const linkPreviewHandler = vi.fn();
+            const imagePreviewHandler = vi.fn();
+            const rtcOfferHandler = vi.fn();
+            const rtcAnswerHandler = vi.fn();
 
-            await service.init(messageHandler, linkPreviewHandler, imagePreviewHandler, rtcOfferHandler, rtcAnswerHandler);
+            await service.init(
+                messageHandler,
+                linkPreviewHandler,
+                imagePreviewHandler,
+                rtcOfferHandler,
+                rtcAnswerHandler,
+            );
 
-            const notificationHandler = mockHubConnection.on.calls.argsFor(0)[1];
+            const notificationHandler = vi.mocked(mockHubConnection.on).mock
+                .calls[0][1];
 
             // Should not throw even if handler fails
             expect(() => {
@@ -547,50 +649,80 @@ describe('SignalrService', () => {
 
     describe('private methods', () => {
         it('should call authorize with correct token', async () => {
-            const messageHandler = jasmine.createSpy('messageHandler').and.returnValue(Promise.resolve());
-            const linkPreviewHandler = jasmine.createSpy('linkPreviewHandler');
-            const imagePreviewHandler = jasmine.createSpy('imagePreviewHandler');
-            const rtcOfferHandler = jasmine.createSpy('rtcOfferHandler');
-            const rtcAnswerHandler = jasmine.createSpy('rtcAnswerHandler');
+            const messageHandler = vi.fn().mockReturnValue(Promise.resolve());
+            const linkPreviewHandler = vi.fn();
+            const imagePreviewHandler = vi.fn();
+            const rtcOfferHandler = vi.fn();
+            const rtcAnswerHandler = vi.fn();
 
-            await service.init(messageHandler, linkPreviewHandler, imagePreviewHandler, rtcOfferHandler, rtcAnswerHandler);
+            await service.init(
+                messageHandler,
+                linkPreviewHandler,
+                imagePreviewHandler,
+                rtcOfferHandler,
+                rtcAnswerHandler,
+            );
 
             expect(mockTokenStorageService.getToken).toHaveBeenCalled();
-            expect(mockHubConnection.invoke).toHaveBeenCalledWith('AuthorizeAsync', mockToken);
+            expect(mockHubConnection.invoke).toHaveBeenCalledWith(
+                'AuthorizeAsync',
+                mockToken,
+            );
         });
 
         it('should set up connection event handlers correctly', async () => {
-            const messageHandler = jasmine.createSpy('messageHandler').and.returnValue(Promise.resolve());
-            const linkPreviewHandler = jasmine.createSpy('linkPreviewHandler');
-            const imagePreviewHandler = jasmine.createSpy('imagePreviewHandler');
-            const rtcOfferHandler = jasmine.createSpy('rtcOfferHandler');
-            const rtcAnswerHandler = jasmine.createSpy('rtcAnswerHandler');
+            const messageHandler = vi.fn().mockReturnValue(Promise.resolve());
+            const linkPreviewHandler = vi.fn();
+            const imagePreviewHandler = vi.fn();
+            const rtcOfferHandler = vi.fn();
+            const rtcAnswerHandler = vi.fn();
 
-            await service.init(messageHandler, linkPreviewHandler, imagePreviewHandler, rtcOfferHandler, rtcAnswerHandler);
+            await service.init(
+                messageHandler,
+                linkPreviewHandler,
+                imagePreviewHandler,
+                rtcOfferHandler,
+                rtcAnswerHandler,
+            );
 
-            expect(mockHubConnection.on).toHaveBeenCalledWith('SendNotificationAsync', jasmine.any(Function));
-            expect(mockHubConnection.onreconnected).toHaveBeenCalledWith(jasmine.any(Function));
+            expect(mockHubConnection.on).toHaveBeenCalledWith(
+                'SendNotificationAsync',
+                expect.any(Function),
+            );
+            expect(mockHubConnection.onreconnected).toHaveBeenCalledWith(
+                expect.any(Function),
+            );
         });
     });
 
     describe('integration tests', () => {
         it('should handle complete workflow successfully', async () => {
-            const messageHandler = jasmine.createSpy('messageHandler').and.returnValue(Promise.resolve());
-            const linkPreviewHandler = jasmine.createSpy('linkPreviewHandler');
-            const imagePreviewHandler = jasmine.createSpy('imagePreviewHandler');
-            const rtcOfferHandler = jasmine.createSpy('rtcOfferHandler');
-            const rtcAnswerHandler = jasmine.createSpy('rtcAnswerHandler');
+            const messageHandler = vi.fn().mockReturnValue(Promise.resolve());
+            const linkPreviewHandler = vi.fn();
+            const imagePreviewHandler = vi.fn();
+            const rtcOfferHandler = vi.fn();
+            const rtcAnswerHandler = vi.fn();
 
             // Initialize service
-            await service.init(messageHandler, linkPreviewHandler, imagePreviewHandler, rtcOfferHandler, rtcAnswerHandler);
+            await service.init(
+                messageHandler,
+                linkPreviewHandler,
+                imagePreviewHandler,
+                rtcOfferHandler,
+                rtcAnswerHandler,
+            );
 
             // Verify initialization
             expect(mockHubConnection.start).toHaveBeenCalled();
-            expect(mockHubConnection.invoke).toHaveBeenCalledWith('AuthorizeAsync', mockToken);
+            expect(mockHubConnection.invoke).toHaveBeenCalledWith(
+                'AuthorizeAsync',
+                mockToken,
+            );
 
             // Test notification handling
-            const notificationHandler = mockHubConnection.on.calls.argsFor(0)[1];
-            
+            const notificationHandler = vi.mocked(mockHubConnection.on).mock
+                .calls[0][1];
+
             await notificationHandler(mockMessageDto, 'MessageDto');
             notificationHandler(mockLinkPreviewDto, 'LinkPreviewDto');
             notificationHandler(mockImagePreviewDto, 'ImagePreviewDto');
@@ -599,13 +731,21 @@ describe('SignalrService', () => {
 
             expect(messageHandler).toHaveBeenCalledWith(mockMessageDto);
             expect(linkPreviewHandler).toHaveBeenCalledWith(mockLinkPreviewDto);
-            expect(imagePreviewHandler).toHaveBeenCalledWith(mockImagePreviewDto);
-            expect(rtcOfferHandler).toHaveBeenCalledWith(mockRtcSessionSettings);
-            expect(rtcAnswerHandler).toHaveBeenCalledWith(mockRtcSessionSettings);
+            expect(imagePreviewHandler).toHaveBeenCalledWith(
+                mockImagePreviewDto,
+            );
+            expect(rtcOfferHandler).toHaveBeenCalledWith(
+                mockRtcSessionSettings,
+            );
+            expect(rtcAnswerHandler).toHaveBeenCalledWith(
+                mockRtcSessionSettings,
+            );
 
             // Test cleanup
             service.removeHandlers();
-            expect(mockHubConnection.off).toHaveBeenCalledWith('SendNotificationAsync');
+            expect(mockHubConnection.off).toHaveBeenCalledWith(
+                'SendNotificationAsync',
+            );
             expect(mockHubConnection.stop).toHaveBeenCalled();
         });
     });

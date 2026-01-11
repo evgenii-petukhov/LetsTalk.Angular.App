@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { InlineCountdownComponent } from './inline-countdown.component';
-import { fakeAsync, tick, flush } from '@angular/core/testing';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('InlineCountdownComponent', () => {
     let component: InlineCountdownComponent;
@@ -16,53 +16,59 @@ describe('InlineCountdownComponent', () => {
         fixture = TestBed.createComponent(InlineCountdownComponent);
         component = fixture.componentInstance;
         component.startValue = 5;
+
+        // Use Vitest's fake timers
+        vi.useFakeTimers();
     });
 
-    it('should emit expired event when countdown reaches zero', fakeAsync(() => {
+    afterEach(() => {
+        // Clean up timers
+        vi.useRealTimers();
+    });
+
+    it('should emit expired event when countdown reaches zero', () => {
         // Arrange
-        spyOn(component.expired, 'emit');
+        vi.spyOn(component.expired, 'emit');
 
         // Act
         component.ngOnInit();
-        tick(5000);
+        vi.advanceTimersByTime(5000);
 
         // Assert
         expect(component.value()).toBe(0);
+        expect(component.expired.emit).toHaveBeenCalled();
 
         component.ngOnDestroy();
-        flush();
-    }));
+    });
 
-    it('should decrement value every second', fakeAsync(() => {
+    it('should decrement value every second', () => {
         // Arrange
 
         // Act
         component.ngOnInit();
-        tick(1000);
+        vi.advanceTimersByTime(1000);
 
         // Assert
         expect(component.value()).toBe(4);
 
-        tick(1000);
+        vi.advanceTimersByTime(1000);
         expect(component.value()).toBe(3);
 
         component.ngOnDestroy();
-        flush();
-    }));
+    });
 
-    it('should stop the timer when countdown reaches zero', fakeAsync(() => {
+    it('should stop the timer when countdown reaches zero', () => {
         // Arrange
-        spyOn(window, 'clearInterval').and.callThrough();
+        vi.spyOn(window, 'clearInterval');
 
         // Act
         component.ngOnInit();
-        tick(5000);
+        vi.advanceTimersByTime(5000);
 
         // Assert
         expect(component.value()).toBe(0);
         expect(window.clearInterval).toHaveBeenCalled();
 
         component.ngOnDestroy();
-        flush();
-    }));
+    });
 });

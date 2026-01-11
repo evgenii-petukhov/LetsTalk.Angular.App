@@ -1,11 +1,11 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { ChatDto, IAccountDto, IChatDto } from 'src/app/api-client/api-client';
+import { ChatDto, IAccountDto, IChatDto } from '../../../../api-client/api-client';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
-import { StoreService } from 'src/app/services/store.service';
-import { IdGeneratorService } from 'src/app/services/id-generator.service';
+import { StoreService } from '../../../../services/store.service';
+import { IdGeneratorService } from '../../../../services/id-generator.service';
 import { Store } from '@ngrx/store';
-import { selectChats } from 'src/app/state/chats/chats.selector';
-import { selectAccounts } from 'src/app/state/accounts/accounts.selector';
+import { selectChats } from '../../../../state/chats/chats.selector';
+import { selectAccounts } from '../../../../state/accounts/accounts.selector';
 import { Location } from '@angular/common';
 
 @Component({

@@ -1,10 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { ChatListItemComponent } from './chat-list-item.component';
-import { IChatDto, ImageDto } from 'src/app/api-client/api-client';
+import { IChatDto, ImageDto } from '../../../../api-client/api-client';
 import { AvatarStubComponent } from '../../../shared/avatar/avatar.component.stub';
 import { UserDetailsStubComponent } from '../../../shared/user-details/user-details.component.stub';
 import { UnreadCountStubComponent } from '../unread-count/unread-count.component.stub';
 import { By } from '@angular/platform-browser';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('ChatListItemComponent', () => {
     let component: ChatListItemComponent;
@@ -18,6 +20,7 @@ describe('ChatListItemComponent', () => {
                 UserDetailsStubComponent,
                 UnreadCountStubComponent,
             ],
+            imports: [RouterTestingModule],
         }).compileComponents();
 
         fixture = TestBed.createComponent(ChatListItemComponent);
@@ -38,7 +41,7 @@ describe('ChatListItemComponent', () => {
             image: new ImageDto({
                 id: 'image-id',
                 fileStorageTypeId: 1,
-            })
+            }),
         };
 
         // Act
@@ -49,10 +52,7 @@ describe('ChatListItemComponent', () => {
         const avatarComponent = fixture.debugElement.query(
             By.directive(AvatarStubComponent),
         ).componentInstance as AvatarStubComponent;
-        expect(avatarComponent.urlOptions).toEqual([
-            chat.image,
-            chat.photoUrl,
-        ]);
+        expect(avatarComponent.urlOptions).toEqual([chat.image, chat.photoUrl]);
 
         const userDetailsComponent = fixture.debugElement.query(
             By.directive(UserDetailsStubComponent),
@@ -77,7 +77,7 @@ describe('ChatListItemComponent', () => {
             image: new ImageDto({
                 id: 'image-id',
                 fileStorageTypeId: 1,
-            })
+            }),
         };
 
         // Act
@@ -88,10 +88,7 @@ describe('ChatListItemComponent', () => {
         const avatarComponent = fixture.debugElement.query(
             By.directive(AvatarStubComponent),
         ).componentInstance as AvatarStubComponent;
-        expect(avatarComponent.urlOptions).toEqual([
-            chat.image,
-            chat.photoUrl,
-        ]);
+        expect(avatarComponent.urlOptions).toEqual([chat.image, chat.photoUrl]);
 
         const userDetailsComponent = fixture.debugElement.query(
             By.directive(UserDetailsStubComponent),
