@@ -3,5 +3,7 @@
         <app-avatar [urlOptions]="urlOptions()"></app-avatar>
     }
     <app-user-details [value]="chat()?.chatName"></app-user-details>
-    <app-call-button (buttonClick)="onCallClicked()"></app-call-button>
+    @if (!isCallInProgress()) {
+        <app-call-button (buttonClick)="onCallClicked()"></app-call-button>
+    }
 </app-top-panel>
