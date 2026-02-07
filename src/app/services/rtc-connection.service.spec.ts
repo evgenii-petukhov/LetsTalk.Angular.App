@@ -211,12 +211,13 @@ describe('RtcConnectionService', () => {
 
         it('should handle incoming call successfully', async () => {
             // Arrange
+            const callId = 'call-id';
             const chatId = 'test-chat-id';
             const offerString = JSON.stringify(mockOffer);
             const finalAnswerData = JSON.stringify(mockAnswer);
 
             // Act
-            const promise = service.handleIncomingCall(chatId, offerString);
+            const promise = service.handleIncomingCall(callId, chatId, offerString);
 
             // Simulate ice candidate generation first, then completion
             setTimeout(() => {
@@ -239,6 +240,7 @@ describe('RtcConnectionService', () => {
                 mockOffer.candidates,
             );
             expect(apiService.handleIncomingCall).toHaveBeenCalledWith(
+                callId,
                 chatId,
                 finalAnswerData,
             );
@@ -246,12 +248,13 @@ describe('RtcConnectionService', () => {
 
         it('should handle timer expiration during answer generation', async () => {
             // Arrange
+            const callId = 'call-id';
             const chatId = 'test-chat-id';
             const offerString = JSON.stringify(mockOffer);
             const finalAnswerData = JSON.stringify(mockAnswer);
 
             // Act
-            const promise = service.handleIncomingCall(chatId, offerString);
+            const promise = service.handleIncomingCall(callId, chatId, offerString);
 
             // Wait for timer to be created
             await new Promise((resolve) => setTimeout(resolve, 0));
@@ -423,6 +426,7 @@ describe('RtcConnectionService', () => {
 
         it('should handle complete incoming call flow', async () => {
             // Arrange
+            const callId = 'call-id';
             const chatId = 'test-chat-id';
             const offerString = JSON.stringify(mockOffer);
             const finalAnswerData = JSON.stringify(mockAnswer);
@@ -432,7 +436,7 @@ describe('RtcConnectionService', () => {
             apiService.handleIncomingCall.mockReturnValue(Promise.resolve());
 
             // Act - Handle the incoming call
-            const callPromise = service.handleIncomingCall(chatId, offerString);
+            const callPromise = service.handleIncomingCall(callId, chatId, offerString);
 
             // Simulate the WebRTC flow
             setTimeout(() => {
@@ -451,6 +455,7 @@ describe('RtcConnectionService', () => {
                 connectionManager.handleOfferAndCreateAnswer,
             ).toHaveBeenCalled();
             expect(apiService.handleIncomingCall).toHaveBeenCalledWith(
+                callId,
                 chatId,
                 finalAnswerData,
             );
@@ -573,6 +578,7 @@ describe('RtcConnectionService', () => {
 
         it('should create timer with correct timeout in handleIncomingCall', async () => {
             // Arrange
+            const callId = 'call-id';
             const chatId = 'test-chat-id';
             const offerString = JSON.stringify(mockOffer);
             const finalAnswerData = JSON.stringify(mockAnswer);
@@ -582,7 +588,7 @@ describe('RtcConnectionService', () => {
             apiService.handleIncomingCall.mockReturnValue(Promise.resolve());
 
             // Act
-            const callPromise = service.handleIncomingCall(chatId, offerString);
+            const callPromise = service.handleIncomingCall(callId, chatId, offerString);
 
             // Wait for timer to be created
             await new Promise((resolve) => setTimeout(resolve, 0));
@@ -636,12 +642,13 @@ describe('RtcConnectionService', () => {
     describe('JSON parsing edge cases', () => {
         it('should handle malformed JSON in handleIncomingCall', async () => {
             // Arrange
+            const callId = 'call-id';
             const chatId = 'test-chat-id';
             const malformedOffer = 'invalid-json';
 
             // Act & Assert
             await expect(
-                service.handleIncomingCall(chatId, malformedOffer),
+                service.handleIncomingCall(callId, chatId, malformedOffer),
             ).rejects.toThrow();
         });
 
@@ -747,6 +754,7 @@ describe('RtcConnectionService', () => {
 
         it('should handle API errors in handleIncomingCall', async () => {
             // Arrange
+            const callId = 'call-id';
             const chatId = 'test-chat-id';
             const offerString = JSON.stringify(mockOffer);
             const error = new Error('API Error');
@@ -754,7 +762,7 @@ describe('RtcConnectionService', () => {
 
             // Act & Assert
             await expect(
-                service.handleIncomingCall(chatId, offerString),
+                service.handleIncomingCall(callId, chatId, offerString),
             ).rejects.toEqual(error);
         });
 

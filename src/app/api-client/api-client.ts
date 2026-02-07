@@ -1275,6 +1275,7 @@ export interface IGenerateLoginCodeResponseDto {
 }
 
 export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
+    callId?: string | undefined;
     chatId?: string | undefined;
     answer?: string | undefined;
 
@@ -1289,6 +1290,7 @@ export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
 
     init(_data?: any) {
         if (_data) {
+            this.callId = _data["callId"];
             this.chatId = _data["chatId"];
             this.answer = _data["answer"];
         }
@@ -1303,6 +1305,7 @@ export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["callId"] = this.callId;
         data["chatId"] = this.chatId;
         data["answer"] = this.answer;
         return data;
@@ -1310,6 +1313,7 @@ export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
 }
 
 export interface IHandleIncomingCallRequest {
+    callId?: string | undefined;
     chatId?: string | undefined;
     answer?: string | undefined;
 }
@@ -1867,6 +1871,7 @@ export interface ISetLinkPreviewRequest {
 }
 
 export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
+    callId?: string | undefined;
     chatId?: string | undefined;
     offer?: string | undefined;
 
@@ -1881,6 +1886,7 @@ export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
 
     init(_data?: any) {
         if (_data) {
+            this.callId = _data["callId"];
             this.chatId = _data["chatId"];
             this.offer = _data["offer"];
         }
@@ -1895,6 +1901,7 @@ export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["callId"] = this.callId;
         data["chatId"] = this.chatId;
         data["offer"] = this.offer;
         return data;
@@ -1902,6 +1909,7 @@ export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
 }
 
 export interface IStartOutgoingCallRequest {
+    callId?: string | undefined;
     chatId?: string | undefined;
     offer?: string | undefined;
 }

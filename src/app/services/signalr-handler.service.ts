@@ -113,6 +113,7 @@ export class SignalrHandlerService {
 
     async handleRtcSessionOfferNotification(
         chats: readonly IChatDto[],
+        callId: string,
         chatId: string,
         offer: string,
     ): Promise<void> {
@@ -123,7 +124,7 @@ export class SignalrHandlerService {
 
         await this.router.navigate(['/messenger/chat', chatId]);
 
-        this.storeService.initIncomingCall(chatId, offer);
+        this.storeService.initIncomingCall(callId, chatId, offer);
     }
 
     handleRtcSessionAnswerNotification(answer: string): void {

@@ -12,7 +12,8 @@ export const videoCallReducer = createReducer(
         captureVideo: true,
         captureAudio: true,
     })),
-    on(videoCallActions.initIncomingCall, (_state, { chatId, offer }) => ({
+    on(videoCallActions.initIncomingCall, (_state, { callId, chatId, offer }) => ({
+        callId,
         chatId,
         offer,
         type: 'incoming',

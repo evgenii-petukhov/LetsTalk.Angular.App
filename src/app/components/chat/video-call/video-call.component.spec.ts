@@ -28,6 +28,7 @@ describe('VideoCallComponent', () => {
     let storeSubject: Subject<VideoCallState | null>;
 
     const mockVideoCallState: VideoCallState = {
+        callId: 'call-id',
         chatId: 'test-chat-id',
         type: 'outgoing',
         captureVideo: true,
@@ -35,6 +36,7 @@ describe('VideoCallComponent', () => {
     };
 
     const mockIncomingVideoCallState: VideoCallState = {
+        callId: 'call-id',
         chatId: 'test-chat-id',
         offer: 'test-offer',
         type: 'incoming',
@@ -231,6 +233,7 @@ describe('VideoCallComponent', () => {
             expect(
                 mockRtcConnectionService.handleIncomingCall,
             ).toHaveBeenCalledWith(
+                mockIncomingVideoCallState.callId,
                 mockIncomingVideoCallState.chatId,
                 mockIncomingVideoCallState.offer,
             );
@@ -543,7 +546,7 @@ describe('VideoCallComponent', () => {
             expect(mockConnectionManager.startMediaCapture).toHaveBeenCalled();
             expect(
                 mockRtcConnectionService.handleIncomingCall,
-            ).toHaveBeenCalledWith('test-chat-id', 'test-offer');
+            ).toHaveBeenCalledWith('call-id', 'test-chat-id', 'test-offer');
             expect(mockConnectionManager.setVideoEnabled).toHaveBeenCalledWith(
                 false,
             );

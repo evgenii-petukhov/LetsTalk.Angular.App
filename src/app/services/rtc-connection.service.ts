@@ -43,7 +43,7 @@ export class RtcConnectionService {
         return this.apiService.startOutgoingCall(accountId, finalOffer);
     }
 
-    async handleIncomingCall(chatId: string, offer: string): Promise<void> {
+    async handleIncomingCall(callId: string, chatId: string, offer: string): Promise<void> {
         const remote = JSON.parse(offer);
         const callSettings = await this.apiService.getCallSettings();
 
@@ -61,7 +61,7 @@ export class RtcConnectionService {
             this.iceCandidateSubject.pipe(takeUntil(this.iceGatheringComplete)),
         );
 
-        return this.apiService.handleIncomingCall(chatId, finalOffer);
+        return this.apiService.handleIncomingCall(callId, chatId, finalOffer);
     }
 
     async establishConnection(answer: string): Promise<void> {

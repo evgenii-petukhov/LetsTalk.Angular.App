@@ -130,8 +130,9 @@ export class ApiService {
         return firstValueFrom(this.client.startOutgoingCall(request));
     }
 
-    handleIncomingCall(chatId: string, answer: string): Promise<void> {
+    handleIncomingCall(callId: string, chatId: string, answer: string): Promise<void> {
         const request = new HandleIncomingCallRequest({
+            callId,
             chatId,
             answer
         });
