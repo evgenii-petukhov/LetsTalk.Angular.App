@@ -121,20 +121,35 @@ export class ApiService {
         return firstValueFrom(this.client.generateLoginCode(request));
     }
 
-    startOutgoingCall(chatId: string, offer: string): Promise<void> {
+    startOutgoingCall(
+        chatId: string,
+        offer: string,
+        iceGatheringElapsedMs: number,
+        iceGatheringCollectedAll: boolean,
+    ): Promise<void> {
         const request = new StartOutgoingCallRequest({
             chatId,
-            offer
+            offer,
+            iceGatheringElapsedMs: Math.round(iceGatheringElapsedMs),
+            iceGatheringCollectedAll,
         });
 
         return firstValueFrom(this.client.startOutgoingCall(request));
     }
 
-    handleIncomingCall(callId: string, chatId: string, answer: string): Promise<void> {
+    handleIncomingCall(
+        callId: string,
+        chatId: string,
+        answer: string,
+        iceGatheringElapsedMs: number,
+        iceGatheringCollectedAll: boolean,
+    ): Promise<void> {
         const request = new HandleIncomingCallRequest({
             callId,
             chatId,
-            answer
+            answer,
+            iceGatheringElapsedMs: Math.round(iceGatheringElapsedMs),
+            iceGatheringCollectedAll,
         });
 
         return firstValueFrom(this.client.handleIncomingCall(request));

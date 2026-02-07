@@ -1278,6 +1278,8 @@ export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
     callId?: string | undefined;
     chatId?: string | undefined;
     answer?: string | undefined;
+    iceGatheringElapsedMs?: number;
+    iceGatheringCollectedAll?: boolean;
 
     constructor(data?: IHandleIncomingCallRequest) {
         if (data) {
@@ -1293,6 +1295,8 @@ export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
             this.callId = _data["callId"];
             this.chatId = _data["chatId"];
             this.answer = _data["answer"];
+            this.iceGatheringElapsedMs = _data["iceGatheringElapsedMs"];
+            this.iceGatheringCollectedAll = _data["iceGatheringCollectedAll"];
         }
     }
 
@@ -1308,6 +1312,8 @@ export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
         data["callId"] = this.callId;
         data["chatId"] = this.chatId;
         data["answer"] = this.answer;
+        data["iceGatheringElapsedMs"] = this.iceGatheringElapsedMs;
+        data["iceGatheringCollectedAll"] = this.iceGatheringCollectedAll;
         return data;
     }
 }
@@ -1316,6 +1322,8 @@ export interface IHandleIncomingCallRequest {
     callId?: string | undefined;
     chatId?: string | undefined;
     answer?: string | undefined;
+    iceGatheringElapsedMs?: number;
+    iceGatheringCollectedAll?: boolean;
 }
 
 export class ImageDto implements IImageDto {
@@ -1874,6 +1882,8 @@ export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
     callId?: string | undefined;
     chatId?: string | undefined;
     offer?: string | undefined;
+    iceGatheringElapsedMs?: number;
+    iceGatheringCollectedAll?: boolean;
 
     constructor(data?: IStartOutgoingCallRequest) {
         if (data) {
@@ -1889,6 +1899,8 @@ export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
             this.callId = _data["callId"];
             this.chatId = _data["chatId"];
             this.offer = _data["offer"];
+            this.iceGatheringElapsedMs = _data["iceGatheringElapsedMs"];
+            this.iceGatheringCollectedAll = _data["iceGatheringCollectedAll"];
         }
     }
 
@@ -1904,6 +1916,8 @@ export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
         data["callId"] = this.callId;
         data["chatId"] = this.chatId;
         data["offer"] = this.offer;
+        data["iceGatheringElapsedMs"] = this.iceGatheringElapsedMs;
+        data["iceGatheringCollectedAll"] = this.iceGatheringCollectedAll;
         return data;
     }
 }
@@ -1912,6 +1926,8 @@ export interface IStartOutgoingCallRequest {
     callId?: string | undefined;
     chatId?: string | undefined;
     offer?: string | undefined;
+    iceGatheringElapsedMs?: number;
+    iceGatheringCollectedAll?: boolean;
 }
 
 export class UpdateProfileRequest implements IUpdateProfileRequest {

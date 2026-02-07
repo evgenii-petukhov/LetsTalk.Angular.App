@@ -54,7 +54,7 @@ export const constraintSets: MediaStreamConstraints[] = [
 })
 export class RtcPeerConnectionManager {
     onCandidatesReceived: (data: string) => void;
-    onGatheringCompleted: () => void;
+    onGatheringCompleted: (timeElapsed: number, collectedAll: boolean) => void;
     onConnectionStateChange: (state: RTCPeerConnectionState) => void;
     isMediaCaptured = false;
     private connection = new RTCPeerConnection();
@@ -65,6 +65,7 @@ export class RtcPeerConnectionManager {
     private isGathering = true;
     private localMediaStream: MediaStream | null = null;
     private remoteMediaStream: MediaStream | null = null;
+    private iceCandidateGatheringStarted: number;
 
     constructor() {
         this.connection.onicecandidate = this.onIceCandidateReceived.bind(this);
@@ -76,6 +77,7 @@ export class RtcPeerConnectionManager {
         this.isGathering = true;
         this.localCandidates = [];
         this.connection.setConfiguration(config);
+        this.iceCandidateGatheringStarted = performance.now();
 
         const offer = await this.connection.createOffer();
         await this.connection.setLocalDescription(offer);
@@ -89,6 +91,7 @@ export class RtcPeerConnectionManager {
         this.isGathering = true;
         this.localCandidates = [];
         this.connection.setConfiguration(config);
+        this.iceCandidateGatheringStarted = performance.now();
 
         await this.connection.setRemoteDescription(desc);
         if (candidates) {
@@ -108,7 +111,7 @@ export class RtcPeerConnectionManager {
             return;
 
         if (this.iceCandidateMetricsService.hasSufficientServers(this.localCandidates)) {
-            this.finalizeIceGathering();
+            this.finalizeIceGathering(false);
         }
     }
 
@@ -160,18 +163,6 @@ export class RtcPeerConnectionManager {
         this.connectRemoteVideo(remoteVideo);
     }
 
-    private connectLocalVideo(localVideo: HTMLVideoElement): void {
-        if (this.localMediaStream && localVideo) {
-            localVideo.srcObject = this.localMediaStream;
-        }
-    }
-
-    private connectRemoteVideo(remoteVideo: HTMLVideoElement): void {
-        if (this.remoteMediaStream && remoteVideo) {
-            remoteVideo.srcObject = this.remoteMediaStream;
-        }
-    }
-
     setVideoEnabled(enabled: boolean): void {
         if (this.localMediaStream) {
             const videoTracks = this.localMediaStream.getVideoTracks();
@@ -211,11 +202,23 @@ export class RtcPeerConnectionManager {
         this.isMediaCaptured = false;
     }
 
+    private connectLocalVideo(localVideo: HTMLVideoElement): void {
+        if (this.localMediaStream && localVideo) {
+            localVideo.srcObject = this.localMediaStream;
+        }
+    }
+
+    private connectRemoteVideo(remoteVideo: HTMLVideoElement): void {
+        if (this.remoteMediaStream && remoteVideo) {
+            remoteVideo.srcObject = this.remoteMediaStream;
+        }
+    }
+
     private onIceCandidateReceived(e: RTCPeerConnectionIceEvent): void {
         if (!this.isGathering) return;
 
         if (!e.candidate) {
-            this.finalizeIceGathering();
+            this.finalizeIceGathering(true);
             return;
         }
 
@@ -229,9 +232,9 @@ export class RtcPeerConnectionManager {
         this.onCandidatesReceived?.(JSON.stringify(data));
     }
 
-    private finalizeIceGathering(): void {
+    private finalizeIceGathering(collectedAll: boolean): void {
         this.isGathering = false;
-        this.onGatheringCompleted?.();
+        this.onGatheringCompleted?.(performance.now() - this.iceCandidateGatheringStarted, collectedAll);
     }
 
     private _onConnectionStateChange(): void {

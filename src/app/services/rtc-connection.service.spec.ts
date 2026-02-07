@@ -150,7 +150,7 @@ describe('RtcConnectionService', () => {
             }, 0);
 
             setTimeout(() => {
-                service['onIceGatheringComplete']();
+                service['onIceGatheringComplete'](0, false);
             }, 5);
 
             await promise;
@@ -163,6 +163,8 @@ describe('RtcConnectionService', () => {
             expect(apiService.startOutgoingCall).toHaveBeenCalledWith(
                 accountId,
                 finalOfferData,
+                0,
+                false
             );
         });
 
@@ -189,7 +191,7 @@ describe('RtcConnectionService', () => {
             }, 0);
 
             setTimeout(() => {
-                service['onIceGatheringComplete']();
+                service['onIceGatheringComplete'](0, false);
             }, 5);
 
             await promise;
@@ -225,7 +227,7 @@ describe('RtcConnectionService', () => {
             }, 0);
 
             setTimeout(() => {
-                service['onIceGatheringComplete']();
+                service['onIceGatheringComplete'](0, false);
             }, 5);
 
             await promise;
@@ -243,6 +245,8 @@ describe('RtcConnectionService', () => {
                 callId,
                 chatId,
                 finalAnswerData,
+                0,
+                false
             );
         });
 
@@ -271,7 +275,7 @@ describe('RtcConnectionService', () => {
             }, 0);
 
             setTimeout(() => {
-                service['onIceGatheringComplete']();
+                service['onIceGatheringComplete'](0, false);
             }, 5);
 
             await promise;
@@ -383,7 +387,7 @@ describe('RtcConnectionService', () => {
             service['iceGatheringTimer'] = mockTimer as any;
 
             // Act
-            service['onIceGatheringComplete']();
+            service['onIceGatheringComplete'](0, false);
 
             // Assert
             expect(service['iceGatheringComplete'].next).toHaveBeenCalled();
@@ -410,7 +414,7 @@ describe('RtcConnectionService', () => {
             }, 0);
 
             setTimeout(() => {
-                service['onIceGatheringComplete']();
+                service['onIceGatheringComplete'](0, false);
             }, 5);
 
             await callPromise;
@@ -421,6 +425,8 @@ describe('RtcConnectionService', () => {
             expect(apiService.startOutgoingCall).toHaveBeenCalledWith(
                 accountId,
                 finalOfferData,
+                0,
+                false
             );
         });
 
@@ -444,7 +450,7 @@ describe('RtcConnectionService', () => {
             }, 0);
 
             setTimeout(() => {
-                service['onIceGatheringComplete']();
+                service['onIceGatheringComplete'](0, false);
             }, 5);
 
             await callPromise;
@@ -458,6 +464,8 @@ describe('RtcConnectionService', () => {
                 callId,
                 chatId,
                 finalAnswerData,
+                0,
+                false
             );
         });
 
@@ -570,7 +578,7 @@ describe('RtcConnectionService', () => {
             // Complete the call
             setTimeout(() => {
                 service['onIceCandidateGenerated'](finalOfferData);
-                service['onIceGatheringComplete']();
+                service['onIceGatheringComplete'](0, false);
             }, 0);
 
             await callPromise;
@@ -600,7 +608,7 @@ describe('RtcConnectionService', () => {
             // Complete the call
             setTimeout(() => {
                 service['onIceCandidateGenerated'](finalAnswerData);
-                service['onIceGatheringComplete']();
+                service['onIceGatheringComplete'](0, false);
             }, 0);
 
             await callPromise;
@@ -629,7 +637,7 @@ describe('RtcConnectionService', () => {
             });
 
             // Act
-            service['onIceGatheringComplete']();
+            service['onIceGatheringComplete'](0, false);
 
             // Assert
             setTimeout(() => {
@@ -731,7 +739,7 @@ describe('RtcConnectionService', () => {
             service['iceGatheringTimer'] = mockTimer as any;
 
             // Act - Simulate callback from connection manager by calling the bound method directly
-            service['onIceGatheringComplete']();
+            service['onIceGatheringComplete'](0, false);
 
             // Assert
             expect(service['iceGatheringComplete'].next).toHaveBeenCalled();

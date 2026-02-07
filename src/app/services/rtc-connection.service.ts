@@ -16,6 +16,8 @@ export class RtcConnectionService {
     private iceGatheringComplete = new Subject<void>();
     private iceGatheringTimer: Timer;
     private iceGatheringTimeoutMs = 10000;
+    private iceGatheringElapsedMs = 0;
+    private iceGatheringCollectedAll = false;
 
     constructor() {
         this.connectionManager.onCandidatesReceived =
@@ -40,10 +42,19 @@ export class RtcConnectionService {
             this.iceCandidateSubject.pipe(takeUntil(this.iceGatheringComplete)),
         );
 
-        return this.apiService.startOutgoingCall(accountId, finalOffer);
+        return this.apiService.startOutgoingCall(
+            accountId,
+            finalOffer,
+            this.iceGatheringElapsedMs,
+            this.iceGatheringCollectedAll,
+        );
     }
 
-    async handleIncomingCall(callId: string, chatId: string, offer: string): Promise<void> {
+    async handleIncomingCall(
+        callId: string,
+        chatId: string,
+        offer: string,
+    ): Promise<void> {
         const remote = JSON.parse(offer);
         const callSettings = await this.apiService.getCallSettings();
 
@@ -61,7 +72,13 @@ export class RtcConnectionService {
             this.iceCandidateSubject.pipe(takeUntil(this.iceGatheringComplete)),
         );
 
-        return this.apiService.handleIncomingCall(callId, chatId, finalOffer);
+        return this.apiService.handleIncomingCall(
+            callId,
+            chatId,
+            finalOffer,
+            this.iceGatheringElapsedMs,
+            this.iceGatheringCollectedAll,
+        );
     }
 
     async establishConnection(answer: string): Promise<void> {
@@ -87,7 +104,12 @@ export class RtcConnectionService {
         }
     }
 
-    private onIceGatheringComplete(): void {
+    private onIceGatheringComplete(
+        timeElapsed: number,
+        collectedAll: boolean,
+    ): void {
+        this.iceGatheringElapsedMs = timeElapsed;
+        this.iceGatheringCollectedAll = collectedAll;
         this.iceGatheringComplete.next();
         this.iceGatheringTimer.clear();
     }
