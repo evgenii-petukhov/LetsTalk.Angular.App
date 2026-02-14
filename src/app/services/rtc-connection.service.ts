@@ -47,9 +47,9 @@ export class RtcConnectionService {
         return this.apiService.startOutgoingCall(
             accountId,
             finalOffer,
-            diagnostics,
             this.iceGatheringElapsedMs,
             this.iceGatheringCollectedAll,
+            diagnostics,
         );
     }
 
@@ -81,9 +81,9 @@ export class RtcConnectionService {
             callId,
             chatId,
             finalOffer,
-            diagnostics,
             this.iceGatheringElapsedMs,
             this.iceGatheringCollectedAll,
+            diagnostics,
         );
     }
 

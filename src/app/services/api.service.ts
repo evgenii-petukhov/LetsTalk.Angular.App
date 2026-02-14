@@ -18,6 +18,7 @@ import {
     StartOutgoingCallRequest,
     HandleIncomingCallRequest,
     CallSettingsDto,
+    ConnectionDiagnostics as ApiConnectionDiagnostics,
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 import { ConnectionDiagnostics } from '../models/connection-diagnostics';
@@ -125,24 +126,20 @@ export class ApiService {
     startOutgoingCall(
         chatId: string,
         offer: string,
-        diagnostics: ConnectionDiagnostics,
         iceGatheringElapsedMs: number,
         iceGatheringCollectedAll: boolean,
+        diagnostics: ConnectionDiagnostics,
     ): Promise<void> {
         const request = new StartOutgoingCallRequest({
             chatId,
             offer,
-            connectionState: diagnostics.connectionState,
-            localCandidateTypes: JSON.stringify(
-                diagnostics.localCandidateTypes,
-            ),
-            remoteCandidateTypes: JSON.stringify(
-                diagnostics.remoteCandidateTypes,
-            ),
-            browser: diagnostics.browser,
-            platform: diagnostics.platform,
-            iceGatheringElapsedMs: Math.round(iceGatheringElapsedMs),
+            iceGatheringElapsedMs: iceGatheringElapsedMs,
             iceGatheringCollectedAll,
+            connectionDiagnostics: new ApiConnectionDiagnostics({
+                ...diagnostics,
+                localCandidateTypes: JSON.stringify(diagnostics.localCandidateTypes),
+                remoteCandidateTypes: JSON.stringify(diagnostics.remoteCandidateTypes)
+            }),
         });
 
         return firstValueFrom(this.client.startOutgoingCall(request));
@@ -152,25 +149,21 @@ export class ApiService {
         callId: string,
         chatId: string,
         answer: string,
-        diagnostics: ConnectionDiagnostics,
         iceGatheringElapsedMs: number,
         iceGatheringCollectedAll: boolean,
+        diagnostics: ConnectionDiagnostics,
     ): Promise<void> {
         const request = new HandleIncomingCallRequest({
             callId,
             chatId,
             answer,
-            connectionState: diagnostics.connectionState,
-            localCandidateTypes: JSON.stringify(
-                diagnostics.localCandidateTypes,
-            ),
-            remoteCandidateTypes: JSON.stringify(
-                diagnostics.remoteCandidateTypes,
-            ),
-            browser: diagnostics.browser,
-            platform: diagnostics.platform,
             iceGatheringElapsedMs: Math.round(iceGatheringElapsedMs),
             iceGatheringCollectedAll,
+            connectionDiagnostics: new ApiConnectionDiagnostics({
+                ...diagnostics,
+                localCandidateTypes: JSON.stringify(diagnostics.localCandidateTypes),
+                remoteCandidateTypes: JSON.stringify(diagnostics.remoteCandidateTypes)
+            }),
         });
 
         return firstValueFrom(this.client.handleIncomingCall(request));

@@ -1074,6 +1074,58 @@ export interface IChatDtoBase {
     id?: string | undefined;
 }
 
+export class ConnectionDiagnostics implements IConnectionDiagnostics {
+    connectionState?: string | undefined;
+    localCandidateTypes?: string | undefined;
+    remoteCandidateTypes?: string | undefined;
+    browser?: string | undefined;
+    platform?: string | undefined;
+
+    constructor(data?: IConnectionDiagnostics) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.connectionState = _data["connectionState"];
+            this.localCandidateTypes = _data["localCandidateTypes"];
+            this.remoteCandidateTypes = _data["remoteCandidateTypes"];
+            this.browser = _data["browser"];
+            this.platform = _data["platform"];
+        }
+    }
+
+    static fromJS(data: any): ConnectionDiagnostics {
+        data = typeof data === 'object' ? data : {};
+        let result = new ConnectionDiagnostics();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["connectionState"] = this.connectionState;
+        data["localCandidateTypes"] = this.localCandidateTypes;
+        data["remoteCandidateTypes"] = this.remoteCandidateTypes;
+        data["browser"] = this.browser;
+        data["platform"] = this.platform;
+        return data;
+    }
+}
+
+export interface IConnectionDiagnostics {
+    connectionState?: string | undefined;
+    localCandidateTypes?: string | undefined;
+    remoteCandidateTypes?: string | undefined;
+    browser?: string | undefined;
+    platform?: string | undefined;
+}
+
 export class CreateIndividualChatRequest implements ICreateIndividualChatRequest {
     accountId?: string | undefined;
 
@@ -1278,11 +1330,7 @@ export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
     callId?: string | undefined;
     chatId?: string | undefined;
     answer?: string | undefined;
-    connectionState?: string | undefined;
-    localCandidateTypes?: string | undefined;
-    remoteCandidateTypes?: string | undefined;
-    browser?: string | undefined;
-    platform?: string | undefined;
+    connectionDiagnostics?: ConnectionDiagnostics;
     iceGatheringElapsedMs?: number;
     iceGatheringCollectedAll?: boolean;
 
@@ -1300,11 +1348,7 @@ export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
             this.callId = _data["callId"];
             this.chatId = _data["chatId"];
             this.answer = _data["answer"];
-            this.connectionState = _data["connectionState"];
-            this.localCandidateTypes = _data["localCandidateTypes"];
-            this.remoteCandidateTypes = _data["remoteCandidateTypes"];
-            this.browser = _data["browser"];
-            this.platform = _data["platform"];
+            this.connectionDiagnostics = _data["connectionDiagnostics"] ? ConnectionDiagnostics.fromJS(_data["connectionDiagnostics"]) : undefined as any;
             this.iceGatheringElapsedMs = _data["iceGatheringElapsedMs"];
             this.iceGatheringCollectedAll = _data["iceGatheringCollectedAll"];
         }
@@ -1322,11 +1366,7 @@ export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
         data["callId"] = this.callId;
         data["chatId"] = this.chatId;
         data["answer"] = this.answer;
-        data["connectionState"] = this.connectionState;
-        data["localCandidateTypes"] = this.localCandidateTypes;
-        data["remoteCandidateTypes"] = this.remoteCandidateTypes;
-        data["browser"] = this.browser;
-        data["platform"] = this.platform;
+        data["connectionDiagnostics"] = this.connectionDiagnostics ? this.connectionDiagnostics.toJSON() : undefined as any;
         data["iceGatheringElapsedMs"] = this.iceGatheringElapsedMs;
         data["iceGatheringCollectedAll"] = this.iceGatheringCollectedAll;
         return data;
@@ -1337,11 +1377,7 @@ export interface IHandleIncomingCallRequest {
     callId?: string | undefined;
     chatId?: string | undefined;
     answer?: string | undefined;
-    connectionState?: string | undefined;
-    localCandidateTypes?: string | undefined;
-    remoteCandidateTypes?: string | undefined;
-    browser?: string | undefined;
-    platform?: string | undefined;
+    connectionDiagnostics?: ConnectionDiagnostics;
     iceGatheringElapsedMs?: number;
     iceGatheringCollectedAll?: boolean;
 }
@@ -1902,11 +1938,7 @@ export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
     callId?: string | undefined;
     chatId?: string | undefined;
     offer?: string | undefined;
-    connectionState?: string | undefined;
-    localCandidateTypes?: string | undefined;
-    remoteCandidateTypes?: string | undefined;
-    browser?: string | undefined;
-    platform?: string | undefined;
+    connectionDiagnostics?: ConnectionDiagnostics;
     iceGatheringElapsedMs?: number;
     iceGatheringCollectedAll?: boolean;
 
@@ -1924,11 +1956,7 @@ export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
             this.callId = _data["callId"];
             this.chatId = _data["chatId"];
             this.offer = _data["offer"];
-            this.connectionState = _data["connectionState"];
-            this.localCandidateTypes = _data["localCandidateTypes"];
-            this.remoteCandidateTypes = _data["remoteCandidateTypes"];
-            this.browser = _data["browser"];
-            this.platform = _data["platform"];
+            this.connectionDiagnostics = _data["connectionDiagnostics"] ? ConnectionDiagnostics.fromJS(_data["connectionDiagnostics"]) : undefined as any;
             this.iceGatheringElapsedMs = _data["iceGatheringElapsedMs"];
             this.iceGatheringCollectedAll = _data["iceGatheringCollectedAll"];
         }
@@ -1946,11 +1974,7 @@ export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
         data["callId"] = this.callId;
         data["chatId"] = this.chatId;
         data["offer"] = this.offer;
-        data["connectionState"] = this.connectionState;
-        data["localCandidateTypes"] = this.localCandidateTypes;
-        data["remoteCandidateTypes"] = this.remoteCandidateTypes;
-        data["browser"] = this.browser;
-        data["platform"] = this.platform;
+        data["connectionDiagnostics"] = this.connectionDiagnostics ? this.connectionDiagnostics.toJSON() : undefined as any;
         data["iceGatheringElapsedMs"] = this.iceGatheringElapsedMs;
         data["iceGatheringCollectedAll"] = this.iceGatheringCollectedAll;
         return data;
@@ -1961,11 +1985,7 @@ export interface IStartOutgoingCallRequest {
     callId?: string | undefined;
     chatId?: string | undefined;
     offer?: string | undefined;
-    connectionState?: string | undefined;
-    localCandidateTypes?: string | undefined;
-    remoteCandidateTypes?: string | undefined;
-    browser?: string | undefined;
-    platform?: string | undefined;
+    connectionDiagnostics?: ConnectionDiagnostics;
     iceGatheringElapsedMs?: number;
     iceGatheringCollectedAll?: boolean;
 }

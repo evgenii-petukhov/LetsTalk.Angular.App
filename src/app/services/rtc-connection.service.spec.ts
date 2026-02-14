@@ -166,9 +166,9 @@ describe('RtcConnectionService', () => {
             expect(apiService.startOutgoingCall).toHaveBeenCalledWith(
                 accountId,
                 finalOfferData,
-                undefined,
                 0,
-                false
+                false,
+                undefined,
             );
         });
 
@@ -249,9 +249,9 @@ describe('RtcConnectionService', () => {
                 callId,
                 chatId,
                 finalAnswerData,
-                undefined,
                 0,
-                false
+                false,
+                undefined,
             );
         });
 
@@ -430,9 +430,9 @@ describe('RtcConnectionService', () => {
             expect(apiService.startOutgoingCall).toHaveBeenCalledWith(
                 accountId,
                 finalOfferData,
-                undefined,
                 0,
-                false
+                false,
+                undefined,
             );
         });
 
@@ -470,9 +470,9 @@ describe('RtcConnectionService', () => {
                 callId,
                 chatId,
                 finalAnswerData,
-                undefined,
                 0,
-                false
+                false,
+                undefined,
             );
         });
 
