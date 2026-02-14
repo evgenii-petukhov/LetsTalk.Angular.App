@@ -1,53 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { inject, Injectable } from '@angular/core';
 import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
-
-export const constraintSets: MediaStreamConstraints[] = [
-    // Standard
-    {
-        video: {
-            width: { ideal: 640, max: 640 },
-            height: { ideal: 480, max: 480 },
-            frameRate: { ideal: 15, max: 30 },
-        },
-        audio: {
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true,
-            sampleRate: { ideal: 44100 },
-            channelCount: { ideal: 1 },
-        },
-    },
-    // Relaxed
-    {
-        video: {
-            width: { ideal: 640 },
-            height: { ideal: 480 },
-            frameRate: { ideal: 15 },
-        },
-        audio: {
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true,
-            channelCount: { ideal: 1 },
-        },
-    },
-    // Basic
-    {
-        video: {
-            width: { ideal: 640 },
-            height: { ideal: 480 },
-        },
-        audio: {
-            echoCancellation: true,
-        },
-    },
-    // Simple
-    {
-        video: true,
-        audio: true,
-    },
-];
+import { mediaStreamConstraintFallbacks } from './media-stream-constraint-fallbacks';
+import { RtcConnectionDiagnosticsService } from './rtc-connection-diagnostics.service';
 
 @Injectable({
     providedIn: 'root',
@@ -61,6 +16,9 @@ export class RtcPeerConnectionManager {
     private localCandidates: RTCIceCandidate[] = [];
     private readonly iceCandidateMetricsService = inject(
         IceCandidateMetricsService,
+    );
+    private readonly rtcConnectionDiagnosticsService = inject(
+        RtcConnectionDiagnosticsService,
     );
     private isGathering = true;
     private localMediaStream: MediaStream | null = null;
@@ -95,7 +53,8 @@ export class RtcPeerConnectionManager {
 
         await this.connection.setRemoteDescription(desc);
         if (candidates) {
-            for (const c of candidates) await this.connection.addIceCandidate(c);
+            for (const c of candidates)
+                await this.connection.addIceCandidate(c);
         }
 
         const answer = await this.connection.createAnswer();
@@ -110,7 +69,11 @@ export class RtcPeerConnectionManager {
         )
             return;
 
-        if (this.iceCandidateMetricsService.hasSufficientServers(this.localCandidates)) {
+        if (
+            this.iceCandidateMetricsService.hasSufficientServers(
+                this.localCandidates,
+            )
+        ) {
             this.finalizeIceGathering(false);
         }
     }
@@ -125,7 +88,8 @@ export class RtcPeerConnectionManager {
 
         await this.connection.setRemoteDescription(desc);
         if (candidates) {
-            for (const c of candidates) await this.connection.addIceCandidate(c);
+            for (const c of candidates)
+                await this.connection.addIceCandidate(c);
         }
     }
 
@@ -133,7 +97,7 @@ export class RtcPeerConnectionManager {
         localVideo: HTMLVideoElement,
         remoteVideo: HTMLVideoElement,
     ): Promise<void> {
-        for (const constraints of constraintSets) {
+        for (const constraints of mediaStreamConstraintFallbacks) {
             try {
                 this.localMediaStream =
                     await navigator.mediaDevices.getUserMedia(constraints);
@@ -166,7 +130,7 @@ export class RtcPeerConnectionManager {
     setVideoEnabled(enabled: boolean): void {
         if (this.localMediaStream) {
             const videoTracks = this.localMediaStream.getVideoTracks();
-            videoTracks.forEach(track => {
+            videoTracks.forEach((track) => {
                 track.enabled = enabled;
             });
         }
@@ -175,7 +139,7 @@ export class RtcPeerConnectionManager {
     setAudioEnabled(enabled: boolean): void {
         if (this.localMediaStream) {
             const audioTracks = this.localMediaStream.getAudioTracks();
-            audioTracks.forEach(track => {
+            audioTracks.forEach((track) => {
                 track.enabled = enabled;
             });
         }
@@ -200,6 +164,12 @@ export class RtcPeerConnectionManager {
         this.localCandidates = [];
         this.isGathering = true;
         this.isMediaCaptured = false;
+    }
+
+    getDiagnostics() {
+        return this.rtcConnectionDiagnosticsService.gatherConnectionDiagnostics(
+            this.connection,
+        );
     }
 
     private connectLocalVideo(localVideo: HTMLVideoElement): void {
@@ -234,7 +204,10 @@ export class RtcPeerConnectionManager {
 
     private finalizeIceGathering(collectedAll: boolean): void {
         this.isGathering = false;
-        this.onGatheringCompleted?.(performance.now() - this.iceCandidateGatheringStarted, collectedAll);
+        this.onGatheringCompleted?.(
+            Math.round(performance.now() - this.iceCandidateGatheringStarted),
+            collectedAll,
+        );
     }
 
     private _onConnectionStateChange(): void {

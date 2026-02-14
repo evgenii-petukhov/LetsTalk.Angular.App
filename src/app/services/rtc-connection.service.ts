@@ -42,9 +42,12 @@ export class RtcConnectionService {
             this.iceCandidateSubject.pipe(takeUntil(this.iceGatheringComplete)),
         );
 
+        const diagnostics = await this.connectionManager.getDiagnostics();
+        
         return this.apiService.startOutgoingCall(
             accountId,
             finalOffer,
+            diagnostics,
             this.iceGatheringElapsedMs,
             this.iceGatheringCollectedAll,
         );
@@ -72,10 +75,13 @@ export class RtcConnectionService {
             this.iceCandidateSubject.pipe(takeUntil(this.iceGatheringComplete)),
         );
 
+        const diagnostics = await this.connectionManager.getDiagnostics();
+
         return this.apiService.handleIncomingCall(
             callId,
             chatId,
             finalOffer,
+            diagnostics,
             this.iceGatheringElapsedMs,
             this.iceGatheringCollectedAll,
         );
@@ -115,8 +121,16 @@ export class RtcConnectionService {
     }
 
     private onConnectionStateChange(state: RTCPeerConnectionState): void {
-        if (state === 'disconnected') {
-            this.processEndCall();
+        switch (state) {
+            case 'connected':
+                // call server success endpoint
+                break;
+            case 'disconnected':
+                this.processEndCall();
+                break;
+            case 'failed':
+                // call server error endpoint
+                break;
         }
     }
 

@@ -88,6 +88,9 @@ describe('RtcConnectionService', () => {
             reinitialize: vi
                 .fn()
                 .mockName('RtcPeerConnectionManager.reinitialize'),
+            getDiagnostics: vi
+                .fn()
+                .mockName('RtcPeerConnectionManager.getDiagnostics'),
             onCandidatesReceived: null,
             onGatheringCompleted: null,
             onConnectionStateChange: null,
@@ -163,6 +166,7 @@ describe('RtcConnectionService', () => {
             expect(apiService.startOutgoingCall).toHaveBeenCalledWith(
                 accountId,
                 finalOfferData,
+                undefined,
                 0,
                 false
             );
@@ -245,6 +249,7 @@ describe('RtcConnectionService', () => {
                 callId,
                 chatId,
                 finalAnswerData,
+                undefined,
                 0,
                 false
             );
@@ -425,6 +430,7 @@ describe('RtcConnectionService', () => {
             expect(apiService.startOutgoingCall).toHaveBeenCalledWith(
                 accountId,
                 finalOfferData,
+                undefined,
                 0,
                 false
             );
@@ -464,6 +470,7 @@ describe('RtcConnectionService', () => {
                 callId,
                 chatId,
                 finalAnswerData,
+                undefined,
                 0,
                 false
             );

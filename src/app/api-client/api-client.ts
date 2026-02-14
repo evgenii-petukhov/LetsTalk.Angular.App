@@ -1278,6 +1278,11 @@ export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
     callId?: string | undefined;
     chatId?: string | undefined;
     answer?: string | undefined;
+    connectionState?: string | undefined;
+    localCandidateTypes?: string | undefined;
+    remoteCandidateTypes?: string | undefined;
+    browser?: string | undefined;
+    platform?: string | undefined;
     iceGatheringElapsedMs?: number;
     iceGatheringCollectedAll?: boolean;
 
@@ -1295,6 +1300,11 @@ export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
             this.callId = _data["callId"];
             this.chatId = _data["chatId"];
             this.answer = _data["answer"];
+            this.connectionState = _data["connectionState"];
+            this.localCandidateTypes = _data["localCandidateTypes"];
+            this.remoteCandidateTypes = _data["remoteCandidateTypes"];
+            this.browser = _data["browser"];
+            this.platform = _data["platform"];
             this.iceGatheringElapsedMs = _data["iceGatheringElapsedMs"];
             this.iceGatheringCollectedAll = _data["iceGatheringCollectedAll"];
         }
@@ -1312,6 +1322,11 @@ export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
         data["callId"] = this.callId;
         data["chatId"] = this.chatId;
         data["answer"] = this.answer;
+        data["connectionState"] = this.connectionState;
+        data["localCandidateTypes"] = this.localCandidateTypes;
+        data["remoteCandidateTypes"] = this.remoteCandidateTypes;
+        data["browser"] = this.browser;
+        data["platform"] = this.platform;
         data["iceGatheringElapsedMs"] = this.iceGatheringElapsedMs;
         data["iceGatheringCollectedAll"] = this.iceGatheringCollectedAll;
         return data;
@@ -1322,6 +1337,11 @@ export interface IHandleIncomingCallRequest {
     callId?: string | undefined;
     chatId?: string | undefined;
     answer?: string | undefined;
+    connectionState?: string | undefined;
+    localCandidateTypes?: string | undefined;
+    remoteCandidateTypes?: string | undefined;
+    browser?: string | undefined;
+    platform?: string | undefined;
     iceGatheringElapsedMs?: number;
     iceGatheringCollectedAll?: boolean;
 }
@@ -1882,6 +1902,11 @@ export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
     callId?: string | undefined;
     chatId?: string | undefined;
     offer?: string | undefined;
+    connectionState?: string | undefined;
+    localCandidateTypes?: string | undefined;
+    remoteCandidateTypes?: string | undefined;
+    browser?: string | undefined;
+    platform?: string | undefined;
     iceGatheringElapsedMs?: number;
     iceGatheringCollectedAll?: boolean;
 
@@ -1899,6 +1924,11 @@ export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
             this.callId = _data["callId"];
             this.chatId = _data["chatId"];
             this.offer = _data["offer"];
+            this.connectionState = _data["connectionState"];
+            this.localCandidateTypes = _data["localCandidateTypes"];
+            this.remoteCandidateTypes = _data["remoteCandidateTypes"];
+            this.browser = _data["browser"];
+            this.platform = _data["platform"];
             this.iceGatheringElapsedMs = _data["iceGatheringElapsedMs"];
             this.iceGatheringCollectedAll = _data["iceGatheringCollectedAll"];
         }
@@ -1916,6 +1946,11 @@ export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
         data["callId"] = this.callId;
         data["chatId"] = this.chatId;
         data["offer"] = this.offer;
+        data["connectionState"] = this.connectionState;
+        data["localCandidateTypes"] = this.localCandidateTypes;
+        data["remoteCandidateTypes"] = this.remoteCandidateTypes;
+        data["browser"] = this.browser;
+        data["platform"] = this.platform;
         data["iceGatheringElapsedMs"] = this.iceGatheringElapsedMs;
         data["iceGatheringCollectedAll"] = this.iceGatheringCollectedAll;
         return data;
@@ -1926,6 +1961,11 @@ export interface IStartOutgoingCallRequest {
     callId?: string | undefined;
     chatId?: string | undefined;
     offer?: string | undefined;
+    connectionState?: string | undefined;
+    localCandidateTypes?: string | undefined;
+    remoteCandidateTypes?: string | undefined;
+    browser?: string | undefined;
+    platform?: string | undefined;
     iceGatheringElapsedMs?: number;
     iceGatheringCollectedAll?: boolean;
 }
