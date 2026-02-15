@@ -153,6 +153,12 @@ export class StoreService {
         );
     }
 
+    setCallId(callId: string): void {
+        this.store.dispatch(
+            videoCallActions.setCallId({ callId }),
+        );
+    }
+
     resetCall(): void {
         this.store.dispatch(videoCallActions.reset());
     }

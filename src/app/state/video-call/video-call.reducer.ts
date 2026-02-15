@@ -20,6 +20,10 @@ export const videoCallReducer = createReducer(
         captureVideo: true,
         captureAudio: true,
     })),
+    on(videoCallActions.setCallId, (_state, { callId }) => ({
+        ..._state,
+        callId
+    })),
     on(videoCallActions.toggleVideo, (state) => {
         if (!state) return state;
         return {

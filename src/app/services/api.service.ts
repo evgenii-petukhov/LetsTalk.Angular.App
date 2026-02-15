@@ -194,6 +194,8 @@ export class ApiService {
         callId: string,
         chatId: string,
         diagnostics: ConnectionDiagnostics,
+        error: any,
+        stackTrace: any
     ): Promise<void> {
         const request = new LogConnectionFailedRequest({
             callId,
@@ -203,6 +205,8 @@ export class ApiService {
                 localCandidateTypes: JSON.stringify(diagnostics.localCandidateTypes),
                 remoteCandidateTypes: JSON.stringify(diagnostics.remoteCandidateTypes)
             }),
+            error: JSON.stringify(error),
+            stackTrace: JSON.stringify(stackTrace)
         });
 
         return firstValueFrom(this.client.logConnectionFailed(request));

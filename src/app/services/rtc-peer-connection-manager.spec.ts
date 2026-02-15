@@ -616,64 +616,6 @@ describe('RtcPeerConnectionManager', () => {
         });
     });
 
-    describe('_onConnectionStateChange', () => {
-        it('should call onConnectionStateChange callback with connection state', () => {
-            // Arrange
-            service.onConnectionStateChange = vi.fn();
-            mockConnection.connectionState = 'connected';
-
-            // Act
-            service['_onConnectionStateChange']();
-
-            // Assert
-            expect(service.onConnectionStateChange).toHaveBeenCalledWith(
-                'connected',
-                undefined,
-                undefined,
-            );
-        });
-
-        it('should handle different connection states', () => {
-            // Arrange
-            service.onConnectionStateChange = vi.fn();
-            const states: RTCPeerConnectionState[] = [
-                'new',
-                'connecting',
-                'connected',
-                'disconnected',
-                'failed',
-                'closed',
-            ];
-
-            states.forEach((state) => {
-                // Arrange
-                mockConnection.connectionState = state;
-
-                // Act
-                service['_onConnectionStateChange']();
-
-                // Assert
-                expect(service.onConnectionStateChange).toHaveBeenCalledWith(
-                    state,
-                    undefined,
-                    undefined,
-                );
-            });
-
-            expect(service.onConnectionStateChange).toHaveBeenCalledTimes(
-                states.length,
-            );
-        });
-
-        it('should not throw if onConnectionStateChange callback is not set', () => {
-            // Arrange
-            service.onConnectionStateChange = undefined as any;
-
-            // Act & Assert
-            expect(() => service['_onConnectionStateChange']()).not.toThrow();
-        });
-    });
-
     describe('edge cases and error handling', () => {
         it('should handle connection setup with null video elements', async () => {
             // Act & Assert - should not throw

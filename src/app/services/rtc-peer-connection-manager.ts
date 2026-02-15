@@ -10,11 +10,9 @@ import { RtcConnectionDiagnosticsService } from './rtc-connection-diagnostics.se
 export class RtcPeerConnectionManager {
     onCandidatesReceived: (data: string) => void;
     onGatheringCompleted: (timeElapsed: number, collectedAll: boolean) => void;
-    onConnectionStateChange: (
-        state: RTCPeerConnectionState,
-        callId: string,
-        chatId: string,
-    ) => void;
+    onConnected: () => void;
+    onConnectionError: (errorMessage?: string, error?: any) => void;
+    onDisconnected: () => void;
     isMediaCaptured = false;
     private connection = new RTCPeerConnection();
     private localCandidates: RTCIceCandidate[] = [];
@@ -28,13 +26,15 @@ export class RtcPeerConnectionManager {
     private localMediaStream: MediaStream | null = null;
     private remoteMediaStream: MediaStream | null = null;
     private iceCandidateGatheringStarted: number;
-    private callId: string;
-    private chatId: string;
 
     constructor() {
         this.connection.onicecandidate = this.onIceCandidateReceived.bind(this);
         this.connection.onconnectionstatechange =
             this._onConnectionStateChange.bind(this);
+        this.connection.oniceconnectionstatechange =
+            this.onIceConnectionStateChange.bind(this);
+        this.connection.onicecandidateerror =
+            this.onIceCandidateError.bind(this);
     }
 
     async initiateOffer(config: RTCConfiguration): Promise<void> {
@@ -178,11 +178,6 @@ export class RtcPeerConnectionManager {
         );
     }
 
-    setCallContext(callId: string, chatId: string) {
-        this.callId = callId;
-        this.chatId = chatId;
-    }
-
     private connectLocalVideo(localVideo: HTMLVideoElement): void {
         if (this.localMediaStream && localVideo) {
             localVideo.srcObject = this.localMediaStream;
@@ -222,10 +217,26 @@ export class RtcPeerConnectionManager {
     }
 
     private _onConnectionStateChange(): void {
-        this.onConnectionStateChange?.(
-            this.connection.connectionState,
-            this.callId,
-            this.chatId,
-        );
+        switch (this.connection.connectionState) {
+            case 'connected':
+                this.onConnected?.();
+                break;
+            case 'failed':
+                this.onConnectionError?.();
+                break;
+            case 'disconnected':
+                this.onDisconnected?.();
+                break;
+        }
+    }
+
+    private onIceConnectionStateChange(): void {
+        if (this.connection.iceConnectionState === 'failed') {
+            this.onConnectionError?.(undefined, new Error());
+        }
+    }
+
+    private onIceCandidateError(event: RTCPeerConnectionIceErrorEvent): void {
+        this.onConnectionError?.(event.errorText, new Error());
     }
 }

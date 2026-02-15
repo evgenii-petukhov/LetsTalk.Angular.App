@@ -1742,6 +1742,8 @@ export class LogConnectionFailedRequest implements ILogConnectionFailedRequest {
     callId?: string | undefined;
     chatId?: string | undefined;
     connectionDiagnostics?: ConnectionDiagnostics;
+    error?: string | undefined;
+    stackTrace?: string | undefined;
 
     constructor(data?: ILogConnectionFailedRequest) {
         if (data) {
@@ -1757,6 +1759,8 @@ export class LogConnectionFailedRequest implements ILogConnectionFailedRequest {
             this.callId = _data["callId"];
             this.chatId = _data["chatId"];
             this.connectionDiagnostics = _data["connectionDiagnostics"] ? ConnectionDiagnostics.fromJS(_data["connectionDiagnostics"]) : undefined as any;
+            this.error = _data["error"];
+            this.stackTrace = _data["stackTrace"];
         }
     }
 
@@ -1772,6 +1776,8 @@ export class LogConnectionFailedRequest implements ILogConnectionFailedRequest {
         data["callId"] = this.callId;
         data["chatId"] = this.chatId;
         data["connectionDiagnostics"] = this.connectionDiagnostics ? this.connectionDiagnostics.toJSON() : undefined as any;
+        data["error"] = this.error;
+        data["stackTrace"] = this.stackTrace;
         return data;
     }
 }
@@ -1780,6 +1786,8 @@ export interface ILogConnectionFailedRequest {
     callId?: string | undefined;
     chatId?: string | undefined;
     connectionDiagnostics?: ConnectionDiagnostics;
+    error?: string | undefined;
+    stackTrace?: string | undefined;
 }
 
 export class LoginResponseDto implements ILoginResponseDto {
