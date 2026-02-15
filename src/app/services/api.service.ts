@@ -19,6 +19,9 @@ import {
     HandleIncomingCallRequest,
     CallSettingsDto,
     ConnectionDiagnostics as ApiConnectionDiagnostics,
+    LogConnectionEstablishedRequest,
+    LogConnectionFailedRequest,
+    StartOutgoingCallDto,
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 import { ConnectionDiagnostics } from '../models/connection-diagnostics';
@@ -129,11 +132,11 @@ export class ApiService {
         iceGatheringElapsedMs: number,
         iceGatheringCollectedAll: boolean,
         diagnostics: ConnectionDiagnostics,
-    ): Promise<void> {
+    ): Promise<StartOutgoingCallDto> {
         const request = new StartOutgoingCallRequest({
             chatId,
             offer,
-            iceGatheringElapsedMs: iceGatheringElapsedMs,
+            iceGatheringElapsedMs,
             iceGatheringCollectedAll,
             connectionDiagnostics: new ApiConnectionDiagnostics({
                 ...diagnostics,
@@ -157,7 +160,7 @@ export class ApiService {
             callId,
             chatId,
             answer,
-            iceGatheringElapsedMs: Math.round(iceGatheringElapsedMs),
+            iceGatheringElapsedMs,
             iceGatheringCollectedAll,
             connectionDiagnostics: new ApiConnectionDiagnostics({
                 ...diagnostics,
@@ -167,6 +170,42 @@ export class ApiService {
         });
 
         return firstValueFrom(this.client.handleIncomingCall(request));
+    }
+
+    logConnectionEstablished(
+        callId: string,
+        chatId: string,
+        diagnostics: ConnectionDiagnostics,
+    ): Promise<void> {
+        const request = new LogConnectionEstablishedRequest({
+            callId,
+            chatId,
+            connectionDiagnostics: new ApiConnectionDiagnostics({
+                ...diagnostics,
+                localCandidateTypes: JSON.stringify(diagnostics.localCandidateTypes),
+                remoteCandidateTypes: JSON.stringify(diagnostics.remoteCandidateTypes)
+            }),
+        });
+
+        return firstValueFrom(this.client.logConnectionEstablished(request));
+    }
+
+    logConnectionFailed(
+        callId: string,
+        chatId: string,
+        diagnostics: ConnectionDiagnostics,
+    ): Promise<void> {
+        const request = new LogConnectionFailedRequest({
+            callId,
+            chatId,
+            connectionDiagnostics: new ApiConnectionDiagnostics({
+                ...diagnostics,
+                localCandidateTypes: JSON.stringify(diagnostics.localCandidateTypes),
+                remoteCandidateTypes: JSON.stringify(diagnostics.remoteCandidateTypes)
+            }),
+        });
+
+        return firstValueFrom(this.client.logConnectionFailed(request));
     }
 
     getCallSettings(): Promise<CallSettingsDto> {

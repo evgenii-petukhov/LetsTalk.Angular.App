@@ -628,6 +628,8 @@ describe('RtcPeerConnectionManager', () => {
             // Assert
             expect(service.onConnectionStateChange).toHaveBeenCalledWith(
                 'connected',
+                undefined,
+                undefined,
             );
         });
 
@@ -653,6 +655,8 @@ describe('RtcPeerConnectionManager', () => {
                 // Assert
                 expect(service.onConnectionStateChange).toHaveBeenCalledWith(
                     state,
+                    undefined,
+                    undefined,
                 );
             });
 

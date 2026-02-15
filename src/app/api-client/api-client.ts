@@ -250,7 +250,7 @@ export class ApiClient {
      * @param body (optional) 
      * @return OK
      */
-    startOutgoingCall(body: StartOutgoingCallRequest | undefined): Observable<void> {
+    startOutgoingCall(body: StartOutgoingCallRequest | undefined): Observable<StartOutgoingCallDto> {
         let url_ = this.baseUrl + "/api/Call/StartOutgoingCall";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -262,6 +262,7 @@ export class ApiClient {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json",
+                "Accept": "application/json"
             })
         };
 
@@ -272,14 +273,14 @@ export class ApiClient {
                 try {
                     return this.processStartOutgoingCall(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
+                    return _observableThrow(e) as any as Observable<StartOutgoingCallDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<void>;
+                return _observableThrow(response_) as any as Observable<StartOutgoingCallDto>;
         }));
     }
 
-    protected processStartOutgoingCall(response: HttpResponseBase): Observable<void> {
+    protected processStartOutgoingCall(response: HttpResponseBase): Observable<StartOutgoingCallDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -288,7 +289,10 @@ export class ApiClient {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return _observableOf(null as any);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = StartOutgoingCallDto.fromJS(resultData200);
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -332,6 +336,110 @@ export class ApiClient {
     }
 
     protected processHandleIncomingCall(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    logConnectionEstablished(body: LogConnectionEstablishedRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Call/LogConnectionEstablished";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processLogConnectionEstablished(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processLogConnectionEstablished(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processLogConnectionEstablished(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    logConnectionFailed(body: LogConnectionFailedRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Call/LogConnectionFailed";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processLogConnectionFailed(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processLogConnectionFailed(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processLogConnectionFailed(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1586,6 +1694,94 @@ export interface ILinkPreviewDto {
     url?: string | undefined;
 }
 
+export class LogConnectionEstablishedRequest implements ILogConnectionEstablishedRequest {
+    callId?: string | undefined;
+    chatId?: string | undefined;
+    connectionDiagnostics?: ConnectionDiagnostics;
+
+    constructor(data?: ILogConnectionEstablishedRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.callId = _data["callId"];
+            this.chatId = _data["chatId"];
+            this.connectionDiagnostics = _data["connectionDiagnostics"] ? ConnectionDiagnostics.fromJS(_data["connectionDiagnostics"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): LogConnectionEstablishedRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new LogConnectionEstablishedRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["callId"] = this.callId;
+        data["chatId"] = this.chatId;
+        data["connectionDiagnostics"] = this.connectionDiagnostics ? this.connectionDiagnostics.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ILogConnectionEstablishedRequest {
+    callId?: string | undefined;
+    chatId?: string | undefined;
+    connectionDiagnostics?: ConnectionDiagnostics;
+}
+
+export class LogConnectionFailedRequest implements ILogConnectionFailedRequest {
+    callId?: string | undefined;
+    chatId?: string | undefined;
+    connectionDiagnostics?: ConnectionDiagnostics;
+
+    constructor(data?: ILogConnectionFailedRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.callId = _data["callId"];
+            this.chatId = _data["chatId"];
+            this.connectionDiagnostics = _data["connectionDiagnostics"] ? ConnectionDiagnostics.fromJS(_data["connectionDiagnostics"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): LogConnectionFailedRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new LogConnectionFailedRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["callId"] = this.callId;
+        data["chatId"] = this.chatId;
+        data["connectionDiagnostics"] = this.connectionDiagnostics ? this.connectionDiagnostics.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ILogConnectionFailedRequest {
+    callId?: string | undefined;
+    chatId?: string | undefined;
+    connectionDiagnostics?: ConnectionDiagnostics;
+}
+
 export class LoginResponseDto implements ILoginResponseDto {
     success?: boolean;
     token?: string | undefined;
@@ -1932,6 +2128,42 @@ export interface ISetLinkPreviewRequest {
     title?: string | undefined;
     imageUrl?: string | undefined;
     signature?: string | undefined;
+}
+
+export class StartOutgoingCallDto implements IStartOutgoingCallDto {
+    callId?: string | undefined;
+
+    constructor(data?: IStartOutgoingCallDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.callId = _data["callId"];
+        }
+    }
+
+    static fromJS(data: any): StartOutgoingCallDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new StartOutgoingCallDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["callId"] = this.callId;
+        return data;
+    }
+}
+
+export interface IStartOutgoingCallDto {
+    callId?: string | undefined;
 }
 
 export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {

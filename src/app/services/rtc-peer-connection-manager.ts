@@ -10,7 +10,11 @@ import { RtcConnectionDiagnosticsService } from './rtc-connection-diagnostics.se
 export class RtcPeerConnectionManager {
     onCandidatesReceived: (data: string) => void;
     onGatheringCompleted: (timeElapsed: number, collectedAll: boolean) => void;
-    onConnectionStateChange: (state: RTCPeerConnectionState) => void;
+    onConnectionStateChange: (
+        state: RTCPeerConnectionState,
+        callId: string,
+        chatId: string,
+    ) => void;
     isMediaCaptured = false;
     private connection = new RTCPeerConnection();
     private localCandidates: RTCIceCandidate[] = [];
@@ -24,6 +28,8 @@ export class RtcPeerConnectionManager {
     private localMediaStream: MediaStream | null = null;
     private remoteMediaStream: MediaStream | null = null;
     private iceCandidateGatheringStarted: number;
+    private callId: string;
+    private chatId: string;
 
     constructor() {
         this.connection.onicecandidate = this.onIceCandidateReceived.bind(this);
@@ -172,6 +178,11 @@ export class RtcPeerConnectionManager {
         );
     }
 
+    setCallContext(callId: string, chatId: string) {
+        this.callId = callId;
+        this.chatId = chatId;
+    }
+
     private connectLocalVideo(localVideo: HTMLVideoElement): void {
         if (this.localMediaStream && localVideo) {
             localVideo.srcObject = this.localMediaStream;
@@ -211,6 +222,10 @@ export class RtcPeerConnectionManager {
     }
 
     private _onConnectionStateChange(): void {
-        this.onConnectionStateChange?.(this.connection.connectionState);
+        this.onConnectionStateChange?.(
+            this.connection.connectionState,
+            this.callId,
+            this.chatId,
+        );
     }
 }

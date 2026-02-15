@@ -28,7 +28,7 @@ export class RtcConnectionService {
             this.onConnectionStateChange.bind(this);
     }
 
-    async startOutgoingCall(accountId: string): Promise<void> {
+    async startOutgoingCall(chatId: string): Promise<void> {
         const callSettings = await this.apiService.getCallSettings();
         this.connectionManager.initiateOffer(
             JSON.parse(callSettings.iceServerConfiguration),
@@ -43,14 +43,16 @@ export class RtcConnectionService {
         );
 
         const diagnostics = await this.connectionManager.getDiagnostics();
-        
-        return this.apiService.startOutgoingCall(
-            accountId,
+
+        const { callId } = await this.apiService.startOutgoingCall(
+            chatId,
             finalOffer,
             this.iceGatheringElapsedMs,
             this.iceGatheringCollectedAll,
             diagnostics,
         );
+
+        this.connectionManager.setCallContext(callId, chatId);
     }
 
     async handleIncomingCall(
@@ -60,6 +62,8 @@ export class RtcConnectionService {
     ): Promise<void> {
         const remote = JSON.parse(offer);
         const callSettings = await this.apiService.getCallSettings();
+
+        this.connectionManager.setCallContext(callId, chatId);
 
         await this.connectionManager.handleOfferAndCreateAnswer(
             JSON.parse(callSettings.iceServerConfiguration),
@@ -120,16 +124,32 @@ export class RtcConnectionService {
         this.iceGatheringTimer.clear();
     }
 
-    private onConnectionStateChange(state: RTCPeerConnectionState): void {
+    private async onConnectionStateChange(
+        state: RTCPeerConnectionState,
+        callId: string,
+        chatId: string,
+    ): Promise<void> {
         switch (state) {
             case 'connected':
-                // call server success endpoint
+            case 'failed':
+                const diagnostics =
+                    await this.connectionManager.getDiagnostics();
+                if (state === 'connected') {
+                    await this.apiService.logConnectionEstablished(
+                        callId,
+                        chatId,
+                        diagnostics,
+                    );
+                } else {
+                    await this.apiService.logConnectionFailed(
+                        callId,
+                        chatId,
+                        diagnostics,
+                    );
+                }
                 break;
             case 'disconnected':
                 this.processEndCall();
-                break;
-            case 'failed':
-                // call server error endpoint
                 break;
         }
     }
