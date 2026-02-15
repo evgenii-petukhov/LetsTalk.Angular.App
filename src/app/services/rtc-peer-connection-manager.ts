@@ -120,6 +120,7 @@ export class RtcPeerConnectionManager {
                 this.isMediaCaptured = true;
                 return;
             } catch (error) {
+                this.onConnectionError?.(undefined, error);
                 console.error(error);
             }
         }
