@@ -20,8 +20,9 @@ import {
     CallSettingsDto,
     ConnectionDiagnostics as ApiConnectionDiagnostics,
     LogConnectionEstablishedRequest,
-    LogConnectionFailedRequest,
     StartOutgoingCallDto,
+    RtcErrorType,
+    LogRtcErrorRequest,
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 import { ConnectionDiagnostics } from '../models/connection-diagnostics';
@@ -190,14 +191,15 @@ export class ApiService {
         return firstValueFrom(this.client.logConnectionEstablished(request));
     }
 
-    logConnectionFailed(
+    logWebRtcError(
         callId: string,
         chatId: string,
         diagnostics: ConnectionDiagnostics,
+        errorType: RtcErrorType,
         error: any,
         stackTrace: any
     ): Promise<void> {
-        const request = new LogConnectionFailedRequest({
+        const request = new LogRtcErrorRequest({
             callId,
             chatId,
             connectionDiagnostics: new ApiConnectionDiagnostics({
@@ -205,11 +207,12 @@ export class ApiService {
                 localCandidateTypes: JSON.stringify(diagnostics.localCandidateTypes),
                 remoteCandidateTypes: JSON.stringify(diagnostics.remoteCandidateTypes)
             }),
+            errorType,
             error: JSON.stringify(error),
             stackTrace: JSON.stringify(stackTrace)
         });
 
-        return firstValueFrom(this.client.logConnectionFailed(request));
+        return firstValueFrom(this.client.logRtcError(request));
     }
 
     getCallSettings(): Promise<CallSettingsDto> {

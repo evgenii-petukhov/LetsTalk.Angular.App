@@ -6,7 +6,7 @@ import { RtcPeerConnectionManager } from './rtc-peer-connection-manager';
 import { StoreService } from './store.service';
 import { Store } from '@ngrx/store';
 import { selectVideoCall } from '../state/video-call/video-call.selectors';
-import { DebugService } from './debug.service';
+import { RtcErrorLoggingService } from './rtc-error-logging.service';
 
 @Injectable({
     providedIn: 'root',
@@ -16,7 +16,7 @@ export class RtcConnectionService {
     private readonly connectionManager = inject(RtcPeerConnectionManager);
     private readonly storeService = inject(StoreService);
     private readonly store = inject(Store);
-    private readonly debugService = inject(DebugService);
+    private readonly errorLoggingService = inject(RtcErrorLoggingService);
     private iceCandidateSubject = new Subject<string>();
     private iceGatheringComplete = new Subject<void>();
     private iceGatheringTimer: Timer;
@@ -31,7 +31,9 @@ export class RtcConnectionService {
             this.onIceGatheringComplete.bind(this);
         this.connectionManager.onConnected = this.onConnected.bind(this);
         this.connectionManager.onConnectionError =
-            this.logConnectionFailed.bind(this);
+            this.onConnectionError.bind(this);
+        this.connectionManager.onIceServerError =
+            this.onIceServerError.bind(this);
         this.connectionManager.onDisconnected = this.onDisconnected.bind(this);
     }
 
@@ -47,7 +49,9 @@ export class RtcConnectionService {
             }, this.iceGatheringTimeoutMs);
 
             const finalOffer = await lastValueFrom(
-                this.iceCandidateSubject.pipe(takeUntil(this.iceGatheringComplete)),
+                this.iceCandidateSubject.pipe(
+                    takeUntil(this.iceGatheringComplete),
+                ),
             );
 
             const diagnostics = await this.connectionManager.getDiagnostics();
@@ -59,10 +63,10 @@ export class RtcConnectionService {
                 this.iceGatheringCollectedAll,
                 diagnostics,
             );
-            
+
             this.storeService.setCallId(callId);
         } catch (error) {
-            await this.logConnectionFailed(undefined, error);
+            await this.errorLoggingService.logConnectionError(undefined, error);
             throw error;
         }
     }
@@ -87,7 +91,9 @@ export class RtcConnectionService {
             }, this.iceGatheringTimeoutMs);
 
             const finalOffer = await lastValueFrom(
-                this.iceCandidateSubject.pipe(takeUntil(this.iceGatheringComplete)),
+                this.iceCandidateSubject.pipe(
+                    takeUntil(this.iceGatheringComplete),
+                ),
             );
 
             const diagnostics = await this.connectionManager.getDiagnostics();
@@ -101,7 +107,7 @@ export class RtcConnectionService {
                 diagnostics,
             );
         } catch (error) {
-            await this.logConnectionFailed(undefined, error);
+            await this.errorLoggingService.logConnectionError(undefined, error);
             throw error;
         }
     }
@@ -151,26 +157,26 @@ export class RtcConnectionService {
         );
     }
 
-    private async logConnectionFailed(errorMessage: string, error?: any): Promise<void> {
-        const diagnostics = await this.connectionManager.getDiagnostics();
-        const callSettings = await firstValueFrom(
-            this.store.select(selectVideoCall),
-        );
-        await this.apiService.logConnectionFailed(
-            callSettings.callId,
-            callSettings.chatId,
-            diagnostics,
-            errorMessage || error,
-            this.debugService.getStackTrace(error),
-        );
-    }
-
     private async onDisconnected(): Promise<void> {
         this.processEndCall();
     }
 
-    private processEndCall() {
+    private processEndCall(): void {
         this.connectionManager.reinitialize();
         this.storeService.resetCall();
+    }
+
+    private onConnectionError(
+        errorMessage?: string,
+        error?: any,
+    ): Promise<void> {
+        return this.errorLoggingService.logConnectionError(errorMessage, error);
+    }
+
+    private onIceServerError(
+        errorMessage?: string,
+        error?: any,
+    ): Promise<void> {
+        return this.errorLoggingService.logIceServerError(errorMessage, error);
     }
 }

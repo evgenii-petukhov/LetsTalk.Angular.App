@@ -12,6 +12,7 @@ export class RtcPeerConnectionManager {
     onGatheringCompleted: (timeElapsed: number, collectedAll: boolean) => void;
     onConnected: () => void;
     onConnectionError: (errorMessage?: string, error?: any) => void;
+    onIceServerError: (errorMessage?: string, error?: any) => void;
     onDisconnected: () => void;
     isMediaCaptured = false;
     private connection = new RTCPeerConnection();
@@ -233,11 +234,11 @@ export class RtcPeerConnectionManager {
 
     private onIceConnectionStateChange(): void {
         if (this.connection.iceConnectionState === 'failed') {
-            this.onConnectionError?.(undefined, new Error());
+            this.onIceServerError?.(undefined, new Error());
         }
     }
 
     private onIceCandidateError(event: RTCPeerConnectionIceErrorEvent): void {
-        this.onConnectionError?.(event.errorText, new Error());
+        this.onIceServerError?.(event.errorText, new Error());
     }
 }

@@ -4,7 +4,6 @@ import {
     expect,
     it,
     vi,
-    type Mock,
     type MockedObject,
 } from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -18,6 +17,7 @@ import { StoreService } from './store.service';
 import { DebugService } from './debug.service';
 import {
     CallSettingsDto,
+    RtcErrorType,
     StartOutgoingCallDto,
 } from '../api-client/api-client';
 
@@ -81,9 +81,9 @@ describe('RtcConnectionService', () => {
                 .fn()
                 .mockName('ApiService.logConnectionEstablished')
                 .mockResolvedValue(undefined),
-            logConnectionFailed: vi
+            logWebRtcError: vi
                 .fn()
-                .mockName('ApiService.logConnectionFailed')
+                .mockName('ApiService.logWebRtcError')
                 .mockResolvedValue(undefined),
         } as MockedObject<ApiService>;
 
@@ -586,13 +586,14 @@ describe('RtcConnectionService', () => {
             const error = new Error(errorMessage);
 
             // Act
-            await service['logConnectionFailed'](errorMessage, error);
+            await service['onConnectionError'](errorMessage, error);
 
             // Assert
-            expect(apiService.logConnectionFailed).toHaveBeenCalledWith(
+            expect(apiService.logWebRtcError).toHaveBeenCalledWith(
                 mockVideoCallState.callId,
                 mockVideoCallState.chatId,
                 undefined,
+                RtcErrorType.Connection,
                 errorMessage,
                 'mock-stack-trace',
             );
@@ -828,7 +829,7 @@ describe('RtcConnectionService', () => {
             );
             
             // Should have attempted to log the failure
-            expect(apiService.logConnectionFailed).toHaveBeenCalled();
+            expect(apiService.logWebRtcError).toHaveBeenCalled();
         });
 
         it('should handle API errors in handleIncomingCall', async () => {
@@ -845,7 +846,7 @@ describe('RtcConnectionService', () => {
             ).rejects.toThrow('API Error');
             
             // Should have attempted to log the failure
-            expect(apiService.logConnectionFailed).toHaveBeenCalled();
+            expect(apiService.logWebRtcError).toHaveBeenCalled();
         });
 
         it('should handle connection manager errors', async () => {
@@ -865,7 +866,7 @@ describe('RtcConnectionService', () => {
             );
             
             // Should have attempted to log the failure
-            expect(apiService.logConnectionFailed).toHaveBeenCalled();
+            expect(apiService.logWebRtcError).toHaveBeenCalled();
         });
     });
 });

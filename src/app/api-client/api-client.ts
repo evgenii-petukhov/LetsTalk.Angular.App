@@ -410,8 +410,8 @@ export class ApiClient {
      * @param body (optional) 
      * @return OK
      */
-    logConnectionFailed(body: LogConnectionFailedRequest | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/Call/LogConnectionFailed";
+    logRtcError(body: LogRtcErrorRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Call/LogRtcError";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -426,11 +426,11 @@ export class ApiClient {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processLogConnectionFailed(response_);
+            return this.processLogRtcError(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processLogConnectionFailed(response_ as any);
+                    return this.processLogRtcError(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<void>;
                 }
@@ -439,7 +439,7 @@ export class ApiClient {
         }));
     }
 
-    protected processLogConnectionFailed(response: HttpResponseBase): Observable<void> {
+    protected processLogRtcError(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1738,14 +1738,15 @@ export interface ILogConnectionEstablishedRequest {
     connectionDiagnostics?: ConnectionDiagnostics;
 }
 
-export class LogConnectionFailedRequest implements ILogConnectionFailedRequest {
+export class LogRtcErrorRequest implements ILogRtcErrorRequest {
     callId?: string | undefined;
     chatId?: string | undefined;
     connectionDiagnostics?: ConnectionDiagnostics;
+    errorType?: RtcErrorType;
     error?: string | undefined;
     stackTrace?: string | undefined;
 
-    constructor(data?: ILogConnectionFailedRequest) {
+    constructor(data?: ILogRtcErrorRequest) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1759,14 +1760,15 @@ export class LogConnectionFailedRequest implements ILogConnectionFailedRequest {
             this.callId = _data["callId"];
             this.chatId = _data["chatId"];
             this.connectionDiagnostics = _data["connectionDiagnostics"] ? ConnectionDiagnostics.fromJS(_data["connectionDiagnostics"]) : undefined as any;
+            this.errorType = _data["errorType"];
             this.error = _data["error"];
             this.stackTrace = _data["stackTrace"];
         }
     }
 
-    static fromJS(data: any): LogConnectionFailedRequest {
+    static fromJS(data: any): LogRtcErrorRequest {
         data = typeof data === 'object' ? data : {};
-        let result = new LogConnectionFailedRequest();
+        let result = new LogRtcErrorRequest();
         result.init(data);
         return result;
     }
@@ -1776,16 +1778,18 @@ export class LogConnectionFailedRequest implements ILogConnectionFailedRequest {
         data["callId"] = this.callId;
         data["chatId"] = this.chatId;
         data["connectionDiagnostics"] = this.connectionDiagnostics ? this.connectionDiagnostics.toJSON() : undefined as any;
+        data["errorType"] = this.errorType;
         data["error"] = this.error;
         data["stackTrace"] = this.stackTrace;
         return data;
     }
 }
 
-export interface ILogConnectionFailedRequest {
+export interface ILogRtcErrorRequest {
     callId?: string | undefined;
     chatId?: string | undefined;
     connectionDiagnostics?: ConnectionDiagnostics;
+    errorType?: RtcErrorType;
     error?: string | undefined;
     stackTrace?: string | undefined;
 }
@@ -2016,6 +2020,13 @@ export interface IProfileDto {
     lastName?: string | undefined;
     email?: string | undefined;
     image?: ImageDto;
+}
+
+export enum RtcErrorType {
+    NotSet = "NotSet",
+    Connection = "Connection",
+    IceServer = "IceServer",
+    Media = "Media",
 }
 
 export class SetImagePreviewRequest implements ISetImagePreviewRequest {
