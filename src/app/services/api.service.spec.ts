@@ -27,6 +27,7 @@ import {
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 import { of } from 'rxjs';
+import { ConnectionDiagnostics } from '../models/connection-diagnostics';
 
 describe('ApiService', () => {
     let service: ApiService;
@@ -237,7 +238,13 @@ describe('ApiService', () => {
         apiClient.startOutgoingCall.mockReturnValue(of(undefined));
 
         // Act
-        const result = await service.startOutgoingCall('chatId', 'offer-sdp');
+        const result = await service.startOutgoingCall(
+            'chatId',
+            'offer-sdp',
+            {} as ConnectionDiagnostics,
+            0,
+            true,
+        );
 
         // Assert
         expect(apiClient.startOutgoingCall).toHaveBeenCalledWith(
@@ -251,7 +258,14 @@ describe('ApiService', () => {
         apiClient.handleIncomingCall.mockReturnValue(of(undefined));
 
         // Act
-        const result = await service.handleIncomingCall('chatId', 'answer-sdp');
+        const result = await service.handleIncomingCall(
+            'callId',
+            'chatId',
+            'answer-sdp',
+            {} as ConnectionDiagnostics,
+            0,
+            true,
+        );
 
         // Assert
         expect(apiClient.handleIncomingCall).toHaveBeenCalledWith(

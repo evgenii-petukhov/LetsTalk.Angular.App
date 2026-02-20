@@ -59,6 +59,7 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
                         );
                         if (currentState.type === 'incoming') {
                             await this.rtcConnectionService.handleIncomingCall(
+                                currentState.callId,
                                 currentState.chatId,
                                 currentState.offer,
                             );

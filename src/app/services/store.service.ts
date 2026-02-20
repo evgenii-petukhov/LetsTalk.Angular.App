@@ -147,9 +147,15 @@ export class StoreService {
         this.store.dispatch(videoCallActions.initOutgoingCall({ chatId }));
     }
 
-    initIncomingCall(chatId: string, offer: string): void {
+    initIncomingCall(callId: string, chatId: string, offer: string): void {
         this.store.dispatch(
-            videoCallActions.initIncomingCall({ chatId, offer }),
+            videoCallActions.initIncomingCall({ callId, chatId, offer }),
+        );
+    }
+
+    setCallId(callId: string): void {
+        this.store.dispatch(
+            videoCallActions.setCallId({ callId }),
         );
     }
 

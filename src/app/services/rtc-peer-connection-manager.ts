@@ -1,81 +1,48 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { inject, Injectable } from '@angular/core';
 import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
-
-export const constraintSets: MediaStreamConstraints[] = [
-    // Standard
-    {
-        video: {
-            width: { ideal: 640, max: 640 },
-            height: { ideal: 480, max: 480 },
-            frameRate: { ideal: 15, max: 30 },
-        },
-        audio: {
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true,
-            sampleRate: { ideal: 44100 },
-            channelCount: { ideal: 1 },
-        },
-    },
-    // Relaxed
-    {
-        video: {
-            width: { ideal: 640 },
-            height: { ideal: 480 },
-            frameRate: { ideal: 15 },
-        },
-        audio: {
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true,
-            channelCount: { ideal: 1 },
-        },
-    },
-    // Basic
-    {
-        video: {
-            width: { ideal: 640 },
-            height: { ideal: 480 },
-        },
-        audio: {
-            echoCancellation: true,
-        },
-    },
-    // Simple
-    {
-        video: true,
-        audio: true,
-    },
-];
+import { mediaStreamConstraintFallbacks } from './media-stream-constraint-fallbacks';
+import { RtcConnectionDiagnosticsService } from './rtc-connection-diagnostics.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class RtcPeerConnectionManager {
     onCandidatesReceived: (data: string) => void;
-    onGatheringCompleted: () => void;
-    onConnectionStateChange: (state: RTCPeerConnectionState) => void;
+    onGatheringCompleted: (timeElapsed: number, collectedAll: boolean) => void;
+    onConnected: () => void;
+    onConnectionError: (errorMessage?: string, error?: any) => void;
+    onIceServerError: (errorMessage?: string, error?: any) => void;
+    onDisconnected: () => void;
     isMediaCaptured = false;
     private connection = new RTCPeerConnection();
     private localCandidates: RTCIceCandidate[] = [];
     private readonly iceCandidateMetricsService = inject(
         IceCandidateMetricsService,
     );
+    private readonly rtcConnectionDiagnosticsService = inject(
+        RtcConnectionDiagnosticsService,
+    );
     private isGathering = true;
     private localMediaStream: MediaStream | null = null;
     private remoteMediaStream: MediaStream | null = null;
+    private iceCandidateGatheringStarted: number;
 
     constructor() {
         this.connection.onicecandidate = this.onIceCandidateReceived.bind(this);
         this.connection.onconnectionstatechange =
             this._onConnectionStateChange.bind(this);
+        this.connection.oniceconnectionstatechange =
+            this.onIceConnectionStateChange.bind(this);
+        this.connection.onicecandidateerror =
+            this.onIceCandidateError.bind(this);
     }
 
     async initiateOffer(config: RTCConfiguration): Promise<void> {
         this.isGathering = true;
         this.localCandidates = [];
         this.connection.setConfiguration(config);
+        this.iceCandidateGatheringStarted = performance.now();
 
         const offer = await this.connection.createOffer();
         await this.connection.setLocalDescription(offer);
@@ -89,10 +56,12 @@ export class RtcPeerConnectionManager {
         this.isGathering = true;
         this.localCandidates = [];
         this.connection.setConfiguration(config);
+        this.iceCandidateGatheringStarted = performance.now();
 
         await this.connection.setRemoteDescription(desc);
         if (candidates) {
-            for (const c of candidates) await this.connection.addIceCandidate(c);
+            for (const c of candidates)
+                await this.connection.addIceCandidate(c);
         }
 
         const answer = await this.connection.createAnswer();
@@ -107,8 +76,12 @@ export class RtcPeerConnectionManager {
         )
             return;
 
-        if (this.iceCandidateMetricsService.hasSufficientServers(this.localCandidates)) {
-            this.finalizeIceGathering();
+        if (
+            this.iceCandidateMetricsService.hasSufficientServers(
+                this.localCandidates,
+            )
+        ) {
+            this.finalizeIceGathering(false);
         }
     }
 
@@ -122,7 +95,8 @@ export class RtcPeerConnectionManager {
 
         await this.connection.setRemoteDescription(desc);
         if (candidates) {
-            for (const c of candidates) await this.connection.addIceCandidate(c);
+            for (const c of candidates)
+                await this.connection.addIceCandidate(c);
         }
     }
 
@@ -130,7 +104,7 @@ export class RtcPeerConnectionManager {
         localVideo: HTMLVideoElement,
         remoteVideo: HTMLVideoElement,
     ): Promise<void> {
-        for (const constraints of constraintSets) {
+        for (const constraints of mediaStreamConstraintFallbacks) {
             try {
                 this.localMediaStream =
                     await navigator.mediaDevices.getUserMedia(constraints);
@@ -147,6 +121,7 @@ export class RtcPeerConnectionManager {
                 this.isMediaCaptured = true;
                 return;
             } catch (error) {
+                this.onConnectionError?.(undefined, error);
                 console.error(error);
             }
         }
@@ -160,22 +135,10 @@ export class RtcPeerConnectionManager {
         this.connectRemoteVideo(remoteVideo);
     }
 
-    private connectLocalVideo(localVideo: HTMLVideoElement): void {
-        if (this.localMediaStream && localVideo) {
-            localVideo.srcObject = this.localMediaStream;
-        }
-    }
-
-    private connectRemoteVideo(remoteVideo: HTMLVideoElement): void {
-        if (this.remoteMediaStream && remoteVideo) {
-            remoteVideo.srcObject = this.remoteMediaStream;
-        }
-    }
-
     setVideoEnabled(enabled: boolean): void {
         if (this.localMediaStream) {
             const videoTracks = this.localMediaStream.getVideoTracks();
-            videoTracks.forEach(track => {
+            videoTracks.forEach((track) => {
                 track.enabled = enabled;
             });
         }
@@ -184,7 +147,7 @@ export class RtcPeerConnectionManager {
     setAudioEnabled(enabled: boolean): void {
         if (this.localMediaStream) {
             const audioTracks = this.localMediaStream.getAudioTracks();
-            audioTracks.forEach(track => {
+            audioTracks.forEach((track) => {
                 track.enabled = enabled;
             });
         }
@@ -211,11 +174,29 @@ export class RtcPeerConnectionManager {
         this.isMediaCaptured = false;
     }
 
+    getDiagnostics() {
+        return this.rtcConnectionDiagnosticsService.gatherConnectionDiagnostics(
+            this.connection,
+        );
+    }
+
+    private connectLocalVideo(localVideo: HTMLVideoElement): void {
+        if (this.localMediaStream && localVideo) {
+            localVideo.srcObject = this.localMediaStream;
+        }
+    }
+
+    private connectRemoteVideo(remoteVideo: HTMLVideoElement): void {
+        if (this.remoteMediaStream && remoteVideo) {
+            remoteVideo.srcObject = this.remoteMediaStream;
+        }
+    }
+
     private onIceCandidateReceived(e: RTCPeerConnectionIceEvent): void {
         if (!this.isGathering) return;
 
         if (!e.candidate) {
-            this.finalizeIceGathering();
+            this.finalizeIceGathering(true);
             return;
         }
 
@@ -229,12 +210,35 @@ export class RtcPeerConnectionManager {
         this.onCandidatesReceived?.(JSON.stringify(data));
     }
 
-    private finalizeIceGathering(): void {
+    private finalizeIceGathering(collectedAll: boolean): void {
         this.isGathering = false;
-        this.onGatheringCompleted?.();
+        this.onGatheringCompleted?.(
+            Math.round(performance.now() - this.iceCandidateGatheringStarted),
+            collectedAll,
+        );
     }
 
     private _onConnectionStateChange(): void {
-        this.onConnectionStateChange?.(this.connection.connectionState);
+        switch (this.connection.connectionState) {
+            case 'connected':
+                this.onConnected?.();
+                break;
+            case 'failed':
+                this.onConnectionError?.();
+                break;
+            case 'disconnected':
+                this.onDisconnected?.();
+                break;
+        }
+    }
+
+    private onIceConnectionStateChange(): void {
+        if (this.connection.iceConnectionState === 'failed') {
+            this.onIceServerError?.(undefined, new Error());
+        }
+    }
+
+    private onIceCandidateError(event: RTCPeerConnectionIceErrorEvent): void {
+        this.onIceServerError?.(event.errorText, new Error());
     }
 }

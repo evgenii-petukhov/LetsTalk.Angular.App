@@ -250,7 +250,7 @@ export class ApiClient {
      * @param body (optional) 
      * @return OK
      */
-    startOutgoingCall(body: StartOutgoingCallRequest | undefined): Observable<void> {
+    startOutgoingCall(body: StartOutgoingCallRequest | undefined): Observable<StartOutgoingCallDto> {
         let url_ = this.baseUrl + "/api/Call/StartOutgoingCall";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -262,6 +262,7 @@ export class ApiClient {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json",
+                "Accept": "application/json"
             })
         };
 
@@ -272,14 +273,14 @@ export class ApiClient {
                 try {
                     return this.processStartOutgoingCall(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
+                    return _observableThrow(e) as any as Observable<StartOutgoingCallDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<void>;
+                return _observableThrow(response_) as any as Observable<StartOutgoingCallDto>;
         }));
     }
 
-    protected processStartOutgoingCall(response: HttpResponseBase): Observable<void> {
+    protected processStartOutgoingCall(response: HttpResponseBase): Observable<StartOutgoingCallDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -288,7 +289,10 @@ export class ApiClient {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
-            return _observableOf(null as any);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = StartOutgoingCallDto.fromJS(resultData200);
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -332,6 +336,110 @@ export class ApiClient {
     }
 
     protected processHandleIncomingCall(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    logConnectionEstablished(body: LogConnectionEstablishedRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Call/LogConnectionEstablished";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processLogConnectionEstablished(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processLogConnectionEstablished(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processLogConnectionEstablished(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    logRtcError(body: LogRtcErrorRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Call/LogRtcError";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processLogRtcError(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processLogRtcError(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processLogRtcError(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1074,6 +1182,58 @@ export interface IChatDtoBase {
     id?: string | undefined;
 }
 
+export class ConnectionDiagnostics implements IConnectionDiagnostics {
+    connectionState?: string | undefined;
+    localCandidateTypes?: string | undefined;
+    remoteCandidateTypes?: string | undefined;
+    browser?: string | undefined;
+    platform?: string | undefined;
+
+    constructor(data?: IConnectionDiagnostics) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.connectionState = _data["connectionState"];
+            this.localCandidateTypes = _data["localCandidateTypes"];
+            this.remoteCandidateTypes = _data["remoteCandidateTypes"];
+            this.browser = _data["browser"];
+            this.platform = _data["platform"];
+        }
+    }
+
+    static fromJS(data: any): ConnectionDiagnostics {
+        data = typeof data === 'object' ? data : {};
+        let result = new ConnectionDiagnostics();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["connectionState"] = this.connectionState;
+        data["localCandidateTypes"] = this.localCandidateTypes;
+        data["remoteCandidateTypes"] = this.remoteCandidateTypes;
+        data["browser"] = this.browser;
+        data["platform"] = this.platform;
+        return data;
+    }
+}
+
+export interface IConnectionDiagnostics {
+    connectionState?: string | undefined;
+    localCandidateTypes?: string | undefined;
+    remoteCandidateTypes?: string | undefined;
+    browser?: string | undefined;
+    platform?: string | undefined;
+}
+
 export class CreateIndividualChatRequest implements ICreateIndividualChatRequest {
     accountId?: string | undefined;
 
@@ -1275,8 +1435,12 @@ export interface IGenerateLoginCodeResponseDto {
 }
 
 export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
+    callId?: string | undefined;
     chatId?: string | undefined;
     answer?: string | undefined;
+    connectionDiagnostics?: ConnectionDiagnostics;
+    iceGatheringElapsedMs?: number;
+    iceGatheringCollectedAll?: boolean;
 
     constructor(data?: IHandleIncomingCallRequest) {
         if (data) {
@@ -1289,8 +1453,12 @@ export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
 
     init(_data?: any) {
         if (_data) {
+            this.callId = _data["callId"];
             this.chatId = _data["chatId"];
             this.answer = _data["answer"];
+            this.connectionDiagnostics = _data["connectionDiagnostics"] ? ConnectionDiagnostics.fromJS(_data["connectionDiagnostics"]) : undefined as any;
+            this.iceGatheringElapsedMs = _data["iceGatheringElapsedMs"];
+            this.iceGatheringCollectedAll = _data["iceGatheringCollectedAll"];
         }
     }
 
@@ -1303,15 +1471,23 @@ export class HandleIncomingCallRequest implements IHandleIncomingCallRequest {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["callId"] = this.callId;
         data["chatId"] = this.chatId;
         data["answer"] = this.answer;
+        data["connectionDiagnostics"] = this.connectionDiagnostics ? this.connectionDiagnostics.toJSON() : undefined as any;
+        data["iceGatheringElapsedMs"] = this.iceGatheringElapsedMs;
+        data["iceGatheringCollectedAll"] = this.iceGatheringCollectedAll;
         return data;
     }
 }
 
 export interface IHandleIncomingCallRequest {
+    callId?: string | undefined;
     chatId?: string | undefined;
     answer?: string | undefined;
+    connectionDiagnostics?: ConnectionDiagnostics;
+    iceGatheringElapsedMs?: number;
+    iceGatheringCollectedAll?: boolean;
 }
 
 export class ImageDto implements IImageDto {
@@ -1516,6 +1692,106 @@ export interface ILinkPreviewDto {
     title?: string | undefined;
     imageUrl?: string | undefined;
     url?: string | undefined;
+}
+
+export class LogConnectionEstablishedRequest implements ILogConnectionEstablishedRequest {
+    callId?: string | undefined;
+    chatId?: string | undefined;
+    connectionDiagnostics?: ConnectionDiagnostics;
+
+    constructor(data?: ILogConnectionEstablishedRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.callId = _data["callId"];
+            this.chatId = _data["chatId"];
+            this.connectionDiagnostics = _data["connectionDiagnostics"] ? ConnectionDiagnostics.fromJS(_data["connectionDiagnostics"]) : undefined as any;
+        }
+    }
+
+    static fromJS(data: any): LogConnectionEstablishedRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new LogConnectionEstablishedRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["callId"] = this.callId;
+        data["chatId"] = this.chatId;
+        data["connectionDiagnostics"] = this.connectionDiagnostics ? this.connectionDiagnostics.toJSON() : undefined as any;
+        return data;
+    }
+}
+
+export interface ILogConnectionEstablishedRequest {
+    callId?: string | undefined;
+    chatId?: string | undefined;
+    connectionDiagnostics?: ConnectionDiagnostics;
+}
+
+export class LogRtcErrorRequest implements ILogRtcErrorRequest {
+    callId?: string | undefined;
+    chatId?: string | undefined;
+    connectionDiagnostics?: ConnectionDiagnostics;
+    errorType?: RtcErrorType;
+    error?: string | undefined;
+    stackTrace?: string | undefined;
+
+    constructor(data?: ILogRtcErrorRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.callId = _data["callId"];
+            this.chatId = _data["chatId"];
+            this.connectionDiagnostics = _data["connectionDiagnostics"] ? ConnectionDiagnostics.fromJS(_data["connectionDiagnostics"]) : undefined as any;
+            this.errorType = _data["errorType"];
+            this.error = _data["error"];
+            this.stackTrace = _data["stackTrace"];
+        }
+    }
+
+    static fromJS(data: any): LogRtcErrorRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new LogRtcErrorRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["callId"] = this.callId;
+        data["chatId"] = this.chatId;
+        data["connectionDiagnostics"] = this.connectionDiagnostics ? this.connectionDiagnostics.toJSON() : undefined as any;
+        data["errorType"] = this.errorType;
+        data["error"] = this.error;
+        data["stackTrace"] = this.stackTrace;
+        return data;
+    }
+}
+
+export interface ILogRtcErrorRequest {
+    callId?: string | undefined;
+    chatId?: string | undefined;
+    connectionDiagnostics?: ConnectionDiagnostics;
+    errorType?: RtcErrorType;
+    error?: string | undefined;
+    stackTrace?: string | undefined;
 }
 
 export class LoginResponseDto implements ILoginResponseDto {
@@ -1746,6 +2022,13 @@ export interface IProfileDto {
     image?: ImageDto;
 }
 
+export enum RtcErrorType {
+    NotSet = "NotSet",
+    Connection = "Connection",
+    IceServer = "IceServer",
+    Media = "Media",
+}
+
 export class SetImagePreviewRequest implements ISetImagePreviewRequest {
     messageId?: string | undefined;
     chatId?: string | undefined;
@@ -1866,9 +2149,49 @@ export interface ISetLinkPreviewRequest {
     signature?: string | undefined;
 }
 
+export class StartOutgoingCallDto implements IStartOutgoingCallDto {
+    callId?: string | undefined;
+
+    constructor(data?: IStartOutgoingCallDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (this as any)[property] = (data as any)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.callId = _data["callId"];
+        }
+    }
+
+    static fromJS(data: any): StartOutgoingCallDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new StartOutgoingCallDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["callId"] = this.callId;
+        return data;
+    }
+}
+
+export interface IStartOutgoingCallDto {
+    callId?: string | undefined;
+}
+
 export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
+    callId?: string | undefined;
     chatId?: string | undefined;
     offer?: string | undefined;
+    connectionDiagnostics?: ConnectionDiagnostics;
+    iceGatheringElapsedMs?: number;
+    iceGatheringCollectedAll?: boolean;
 
     constructor(data?: IStartOutgoingCallRequest) {
         if (data) {
@@ -1881,8 +2204,12 @@ export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
 
     init(_data?: any) {
         if (_data) {
+            this.callId = _data["callId"];
             this.chatId = _data["chatId"];
             this.offer = _data["offer"];
+            this.connectionDiagnostics = _data["connectionDiagnostics"] ? ConnectionDiagnostics.fromJS(_data["connectionDiagnostics"]) : undefined as any;
+            this.iceGatheringElapsedMs = _data["iceGatheringElapsedMs"];
+            this.iceGatheringCollectedAll = _data["iceGatheringCollectedAll"];
         }
     }
 
@@ -1895,15 +2222,23 @@ export class StartOutgoingCallRequest implements IStartOutgoingCallRequest {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["callId"] = this.callId;
         data["chatId"] = this.chatId;
         data["offer"] = this.offer;
+        data["connectionDiagnostics"] = this.connectionDiagnostics ? this.connectionDiagnostics.toJSON() : undefined as any;
+        data["iceGatheringElapsedMs"] = this.iceGatheringElapsedMs;
+        data["iceGatheringCollectedAll"] = this.iceGatheringCollectedAll;
         return data;
     }
 }
 
 export interface IStartOutgoingCallRequest {
+    callId?: string | undefined;
     chatId?: string | undefined;
     offer?: string | undefined;
+    connectionDiagnostics?: ConnectionDiagnostics;
+    iceGatheringElapsedMs?: number;
+    iceGatheringCollectedAll?: boolean;
 }
 
 export class UpdateProfileRequest implements IUpdateProfileRequest {

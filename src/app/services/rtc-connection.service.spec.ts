@@ -4,30 +4,41 @@ import {
     expect,
     it,
     vi,
-    type Mock,
     type MockedObject,
 } from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
+import { of } from 'rxjs';
 import { RtcConnectionService } from './rtc-connection.service';
 import { ApiService } from './api.service';
 import { RtcPeerConnectionManager } from './rtc-peer-connection-manager';
 import { StoreService } from './store.service';
-import { CallSettingsDto } from '../api-client/api-client';
+import { DebugService } from './debug.service';
+import {
+    CallSettingsDto,
+    RtcErrorType,
+    StartOutgoingCallDto,
+} from '../api-client/api-client';
 
 describe('RtcConnectionService', () => {
     let service: RtcConnectionService;
     let apiService: MockedObject<ApiService>;
-    let connectionManager: MockedObject<RtcPeerConnectionManager>;
+    let connectionManager: Partial<MockedObject<RtcPeerConnectionManager>>;
     let storeService: MockedObject<StoreService>;
     let mockStore: MockedObject<Store>;
+    let debugService: MockedObject<DebugService>;
 
     const mockCallSettings = {
         iceServerConfiguration: JSON.stringify({
             iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
         }),
     } as CallSettingsDto;
+
+    const mockVideoCallState = {
+        callId: 'call-id',
+        chatId: 'test-chat-id',
+    };
 
     const mockOffer = {
         desc: {
@@ -66,6 +77,14 @@ describe('RtcConnectionService', () => {
             handleIncomingCall: vi
                 .fn()
                 .mockName('ApiService.handleIncomingCall'),
+            logConnectionEstablished: vi
+                .fn()
+                .mockName('ApiService.logConnectionEstablished')
+                .mockResolvedValue(undefined),
+            logWebRtcError: vi
+                .fn()
+                .mockName('ApiService.logWebRtcError')
+                .mockResolvedValue(undefined),
         } as MockedObject<ApiService>;
 
         connectionManager = {
@@ -88,19 +107,30 @@ describe('RtcConnectionService', () => {
             reinitialize: vi
                 .fn()
                 .mockName('RtcPeerConnectionManager.reinitialize'),
+            getDiagnostics: vi
+                .fn()
+                .mockName('RtcPeerConnectionManager.getDiagnostics')
+                .mockResolvedValue(undefined),
             onCandidatesReceived: null,
             onGatheringCompleted: null,
-            onConnectionStateChange: null,
-        } as MockedObject<RtcPeerConnectionManager>;
+            onConnected: null,
+            onConnectionError: null,
+            onDisconnected: null,
+        };
 
         storeService = {
             resetCall: vi.fn().mockName('StoreService.resetCall'),
+            setCallId: vi.fn().mockName('StoreService.setCallId'),
         } as MockedObject<StoreService>;
 
         mockStore = {
             dispatch: vi.fn().mockName('Store.dispatch'),
-            select: vi.fn().mockName('Store.select'),
+            select: vi.fn().mockName('Store.select').mockReturnValue(of(mockVideoCallState)),
         } as MockedObject<Store>;
+
+        debugService = {
+            getStackTrace: vi.fn().mockName('DebugService.getStackTrace').mockReturnValue('mock-stack-trace'),
+        } as MockedObject<DebugService>;
 
         TestBed.configureTestingModule({
             providers: [
@@ -112,6 +142,7 @@ describe('RtcConnectionService', () => {
                 },
                 { provide: StoreService, useValue: storeService },
                 { provide: Store, useValue: mockStore },
+                { provide: DebugService, useValue: debugService },
             ],
         });
 
@@ -125,15 +156,21 @@ describe('RtcConnectionService', () => {
     it('should set up connection manager callbacks in constructor', () => {
         expect(connectionManager.onCandidatesReceived).toBeDefined();
         expect(connectionManager.onGatheringCompleted).toBeDefined();
-        expect(connectionManager.onConnectionStateChange).toBeDefined();
     });
 
     describe('startOutgoingCall', () => {
         beforeEach(() => {
+            const callId = 'call-id';
             apiService.getCallSettings.mockReturnValue(
                 Promise.resolve(mockCallSettings),
             );
-            apiService.startOutgoingCall.mockReturnValue(Promise.resolve());
+            apiService.startOutgoingCall.mockReturnValue(
+                Promise.resolve(
+                    new StartOutgoingCallDto({
+                        callId,
+                    }),
+                ),
+            );
         });
 
         it('should start outgoing call successfully', async () => {
@@ -150,7 +187,7 @@ describe('RtcConnectionService', () => {
             }, 0);
 
             setTimeout(() => {
-                service['onIceGatheringComplete']();
+                service['onIceGatheringComplete'](0, false);
             }, 5);
 
             await promise;
@@ -163,6 +200,9 @@ describe('RtcConnectionService', () => {
             expect(apiService.startOutgoingCall).toHaveBeenCalledWith(
                 accountId,
                 finalOfferData,
+                0,
+                false,
+                undefined,
             );
         });
 
@@ -189,7 +229,7 @@ describe('RtcConnectionService', () => {
             }, 0);
 
             setTimeout(() => {
-                service['onIceGatheringComplete']();
+                service['onIceGatheringComplete'](0, false);
             }, 5);
 
             await promise;
@@ -211,12 +251,17 @@ describe('RtcConnectionService', () => {
 
         it('should handle incoming call successfully', async () => {
             // Arrange
+            const callId = 'call-id';
             const chatId = 'test-chat-id';
             const offerString = JSON.stringify(mockOffer);
             const finalAnswerData = JSON.stringify(mockAnswer);
 
             // Act
-            const promise = service.handleIncomingCall(chatId, offerString);
+            const promise = service.handleIncomingCall(
+                callId,
+                chatId,
+                offerString,
+            );
 
             // Simulate ice candidate generation first, then completion
             setTimeout(() => {
@@ -224,7 +269,7 @@ describe('RtcConnectionService', () => {
             }, 0);
 
             setTimeout(() => {
-                service['onIceGatheringComplete']();
+                service['onIceGatheringComplete'](0, false);
             }, 5);
 
             await promise;
@@ -239,19 +284,28 @@ describe('RtcConnectionService', () => {
                 mockOffer.candidates,
             );
             expect(apiService.handleIncomingCall).toHaveBeenCalledWith(
+                callId,
                 chatId,
                 finalAnswerData,
+                0,
+                false,
+                undefined,
             );
         });
 
         it('should handle timer expiration during answer generation', async () => {
             // Arrange
+            const callId = 'call-id';
             const chatId = 'test-chat-id';
             const offerString = JSON.stringify(mockOffer);
             const finalAnswerData = JSON.stringify(mockAnswer);
 
             // Act
-            const promise = service.handleIncomingCall(chatId, offerString);
+            const promise = service.handleIncomingCall(
+                callId,
+                chatId,
+                offerString,
+            );
 
             // Wait for timer to be created
             await new Promise((resolve) => setTimeout(resolve, 0));
@@ -268,7 +322,7 @@ describe('RtcConnectionService', () => {
             }, 0);
 
             setTimeout(() => {
-                service['onIceGatheringComplete']();
+                service['onIceGatheringComplete'](0, false);
             }, 5);
 
             await promise;
@@ -380,7 +434,7 @@ describe('RtcConnectionService', () => {
             service['iceGatheringTimer'] = mockTimer as any;
 
             // Act
-            service['onIceGatheringComplete']();
+            service['onIceGatheringComplete'](0, false);
 
             // Assert
             expect(service['iceGatheringComplete'].next).toHaveBeenCalled();
@@ -391,12 +445,19 @@ describe('RtcConnectionService', () => {
     describe('integration scenarios', () => {
         it('should handle complete outgoing call flow', async () => {
             // Arrange
+            const callId = 'call-id';
             const accountId = 'test-account-id';
             const finalOfferData = JSON.stringify(mockOffer);
             apiService.getCallSettings.mockReturnValue(
                 Promise.resolve(mockCallSettings),
             );
-            apiService.startOutgoingCall.mockReturnValue(Promise.resolve());
+            apiService.startOutgoingCall.mockReturnValue(
+                Promise.resolve(
+                    new StartOutgoingCallDto({
+                        callId,
+                    }),
+                ),
+            );
 
             // Act - Start the call
             const callPromise = service.startOutgoingCall(accountId);
@@ -407,7 +468,7 @@ describe('RtcConnectionService', () => {
             }, 0);
 
             setTimeout(() => {
-                service['onIceGatheringComplete']();
+                service['onIceGatheringComplete'](0, false);
             }, 5);
 
             await callPromise;
@@ -418,11 +479,15 @@ describe('RtcConnectionService', () => {
             expect(apiService.startOutgoingCall).toHaveBeenCalledWith(
                 accountId,
                 finalOfferData,
+                0,
+                false,
+                undefined,
             );
         });
 
         it('should handle complete incoming call flow', async () => {
             // Arrange
+            const callId = 'call-id';
             const chatId = 'test-chat-id';
             const offerString = JSON.stringify(mockOffer);
             const finalAnswerData = JSON.stringify(mockAnswer);
@@ -432,7 +497,11 @@ describe('RtcConnectionService', () => {
             apiService.handleIncomingCall.mockReturnValue(Promise.resolve());
 
             // Act - Handle the incoming call
-            const callPromise = service.handleIncomingCall(chatId, offerString);
+            const callPromise = service.handleIncomingCall(
+                callId,
+                chatId,
+                offerString,
+            );
 
             // Simulate the WebRTC flow
             setTimeout(() => {
@@ -440,7 +509,7 @@ describe('RtcConnectionService', () => {
             }, 0);
 
             setTimeout(() => {
-                service['onIceGatheringComplete']();
+                service['onIceGatheringComplete'](0, false);
             }, 5);
 
             await callPromise;
@@ -451,8 +520,12 @@ describe('RtcConnectionService', () => {
                 connectionManager.handleOfferAndCreateAnswer,
             ).toHaveBeenCalled();
             expect(apiService.handleIncomingCall).toHaveBeenCalledWith(
+                callId,
                 chatId,
                 finalAnswerData,
+                0,
+                false,
+                undefined,
             );
         });
 
@@ -484,50 +557,46 @@ describe('RtcConnectionService', () => {
     });
 
     describe('onConnectionStateChange', () => {
-        it('should call processEndCall when state is disconnected', () => {
+        it('should call processEndCall when disconnected', () => {
             // Arrange
             vi.spyOn(service as any, 'processEndCall');
 
             // Act
-            service['onConnectionStateChange']('disconnected');
+            service['onDisconnected']();
 
             // Assert
             expect(service['processEndCall']).toHaveBeenCalled();
         });
 
-        it('should not call processEndCall when state is not disconnected', () => {
-            // Arrange
-            vi.spyOn(service as any, 'processEndCall');
-
+        it('should log connection when connected', async () => {
             // Act
-            service['onConnectionStateChange']('connected');
+            await service['onConnected']();
 
             // Assert
-            expect(service['processEndCall']).not.toHaveBeenCalled();
+            expect(apiService.logConnectionEstablished).toHaveBeenCalledWith(
+                mockVideoCallState.callId,
+                mockVideoCallState.chatId,
+                undefined,
+            );
         });
 
-        it('should handle all RTCPeerConnectionState values correctly', () => {
+        it('should log connection failure', async () => {
             // Arrange
-            vi.spyOn(service as any, 'processEndCall');
-            const states: RTCPeerConnectionState[] = [
-                'closed',
-                'connected',
-                'connecting',
-                'disconnected',
-                'failed',
-                'new',
-            ];
+            const errorMessage = 'Connection failed';
+            const error = new Error(errorMessage);
 
-            // Act & Assert
-            states.forEach((state) => {
-                service['onConnectionStateChange'](state);
-                if (state === 'disconnected') {
-                    expect(service['processEndCall']).toHaveBeenCalled();
-                } else {
-                    expect(service['processEndCall']).not.toHaveBeenCalled();
-                }
-                (service['processEndCall'] as Mock).mockClear();
-            });
+            // Act
+            await service['onConnectionError'](errorMessage, error);
+
+            // Assert
+            expect(apiService.logWebRtcError).toHaveBeenCalledWith(
+                mockVideoCallState.callId,
+                mockVideoCallState.chatId,
+                undefined,
+                RtcErrorType.Connection,
+                errorMessage,
+                'mock-stack-trace',
+            );
         });
     });
 
@@ -545,12 +614,19 @@ describe('RtcConnectionService', () => {
     describe('Timer integration', () => {
         it('should create timer with correct timeout in startOutgoingCall', async () => {
             // Arrange
+            const callId = 'call-id';
             const accountId = 'test-account-id';
             const finalOfferData = JSON.stringify(mockOffer);
             apiService.getCallSettings.mockReturnValue(
                 Promise.resolve(mockCallSettings),
             );
-            apiService.startOutgoingCall.mockReturnValue(Promise.resolve());
+            apiService.startOutgoingCall.mockReturnValue(
+                Promise.resolve(
+                    new StartOutgoingCallDto({
+                        callId,
+                    }),
+                ),
+            );
 
             // Act
             const callPromise = service.startOutgoingCall(accountId);
@@ -565,7 +641,7 @@ describe('RtcConnectionService', () => {
             // Complete the call
             setTimeout(() => {
                 service['onIceCandidateGenerated'](finalOfferData);
-                service['onIceGatheringComplete']();
+                service['onIceGatheringComplete'](0, false);
             }, 0);
 
             await callPromise;
@@ -573,6 +649,7 @@ describe('RtcConnectionService', () => {
 
         it('should create timer with correct timeout in handleIncomingCall', async () => {
             // Arrange
+            const callId = 'call-id';
             const chatId = 'test-chat-id';
             const offerString = JSON.stringify(mockOffer);
             const finalAnswerData = JSON.stringify(mockAnswer);
@@ -582,7 +659,11 @@ describe('RtcConnectionService', () => {
             apiService.handleIncomingCall.mockReturnValue(Promise.resolve());
 
             // Act
-            const callPromise = service.handleIncomingCall(chatId, offerString);
+            const callPromise = service.handleIncomingCall(
+                callId,
+                chatId,
+                offerString,
+            );
 
             // Wait for timer to be created
             await new Promise((resolve) => setTimeout(resolve, 0));
@@ -594,7 +675,7 @@ describe('RtcConnectionService', () => {
             // Complete the call
             setTimeout(() => {
                 service['onIceCandidateGenerated'](finalAnswerData);
-                service['onIceGatheringComplete']();
+                service['onIceGatheringComplete'](0, false);
             }, 0);
 
             await callPromise;
@@ -623,7 +704,7 @@ describe('RtcConnectionService', () => {
             });
 
             // Act
-            service['onIceGatheringComplete']();
+            service['onIceGatheringComplete'](0, false);
 
             // Assert
             setTimeout(() => {
@@ -636,12 +717,13 @@ describe('RtcConnectionService', () => {
     describe('JSON parsing edge cases', () => {
         it('should handle malformed JSON in handleIncomingCall', async () => {
             // Arrange
+            const callId = 'call-id';
             const chatId = 'test-chat-id';
             const malformedOffer = 'invalid-json';
 
             // Act & Assert
             await expect(
-                service.handleIncomingCall(chatId, malformedOffer),
+                service.handleIncomingCall(callId, chatId, malformedOffer),
             ).rejects.toThrow();
         });
 
@@ -688,15 +770,17 @@ describe('RtcConnectionService', () => {
             // The callbacks should be bound in constructor and should be functions
             expect(connectionManager.onCandidatesReceived).toBeDefined();
             expect(connectionManager.onGatheringCompleted).toBeDefined();
-            expect(connectionManager.onConnectionStateChange).toBeDefined();
+            expect(connectionManager.onConnected).toBeDefined();
+            expect(connectionManager.onConnectionError).toBeDefined();
+            expect(connectionManager.onDisconnected).toBeDefined();
         });
 
-        it('should trigger onConnectionStateChange callback correctly', () => {
+        it('should trigger onDisconnected callback correctly', () => {
             // Arrange
             vi.spyOn(service as any, 'processEndCall');
 
             // Act - Simulate callback from connection manager by calling the bound method directly
-            service['onConnectionStateChange']('disconnected');
+            service['onDisconnected']();
 
             // Assert
             expect(service['processEndCall']).toHaveBeenCalled();
@@ -724,7 +808,7 @@ describe('RtcConnectionService', () => {
             service['iceGatheringTimer'] = mockTimer as any;
 
             // Act - Simulate callback from connection manager by calling the bound method directly
-            service['onIceGatheringComplete']();
+            service['onIceGatheringComplete'](0, false);
 
             // Assert
             expect(service['iceGatheringComplete'].next).toHaveBeenCalled();
@@ -740,13 +824,17 @@ describe('RtcConnectionService', () => {
             apiService.getCallSettings.mockReturnValue(Promise.reject(error));
 
             // Act & Assert
-            await expect(service.startOutgoingCall(accountId)).rejects.toEqual(
-                error,
+            await expect(service.startOutgoingCall(accountId)).rejects.toThrow(
+                'API Error',
             );
+            
+            // Should have attempted to log the failure
+            expect(apiService.logWebRtcError).toHaveBeenCalled();
         });
 
         it('should handle API errors in handleIncomingCall', async () => {
             // Arrange
+            const callId = 'call-id';
             const chatId = 'test-chat-id';
             const offerString = JSON.stringify(mockOffer);
             const error = new Error('API Error');
@@ -754,8 +842,11 @@ describe('RtcConnectionService', () => {
 
             // Act & Assert
             await expect(
-                service.handleIncomingCall(chatId, offerString),
-            ).rejects.toEqual(error);
+                service.handleIncomingCall(callId, chatId, offerString),
+            ).rejects.toThrow('API Error');
+            
+            // Should have attempted to log the failure
+            expect(apiService.logWebRtcError).toHaveBeenCalled();
         });
 
         it('should handle connection manager errors', async () => {
@@ -770,9 +861,12 @@ describe('RtcConnectionService', () => {
             });
 
             // Act & Assert
-            await expect(service.startOutgoingCall(accountId)).rejects.toEqual(
-                error,
+            await expect(service.startOutgoingCall(accountId)).rejects.toThrow(
+                'Connection Manager Error',
             );
+            
+            // Should have attempted to log the failure
+            expect(apiService.logWebRtcError).toHaveBeenCalled();
         });
     });
 });

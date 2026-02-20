@@ -3,9 +3,9 @@ import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
 import {
-    constraintSets,
     RtcPeerConnectionManager,
 } from './rtc-peer-connection-manager';
+import { mediaStreamConstraintFallbacks } from './media-stream-constraint-fallbacks';
 
 describe('RtcPeerConnectionManager', () => {
     let service: RtcPeerConnectionManager;
@@ -255,7 +255,7 @@ describe('RtcPeerConnectionManager', () => {
 
             // Assert
             expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith(
-                constraintSets[0],
+                mediaStreamConstraintFallbacks[0],
             );
             expect(mockLocalVideo.srcObject).toBe(mockMediaStream);
             expect(mockConnection.addTrack).toHaveBeenCalledWith(
@@ -278,7 +278,7 @@ describe('RtcPeerConnectionManager', () => {
 
             // Assert
             expect(console.error).toHaveBeenCalledWith(error);
-            expect(console.error).toHaveBeenCalledTimes(constraintSets.length);
+            expect(console.error).toHaveBeenCalledTimes(mediaStreamConstraintFallbacks.length);
             expect(service.isMediaCaptured).toBe(false);
         });
 
@@ -490,7 +490,7 @@ describe('RtcPeerConnectionManager', () => {
             service.onGatheringCompleted = vi.fn();
 
             // Act
-            service['finalizeIceGathering']();
+            service['finalizeIceGathering'](true);
 
             // Assert
             expect(service['isGathering']).toBe(false);
@@ -613,60 +613,6 @@ describe('RtcPeerConnectionManager', () => {
             // Assert
             expect(mockAudioTrack1.enabled).toBe(true);
             expect(mockAudioTrack2.enabled).toBe(true);
-        });
-    });
-
-    describe('_onConnectionStateChange', () => {
-        it('should call onConnectionStateChange callback with connection state', () => {
-            // Arrange
-            service.onConnectionStateChange = vi.fn();
-            mockConnection.connectionState = 'connected';
-
-            // Act
-            service['_onConnectionStateChange']();
-
-            // Assert
-            expect(service.onConnectionStateChange).toHaveBeenCalledWith(
-                'connected',
-            );
-        });
-
-        it('should handle different connection states', () => {
-            // Arrange
-            service.onConnectionStateChange = vi.fn();
-            const states: RTCPeerConnectionState[] = [
-                'new',
-                'connecting',
-                'connected',
-                'disconnected',
-                'failed',
-                'closed',
-            ];
-
-            states.forEach((state) => {
-                // Arrange
-                mockConnection.connectionState = state;
-
-                // Act
-                service['_onConnectionStateChange']();
-
-                // Assert
-                expect(service.onConnectionStateChange).toHaveBeenCalledWith(
-                    state,
-                );
-            });
-
-            expect(service.onConnectionStateChange).toHaveBeenCalledTimes(
-                states.length,
-            );
-        });
-
-        it('should not throw if onConnectionStateChange callback is not set', () => {
-            // Arrange
-            service.onConnectionStateChange = undefined as any;
-
-            // Act & Assert
-            expect(() => service['_onConnectionStateChange']()).not.toThrow();
         });
     });
 

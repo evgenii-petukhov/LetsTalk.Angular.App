@@ -133,6 +133,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
     ): Promise<void> {
         this.signalrHandlerService.handleRtcSessionOfferNotification(
             this.chats,
+            sessionSettings.callId,
             sessionSettings.chatId,
             sessionSettings.offer,
         );

@@ -636,11 +636,13 @@ describe('SignalrHandlerService', () => {
     describe('RTC Session Handlers', () => {
         describe('handleRtcSessionOfferNotification', () => {
             it('should navigate to chat and init incoming call when chat exists', async () => {
+                const callId = 'callId';
                 const chatId = 'chatId';
                 const offer = 'mock-offer-string';
 
                 await service.handleRtcSessionOfferNotification(
                     mockChats,
+                    callId,
                     chatId,
                     offer,
                 );
@@ -650,6 +652,7 @@ describe('SignalrHandlerService', () => {
                     chatId,
                 ]);
                 expect(storeService.initIncomingCall).toHaveBeenCalledWith(
+                    callId,
                     chatId,
                     offer,
                 );
@@ -657,11 +660,13 @@ describe('SignalrHandlerService', () => {
             });
 
             it('should init chat storage when chat does not exist', async () => {
+                const callId = 'callId';
                 const chatId = 'nonExistentChatId';
                 const offer = 'mock-offer-string';
 
                 await service.handleRtcSessionOfferNotification(
                     mockChats,
+                    callId,
                     chatId,
                     offer,
                 );
@@ -672,17 +677,20 @@ describe('SignalrHandlerService', () => {
                     chatId,
                 ]);
                 expect(storeService.initIncomingCall).toHaveBeenCalledWith(
+                    callId,
                     chatId,
                     offer,
                 );
             });
 
             it('should handle empty chats array', async () => {
+                const callId = 'callId';
                 const chatId = 'chatId';
                 const offer = 'mock-offer-string';
 
                 await service.handleRtcSessionOfferNotification(
                     [],
+                    callId,
                     chatId,
                     offer,
                 );
@@ -693,12 +701,14 @@ describe('SignalrHandlerService', () => {
                     chatId,
                 ]);
                 expect(storeService.initIncomingCall).toHaveBeenCalledWith(
+                    callId,
                     chatId,
                     offer,
                 );
             });
 
             it('should handle router navigation failure gracefully', async () => {
+                const callId = 'callId';
                 const chatId = 'chatId';
                 const offer = 'mock-offer-string';
                 router.navigate.mockReturnValue(
@@ -708,6 +718,7 @@ describe('SignalrHandlerService', () => {
                 await expect(
                     service.handleRtcSessionOfferNotification(
                         mockChats,
+                        callId,
                         chatId,
                         offer,
                     ),
@@ -720,6 +731,7 @@ describe('SignalrHandlerService', () => {
             });
 
             it('should handle initChatStorage failure gracefully', async () => {
+                const callId = 'callId';
                 const chatId = 'nonExistentChatId';
                 const offer = 'mock-offer-string';
                 storeService.initChatStorage.mockReturnValue(
@@ -729,6 +741,7 @@ describe('SignalrHandlerService', () => {
                 await expect(
                     service.handleRtcSessionOfferNotification(
                         mockChats,
+                        callId,
                         chatId,
                         offer,
                     ),
@@ -741,6 +754,7 @@ describe('SignalrHandlerService', () => {
                 await expect(
                     service.handleRtcSessionOfferNotification(
                         null as any,
+                        'callId',
                         'chatId',
                         'offer',
                     ),
@@ -748,11 +762,13 @@ describe('SignalrHandlerService', () => {
             });
 
             it('should handle empty string parameters', async () => {
+                const callId = '';
                 const chatId = '';
                 const offer = '';
 
                 await service.handleRtcSessionOfferNotification(
                     mockChats,
+                    callId,
                     chatId,
                     offer,
                 );
@@ -763,6 +779,7 @@ describe('SignalrHandlerService', () => {
                     chatId,
                 ]);
                 expect(storeService.initIncomingCall).toHaveBeenCalledWith(
+                    callId,
                     chatId,
                     offer,
                 );
@@ -920,6 +937,7 @@ describe('SignalrHandlerService', () => {
         });
 
         it('should handle complete RTC workflow', async () => {
+            const callId = 'callId';
             const chatId = 'chatId';
             const offer = 'test-offer';
             const answer = 'test-answer';
@@ -927,6 +945,7 @@ describe('SignalrHandlerService', () => {
             // Handle offer
             await service.handleRtcSessionOfferNotification(
                 mockChats,
+                callId,
                 chatId,
                 offer,
             );
@@ -936,6 +955,7 @@ describe('SignalrHandlerService', () => {
                 chatId,
             ]);
             expect(storeService.initIncomingCall).toHaveBeenCalledWith(
+                callId,
                 chatId,
                 offer,
             );
@@ -969,6 +989,7 @@ describe('SignalrHandlerService', () => {
             // RTC notifications
             await service.handleRtcSessionOfferNotification(
                 mockChats,
+                'callId',
                 'chatId',
                 'offer',
             );
@@ -1068,6 +1089,7 @@ describe('SignalrHandlerService', () => {
         });
 
         it('should handle concurrent RTC notifications', async () => {
+            const callId = 'callId';
             const offer1 = 'offer1';
             const offer2 = 'offer2';
             const answer1 = 'answer1';
@@ -1076,11 +1098,13 @@ describe('SignalrHandlerService', () => {
             const promises = [
                 service.handleRtcSessionOfferNotification(
                     mockChats,
+                    callId,
                     'chatId',
                     offer1,
                 ),
                 service.handleRtcSessionOfferNotification(
                     mockChats,
+                    callId,
                     'otherChatId',
                     offer2,
                 ),
@@ -1201,10 +1225,12 @@ describe('SignalrHandlerService', () => {
         });
 
         it('should handle multiple rapid RTC session offers', async () => {
+            const callId = 'callId';
             const offers = ['offer1', 'offer2', 'offer3'];
             const promises = offers.map((offer, index) =>
                 service.handleRtcSessionOfferNotification(
                     mockChats,
+                    callId,
                     `chatId${index}`,
                     offer,
                 ),

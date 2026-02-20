@@ -18,8 +18,14 @@ import {
     StartOutgoingCallRequest,
     HandleIncomingCallRequest,
     CallSettingsDto,
+    ConnectionDiagnostics as ApiConnectionDiagnostics,
+    LogConnectionEstablishedRequest,
+    StartOutgoingCallDto,
+    RtcErrorType,
+    LogRtcErrorRequest,
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
+import { ConnectionDiagnostics } from '../models/connection-diagnostics';
 
 @Injectable({
     providedIn: 'root',
@@ -121,22 +127,92 @@ export class ApiService {
         return firstValueFrom(this.client.generateLoginCode(request));
     }
 
-    startOutgoingCall(chatId: string, offer: string): Promise<void> {
+    startOutgoingCall(
+        chatId: string,
+        offer: string,
+        iceGatheringElapsedMs: number,
+        iceGatheringCollectedAll: boolean,
+        diagnostics: ConnectionDiagnostics,
+    ): Promise<StartOutgoingCallDto> {
         const request = new StartOutgoingCallRequest({
             chatId,
-            offer
+            offer,
+            iceGatheringElapsedMs,
+            iceGatheringCollectedAll,
+            connectionDiagnostics: new ApiConnectionDiagnostics({
+                ...diagnostics,
+                localCandidateTypes: JSON.stringify(diagnostics.localCandidateTypes),
+                remoteCandidateTypes: JSON.stringify(diagnostics.remoteCandidateTypes)
+            }),
         });
 
         return firstValueFrom(this.client.startOutgoingCall(request));
     }
 
-    handleIncomingCall(chatId: string, answer: string): Promise<void> {
+    handleIncomingCall(
+        callId: string,
+        chatId: string,
+        answer: string,
+        iceGatheringElapsedMs: number,
+        iceGatheringCollectedAll: boolean,
+        diagnostics: ConnectionDiagnostics,
+    ): Promise<void> {
         const request = new HandleIncomingCallRequest({
+            callId,
             chatId,
-            answer
+            answer,
+            iceGatheringElapsedMs,
+            iceGatheringCollectedAll,
+            connectionDiagnostics: new ApiConnectionDiagnostics({
+                ...diagnostics,
+                localCandidateTypes: JSON.stringify(diagnostics.localCandidateTypes),
+                remoteCandidateTypes: JSON.stringify(diagnostics.remoteCandidateTypes)
+            }),
         });
 
         return firstValueFrom(this.client.handleIncomingCall(request));
+    }
+
+    logConnectionEstablished(
+        callId: string,
+        chatId: string,
+        diagnostics: ConnectionDiagnostics,
+    ): Promise<void> {
+        const request = new LogConnectionEstablishedRequest({
+            callId,
+            chatId,
+            connectionDiagnostics: new ApiConnectionDiagnostics({
+                ...diagnostics,
+                localCandidateTypes: JSON.stringify(diagnostics.localCandidateTypes),
+                remoteCandidateTypes: JSON.stringify(diagnostics.remoteCandidateTypes)
+            }),
+        });
+
+        return firstValueFrom(this.client.logConnectionEstablished(request));
+    }
+
+    logWebRtcError(
+        callId: string,
+        chatId: string,
+        diagnostics: ConnectionDiagnostics,
+        errorType: RtcErrorType,
+        error: any,
+        stackTrace: any
+    ): Promise<void> {
+        const request = new LogRtcErrorRequest({
+            callId,
+            chatId,
+            connectionDiagnostics: new ApiConnectionDiagnostics({
+                ...diagnostics,
+                localCandidateTypes: JSON.stringify(diagnostics.localCandidateTypes),
+                remoteCandidateTypes: JSON.stringify(diagnostics.remoteCandidateTypes)
+            }),
+            errorType,
+            error: JSON.stringify(error),
+            stackTrace: JSON.stringify(stackTrace)
+        });
+
+        return firstValueFrom(this.client.logRtcError(request));
     }
 
     getCallSettings(): Promise<CallSettingsDto> {

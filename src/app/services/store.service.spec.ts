@@ -472,13 +472,14 @@ describe('StoreService', () => {
 
     describe('initIncomingCall', () => {
         it('should dispatch initIncomingCall action', () => {
+            const callId = '2d6cd570-0584-41db-996a-e60b13020b35';
             const chatId = '1';
             const offer = 'sdp-offer-string';
 
-            service.initIncomingCall(chatId, offer);
+            service.initIncomingCall(callId, chatId, offer);
 
             expect(store.dispatch).toHaveBeenCalledWith(
-                videoCallActions.initIncomingCall({ chatId, offer }),
+                videoCallActions.initIncomingCall({ callId, chatId, offer }),
             );
         });
     });
