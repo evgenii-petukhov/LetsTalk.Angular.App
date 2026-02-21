@@ -208,6 +208,8 @@ export class RtcPeerConnectionManager {
         };
 
         this.onCandidatesReceived?.(JSON.stringify(data));
+
+        this.requestCompleteGathering();
     }
 
     private finalizeIceGathering(collectedAll: boolean): void {
