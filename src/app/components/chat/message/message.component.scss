@@ -45,6 +45,42 @@
                             font-size: 14px;
                         }
                     }
+
+                    .emoji {
+                        font-size: 22px;
+                        line-height: 1;
+                        vertical-align: bottom;
+                    }
+
+                    &.emoji-only-1 {
+                        .emoji {
+                            font-size: 42px;
+                        }
+                    }
+
+                    &.emoji-only-2 {
+                        .emoji {
+                            font-size: 32px;
+                        }
+                    }
+                }
+
+                &.emoji-only-1 {
+                    /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
+                    ::ng-deep p {
+                        .emoji {
+                            font-size: 42px;
+                        }
+                    }
+                }
+
+                &.emoji-only-2 {
+                    /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
+                    ::ng-deep p {
+                        .emoji {
+                            font-size: 32px;
+                        }
+                    }
                 }
             }
 

@@ -37,7 +37,11 @@
         }
         @if (message.textHtml) {
             <div
-                class="content"
+                [ngClass]="{
+                    'content': true,
+                    'emoji-only-1': message.emojisOnly && message.emojiCount === 1,
+                    'emoji-only-2': message.emojisOnly && message.emojiCount === 2,
+                }"
                 [innerHTML]="message.textHtml"
             ></div>
         }
