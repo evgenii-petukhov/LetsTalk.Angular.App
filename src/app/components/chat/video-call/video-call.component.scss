@@ -49,6 +49,11 @@
             app-call-button,
             app-media-toggle-button {
                 @include avatar-styles(42px);
+
+                @include media-breakpoint-down(sm) {
+                    @include avatar-styles(54px);
+                    font-size: 20px;
+                }
             }
         }
     }
