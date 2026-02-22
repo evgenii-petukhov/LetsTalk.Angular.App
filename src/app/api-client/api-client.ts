@@ -1844,6 +1844,8 @@ export class MessageDto implements IMessageDto {
     linkPreview?: LinkPreviewDto;
     image?: ImageDto;
     imagePreview?: ImagePreviewDto;
+    emojisOnly?: boolean;
+    emojiCount?: number;
 
     constructor(data?: IMessageDto) {
         if (data) {
@@ -1865,6 +1867,8 @@ export class MessageDto implements IMessageDto {
             this.linkPreview = _data["linkPreview"] ? LinkPreviewDto.fromJS(_data["linkPreview"]) : undefined as any;
             this.image = _data["image"] ? ImageDto.fromJS(_data["image"]) : undefined as any;
             this.imagePreview = _data["imagePreview"] ? ImagePreviewDto.fromJS(_data["imagePreview"]) : undefined as any;
+            this.emojisOnly = _data["emojisOnly"];
+            this.emojiCount = _data["emojiCount"];
         }
     }
 
@@ -1886,6 +1890,8 @@ export class MessageDto implements IMessageDto {
         data["linkPreview"] = this.linkPreview ? this.linkPreview.toJSON() : undefined as any;
         data["image"] = this.image ? this.image.toJSON() : undefined as any;
         data["imagePreview"] = this.imagePreview ? this.imagePreview.toJSON() : undefined as any;
+        data["emojisOnly"] = this.emojisOnly;
+        data["emojiCount"] = this.emojiCount;
         return data;
     }
 }
@@ -1900,6 +1906,8 @@ export interface IMessageDto {
     linkPreview?: LinkPreviewDto;
     image?: ImageDto;
     imagePreview?: ImagePreviewDto;
+    emojisOnly?: boolean;
+    emojiCount?: number;
 }
 
 export class ProblemDetails implements IProblemDetails {

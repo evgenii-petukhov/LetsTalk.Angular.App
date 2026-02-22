@@ -16,6 +16,8 @@ export class Message {
     image?: Image;
     imagePreview?: ImagePreview;
     chatId?: string;
+    emojisOnly?: boolean;
+    emojiCount?: number;
 
     constructor(...inits: Partial<Message | IMessageDto>[]) {
         inits
