@@ -26,10 +26,19 @@
 
         &.local-video {
             flex: 1;
-            width: 40%;
+
+            position: absolute;
+            right: 0;
+            height: auto;
+            bottom: 0;
+            width: 30%;
+            border-radius: 8px 0 0 0;
 
             @include media-breakpoint-down(sm) {
-                width: 100%;
+                bottom: 100px;
+                border-radius: 8px 0 0 8px;
+                max-width: 35%;
+                max-height: 35%;
             }
         }
     }
