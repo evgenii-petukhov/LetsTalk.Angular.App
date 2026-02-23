@@ -15,22 +15,35 @@ export const selectSelectedChatMessageListStatus = createSelector(
 export const selectSelectedChatIsCallInProgress = createSelector(
     selectVideoCall,
     selectSelectedChatId,
-    (callState, chatId) => callState !== null && callState.chatId === chatId,
+    (state, chatId) =>
+        state !== null &&
+        state.chatId === chatId &&
+        state.type !== 'incoming-awaiting',
+);
+
+export const selectSelectedChatIsAwaitingResponse = createSelector(
+    selectVideoCall,
+    (state) => state !== null && state.type === 'incoming-awaiting',
 );
 
 export const selectSelectedChatIsMessageListVisible = createSelector(
     selectSelectedChatIsCallInProgress,
+    selectSelectedChatIsAwaitingResponse,
     selectSelectedChatMessageListStatus,
-    (isCallInProgress, status) =>
+    (isCallInProgress, awaitingResponse, status) =>
         !isCallInProgress &&
+        !awaitingResponse &&
         [MessageListStatus.Unknown, MessageListStatus.Success].includes(status),
 );
 
 export const selectSelectedChatIsComposeAreaVisible = createSelector(
     selectSelectedChatIsCallInProgress,
+    selectSelectedChatIsAwaitingResponse,
     selectSelectedChatMessageListStatus,
-    (isCallInProgress, status) =>
-        !isCallInProgress && status === MessageListStatus.Success,
+    (isCallInProgress, awaitingResponse, status) =>
+        !isCallInProgress &&
+        !awaitingResponse &&
+        status === MessageListStatus.Success,
 );
 
 export const selectSelectedChatIsNotFoundVisible = createSelector(

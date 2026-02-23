@@ -5,6 +5,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { MessageListStatus } from '../../models/message-list-status';
 import { StoreService } from '../../services/store.service';
 import {
+    selectSelectedChatIsAwaitingResponse,
     selectSelectedChatIsCallInProgress,
     selectSelectedChatIsComposeAreaVisible,
     selectSelectedChatIsErrorVisible,
@@ -26,6 +27,9 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     isCallInProgress = toSignal(
         this.store.select(selectSelectedChatIsCallInProgress),
+    );
+    isAwaitingResponse = toSignal(
+        this.store.select(selectSelectedChatIsAwaitingResponse),
     );
     isMessageListVisible = toSignal(
         this.store.select(selectSelectedChatIsMessageListVisible),

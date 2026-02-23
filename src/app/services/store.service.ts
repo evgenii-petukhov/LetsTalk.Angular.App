@@ -153,6 +153,12 @@ export class StoreService {
         );
     }
 
+    acceptIncomingCall(): void {
+        this.store.dispatch(
+            videoCallActions.acceptIncomingCall(),
+        );
+    }
+
     setCallId(callId: string): void {
         this.store.dispatch(
             videoCallActions.setCallId({ callId }),

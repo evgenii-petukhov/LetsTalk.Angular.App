@@ -5,6 +5,7 @@ export const videoCallActions = createActionGroup({
     events: {
         initOutgoingCall: props<{ chatId: string }>(),
         initIncomingCall: props<{ callId: string; chatId: string; offer: string }>(),
+        acceptIncomingCall: emptyProps(),
         setCallId: props<{ callId: string; }>(),
         toggleVideo: emptyProps(),
         toggleAudio: emptyProps(),

@@ -39,7 +39,7 @@ describe('VideoCallComponent', () => {
         callId: 'call-id',
         chatId: 'test-chat-id',
         offer: 'test-offer',
-        type: 'incoming',
+        type: 'incoming-active',
         captureVideo: false,
         captureAudio: true,
     };

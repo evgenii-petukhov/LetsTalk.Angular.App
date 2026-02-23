@@ -17,4 +17,7 @@
     @if (isCallInProgress()) {
         <app-video-call></app-video-call>
     }
+    @if (isAwaitingResponse()) {
+        <app-incoming-call></app-incoming-call>
+    }
 </div>
