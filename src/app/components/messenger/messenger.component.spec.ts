@@ -26,6 +26,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { RtcConnectionService } from '../../services/rtc-connection.service';
 
 describe('MessengerComponent', () => {
     let component: MessengerComponent;
@@ -33,6 +34,7 @@ describe('MessengerComponent', () => {
     let signalrHandlerService: MockedObject<SignalrHandlerService>;
     let storeService: MockedObject<StoreService>;
     let store: MockedObject<Store>;
+    let rtcConnectionService: MockedObject<RtcConnectionService>;
 
     beforeEach(async () => {
         signalrHandlerService = {
@@ -69,6 +71,12 @@ describe('MessengerComponent', () => {
             select: vi.fn().mockName('Store.select'),
         } as MockedObject<Store>;
 
+        rtcConnectionService = {
+            establishConnection: vi
+                .fn()
+                .mockName('RtcConnectionService.establishConnection'),
+        } as MockedObject<RtcConnectionService>;
+
         await TestBed.configureTestingModule({
             declarations: [
                 MessengerComponent,
@@ -87,6 +95,10 @@ describe('MessengerComponent', () => {
                 {
                     provide: ActivatedRoute,
                     useValue: { firstChild: null, params: of({}) },
+                },
+                {
+                    provide: RtcConnectionService,
+                    useValue: rtcConnectionService,
                 },
             ],
             schemas: [NO_ERRORS_SCHEMA],

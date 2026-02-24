@@ -27,7 +27,9 @@ import { selectChats } from '../../state/chats/chats.selector';
 import { SignalrHandlerService } from '../../services/signalr-handler.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { IdGeneratorService } from '../../services/id-generator.service';
-import { RtcSessionSettings } from '../../models/rtc-sessions-settings';
+import { IncomingCall } from '../../models/incoming-call';
+import { EstablishConnection } from '../../models/establish-connection';
+import { RtcConnectionService } from '../../services/rtc-connection.service';
 
 @Component({
     selector: 'app-messenger',
@@ -49,6 +51,7 @@ export class MessengerComponent implements OnInit, OnDestroy {
     private readonly activatedRoute = inject(ActivatedRoute);
     private readonly router = inject(Router);
     private readonly idGeneratorService = inject(IdGeneratorService);
+    private readonly rtcConnectionService = inject(RtcConnectionService);
 
     @HostListener('document:visibilitychange', ['$event'])
     onVisibilityChange(event: Event): void {
@@ -94,8 +97,8 @@ export class MessengerComponent implements OnInit, OnDestroy {
             this.handleMessageNotification.bind(this),
             this.handleLinkPreviewNotification.bind(this),
             this.handleImagePreviewNotification.bind(this),
-            this.handleRtcSessionOfferNotification.bind(this),
-            this.handleRtcSessionAnswerNotification.bind(this),
+            this.handleIncomingCallNotification.bind(this),
+            this.handleEstablishConnectionNotification.bind(this),
         );
     }
 
@@ -128,22 +131,22 @@ export class MessengerComponent implements OnInit, OnDestroy {
         );
     }
 
-    async handleRtcSessionOfferNotification(
-        sessionSettings: RtcSessionSettings,
+    async handleIncomingCallNotification(
+        data: IncomingCall,
     ): Promise<void> {
-        this.signalrHandlerService.handleRtcSessionOfferNotification(
+        this.signalrHandlerService.handleIncomingCallNotification(
             this.chats,
-            sessionSettings.callId,
-            sessionSettings.chatId,
-            sessionSettings.offer,
+            data.callId,
+            data.chatId,
+            data.offer,
         );
     }
 
-    handleRtcSessionAnswerNotification(
-        sessionSettings: RtcSessionSettings,
+    handleEstablishConnectionNotification(
+        data: EstablishConnection,
     ): void {
-        this.signalrHandlerService.handleRtcSessionAnswerNotification(
-            sessionSettings.answer,
+        this.rtcConnectionService.establishConnection(
+            data.answer,
         );
     }
 }

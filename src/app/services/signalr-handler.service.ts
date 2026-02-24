@@ -9,9 +9,9 @@ import {
 import { StoreService } from './store.service';
 import { ApiService } from './api.service';
 import { BrowserNotificationService } from './browser-notification.service';
-import { RtcSessionSettings } from '../models/rtc-sessions-settings';
+import { IncomingCall } from '../models/incoming-call';
 import { Router } from '@angular/router';
-import { RtcConnectionService } from './rtc-connection.service';
+import { EstablishConnection } from '../models/establish-connection';
 
 @Injectable({
     providedIn: 'root',
@@ -23,7 +23,6 @@ export class SignalrHandlerService {
     private readonly browserNotificationService = inject(
         BrowserNotificationService,
     );
-    private readonly rtcConnectionService = inject(RtcConnectionService);
     private readonly router = inject(Router);
 
     async initHandlers(
@@ -34,11 +33,11 @@ export class SignalrHandlerService {
         handleImagePreviewNotification: (
             imagePreviewDto: IImagePreviewDto,
         ) => void,
-        handleRtcSessionOfferNotification: (
-            sessionSettings: RtcSessionSettings,
+        handleIncomingCallNotification: (
+            data: IncomingCall,
         ) => void,
-        handleRtcSessionAnswerNotification: (
-            sessionSettings: RtcSessionSettings,
+        handleEstablishConnectionNotification: (
+            data: EstablishConnection,
         ) => void,
     ): Promise<void> {
         await this.browserNotificationService.init();
@@ -46,8 +45,8 @@ export class SignalrHandlerService {
             handleMessageNotification,
             handleLinkPreviewNotification,
             handleImagePreviewNotification,
-            handleRtcSessionOfferNotification,
-            handleRtcSessionAnswerNotification,
+            handleIncomingCallNotification,
+            handleEstablishConnectionNotification,
         );
     }
 
@@ -111,7 +110,7 @@ export class SignalrHandlerService {
         this.storeService.setImagePreview(imagePreviewDto);
     }
 
-    async handleRtcSessionOfferNotification(
+    async handleIncomingCallNotification(
         chats: readonly IChatDto[],
         callId: string,
         chatId: string,
@@ -125,9 +124,5 @@ export class SignalrHandlerService {
         await this.router.navigate(['/messenger/chat', chatId]);
 
         this.storeService.initIncomingCall(callId, chatId, offer);
-    }
-
-    handleRtcSessionAnswerNotification(answer: string): void {
-        this.rtcConnectionService.establishConnection(answer);
     }
 }

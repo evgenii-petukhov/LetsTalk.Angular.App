@@ -1,6 +1,5 @@
-export interface RtcSessionSettings {
+export interface EstablishConnection {
     callId?: string;
-    offer?: string;
     answer?: string;
     chatId?: string;
 }

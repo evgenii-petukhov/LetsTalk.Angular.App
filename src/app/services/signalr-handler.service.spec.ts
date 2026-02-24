@@ -30,7 +30,6 @@ describe('SignalrHandlerService', () => {
     let storeService: MockedObject<StoreService>;
     let signalrService: MockedObject<SignalrService>;
     let browserNotificationService: MockedObject<BrowserNotificationService>;
-    let rtcConnectionService: MockedObject<RtcConnectionService>;
     let router: MockedObject<Router>;
 
     const mockMessageDto: IMessageDto = {
@@ -104,12 +103,6 @@ describe('SignalrHandlerService', () => {
         } as MockedObject<BrowserNotificationService>;
         browserNotificationService.init.mockReturnValue(Promise.resolve());
 
-        rtcConnectionService = {
-            establishConnection: vi
-                .fn()
-                .mockName('RtcConnectionService.establishConnection'),
-        } as MockedObject<RtcConnectionService>;
-
         router = {
             navigate: vi.fn().mockName('Router.navigate'),
         } as MockedObject<Router>;
@@ -124,10 +117,6 @@ describe('SignalrHandlerService', () => {
                 {
                     provide: BrowserNotificationService,
                     useValue: browserNotificationService,
-                },
-                {
-                    provide: RtcConnectionService,
-                    useValue: rtcConnectionService,
                 },
                 { provide: Router, useValue: router },
             ],
@@ -144,15 +133,15 @@ describe('SignalrHandlerService', () => {
         let handleMessageNotification: Mock;
         let handleLinkPreviewNotification: Mock;
         let handleImagePreviewNotification: Mock;
-        let handleRtcSessionOfferNotification: Mock;
-        let handleRtcSessionAnswerNotification: Mock;
+        let handleIncomingCallNotification: Mock;
+        let handleEstablishConnectionNotification: Mock;
 
         beforeEach(() => {
             handleMessageNotification = vi.fn();
             handleLinkPreviewNotification = vi.fn();
             handleImagePreviewNotification = vi.fn();
-            handleRtcSessionOfferNotification = vi.fn();
-            handleRtcSessionAnswerNotification = vi.fn();
+            handleIncomingCallNotification = vi.fn();
+            handleEstablishConnectionNotification = vi.fn();
         });
 
         it('should initialize browser notifications and SignalR handlers', async () => {
@@ -160,8 +149,8 @@ describe('SignalrHandlerService', () => {
                 handleMessageNotification,
                 handleLinkPreviewNotification,
                 handleImagePreviewNotification,
-                handleRtcSessionOfferNotification,
-                handleRtcSessionAnswerNotification,
+                handleIncomingCallNotification,
+                handleEstablishConnectionNotification,
             );
 
             expect(browserNotificationService.init).toHaveBeenCalledTimes(1);
@@ -169,8 +158,8 @@ describe('SignalrHandlerService', () => {
                 handleMessageNotification,
                 handleLinkPreviewNotification,
                 handleImagePreviewNotification,
-                handleRtcSessionOfferNotification,
-                handleRtcSessionAnswerNotification,
+                handleIncomingCallNotification,
+                handleEstablishConnectionNotification,
             );
         });
 
@@ -184,8 +173,8 @@ describe('SignalrHandlerService', () => {
                     handleMessageNotification,
                     handleLinkPreviewNotification,
                     handleImagePreviewNotification,
-                    handleRtcSessionOfferNotification,
-                    handleRtcSessionAnswerNotification,
+                    handleIncomingCallNotification,
+                    handleEstablishConnectionNotification,
                 ),
             ).rejects.toThrow();
 
@@ -202,8 +191,8 @@ describe('SignalrHandlerService', () => {
                     handleMessageNotification,
                     handleLinkPreviewNotification,
                     handleImagePreviewNotification,
-                    handleRtcSessionOfferNotification,
-                    handleRtcSessionAnswerNotification,
+                    handleIncomingCallNotification,
+                    handleEstablishConnectionNotification,
                 ),
             ).rejects.toThrow();
 
@@ -634,13 +623,13 @@ describe('SignalrHandlerService', () => {
     });
 
     describe('RTC Session Handlers', () => {
-        describe('handleRtcSessionOfferNotification', () => {
+        describe('handleIncomingCallNotification', () => {
             it('should navigate to chat and init incoming call when chat exists', async () => {
                 const callId = 'callId';
                 const chatId = 'chatId';
                 const offer = 'mock-offer-string';
 
-                await service.handleRtcSessionOfferNotification(
+                await service.handleIncomingCallNotification(
                     mockChats,
                     callId,
                     chatId,
@@ -664,7 +653,7 @@ describe('SignalrHandlerService', () => {
                 const chatId = 'nonExistentChatId';
                 const offer = 'mock-offer-string';
 
-                await service.handleRtcSessionOfferNotification(
+                await service.handleIncomingCallNotification(
                     mockChats,
                     callId,
                     chatId,
@@ -688,7 +677,7 @@ describe('SignalrHandlerService', () => {
                 const chatId = 'chatId';
                 const offer = 'mock-offer-string';
 
-                await service.handleRtcSessionOfferNotification(
+                await service.handleIncomingCallNotification(
                     [],
                     callId,
                     chatId,
@@ -716,7 +705,7 @@ describe('SignalrHandlerService', () => {
                 );
 
                 await expect(
-                    service.handleRtcSessionOfferNotification(
+                    service.handleIncomingCallNotification(
                         mockChats,
                         callId,
                         chatId,
@@ -739,7 +728,7 @@ describe('SignalrHandlerService', () => {
                 );
 
                 await expect(
-                    service.handleRtcSessionOfferNotification(
+                    service.handleIncomingCallNotification(
                         mockChats,
                         callId,
                         chatId,
@@ -752,7 +741,7 @@ describe('SignalrHandlerService', () => {
 
             it('should handle null/undefined parameters', async () => {
                 await expect(
-                    service.handleRtcSessionOfferNotification(
+                    service.handleIncomingCallNotification(
                         null as any,
                         'callId',
                         'chatId',
@@ -766,7 +755,7 @@ describe('SignalrHandlerService', () => {
                 const chatId = '';
                 const offer = '';
 
-                await service.handleRtcSessionOfferNotification(
+                await service.handleIncomingCallNotification(
                     mockChats,
                     callId,
                     chatId,
@@ -783,76 +772,6 @@ describe('SignalrHandlerService', () => {
                     chatId,
                     offer,
                 );
-            });
-        });
-
-        describe('handleRtcSessionAnswerNotification', () => {
-            it('should establish RTC connection with answer', () => {
-                const answer = 'mock-answer-string';
-
-                service.handleRtcSessionAnswerNotification(answer);
-
-                expect(
-                    rtcConnectionService.establishConnection,
-                ).toHaveBeenCalledWith(answer);
-            });
-
-            it('should handle empty answer string', () => {
-                const answer = '';
-
-                service.handleRtcSessionAnswerNotification(answer);
-
-                expect(
-                    rtcConnectionService.establishConnection,
-                ).toHaveBeenCalledWith(answer);
-            });
-
-            it('should handle null answer', () => {
-                const answer = null as any;
-
-                service.handleRtcSessionAnswerNotification(answer);
-
-                expect(
-                    rtcConnectionService.establishConnection,
-                ).toHaveBeenCalledWith(answer);
-            });
-
-            it('should handle undefined answer', () => {
-                const answer = undefined as any;
-
-                service.handleRtcSessionAnswerNotification(answer);
-
-                expect(
-                    rtcConnectionService.establishConnection,
-                ).toHaveBeenCalledWith(answer);
-            });
-
-            it('should be callable multiple times', () => {
-                const answer1 = 'answer1';
-                const answer2 = 'answer2';
-
-                service.handleRtcSessionAnswerNotification(answer1);
-                service.handleRtcSessionAnswerNotification(answer2);
-
-                expect(
-                    rtcConnectionService.establishConnection,
-                ).toHaveBeenCalledTimes(2);
-                expect(
-                    rtcConnectionService.establishConnection,
-                ).toHaveBeenCalledWith(answer1);
-                expect(
-                    rtcConnectionService.establishConnection,
-                ).toHaveBeenCalledWith(answer2);
-            });
-
-            it('should handle very long answer strings', () => {
-                const longAnswer = 'a'.repeat(10000);
-
-                service.handleRtcSessionAnswerNotification(longAnswer);
-
-                expect(
-                    rtcConnectionService.establishConnection,
-                ).toHaveBeenCalledWith(longAnswer);
             });
         });
     });
@@ -934,73 +853,6 @@ describe('SignalrHandlerService', () => {
             service.removeHandlers();
 
             expect(signalrService.removeHandlers).toHaveBeenCalledTimes(1);
-        });
-
-        it('should handle complete RTC workflow', async () => {
-            const callId = 'callId';
-            const chatId = 'chatId';
-            const offer = 'test-offer';
-            const answer = 'test-answer';
-
-            // Handle offer
-            await service.handleRtcSessionOfferNotification(
-                mockChats,
-                callId,
-                chatId,
-                offer,
-            );
-
-            expect(router.navigate).toHaveBeenCalledWith([
-                '/messenger/chat',
-                chatId,
-            ]);
-            expect(storeService.initIncomingCall).toHaveBeenCalledWith(
-                callId,
-                chatId,
-                offer,
-            );
-
-            // Handle answer
-            service.handleRtcSessionAnswerNotification(answer);
-
-            expect(
-                rtcConnectionService.establishConnection,
-            ).toHaveBeenCalledWith(answer);
-        });
-
-        it('should handle mixed notification types in sequence', async () => {
-            // Message notification
-            await service.handleMessageNotification(
-                mockMessageDto,
-                'chatId',
-                mockChats,
-                true,
-            );
-
-            // Link preview notification
-            service.handleLinkPreviewNotification(mockLinkPreviewDto, 'chatId');
-
-            // Image preview notification
-            service.handleImagePreviewNotification(
-                mockImagePreviewDto,
-                'chatId',
-            );
-
-            // RTC notifications
-            await service.handleRtcSessionOfferNotification(
-                mockChats,
-                'callId',
-                'chatId',
-                'offer',
-            );
-            service.handleRtcSessionAnswerNotification('answer');
-
-            // Verify all handlers were called
-            expect(storeService.addMessage).toHaveBeenCalled();
-            expect(storeService.setLinkPreview).toHaveBeenCalled();
-            expect(storeService.setImagePreview).toHaveBeenCalled();
-            expect(storeService.initIncomingCall).toHaveBeenCalled();
-            expect(rtcConnectionService.establishConnection).toHaveBeenCalled();
         });
     });
 
@@ -1086,40 +938,6 @@ describe('SignalrHandlerService', () => {
             ).rejects.toThrow();
 
             expect(storeService.setLastMessageInfo).toHaveBeenCalled();
-        });
-
-        it('should handle concurrent RTC notifications', async () => {
-            const callId = 'callId';
-            const offer1 = 'offer1';
-            const offer2 = 'offer2';
-            const answer1 = 'answer1';
-            const answer2 = 'answer2';
-
-            const promises = [
-                service.handleRtcSessionOfferNotification(
-                    mockChats,
-                    callId,
-                    'chatId',
-                    offer1,
-                ),
-                service.handleRtcSessionOfferNotification(
-                    mockChats,
-                    callId,
-                    'otherChatId',
-                    offer2,
-                ),
-            ];
-
-            await Promise.all(promises);
-
-            service.handleRtcSessionAnswerNotification(answer1);
-            service.handleRtcSessionAnswerNotification(answer2);
-
-            expect(router.navigate).toHaveBeenCalledTimes(2);
-            expect(storeService.initIncomingCall).toHaveBeenCalledTimes(2);
-            expect(
-                rtcConnectionService.establishConnection,
-            ).toHaveBeenCalledTimes(2);
         });
 
         it('should handle memory pressure scenarios', async () => {
@@ -1228,7 +1046,7 @@ describe('SignalrHandlerService', () => {
             const callId = 'callId';
             const offers = ['offer1', 'offer2', 'offer3'];
             const promises = offers.map((offer, index) =>
-                service.handleRtcSessionOfferNotification(
+                service.handleIncomingCallNotification(
                     mockChats,
                     callId,
                     `chatId${index}`,
@@ -1240,23 +1058,6 @@ describe('SignalrHandlerService', () => {
 
             expect(router.navigate).toHaveBeenCalledTimes(3);
             expect(storeService.initIncomingCall).toHaveBeenCalledTimes(3);
-        });
-
-        it('should handle RTC session answers in rapid succession', () => {
-            const answers = ['answer1', 'answer2', 'answer3'];
-
-            answers.forEach((answer) => {
-                service.handleRtcSessionAnswerNotification(answer);
-            });
-
-            expect(
-                rtcConnectionService.establishConnection,
-            ).toHaveBeenCalledTimes(3);
-            answers.forEach((answer) => {
-                expect(
-                    rtcConnectionService.establishConnection,
-                ).toHaveBeenCalledWith(answer);
-            });
         });
     });
 });
