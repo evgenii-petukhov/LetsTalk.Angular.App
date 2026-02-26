@@ -5,6 +5,7 @@ import {
     ILinkPreviewDto,
     IImagePreviewDto,
     IChatDto,
+    IAccountDto,
 } from '../api-client/api-client';
 import { StoreService } from './store.service';
 import { ApiService } from './api.service';
@@ -115,6 +116,7 @@ export class SignalrHandlerService {
         callId: string,
         chatId: string,
         offer: string,
+        caller: IAccountDto
     ): Promise<void> {
         const chat = chats.find((chat) => chat.id === chatId);
         if (!chat) {
@@ -123,6 +125,6 @@ export class SignalrHandlerService {
 
         await this.router.navigate(['/messenger/chat', chatId]);
 
-        this.storeService.initIncomingCall(callId, chatId, offer);
+        this.storeService.initIncomingCall(callId, chatId, offer, caller);
     }
 }

@@ -1,0 +1,12 @@
+@use "bootstrap/scss/bootstrap" as *;
+
+:host {
+    app-avatar {
+        width: 100px;
+        height: 100px;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+        position: relative;
+    }
+}
