@@ -15,18 +15,22 @@ export class IncomingCallComponent {
     private readonly storeService = inject(StoreService);
     private readonly store = inject(Store);
 
-    urlOptions = toSignal(
-        this.store
-            .select(selectVideoCall)
-            .pipe(
-                map(
-                    (videoCall) =>
-                        videoCall?.caller && [
+    caller = toSignal(
+        this.store.select(selectVideoCall).pipe(
+            map(
+                (videoCall) =>
+                    videoCall?.caller && {
+                        urlOptions: [
                             videoCall.caller.image,
                             videoCall.caller.photoUrl,
                         ],
-                ),
+                        name:
+                            videoCall.caller.firstName +
+                            ' ' +
+                            videoCall.caller.lastName,
+                    },
             ),
+        ),
     );
 
     onAcceptClicked(): void {
