@@ -1,5 +1,6 @@
 @use "bootstrap/scss/bootstrap" as *;
 @use "../../../shared-styles/mixins/avatar-styles" as *;
+@use "../../../shared-styles/variables" as *;
 
 :host {
     display: flex;
@@ -57,10 +58,9 @@
 
             app-call-button,
             app-media-toggle-button {
-                @include avatar-styles(42px);
+                @include avatar-styles(42px, 54px);
 
                 @include media-breakpoint-down(sm) {
-                    @include avatar-styles(54px);
                     font-size: 20px;
                 }
             }

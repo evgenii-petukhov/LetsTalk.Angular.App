@@ -1,5 +1,6 @@
 @use "bootstrap/scss/bootstrap" as *;
 @use "../../../shared-styles/mixins/avatar-styles" as *;
+@use "../../../shared-styles/variables" as *;
 
 :host {
     z-index: 1;
@@ -8,11 +9,11 @@
         background: rgb(0 0 0 / 10%);
 
         app-avatar {
-            @include avatar-styles(42px);
+            @include avatar-styles($avatar-size-desktop, 42px);
         }
 
         app-call-button {
-            @include avatar-styles(42px);
+            @include avatar-styles($avatar-size-desktop, 42px);
         }
 
         app-user-details {

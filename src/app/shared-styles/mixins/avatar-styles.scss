@@ -1,14 +1,14 @@
 @use "bootstrap/scss/bootstrap" as *;
 @use "../variables" as *;
 
-@mixin avatar-styles($size: $avatar-size-mobile) {
-    flex: 0 1 $avatar-size-desktop;
-    min-width: $avatar-size-desktop;
-    height: $avatar-size-desktop;
+@mixin avatar-styles($desktop: $avatar-size-desktop, $mobile: $avatar-size-mobile) {
+    flex: 0 1 $desktop;
+    min-width: $desktop;
+    height: $desktop;
 
     @include media-breakpoint-down(sm) {
-        flex: 0 1 $size;
-        min-width: $size;
-        height: $size;
+        flex: 0 1 $mobile;
+        min-width: $mobile;
+        height: $mobile;
     }
 }
