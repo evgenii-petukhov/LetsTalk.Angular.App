@@ -9,6 +9,7 @@ import {
     selectSelectedChatIsCallInProgress,
     selectSelectedChatIsComposeAreaVisible,
     selectSelectedChatIsErrorVisible,
+    selectSelectedChatIsHeaderVisible,
     selectSelectedChatIsMessageListVisible,
     selectSelectedChatIsNotFoundVisible,
 } from '../../state/selected-chat-ui/selected-chat-ui.selectors';
@@ -30,6 +31,9 @@ export class ChatComponent implements OnInit, OnDestroy {
     );
     isAwaitingResponse = toSignal(
         this.store.select(selectSelectedChatIsAwaitingResponse),
+    );
+    isHeaderVisible = toSignal(
+        this.store.select(selectSelectedChatIsHeaderVisible),
     );
     isMessageListVisible = toSignal(
         this.store.select(selectSelectedChatIsMessageListVisible),

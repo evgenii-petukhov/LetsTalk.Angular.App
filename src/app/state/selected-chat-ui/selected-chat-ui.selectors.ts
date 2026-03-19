@@ -23,7 +23,18 @@ export const selectSelectedChatIsCallInProgress = createSelector(
 
 export const selectSelectedChatIsAwaitingResponse = createSelector(
     selectVideoCall,
-    (state) => state !== null && state.type === 'incoming-awaiting',
+    selectSelectedChatId,
+    (state, chatId) =>
+        state !== null &&
+        state.chatId === chatId &&
+        state.type === 'incoming-awaiting',
+);
+
+export const selectSelectedChatIsHeaderVisible = createSelector(
+    selectSelectedChatIsCallInProgress,
+    selectSelectedChatIsAwaitingResponse,
+    (isCallInProgress, awaitingResponse) =>
+        !isCallInProgress && !awaitingResponse,
 );
 
 export const selectSelectedChatIsMessageListVisible = createSelector(

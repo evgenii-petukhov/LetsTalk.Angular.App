@@ -1,7 +1,9 @@
 <router-outlet></router-outlet>
 <div class="chat-container">
-    <app-chat-header
-        [backButton]="isNotFoundVisible() || isErrorVisible() ? 'visibleWithText' : 'visible'"></app-chat-header>
+    @if (isHeaderVisible()) {
+        <app-chat-header
+            [backButton]="isNotFoundVisible() || isErrorVisible() ? 'visibleWithText' : 'visible'"></app-chat-header>
+    }
     @if (isMessageListVisible()) {
         <app-message-list></app-message-list>
     }
