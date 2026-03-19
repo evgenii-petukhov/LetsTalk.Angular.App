@@ -51,15 +51,6 @@
                 @include avatar-styles(54px);
                 font-size: 20px;
             }
-
-            &.start-call {
-                ::ng-deep {
-                    button {
-                        background: #44B351;
-                        color: #fff;
-                    }
-                }
-            }
         }
     }
 }
