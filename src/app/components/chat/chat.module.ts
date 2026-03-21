@@ -20,6 +20,7 @@ import { VideoCallComponent } from './video-call/video-call.component';
 import { CallButtonComponent } from './call-button/call-button.component';
 import { MediaToggleButtonComponent } from './media-toggle-button/media-toggle-button.component';
 import { IncomingCallComponent } from './incoming-call/incoming-call.component';
+import { OngoingCallComponent } from './ongoing-call-panel/ongoing-call-panel.component';
 
 @NgModule({
     declarations: [
@@ -39,6 +40,7 @@ import { IncomingCallComponent } from './incoming-call/incoming-call.component';
         MediaToggleButtonComponent,
         VisibleOnlyPipe,
         IncomingCallComponent,
+        OngoingCallComponent,
     ],
     imports: [
         CommonModule,
@@ -49,6 +51,7 @@ import { IncomingCallComponent } from './incoming-call/incoming-call.component';
     ],
     exports: [
         ChatComponent,
+        OngoingCallComponent,
     ],
 })
 export class ChatModule {}

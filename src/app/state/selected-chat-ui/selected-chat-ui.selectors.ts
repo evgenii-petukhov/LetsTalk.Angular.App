@@ -7,12 +7,12 @@ import { MessageListStatus } from '../../models/message-list-status';
 export const selectSelectedChatUi =
     createFeatureSelector<SelectedChatUiState>('selectedChatUi');
 
-export const selectSelectedChatMessageListStatus = createSelector(
+export const selectMessageListStatus = createSelector(
     selectSelectedChatUi,
     (state) => state?.messageListStatus ?? MessageListStatus.Unknown,
 );
 
-export const selectSelectedChatIsCallInProgress = createSelector(
+export const selectIsCallInProgress = createSelector(
     selectVideoCall,
     selectSelectedChatId,
     (state, chatId) =>
@@ -21,7 +21,15 @@ export const selectSelectedChatIsCallInProgress = createSelector(
         state.type !== 'incoming-awaiting',
 );
 
-export const selectSelectedChatIsAwaitingResponse = createSelector(
+export const selectIsOngoingCallVisible = createSelector(
+    selectVideoCall,
+    selectSelectedChatId,
+    (state, chatId) =>
+        state !== null &&
+        state.chatId !== chatId,
+);
+
+export const selectIsAwaitingResponse = createSelector(
     selectVideoCall,
     selectSelectedChatId,
     (state, chatId) =>
@@ -30,43 +38,43 @@ export const selectSelectedChatIsAwaitingResponse = createSelector(
         state.type === 'incoming-awaiting',
 );
 
-export const selectSelectedChatIsHeaderVisible = createSelector(
-    selectSelectedChatIsCallInProgress,
-    selectSelectedChatIsAwaitingResponse,
+export const selectIsHeaderVisible = createSelector(
+    selectIsCallInProgress,
+    selectIsAwaitingResponse,
     (isCallInProgress, awaitingResponse) =>
         !isCallInProgress && !awaitingResponse,
 );
 
-export const selectSelectedChatIsMessageListVisible = createSelector(
-    selectSelectedChatIsCallInProgress,
-    selectSelectedChatIsAwaitingResponse,
-    selectSelectedChatMessageListStatus,
+export const selectIsMessageListVisible = createSelector(
+    selectIsCallInProgress,
+    selectIsAwaitingResponse,
+    selectMessageListStatus,
     (isCallInProgress, awaitingResponse, status) =>
         !isCallInProgress &&
         !awaitingResponse &&
         [MessageListStatus.Unknown, MessageListStatus.Success].includes(status),
 );
 
-export const selectSelectedChatIsComposeAreaVisible = createSelector(
-    selectSelectedChatIsCallInProgress,
-    selectSelectedChatIsAwaitingResponse,
-    selectSelectedChatMessageListStatus,
+export const selectIsComposeAreaVisible = createSelector(
+    selectIsCallInProgress,
+    selectIsAwaitingResponse,
+    selectMessageListStatus,
     (isCallInProgress, awaitingResponse, status) =>
         !isCallInProgress &&
         !awaitingResponse &&
         status === MessageListStatus.Success,
 );
 
-export const selectSelectedChatIsNotFoundVisible = createSelector(
-    selectSelectedChatIsCallInProgress,
-    selectSelectedChatMessageListStatus,
+export const selectIsNotFoundVisible = createSelector(
+    selectIsCallInProgress,
+    selectMessageListStatus,
     (isCallInProgress, status) =>
         !isCallInProgress && status === MessageListStatus.NotFound,
 );
 
-export const selectSelectedChatIsErrorVisible = createSelector(
-    selectSelectedChatIsCallInProgress,
-    selectSelectedChatMessageListStatus,
+export const selectIsErrorVisible = createSelector(
+    selectIsCallInProgress,
+    selectMessageListStatus,
     (isCallInProgress, status) =>
         !isCallInProgress && status === MessageListStatus.Error,
 );

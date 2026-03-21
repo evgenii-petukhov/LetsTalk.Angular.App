@@ -3,6 +3,7 @@
 :host {
     flex: 1 1 auto;
     display: flex;
+    flex-direction: column;
     box-shadow: 0 0 0 6px rgb(255 255 255 / 40%);
     width: 1000px;
     margin: 28px auto;
@@ -10,6 +11,12 @@
     border-radius: 10px;
     background: #fff;
     overflow: hidden;
+
+    .messenger-container {
+        flex: 1 1 auto;
+        display: flex;
+        overflow: hidden;
+    }
 
     @include media-breakpoint-down(lg) {
         width: calc(100vw - 56px);

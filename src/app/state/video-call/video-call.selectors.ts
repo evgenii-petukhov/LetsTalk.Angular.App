@@ -8,3 +8,8 @@ export const selectIsCallInProgress = createSelector(
     selectVideoCall,
     (callState) => !!callState,
 );
+
+export const selectVideoCallChatId = createSelector(
+    selectVideoCall,
+    (callState) => callState?.chatId,
+);

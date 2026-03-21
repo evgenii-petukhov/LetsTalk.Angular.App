@@ -5,13 +5,13 @@ import { Subject, takeUntil } from 'rxjs';
 import { MessageListStatus } from '../../models/message-list-status';
 import { StoreService } from '../../services/store.service';
 import {
-    selectSelectedChatIsAwaitingResponse,
-    selectSelectedChatIsCallInProgress,
-    selectSelectedChatIsComposeAreaVisible,
-    selectSelectedChatIsErrorVisible,
-    selectSelectedChatIsHeaderVisible,
-    selectSelectedChatIsMessageListVisible,
-    selectSelectedChatIsNotFoundVisible,
+    selectIsAwaitingResponse,
+    selectIsCallInProgress,
+    selectIsComposeAreaVisible,
+    selectIsErrorVisible,
+    selectIsHeaderVisible,
+    selectIsMessageListVisible,
+    selectIsNotFoundVisible,
 } from '../../state/selected-chat-ui/selected-chat-ui.selectors';
 import { selectSelectedChatId } from '../../state/selected-chat/selected-chat-id.selectors';
 
@@ -27,25 +27,25 @@ export class ChatComponent implements OnInit, OnDestroy {
     private readonly storeService = inject(StoreService);
 
     isCallInProgress = toSignal(
-        this.store.select(selectSelectedChatIsCallInProgress),
+        this.store.select(selectIsCallInProgress),
     );
     isAwaitingResponse = toSignal(
-        this.store.select(selectSelectedChatIsAwaitingResponse),
+        this.store.select(selectIsAwaitingResponse),
     );
     isHeaderVisible = toSignal(
-        this.store.select(selectSelectedChatIsHeaderVisible),
+        this.store.select(selectIsHeaderVisible),
     );
     isMessageListVisible = toSignal(
-        this.store.select(selectSelectedChatIsMessageListVisible),
+        this.store.select(selectIsMessageListVisible),
     );
     isComposeAreaVisible = toSignal(
-        this.store.select(selectSelectedChatIsComposeAreaVisible),
+        this.store.select(selectIsComposeAreaVisible),
     );
     isNotFoundVisible = toSignal(
-        this.store.select(selectSelectedChatIsNotFoundVisible),
+        this.store.select(selectIsNotFoundVisible),
     );
     isErrorVisible = toSignal(
-        this.store.select(selectSelectedChatIsErrorVisible),
+        this.store.select(selectIsErrorVisible),
     );
 
     ngOnInit(): void {

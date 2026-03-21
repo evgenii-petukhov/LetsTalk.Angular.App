@@ -30,6 +30,8 @@ import { IdGeneratorService } from '../../services/id-generator.service';
 import { IncomingCall } from '../../models/incoming-call';
 import { EstablishConnection } from '../../models/establish-connection';
 import { RtcConnectionService } from '../../services/rtc-connection.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { selectIsOngoingCallVisible } from 'src/app/state/selected-chat-ui/selected-chat-ui.selectors';
 
 @Component({
     selector: 'app-messenger',
@@ -58,6 +60,10 @@ export class MessengerComponent implements OnInit, OnDestroy {
         this.isWindowActive = !(event.target as Document).hidden;
         this.storeService.markAllAsRead(this.selectedChat);
     }
+
+    isOngoingCallVisible = toSignal(
+        this.store.select(selectIsOngoingCallVisible),
+    );
 
     async ngOnInit(): Promise<void> {
         await this.storeService.initChatStorage();
@@ -131,23 +137,17 @@ export class MessengerComponent implements OnInit, OnDestroy {
         );
     }
 
-    async handleIncomingCallNotification(
-        data: IncomingCall,
-    ): Promise<void> {
+    async handleIncomingCallNotification(data: IncomingCall): Promise<void> {
         this.signalrHandlerService.handleIncomingCallNotification(
             this.chats,
             data.callId,
             data.chatId,
             data.offer,
-            data.caller
+            data.caller,
         );
     }
 
-    handleEstablishConnectionNotification(
-        data: EstablishConnection,
-    ): void {
-        this.rtcConnectionService.establishConnection(
-            data.answer,
-        );
+    handleEstablishConnectionNotification(data: EstablishConnection): void {
+        this.rtcConnectionService.establishConnection(data.answer);
     }
 }
