@@ -31,7 +31,7 @@ import { IncomingCall } from '../../models/incoming-call';
 import { EstablishConnection } from '../../models/establish-connection';
 import { RtcConnectionService } from '../../services/rtc-connection.service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { selectIsOngoingCallVisible } from 'src/app/state/selected-chat-ui/selected-chat-ui.selectors';
+import { selectIsOngoingCallVisible } from '../../state/selected-chat-ui/selected-chat-ui.selectors';
 
 @Component({
     selector: 'app-messenger',

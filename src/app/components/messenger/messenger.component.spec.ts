@@ -68,7 +68,12 @@ describe('MessengerComponent', () => {
         } as MockedObject<StoreService>;
 
         store = {
-            select: vi.fn().mockName('Store.select'),
+            select: vi.fn().mockImplementation((selector) => {
+                if (selector === selectChats) {
+                    return of([]);
+                }
+                return of(null);
+            }),
         } as MockedObject<Store>;
 
         rtcConnectionService = {
@@ -106,13 +111,6 @@ describe('MessengerComponent', () => {
 
         fixture = TestBed.createComponent(MessengerComponent);
         component = fixture.componentInstance;
-
-        store.select.mockImplementation((selector) => {
-            if (selector === selectChats) {
-                return of([]);
-            }
-            return of(null);
-        });
     });
 
     it('should create', () => {

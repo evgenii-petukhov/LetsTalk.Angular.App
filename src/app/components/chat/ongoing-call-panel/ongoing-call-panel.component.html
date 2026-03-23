@@ -1,1 +1,5 @@
-<p>Ongoing call</p>
+<app-avatar [urlOptions]="urlOptions()" (click)="onChatClick()"></app-avatar>
+<app-user-details [value]="'Chat name'" (click)="onChatClick()"></app-user-details>
+<app-call-button [mode]="'accept-call'"></app-call-button>
+<app-media-toggle-button [mode]="'audio'"></app-media-toggle-button>
+<app-call-button [mode]="'end-call'" (buttonClick)="endCall()"></app-call-button>
