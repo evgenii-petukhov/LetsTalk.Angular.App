@@ -12,7 +12,7 @@ import {
 import { chatsActions } from '../state/chats/chats.actions';
 import { loggedInUserActions } from '../state/logged-in-user/logged-in-user.actions';
 import { messagesActions } from '../state/messages/messages.actions';
-import { selectedChatIdActions } from '../state/selected-chat/selected-chat-id.actions';
+import { selectedChatInfoActions } from '../state/selected-chat/selected-chat-info.actions';
 import { selectLoggedInUser } from '../state/logged-in-user/logged-in-user.selectors';
 import { ApiService } from './api.service';
 import { selectChats } from '../state/chats/chats.selector';
@@ -24,8 +24,7 @@ import { selectAccounts } from '../state/accounts/accounts.selector';
 import { accountsActions } from '../state/accounts/accounts.actions';
 import { firstValueFrom } from 'rxjs';
 import { videoCallActions } from '../state/video-call/video-call.actions';
-import { selectedChatUiActions } from '../state/selected-chat-ui/selected-chat-ui.actions';
-import { MessageListStatus } from '../models/message-list-status';
+import { MessageFetchStatus } from '../models/message-fetch-status';
 
 @Injectable({
     providedIn: 'root',
@@ -141,7 +140,7 @@ export class StoreService {
     }
 
     setSelectedChatId(chatId: string): void {
-        this.store.dispatch(selectedChatIdActions.init({ chatId }));
+        this.store.dispatch(selectedChatInfoActions.init({ chatId }));
     }
 
     initOutgoingCall(chatId: string): void {
@@ -184,14 +183,10 @@ export class StoreService {
         this.store.dispatch(videoCallActions.toggleAudio());
     }
 
-    setSelectedChatMessageListStatus(
-        messageListStatus: MessageListStatus,
+    setSelectedChatMessageFetchStatus(
+        status: MessageFetchStatus,
     ): void {
-        this.store.dispatch(
-            selectedChatUiActions.setMessageListStatus({
-                messageListStatus,
-            }),
-        );
+        this.store.dispatch(selectedChatInfoActions.setMessageFetchStatus({ status }));
     }
 
     // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/

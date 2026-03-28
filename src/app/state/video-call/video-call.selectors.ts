@@ -1,15 +1,21 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { VideoCallState } from '../../models/video-call-state';
+import { VideoCall } from '../../models/video-call';
+import { selectChats } from '../chats/chats.selector';
 
-export const selectVideoCall =
-    createFeatureSelector<VideoCallState>('videoCall');
-
-export const selectIsCallInProgress = createSelector(
-    selectVideoCall,
-    (callState) => !!callState,
-);
+export const selectVideoCall = createFeatureSelector<VideoCall>('videoCall');
 
 export const selectVideoCallChatId = createSelector(
     selectVideoCall,
-    (callState) => callState?.chatId,
+    (videoCall) => videoCall?.chatId,
+);
+
+export const selectVideoCallChat = createSelector(
+    selectChats,
+    selectVideoCall,
+    (chats, videoCall) => chats?.find((chat) => chat.id === videoCall.chatId),
+);
+
+export const selectIsAnyCallInProgress = createSelector(
+    selectVideoCall,
+    (videoCall) => !!videoCall,
 );

@@ -54,23 +54,25 @@ describe('CallButtonComponent', () => {
         it('should emit buttonClick event when onButtonClicked is called', () => {
             // Arrange
             vi.spyOn(component.buttonClick, 'emit');
+            const mockEvent = new MouseEvent('click');
 
             // Act
-            component.onButtonClicked();
+            component.onButtonClicked(mockEvent);
 
             // Assert
             expect(component.buttonClick.emit).toHaveBeenCalled();
         });
 
-        it('should emit buttonClick event without parameters', () => {
+        it('should emit buttonClick event with the mouse event', () => {
             // Arrange
             vi.spyOn(component.buttonClick, 'emit');
+            const mockEvent = new MouseEvent('click');
 
             // Act
-            component.onButtonClicked();
+            component.onButtonClicked(mockEvent);
 
             // Assert
-            expect(component.buttonClick.emit).toHaveBeenCalledWith();
+            expect(component.buttonClick.emit).toHaveBeenCalledWith(mockEvent);
         });
 
         it('should emit buttonClick event when button is clicked in template', () => {
@@ -131,22 +133,14 @@ describe('CallButtonComponent', () => {
     });
 
     describe('Event Handling', () => {
-        it('should call onButtonClicked when component receives click event', () => {
+        it('should call onButtonClicked when button is clicked', () => {
             // Arrange
             vi.spyOn(component, 'onButtonClicked');
             fixture.detectChanges();
 
             // Act
-            const clickableElement =
-                fixture.debugElement.query(
-                    By.css('[ng-click], button, [click]'),
-                ) ||
-                fixture.debugElement.query(By.css('*[ng-click]')) ||
-                fixture.debugElement;
-
-            if (clickableElement) {
-                clickableElement.triggerEventHandler('click', null);
-            }
+            const buttonElement = fixture.debugElement.query(By.css('button'));
+            buttonElement.triggerEventHandler('click', new MouseEvent('click'));
 
             // Assert
             expect(component.onButtonClicked).toHaveBeenCalled();
@@ -168,13 +162,14 @@ describe('CallButtonComponent', () => {
 
         it('should work correctly when used with output binding', async () => {
             // Arrange
-            component.buttonClick.subscribe(() => {
+            const mockEvent = new MouseEvent('click');
+            component.buttonClick.subscribe((event) => {
                 // Assert
-                expect(true).toBe(true); // Event was emitted successfully
+                expect(event).toBe(mockEvent);
             });
 
             // Act
-            component.onButtonClicked();
+            component.onButtonClicked(mockEvent);
         });
     });
 
@@ -182,11 +177,12 @@ describe('CallButtonComponent', () => {
         it('should handle rapid successive clicks', () => {
             // Arrange
             vi.spyOn(component.buttonClick, 'emit');
+            const mockEvent = new MouseEvent('click');
 
             // Act
-            component.onButtonClicked();
-            component.onButtonClicked();
-            component.onButtonClicked();
+            component.onButtonClicked(mockEvent);
+            component.onButtonClicked(mockEvent);
+            component.onButtonClicked(mockEvent);
 
             // Assert
             expect(component.buttonClick.emit).toHaveBeenCalledTimes(3);
@@ -196,9 +192,10 @@ describe('CallButtonComponent', () => {
             // Arrange
             const originalMode = component.mode;
             vi.spyOn(component.buttonClick, 'emit');
+            const mockEvent = new MouseEvent('click');
 
             // Act
-            component.onButtonClicked();
+            component.onButtonClicked(mockEvent);
 
             // Assert
             expect(component.mode).toBe(originalMode);

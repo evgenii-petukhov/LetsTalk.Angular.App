@@ -6,8 +6,8 @@ export const initialState: readonly ImageCacheEntry[] = [];
 
 export const imageCacheReducer = createReducer(
     initialState,
-    on(imageCacheActions.add, (_state, { image }) => {
-        const existing = _state.find((i) => i.imageId === image.imageId);
-        return existing ? _state : [..._state, image];
+    on(imageCacheActions.add, (state, { image }) => {
+        const existing = state.find((i) => i.imageId === image.imageId);
+        return existing ? state : [...state, image];
     }),
 );

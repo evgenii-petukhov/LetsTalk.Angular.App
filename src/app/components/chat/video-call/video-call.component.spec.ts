@@ -16,7 +16,7 @@ import { VideoCallComponent } from './video-call.component';
 import { RtcConnectionService } from '../../../services/rtc-connection.service';
 import { RtcPeerConnectionManager } from '../../../services/rtc-peer-connection-manager';
 import { StoreService } from '../../../services/store.service';
-import { VideoCallState } from '../../../models/video-call-state';
+import { VideoCall } from '../../../models/video-call';
 
 describe('VideoCallComponent', () => {
     let component: VideoCallComponent;
@@ -25,27 +25,27 @@ describe('VideoCallComponent', () => {
     let mockRtcConnectionService: MockedObject<RtcConnectionService>;
     let mockConnectionManager: MockedObject<RtcPeerConnectionManager>;
     let mockStoreService: MockedObject<StoreService>;
-    let storeSubject: Subject<VideoCallState | null>;
+    let storeSubject: Subject<VideoCall | null>;
 
-    const mockVideoCallState: VideoCallState = {
+    const mockVideoCallState: VideoCall = {
         callId: 'call-id',
         chatId: 'test-chat-id',
-        type: 'outgoing',
+        status: 'outgoing',
         captureVideo: true,
         captureAudio: true,
     };
 
-    const mockIncomingVideoCallState: VideoCallState = {
+    const mockIncomingVideoCallState: VideoCall = {
         callId: 'call-id',
         chatId: 'test-chat-id',
         offer: 'test-offer',
-        type: 'incoming-active',
+        status: 'incoming-active',
         captureVideo: false,
         captureAudio: true,
     };
 
     beforeEach(async () => {
-        storeSubject = new Subject<VideoCallState | null>();
+        storeSubject = new Subject<VideoCall | null>();
 
         const storeSpy = {
             select: vi.fn().mockName('Store.select'),
@@ -494,8 +494,8 @@ describe('VideoCallComponent', () => {
 
         it('should handle undefined state properties gracefully', async () => {
             const incompleteState = {
-                type: 'outgoing',
-            } as VideoCallState;
+                status: 'outgoing',
+            } as VideoCall;
 
             component.ngAfterViewInit();
             storeSubject.next(incompleteState);

@@ -8,6 +8,12 @@
     display: flex;
     padding: 10px;
     gap: 10px;
+    align-items: center;
+
+    fa-icon {
+        color: #ff0000;
+        font-size: 20px;
+    }
 
     app-avatar,
     app-call-button,
@@ -15,7 +21,8 @@
         @include avatar-styles($avatar-size-desktop, 42px);
     }
 
-    app-avatar, app-user-details {
+    app-avatar,
+    app-user-details {
         cursor: pointer;
     }
 

@@ -1,14 +1,14 @@
 import { createReducer, on } from '@ngrx/store';
-import { VideoCallState } from '../../models/video-call-state';
+import { VideoCall } from '../../models/video-call';
 import { videoCallActions } from './video-call.actions';
 
-export const initialState: VideoCallState | null = null;
+export const initialState: VideoCall | null = null;
 
 export const videoCallReducer = createReducer(
     initialState,
     on(videoCallActions.initOutgoingCall, (_state, { chatId }) => ({
         chatId,
-        type: 'outgoing',
+        status: 'outgoing',
         captureVideo: true,
         captureAudio: true,
     })),
@@ -19,7 +19,7 @@ export const videoCallReducer = createReducer(
             chatId,
             offer,
             caller,
-            type: 'incoming-awaiting',
+            status: 'incoming-awaiting',
             captureVideo: true,
             captureAudio: true,
         }),
@@ -28,11 +28,11 @@ export const videoCallReducer = createReducer(
         if (!state) return state;
         return {
             ...state,
-            type: 'incoming-active',
+            status: 'incoming-active',
         };
     }),
-    on(videoCallActions.setCallId, (_state, { callId }) => ({
-        ..._state,
+    on(videoCallActions.setCallId, (state, { callId }) => ({
+        ...state,
         callId,
     })),
     on(videoCallActions.toggleVideo, (state) => {

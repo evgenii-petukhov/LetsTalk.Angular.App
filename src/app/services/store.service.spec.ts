@@ -24,14 +24,14 @@ import {
     ILinkPreviewDto,
     IImageDto,
     ImageDto,
+    AccountDto,
 } from '../api-client/api-client';
 import { ImageCacheEntry } from '../models/image-cache-entry';
 import { accountsActions } from '../state/accounts/accounts.actions';
 import { messagesActions } from '../state/messages/messages.actions';
-import { selectedChatIdActions } from '../state/selected-chat/selected-chat-id.actions';
 import { videoCallActions } from '../state/video-call/video-call.actions';
-import { selectedChatUiActions } from '../state/selected-chat-ui/selected-chat-ui.actions';
 import { DownloadImageResponse } from '../protos/file_upload_pb';
+import { selectedChatInfoActions } from '../state/selected-chat/selected-chat-info.actions';
 
 describe('StoreService', () => {
     let service: StoreService;
@@ -453,7 +453,7 @@ describe('StoreService', () => {
             service.setSelectedChatId(chatId);
 
             expect(store.dispatch).toHaveBeenCalledWith(
-                selectedChatIdActions.init({ chatId }),
+                selectedChatInfoActions.init({ chatId }),
             );
         });
     });
@@ -475,11 +475,12 @@ describe('StoreService', () => {
             const callId = '2d6cd570-0584-41db-996a-e60b13020b35';
             const chatId = '1';
             const offer = 'sdp-offer-string';
+            const caller = new AccountDto();
 
-            service.initIncomingCall(callId, chatId, offer);
+            service.initIncomingCall(callId, chatId, offer, caller);
 
             expect(store.dispatch).toHaveBeenCalledWith(
-                videoCallActions.initIncomingCall({ callId, chatId, offer }),
+                videoCallActions.initIncomingCall({ callId, chatId, offer, caller }),
             );
         });
     });
@@ -514,15 +515,15 @@ describe('StoreService', () => {
         });
     });
 
-    describe('setSelectedChatMessageListStatus', () => {
-        it('should dispatch setMessageListStatus action', () => {
-            const messageListStatus = 'Success' as any; // Using 'as any' to avoid importing the enum
+    describe('setSelectedChatMessageFetchStatus', () => {
+        it('should dispatch setMessageFetchStatus action', () => {
+            const status = 'Success' as any; // Using 'as any' to avoid importing the enum
 
-            service.setSelectedChatMessageListStatus(messageListStatus);
+            service.setSelectedChatMessageFetchStatus(status);
 
             expect(store.dispatch).toHaveBeenCalledWith(
-                selectedChatUiActions.setMessageListStatus({
-                    messageListStatus,
+                selectedChatInfoActions.setMessageFetchStatus({
+                    status,
                 }),
             );
         });

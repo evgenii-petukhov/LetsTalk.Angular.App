@@ -1,5 +1,10 @@
-<app-avatar [urlOptions]="urlOptions()" (click)="onChatClick()"></app-avatar>
-<app-user-details [value]="'Chat name'" (click)="onChatClick()"></app-user-details>
-<app-call-button [mode]="'accept-call'"></app-call-button>
-<app-media-toggle-button [mode]="'audio'"></app-media-toggle-button>
-<app-call-button [mode]="'end-call'" (buttonClick)="endCall()"></app-call-button>
+<fa-icon [icon]="faPhoneVolume"></fa-icon>
+<app-user-details [value]="chat()?.chatName"></app-user-details>
+@if (isAwaitingResponseButtonVisible()) {
+    <app-call-button [mode]="'accept-call'" text="Accept" (click)="onAcceptClicked($event)"></app-call-button>
+    <app-call-button [mode]="'end-call'" text="Decline" (click)="onDeclineClicked($event)"></app-call-button>
+}
+@if (isCallControlSetVisible()) {
+    <app-media-toggle-button [mode]="'audio'"></app-media-toggle-button>
+    <app-call-button [mode]="'end-call'" (buttonClick)="endCall($event)"></app-call-button>
+}

@@ -57,13 +57,13 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
                             this.localVideo.nativeElement,
                             this.remoteVideo.nativeElement,
                         );
-                        if (currentState.type === 'incoming-active') {
+                        if (currentState.status === 'incoming-active') {
                             await this.rtcConnectionService.handleIncomingCall(
                                 currentState.callId,
                                 currentState.chatId,
                                 currentState.offer,
                             );
-                        } else if (currentState.type === 'outgoing') {
+                        } else if (currentState.status === 'outgoing') {
                             await this.rtcConnectionService.startOutgoingCall(
                                 currentState.chatId,
                             );

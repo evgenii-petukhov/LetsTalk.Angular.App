@@ -16,7 +16,7 @@ import { OrderByPipe } from '../../../../pipes/orderby';
 import { ChatListItemStubComponent } from '../chat-list-item/chat-list-item.component.stub';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { selectChats } from '../../../../state/chats/chats.selector';
-import { selectSelectedChatId } from '../../../../state/selected-chat/selected-chat-id.selectors';
+import { selectSelectedChatId } from '../../../../state/selected-chat/selected-chat-info.selectors';
 import { By } from '@angular/platform-browser';
 
 describe('ChatListComponent', () => {

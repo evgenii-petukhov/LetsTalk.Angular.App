@@ -1,10 +1,15 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { faPhoneVolume } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { RtcConnectionService } from 'src/app/services/rtc-connection.service';
-import { selectSelectedChat } from 'src/app/state/selected-chat/selected-chat.selector';
-import { selectVideoCallChatId } from 'src/app/state/video-call/video-call.selectors';
+import { StoreService } from 'src/app/services/store.service';
+import {
+    selectIsAwaitingResponseButtonVisible,
+    selectIsOngoingCallControlSetVisible,
+} from 'src/app/state/selected-chat/selected-chat.selector';
+import { selectVideoCallChat } from 'src/app/state/video-call/video-call.selectors';
 
 @Component({
     selector: 'app-ongoing-call-panel',
@@ -15,23 +20,39 @@ import { selectVideoCallChatId } from 'src/app/state/video-call/video-call.selec
 export class OngoingCallComponent {
     private readonly router = inject(Router);
     private readonly store = inject(Store);
+    private readonly storeService = inject(StoreService);
     private readonly rtcConnectionService = inject(RtcConnectionService);
-    private chatId = toSignal(this.store.select(selectVideoCallChatId));
-    private chat = toSignal(this.store.select(selectSelectedChat), { initialValue: null });
 
-    urlOptions = computed(() => {
+    chat = toSignal(this.store.select(selectVideoCallChat));
+    isAwaitingResponseButtonVisible = toSignal(
+        this.store.select(selectIsAwaitingResponseButtonVisible),
+    );
+    isCallControlSetVisible = toSignal(
+        this.store.select(selectIsOngoingCallControlSetVisible),
+    );
+
+    faPhoneVolume = faPhoneVolume;
+
+    @HostListener('click')
+    async onPanelClick(): Promise<void> {
         const chat = this.chat();
-        return chat && [chat.image, chat.photoUrl];
-    });
-
-    async onChatClick(): Promise<void> {
-        const chatId = this.chatId();
-        if (chatId) {
-            await this.router.navigate(['/messenger/chat', chatId]);
+        if (chat) {
+            await this.router.navigate(['/messenger/chat', chat.id]);
         }
     }
 
-    endCall(): void {
+    onAcceptClicked(e: MouseEvent): void {
+        e.stopPropagation();
+        this.storeService.acceptIncomingCall();
+    }
+
+    onDeclineClicked(e: MouseEvent): void {
+        e.stopPropagation();
+        this.storeService.resetCall();
+    }
+
+    endCall(e: MouseEvent): void {
+        e.stopPropagation();
         this.rtcConnectionService.endCall();
     }
 }

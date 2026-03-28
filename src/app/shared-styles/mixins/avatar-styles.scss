@@ -2,12 +2,10 @@
 @use "../variables" as *;
 
 @mixin avatar-styles($desktop: $avatar-size-desktop, $mobile: $avatar-size-mobile) {
-    flex: 0 1 $desktop;
     min-width: $desktop;
     height: $desktop;
 
     @include media-breakpoint-down(sm) {
-        flex: 0 1 $mobile;
         min-width: $mobile;
         height: $mobile;
     }

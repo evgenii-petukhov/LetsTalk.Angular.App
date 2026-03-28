@@ -2,18 +2,18 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
-import { MessageListStatus } from '../../models/message-list-status';
+import { MessageFetchStatus } from '../../models/message-fetch-status';
 import { StoreService } from '../../services/store.service';
+import { selectSelectedChatId } from '../../state/selected-chat/selected-chat-info.selectors';
 import {
-    selectIsAwaitingResponse,
-    selectIsCallInProgress,
-    selectIsComposeAreaVisible,
-    selectIsErrorVisible,
+    selectIsAwaitingResponseScreenVisible,
     selectIsHeaderVisible,
     selectIsMessageListVisible,
+    selectIsComposeAreaVisible,
     selectIsNotFoundVisible,
-} from '../../state/selected-chat-ui/selected-chat-ui.selectors';
-import { selectSelectedChatId } from '../../state/selected-chat/selected-chat-id.selectors';
+    selectIsErrorVisible,
+    selectIsOngoingCallScreenVisible,
+} from 'src/app/state/selected-chat/selected-chat.selector';
 
 @Component({
     selector: 'app-chat',
@@ -26,35 +26,29 @@ export class ChatComponent implements OnInit, OnDestroy {
     private readonly store = inject(Store);
     private readonly storeService = inject(StoreService);
 
-    isCallInProgress = toSignal(
-        this.store.select(selectIsCallInProgress),
+    isOngoingCallScreenVisible = toSignal(
+        this.store.select(selectIsOngoingCallScreenVisible),
     );
-    isAwaitingResponse = toSignal(
-        this.store.select(selectIsAwaitingResponse),
+    isAwaitingResponseScreenVisible = toSignal(
+        this.store.select(selectIsAwaitingResponseScreenVisible),
     );
-    isHeaderVisible = toSignal(
-        this.store.select(selectIsHeaderVisible),
-    );
+    isHeaderVisible = toSignal(this.store.select(selectIsHeaderVisible));
     isMessageListVisible = toSignal(
         this.store.select(selectIsMessageListVisible),
     );
     isComposeAreaVisible = toSignal(
         this.store.select(selectIsComposeAreaVisible),
     );
-    isNotFoundVisible = toSignal(
-        this.store.select(selectIsNotFoundVisible),
-    );
-    isErrorVisible = toSignal(
-        this.store.select(selectIsErrorVisible),
-    );
+    isNotFoundVisible = toSignal(this.store.select(selectIsNotFoundVisible));
+    isErrorVisible = toSignal(this.store.select(selectIsErrorVisible));
 
     ngOnInit(): void {
         this.store
             .select(selectSelectedChatId)
             .pipe(takeUntil(this.unsubscribe$))
             .subscribe(() => {
-                this.storeService.setSelectedChatMessageListStatus(
-                    MessageListStatus.Unknown,
+                this.storeService.setSelectedChatMessageFetchStatus(
+                    MessageFetchStatus.Unknown,
                 );
             });
     }

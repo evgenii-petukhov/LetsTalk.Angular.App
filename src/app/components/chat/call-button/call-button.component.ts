@@ -10,9 +10,10 @@ import { faPhone } from '@fortawesome/free-solid-svg-icons';
 export class CallButtonComponent {
     faPhone = faPhone;
     @Input() mode: 'start-call' | 'accept-call' | 'end-call' = 'start-call';
-    @Output() buttonClick = new EventEmitter();
+    @Input() text: string;
+    @Output() buttonClick = new EventEmitter<MouseEvent>();
 
-    onButtonClicked(): void {
-        this.buttonClick.emit();
+    onButtonClicked(event: MouseEvent): void {
+        this.buttonClick.emit(event);
     }
 }

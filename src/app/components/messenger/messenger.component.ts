@@ -22,7 +22,10 @@ import {
     Subject,
     takeUntil,
 } from 'rxjs';
-import { selectSelectedChat } from '../../state/selected-chat/selected-chat.selector';
+import {
+    selectIsOngoingCallPanelVisible,
+    selectSelectedChat,
+} from '../../state/selected-chat/selected-chat.selector';
 import { selectChats } from '../../state/chats/chats.selector';
 import { SignalrHandlerService } from '../../services/signalr-handler.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
@@ -31,7 +34,6 @@ import { IncomingCall } from '../../models/incoming-call';
 import { EstablishConnection } from '../../models/establish-connection';
 import { RtcConnectionService } from '../../services/rtc-connection.service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { selectIsOngoingCallVisible } from '../../state/selected-chat-ui/selected-chat-ui.selectors';
 
 @Component({
     selector: 'app-messenger',
@@ -61,8 +63,8 @@ export class MessengerComponent implements OnInit, OnDestroy {
         this.storeService.markAllAsRead(this.selectedChat);
     }
 
-    isOngoingCallVisible = toSignal(
-        this.store.select(selectIsOngoingCallVisible),
+    isOngoingCallPanelVisible = toSignal(
+        this.store.select(selectIsOngoingCallPanelVisible),
     );
 
     async ngOnInit(): Promise<void> {

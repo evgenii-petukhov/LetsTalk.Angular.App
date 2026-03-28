@@ -16,10 +16,10 @@
     @if (isErrorVisible()) {
         <app-error></app-error>
     }
-    @if (isCallInProgress()) {
+    @if (isOngoingCallScreenVisible()) {
         <app-video-call></app-video-call>
     }
-    @if (isAwaitingResponse()) {
+    @if (isAwaitingResponseScreenVisible()) {
         <app-incoming-call></app-incoming-call>
     }
 </div>

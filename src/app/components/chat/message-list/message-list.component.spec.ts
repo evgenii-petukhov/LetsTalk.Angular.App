@@ -19,7 +19,7 @@ import { MessageStubComponent } from '../message/message.component.stub';
 import { SendMessageStubComponent } from '../compose-area/compose-area.component.stub';
 import { VisibleOnlyPipe } from '../../../pipes/visibleOnly';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { selectSelectedChatId } from '../../../state/selected-chat/selected-chat-id.selectors';
+import { selectSelectedChatId } from '../../../state/selected-chat/selected-chat-info.selectors';
 import { Message } from '../../../models/message';
 import { selectMessages } from '../../../state/messages/messages.selector';
 import { By } from '@angular/platform-browser';
@@ -28,7 +28,7 @@ import { OrderByPipe } from '../../../pipes/orderby';
 import { ActivatedRoute } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { selectChats } from '../../../state/chats/chats.selector';
-import { MessageListStatus } from '../../../models/message-list-status';
+import { MessageFetchStatus } from '../../../models/message-fetch-status';
 import { ApiException } from '../../../api-client/api-client';
 import { ElementRef } from '@angular/core';
 
@@ -65,9 +65,9 @@ describe('MessageListComponent', () => {
                 .fn()
                 .mockName('StoreService.setSelectedChatId'),
             isChatIdValid: vi.fn().mockName('StoreService.isChatIdValid'),
-            setSelectedChatMessageListStatus: vi
+            setSelectedChatMessageFetchStatus: vi
                 .fn()
-                .mockName('StoreService.setSelectedChatMessageListStatus'),
+                .mockName('StoreService.setSelectedChatMessageFetchStatus'),
         } as MockedObject<StoreService>;
         idGeneratorService = {
             isFake: vi.fn().mockName('IdGeneratorService.isFake'),
@@ -139,8 +139,8 @@ describe('MessageListComponent', () => {
             '',
         );
         expect(
-            storeService.setSelectedChatMessageListStatus,
-        ).toHaveBeenCalledWith(MessageListStatus.Success);
+            storeService.setSelectedChatMessageFetchStatus,
+        ).toHaveBeenCalledWith(MessageFetchStatus.Success);
         const messages = fixture.debugElement.queryAll(
             By.directive(MessageStubComponent),
         );
@@ -189,8 +189,8 @@ describe('MessageListComponent', () => {
             'message2',
         );
         expect(
-            storeService.setSelectedChatMessageListStatus,
-        ).toHaveBeenCalledWith(MessageListStatus.Success);
+            storeService.setSelectedChatMessageFetchStatus,
+        ).toHaveBeenCalledWith(MessageFetchStatus.Success);
 
         // Act
         const messages = messageDtos.map((message) => new Message(message));
@@ -357,8 +357,8 @@ describe('MessageListComponent', () => {
             expect(storeService.isChatIdValid).toHaveBeenCalledWith(chatId);
             expect(component['isMessageListLoaded']()).toBe(true);
             expect(
-                storeService.setSelectedChatMessageListStatus,
-            ).toHaveBeenCalledWith(MessageListStatus.Success);
+                storeService.setSelectedChatMessageFetchStatus,
+            ).toHaveBeenCalledWith(MessageFetchStatus.Success);
         });
 
         it('should set NotFound status when fake chatId is invalid', async () => {
@@ -374,8 +374,8 @@ describe('MessageListComponent', () => {
             // Assert
             expect(storeService.isChatIdValid).toHaveBeenCalledWith(chatId);
             expect(
-                storeService.setSelectedChatMessageListStatus,
-            ).toHaveBeenCalledWith(MessageListStatus.NotFound);
+                storeService.setSelectedChatMessageFetchStatus,
+            ).toHaveBeenCalledWith(MessageFetchStatus.NotFound);
         });
     });
 
@@ -399,8 +399,8 @@ describe('MessageListComponent', () => {
 
             // Assert
             expect(
-                storeService.setSelectedChatMessageListStatus,
-            ).toHaveBeenCalledWith(MessageListStatus.NotFound);
+                storeService.setSelectedChatMessageFetchStatus,
+            ).toHaveBeenCalledWith(MessageFetchStatus.NotFound);
         });
 
         it('should set Error status when API returns other error', async () => {
@@ -422,8 +422,8 @@ describe('MessageListComponent', () => {
 
             // Assert
             expect(
-                storeService.setSelectedChatMessageListStatus,
-            ).toHaveBeenCalledWith(MessageListStatus.Error);
+                storeService.setSelectedChatMessageFetchStatus,
+            ).toHaveBeenCalledWith(MessageFetchStatus.Error);
         });
 
         it('should set Error status when non-API error occurs', async () => {
@@ -440,8 +440,8 @@ describe('MessageListComponent', () => {
 
             // Assert
             expect(
-                storeService.setSelectedChatMessageListStatus,
-            ).toHaveBeenCalledWith(MessageListStatus.Error);
+                storeService.setSelectedChatMessageFetchStatus,
+            ).toHaveBeenCalledWith(MessageFetchStatus.Error);
         });
     });
 
@@ -747,8 +747,8 @@ describe('MessageListComponent', () => {
 
             // Assert
             expect(
-                storeService.setSelectedChatMessageListStatus,
-            ).toHaveBeenCalledWith(MessageListStatus.Success);
+                storeService.setSelectedChatMessageFetchStatus,
+            ).toHaveBeenCalledWith(MessageFetchStatus.Success);
             expect(component['isMessageListLoaded']()).toBe(true);
         });
 
@@ -766,7 +766,7 @@ describe('MessageListComponent', () => {
 
             // Assert
             expect(
-                storeService.setSelectedChatMessageListStatus,
+                storeService.setSelectedChatMessageFetchStatus,
             ).not.toHaveBeenCalled();
         });
 
@@ -812,8 +812,8 @@ describe('MessageListComponent', () => {
                 '',
             );
             expect(
-                storeService.setSelectedChatMessageListStatus,
-            ).toHaveBeenCalledWith(MessageListStatus.Success);
+                storeService.setSelectedChatMessageFetchStatus,
+            ).toHaveBeenCalledWith(MessageFetchStatus.Success);
         });
     });
 
@@ -876,7 +876,7 @@ describe('MessageListComponent', () => {
             expect(component['isMessageListLoaded']()).toBe(true);
             expect(apiService.getMessages).not.toHaveBeenCalled();
             expect(
-                storeService.setSelectedChatMessageListStatus,
+                storeService.setSelectedChatMessageFetchStatus,
             ).not.toHaveBeenCalled();
         });
 
