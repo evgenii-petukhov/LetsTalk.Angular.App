@@ -9,7 +9,11 @@ import {
     selectIsAwaitingResponseButtonVisible,
     selectIsOngoingCallControlSetVisible,
 } from 'src/app/state/selected-chat/selected-chat.selector';
-import { selectVideoCallChat } from 'src/app/state/video-call/video-call.selectors';
+import {
+    selectCaptureAudio,
+    selectCaptureVideo,
+    selectVideoCallChat,
+} from 'src/app/state/video-call/video-call.selectors';
 
 @Component({
     selector: 'app-ongoing-call-panel',
@@ -30,6 +34,8 @@ export class OngoingCallComponent {
     isCallControlSetVisible = toSignal(
         this.store.select(selectIsOngoingCallControlSetVisible),
     );
+    captureVideo = toSignal(this.store.select(selectCaptureVideo));
+    captureAudio = toSignal(this.store.select(selectCaptureAudio));
 
     faPhoneVolume = faPhoneVolume;
 
@@ -49,6 +55,16 @@ export class OngoingCallComponent {
     onDeclineClicked(e: MouseEvent): void {
         e.stopPropagation();
         this.storeService.resetCall();
+    }
+
+    toggleCaptureVideo(e: MouseEvent) {
+        e.stopPropagation();
+        this.storeService.toggleCaptureVideo();
+    }
+
+    toggleCaptureAudio(e: MouseEvent) {
+        e.stopPropagation();
+        this.storeService.toggleCaptureAudio();
     }
 
     endCall(e: MouseEvent): void {

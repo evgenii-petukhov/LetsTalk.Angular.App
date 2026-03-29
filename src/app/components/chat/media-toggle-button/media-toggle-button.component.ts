@@ -15,7 +15,7 @@ export class MediaToggleButtonComponent {
     
     @Input() mode: 'audio' | 'video' = 'audio';
     @Input() isMuted = false;
-    @Output() buttonClick = new EventEmitter<void>();
+    @Output() buttonClick = new EventEmitter<MouseEvent>();
 
     get activeIcon() {
         return this.mode === 'audio' 
@@ -23,7 +23,7 @@ export class MediaToggleButtonComponent {
             : (this.isMuted ? this.faVideoSlash : this.faVideo);
     }
 
-    onButtonClicked(): void {
-        this.buttonClick.emit();
+    onButtonClicked(e: MouseEvent): void {
+        this.buttonClick.emit(e);
     }
 }

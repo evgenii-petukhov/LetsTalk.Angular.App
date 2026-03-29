@@ -19,3 +19,13 @@ export const selectIsAnyCallInProgress = createSelector(
     selectVideoCall,
     (videoCall) => !!videoCall,
 );
+
+export const selectCaptureVideo = createSelector(
+    selectVideoCall,
+    (videoCall) => videoCall && videoCall.captureVideo,
+);
+
+export const selectCaptureAudio = createSelector(
+    selectVideoCall,
+    (videoCall) => videoCall && videoCall.captureAudio,
+);

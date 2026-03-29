@@ -495,22 +495,22 @@ describe('StoreService', () => {
         });
     });
 
-    describe('toggleVideo', () => {
-        it('should dispatch toggleVideo action', () => {
-            service.toggleVideo();
+    describe('toggleCaptureVideo', () => {
+        it('should dispatch toggleCaptureVideo action', () => {
+            service.toggleCaptureVideo();
 
             expect(store.dispatch).toHaveBeenCalledWith(
-                videoCallActions.toggleVideo(),
+                videoCallActions.toggleCaptureVideo(),
             );
         });
     });
 
-    describe('toggleAudio', () => {
-        it('should dispatch toggleAudio action', () => {
-            service.toggleAudio();
+    describe('toggleCaptureAudio', () => {
+        it('should dispatch toggleCaptureAudio action', () => {
+            service.toggleCaptureAudio();
 
             expect(store.dispatch).toHaveBeenCalledWith(
-                videoCallActions.toggleAudio(),
+                videoCallActions.toggleCaptureAudio(),
             );
         });
     });

@@ -10,13 +10,18 @@ import {
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
-import { Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { VideoCallComponent } from './video-call.component';
 import { RtcConnectionService } from '../../../services/rtc-connection.service';
 import { RtcPeerConnectionManager } from '../../../services/rtc-peer-connection-manager';
 import { StoreService } from '../../../services/store.service';
 import { VideoCall } from '../../../models/video-call';
+import {
+    selectCaptureAudio,
+    selectCaptureVideo,
+    selectVideoCall,
+} from '../../../state/video-call/video-call.selectors';
 
 describe('VideoCallComponent', () => {
     let component: VideoCallComponent;
@@ -48,7 +53,18 @@ describe('VideoCallComponent', () => {
         storeSubject = new Subject<VideoCall | null>();
 
         const storeSpy = {
-            select: vi.fn().mockName('Store.select'),
+            select: vi.fn().mockName('Store.select').mockImplementation((selector: any) => {
+                if (selector === selectVideoCall) {
+                    return storeSubject.asObservable();
+                }
+                if (selector === selectCaptureVideo) {
+                    return of(true);
+                }
+                if (selector === selectCaptureAudio) {
+                    return of(true);
+                }
+                return of(null);
+            }),
         };
         const rtcConnectionServiceSpy = {
             handleIncomingCall: vi
@@ -78,8 +94,8 @@ describe('VideoCallComponent', () => {
             configurable: true,
         });
         const storeServiceSpy = {
-            toggleVideo: vi.fn().mockName('StoreService.toggleVideo'),
-            toggleAudio: vi.fn().mockName('StoreService.toggleAudio'),
+            toggleCaptureVideo: vi.fn().mockName('StoreService.toggleCaptureVideo'),
+            toggleCaptureAudio: vi.fn().mockName('StoreService.toggleCaptureAudio'),
         };
 
         await TestBed.configureTestingModule({
@@ -112,8 +128,6 @@ describe('VideoCallComponent', () => {
         mockStoreService = TestBed.inject(
             StoreService,
         ) as MockedObject<StoreService>;
-
-        mockStore.select.mockReturnValue(storeSubject.asObservable());
 
         // Mock video elements with proper attributes to match template
         const mockLocalVideo = document.createElement('video');
@@ -265,7 +279,7 @@ describe('VideoCallComponent', () => {
             ).toHaveBeenCalledWith(mockVideoCallState.chatId);
         });
 
-        it('should set video and audio enabled states and update component properties', async () => {
+        it('should set video and audio enabled states', async () => {
             component.ngAfterViewInit();
             storeSubject.next(mockIncomingVideoCallState);
 
@@ -277,8 +291,6 @@ describe('VideoCallComponent', () => {
             expect(mockConnectionManager.setAudioEnabled).toHaveBeenCalledWith(
                 true,
             );
-            expect(component.captureVideo).toBe(false);
-            expect(component.captureAudio).toBe(true);
         });
 
         it('should handle errors gracefully when startMediaCapture fails', async () => {
@@ -286,7 +298,6 @@ describe('VideoCallComponent', () => {
                 Promise.reject(new Error('Media error')),
             );
 
-            // Spy on console.error to verify error logging
             const consoleSpy = vi
                 .spyOn(console, 'error')
                 .mockImplementation(() => {});
@@ -294,7 +305,6 @@ describe('VideoCallComponent', () => {
             component.ngAfterViewInit();
             storeSubject.next(mockVideoCallState);
 
-            // Wait for the async operations
             await new Promise((resolve) => setTimeout(resolve, 10));
 
             expect(mockConnectionManager.startMediaCapture).toHaveBeenCalled();
@@ -311,7 +321,6 @@ describe('VideoCallComponent', () => {
                 Promise.reject(new Error('Connection error')),
             );
 
-            // Spy on console.error to verify error logging
             const consoleSpy = vi
                 .spyOn(console, 'error')
                 .mockImplementation(() => {});
@@ -319,7 +328,6 @@ describe('VideoCallComponent', () => {
             component.ngAfterViewInit();
             storeSubject.next(mockIncomingVideoCallState);
 
-            // Wait for the async operations
             await new Promise((resolve) => setTimeout(resolve, 10));
 
             expect(
@@ -338,7 +346,6 @@ describe('VideoCallComponent', () => {
                 Promise.reject(new Error('Connection error')),
             );
 
-            // Spy on console.error to verify error logging
             const consoleSpy = vi
                 .spyOn(console, 'error')
                 .mockImplementation(() => {});
@@ -346,7 +353,6 @@ describe('VideoCallComponent', () => {
             component.ngAfterViewInit();
             storeSubject.next(mockVideoCallState);
 
-            // Wait for the async operations
             await new Promise((resolve) => setTimeout(resolve, 10));
 
             expect(
@@ -383,19 +389,19 @@ describe('VideoCallComponent', () => {
         });
     });
 
-    describe('toggleVideo', () => {
-        it('should call storeService.toggleVideo', () => {
-            component.toggleVideo();
+    describe('toggleCaptureVideo', () => {
+        it('should call storeService.toggleCaptureVideo', () => {
+            component.toggleCaptureVideo();
 
-            expect(mockStoreService.toggleVideo).toHaveBeenCalled();
+            expect(mockStoreService.toggleCaptureVideo).toHaveBeenCalled();
         });
     });
 
-    describe('toggleAudio', () => {
-        it('should call storeService.toggleAudio', () => {
-            component.toggleAudio();
+    describe('toggleCaptureAudio', () => {
+        it('should call storeService.toggleCaptureAudio', () => {
+            component.toggleCaptureAudio();
 
-            expect(mockStoreService.toggleAudio).toHaveBeenCalled();
+            expect(mockStoreService.toggleCaptureAudio).toHaveBeenCalled();
         });
     });
 
@@ -409,9 +415,10 @@ describe('VideoCallComponent', () => {
     });
 
     describe('component properties', () => {
-        it('should initialize with default values', () => {
-            expect(component.captureVideo).toBe(true);
-            expect(component.captureAudio).toBe(true);
+        it('should initialize with default values from store', () => {
+            // captureVideo and captureAudio are signals derived from the store
+            expect(component.captureVideo()).toBe(true);
+            expect(component.captureAudio()).toBe(true);
         });
 
         it('should have ViewChild references for video elements', () => {
@@ -437,7 +444,6 @@ describe('VideoCallComponent', () => {
         it('should use takeUntil to manage subscription lifecycle', () => {
             component.ngAfterViewInit();
 
-            // Verify that the subscription is properly managed
             expect(mockStore.select).toHaveBeenCalled();
         });
     });
@@ -448,43 +454,36 @@ describe('VideoCallComponent', () => {
 
             component.ngAfterViewInit();
 
-            // Initial state
             storeSubject.next(mockVideoCallState);
             await new Promise((resolve) => setTimeout(resolve, 0));
 
-            // Change to incoming call
             storeSubject.next(mockIncomingVideoCallState);
             await new Promise((resolve) => setTimeout(resolve, 0));
 
-            // End call
             storeSubject.next(null);
 
             expect(component['disconnectVideoElements']).toHaveBeenCalled();
         });
 
-        it('should update component properties based on state changes', async () => {
+        it('should set video and audio enabled states based on state changes', async () => {
             component.ngAfterViewInit();
 
-            // Test outgoing call state
             storeSubject.next(mockVideoCallState);
             await new Promise((resolve) => setTimeout(resolve, 0));
 
-            expect(component.captureVideo).toBe(true);
-            expect(component.captureAudio).toBe(true);
+            expect(mockConnectionManager.setVideoEnabled).toHaveBeenCalledWith(true);
+            expect(mockConnectionManager.setAudioEnabled).toHaveBeenCalledWith(true);
 
-            // Test incoming call state with different settings
             storeSubject.next(mockIncomingVideoCallState);
             await new Promise((resolve) => setTimeout(resolve, 0));
 
-            expect(component.captureVideo).toBe(false);
-            expect(component.captureAudio).toBe(true);
+            expect(mockConnectionManager.setVideoEnabled).toHaveBeenCalledWith(false);
+            expect(mockConnectionManager.setAudioEnabled).toHaveBeenCalledWith(true);
         });
     });
 
     describe('error handling', () => {
         it('should handle null video elements gracefully', () => {
-            // This test should verify the component handles null elements properly
-            // The actual component should have null checks
             expect(() => {
                 if (component.localVideo && component.remoteVideo) {
                     component['disconnectVideoElements']();
@@ -492,7 +491,7 @@ describe('VideoCallComponent', () => {
             }).not.toThrow();
         });
 
-        it('should handle undefined state properties gracefully', async () => {
+        it('should handle incomplete state properties gracefully', async () => {
             const incompleteState = {
                 status: 'outgoing',
             } as VideoCall;
@@ -502,9 +501,9 @@ describe('VideoCallComponent', () => {
 
             await new Promise((resolve) => setTimeout(resolve, 0));
 
-            // Should not throw errors even with incomplete state
-            expect(component.captureVideo).toBe(undefined);
-            expect(component.captureAudio).toBe(undefined);
+            // setVideoEnabled/setAudioEnabled called with undefined from incomplete state
+            expect(mockConnectionManager.setVideoEnabled).toHaveBeenCalledWith(undefined);
+            expect(mockConnectionManager.setAudioEnabled).toHaveBeenCalledWith(undefined);
         });
     });
 

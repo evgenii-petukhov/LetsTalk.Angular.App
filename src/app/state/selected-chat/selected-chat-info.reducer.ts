@@ -16,6 +16,6 @@ export const selectedChatInfoReducer = createReducer(
     })),
     on(selectedChatInfoActions.setMessageFetchStatus, (state, { status }) => ({
         ...state,
-        status,
+        messageFetchStatus: status,
     })),
 );

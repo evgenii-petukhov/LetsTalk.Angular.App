@@ -8,8 +8,8 @@ export const videoCallActions = createActionGroup({
         initIncomingCall: props<{ callId: string; chatId: string; offer: string, caller: IAccountDto }>(),
         acceptIncomingCall: emptyProps(),
         setCallId: props<{ callId: string; }>(),
-        toggleVideo: emptyProps(),
-        toggleAudio: emptyProps(),
+        toggleCaptureVideo: emptyProps(),
+        toggleCaptureAudio: emptyProps(),
         reset: emptyProps(),
     },
 });

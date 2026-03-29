@@ -5,6 +5,9 @@
     <app-call-button [mode]="'end-call'" text="Decline" (click)="onDeclineClicked($event)"></app-call-button>
 }
 @if (isCallControlSetVisible()) {
-    <app-media-toggle-button [mode]="'audio'"></app-media-toggle-button>
+    <app-media-toggle-button [isMuted]="!captureVideo()" [mode]="'video'"
+        (buttonClick)="toggleCaptureVideo($event)"></app-media-toggle-button>
+    <app-media-toggle-button [isMuted]="!captureAudio()" [mode]="'audio'"
+        (buttonClick)="toggleCaptureAudio($event)"></app-media-toggle-button>
     <app-call-button [mode]="'end-call'" (buttonClick)="endCall($event)"></app-call-button>
 }

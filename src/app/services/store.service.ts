@@ -175,18 +175,18 @@ export class StoreService {
         this.store.dispatch(videoCallActions.reset());
     }
 
-    toggleVideo(): void {
-        this.store.dispatch(videoCallActions.toggleVideo());
+    toggleCaptureVideo(): void {
+        this.store.dispatch(videoCallActions.toggleCaptureVideo());
     }
 
-    toggleAudio(): void {
-        this.store.dispatch(videoCallActions.toggleAudio());
+    toggleCaptureAudio(): void {
+        this.store.dispatch(videoCallActions.toggleCaptureAudio());
     }
 
-    setSelectedChatMessageFetchStatus(
-        status: MessageFetchStatus,
-    ): void {
-        this.store.dispatch(selectedChatInfoActions.setMessageFetchStatus({ status }));
+    setSelectedChatMessageFetchStatus(status: MessageFetchStatus): void {
+        this.store.dispatch(
+            selectedChatInfoActions.setMessageFetchStatus({ status }),
+        );
     }
 
     // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
