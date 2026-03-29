@@ -127,12 +127,17 @@ export class RtcPeerConnectionManager {
         }
     }
 
-    reconnectVideoElements(
-        localVideo: HTMLVideoElement,
-        remoteVideo: HTMLVideoElement,
-    ): void {
-        this.connectLocalVideo(localVideo);
-        this.connectRemoteVideo(remoteVideo);
+    reconnectVideoElements(elements: {
+        local?: HTMLVideoElement,
+        remote?: HTMLVideoElement,
+    }): void {
+        if (elements.local) {
+            this.connectLocalVideo(elements.local);
+        }
+
+        if (elements.remote) {
+            this.connectRemoteVideo(elements.remote);
+        }
     }
 
     setVideoEnabled(enabled: boolean): void {

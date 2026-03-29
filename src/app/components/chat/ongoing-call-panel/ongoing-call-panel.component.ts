@@ -1,9 +1,19 @@
-import { Component, HostListener, inject } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    HostListener,
+    inject,
+    OnDestroy,
+    ViewChild,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { faPhoneVolume } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
+import { Subject, takeUntil } from 'rxjs';
 import { RtcConnectionService } from 'src/app/services/rtc-connection.service';
+import { RtcPeerConnectionManager } from 'src/app/services/rtc-peer-connection-manager';
 import { StoreService } from 'src/app/services/store.service';
 import {
     selectIsAwaitingResponseButtonVisible,
@@ -12,6 +22,7 @@ import {
 import {
     selectCaptureAudio,
     selectCaptureVideo,
+    selectVideoCall,
     selectVideoCallChat,
 } from 'src/app/state/video-call/video-call.selectors';
 
@@ -21,11 +32,13 @@ import {
     styleUrl: './ongoing-call-panel.component.scss',
     standalone: false,
 })
-export class OngoingCallComponent {
+export class OngoingCallComponent implements OnDestroy, AfterViewInit {
     private readonly router = inject(Router);
     private readonly store = inject(Store);
     private readonly storeService = inject(StoreService);
     private readonly rtcConnectionService = inject(RtcConnectionService);
+    private readonly connectionManager = inject(RtcPeerConnectionManager);
+    private readonly unsubscribe$: Subject<void> = new Subject<void>();
 
     chat = toSignal(this.store.select(selectVideoCallChat));
     isAwaitingResponseButtonVisible = toSignal(
@@ -38,6 +51,36 @@ export class OngoingCallComponent {
     captureAudio = toSignal(this.store.select(selectCaptureAudio));
 
     faPhoneVolume = faPhoneVolume;
+
+    @ViewChild('remoteVideo', { static: false })
+    remoteVideo!: ElementRef<HTMLVideoElement>;
+
+    ngAfterViewInit(): void {
+        this.store
+            .select(selectVideoCall)
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe((currentState) => {
+                if (this.connectionManager.isMediaCaptured) {
+                    this.connectionManager.reconnectVideoElements({
+                        remote: this.remoteVideo.nativeElement,
+                    });
+                }
+
+                this.connectionManager.setVideoEnabled(
+                    currentState.captureVideo,
+                );
+                this.connectionManager.setAudioEnabled(
+                    currentState.captureAudio,
+                );
+            });
+    }
+
+    ngOnDestroy(): void {
+        this.disconnectVideoElements();
+
+        this.unsubscribe$.next();
+        this.unsubscribe$.complete();
+    }
 
     @HostListener('click')
     async onPanelClick(): Promise<void> {
@@ -75,5 +118,9 @@ export class OngoingCallComponent {
         if (chat) {
             await this.router.navigate(['/messenger/chat', chat.id]);
         }
+    }
+
+    private disconnectVideoElements(): void {
+        this.remoteVideo.nativeElement.srcObject = null;
     }
 }

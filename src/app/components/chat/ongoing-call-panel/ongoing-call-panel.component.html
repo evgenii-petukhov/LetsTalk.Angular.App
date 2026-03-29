@@ -12,4 +12,5 @@
     <app-media-toggle-button [isMuted]="!captureAudio()" [mode]="'audio'"
         (buttonClick)="toggleCaptureAudio($event)"></app-media-toggle-button>
     <app-call-button [mode]="'end-call'" (buttonClick)="endCall($event)"></app-call-button>
+    <video #remoteVideo class="remote-video" autoplay playsinline></video>
 }

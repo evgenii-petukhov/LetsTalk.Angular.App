@@ -2,9 +2,7 @@ import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
-import {
-    RtcPeerConnectionManager,
-} from './rtc-peer-connection-manager';
+import { RtcPeerConnectionManager } from './rtc-peer-connection-manager';
 import { mediaStreamConstraintFallbacks } from './media-stream-constraint-fallbacks';
 
 describe('RtcPeerConnectionManager', () => {
@@ -278,7 +276,9 @@ describe('RtcPeerConnectionManager', () => {
 
             // Assert
             expect(console.error).toHaveBeenCalledWith(error);
-            expect(console.error).toHaveBeenCalledTimes(mediaStreamConstraintFallbacks.length);
+            expect(console.error).toHaveBeenCalledTimes(
+                mediaStreamConstraintFallbacks.length,
+            );
             expect(service.isMediaCaptured).toBe(false);
         });
 
@@ -323,7 +323,10 @@ describe('RtcPeerConnectionManager', () => {
             service['remoteMediaStream'] = mockMediaStream;
 
             // Act
-            service.reconnectVideoElements(mockLocalVideo, mockRemoteVideo);
+            service.reconnectVideoElements({
+                local: mockLocalVideo,
+                remote: mockRemoteVideo,
+            });
 
             // Assert
             expect(mockLocalVideo.srcObject).toBe(mockMediaStream);
@@ -336,7 +339,10 @@ describe('RtcPeerConnectionManager', () => {
             service['remoteMediaStream'] = null;
 
             // Act
-            service.reconnectVideoElements(mockLocalVideo, mockRemoteVideo);
+            service.reconnectVideoElements({
+                local: mockLocalVideo,
+                remote: mockRemoteVideo,
+            });
 
             // Assert
             expect(mockLocalVideo.srcObject).toBeNull();
@@ -627,7 +633,10 @@ describe('RtcPeerConnectionManager', () => {
         it('should handle reconnection with null video elements', () => {
             // Act & Assert - should not throw
             expect(() =>
-                service.reconnectVideoElements(null as any, null as any),
+                service.reconnectVideoElements({
+                local: null as any,
+                remote: null as any,
+            }),
             ).not.toThrow();
         });
 

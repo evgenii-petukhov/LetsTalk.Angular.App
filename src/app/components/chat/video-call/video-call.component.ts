@@ -53,10 +53,10 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
 
                 if (prevState === null) {
                     if (this.connectionManager.isMediaCaptured) {
-                        this.connectionManager.reconnectVideoElements(
-                            this.localVideo.nativeElement,
-                            this.remoteVideo.nativeElement,
-                        );
+                        this.connectionManager.reconnectVideoElements({
+                            local: this.localVideo.nativeElement,
+                            remote: this.remoteVideo.nativeElement,
+                        });
                     } else {
                         try {
                             await this.connectionManager.startMediaCapture(

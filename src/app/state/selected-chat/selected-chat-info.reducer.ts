@@ -10,7 +10,7 @@ export const selectedChatInfoReducer = createReducer(
     on(selectedChatInfoActions.init, (state, { chatId }) => ({
         chatId,
         messageFetchStatus:
-            state.chatId === chatId
+            state && state.chatId === chatId
                 ? state.messageFetchStatus
                 : MessageFetchStatus.Unknown,
     })),

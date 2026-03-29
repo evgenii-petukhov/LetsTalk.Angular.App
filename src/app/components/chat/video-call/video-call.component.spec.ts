@@ -216,11 +216,13 @@ describe('VideoCallComponent', () => {
             const callArgs = vi.mocked(
                 mockConnectionManager.reconnectVideoElements,
             ).mock.calls[0];
-            expect(callArgs.length).toBe(2);
-            expect(callArgs[0]).toBeInstanceOf(HTMLVideoElement);
-            expect(callArgs[1]).toBeInstanceOf(HTMLVideoElement);
-            expect(callArgs[0].className).toContain('local-video');
-            expect(callArgs[1].className).toContain('remote-video');
+            expect(callArgs.length).toBe(1);
+            expect(callArgs[0]).toEqual({
+                local: expect.any(HTMLVideoElement),
+                remote: expect.any(HTMLVideoElement),
+            });
+            expect((callArgs[0] as any).local.className).toContain('local-video');
+            expect((callArgs[0] as any).remote.className).toContain('remote-video');
         });
 
         it('should start media capture and handle incoming call when media is not captured and call is incoming', async () => {

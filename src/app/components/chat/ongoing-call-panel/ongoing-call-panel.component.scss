@@ -35,6 +35,10 @@
         cursor: pointer;
     }
 
+    video {
+        display: none;
+    }
+
     @include media-breakpoint-down(sm) {
         padding: 8px 10px;
     }
