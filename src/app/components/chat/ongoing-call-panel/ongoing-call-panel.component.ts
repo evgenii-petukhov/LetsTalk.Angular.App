@@ -41,15 +41,13 @@ export class OngoingCallComponent {
 
     @HostListener('click')
     async onPanelClick(): Promise<void> {
-        const chat = this.chat();
-        if (chat) {
-            await this.router.navigate(['/messenger/chat', chat.id]);
-        }
+        this.navigateToChat();
     }
 
-    onAcceptClicked(e: MouseEvent): void {
+    async onAcceptClicked(e: MouseEvent): Promise<void> {
         e.stopPropagation();
         this.storeService.acceptIncomingCall();
+        await this.navigateToChat();
     }
 
     onDeclineClicked(e: MouseEvent): void {
@@ -70,5 +68,12 @@ export class OngoingCallComponent {
     endCall(e: MouseEvent): void {
         e.stopPropagation();
         this.rtcConnectionService.endCall();
+    }
+
+    private async navigateToChat(): Promise<void> {
+        const chat = this.chat();
+        if (chat) {
+            await this.router.navigate(['/messenger/chat', chat.id]);
+        }
     }
 }

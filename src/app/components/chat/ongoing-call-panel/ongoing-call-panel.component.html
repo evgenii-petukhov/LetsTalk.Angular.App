@@ -1,8 +1,10 @@
 <fa-icon [icon]="faPhoneVolume"></fa-icon>
 <app-user-details [value]="chat()?.chatName"></app-user-details>
 @if (isAwaitingResponseButtonVisible()) {
-    <app-call-button [mode]="'accept-call'" text="Accept" (click)="onAcceptClicked($event)"></app-call-button>
-    <app-call-button [mode]="'end-call'" text="Decline" (click)="onDeclineClicked($event)"></app-call-button>
+    <app-call-button [mode]="'accept-call'" text="Accept" class="accept"
+        (click)="onAcceptClicked($event)"></app-call-button>
+    <app-call-button [mode]="'end-call'" text="Decline" class="decline"
+        (click)="onDeclineClicked($event)"></app-call-button>
 }
 @if (isCallControlSetVisible()) {
     <app-media-toggle-button [isMuted]="!captureVideo()" [mode]="'video'"

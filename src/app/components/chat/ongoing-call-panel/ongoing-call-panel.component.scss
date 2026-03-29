@@ -11,7 +11,7 @@
     align-items: center;
 
     fa-icon {
-        color: #ff0000;
+        color: rgba(255, 0, 0, 0.85);
         font-size: 20px;
     }
 
@@ -19,6 +19,15 @@
     app-call-button,
     app-media-toggle-button {
         @include avatar-styles($avatar-size-desktop, 42px);
+    }
+
+    app-call-button {
+        &.accept,
+        &.decline {
+            ::ng-deep button {
+                padding: 0 18px;
+            }
+        }
     }
 
     app-avatar,
