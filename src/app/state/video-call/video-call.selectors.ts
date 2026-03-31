@@ -29,3 +29,12 @@ export const selectCaptureAudio = createSelector(
     selectVideoCall,
     (videoCall) => videoCall && videoCall.captureAudio,
 );
+
+export const selectCaller = createSelector(
+    selectVideoCall,
+    selectChats,
+    (videoCall, chats) =>
+        !videoCall || !chats
+            ? null
+            : chats.find((chat) => chat.id === videoCall.chatId),
+);

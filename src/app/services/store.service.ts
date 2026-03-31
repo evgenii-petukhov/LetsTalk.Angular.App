@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
-    IAccountDto,
     IChatDto,
     IImageDto,
     IImagePreviewDto,
@@ -151,14 +150,12 @@ export class StoreService {
         callId: string,
         chatId: string,
         offer: string,
-        caller: IAccountDto,
     ): void {
         this.store.dispatch(
             videoCallActions.initIncomingCall({
                 callId,
                 chatId,
                 offer,
-                caller,
             }),
         );
     }

@@ -24,7 +24,6 @@ import {
     ILinkPreviewDto,
     IImageDto,
     ImageDto,
-    AccountDto,
 } from '../api-client/api-client';
 import { ImageCacheEntry } from '../models/image-cache-entry';
 import { accountsActions } from '../state/accounts/accounts.actions';
@@ -475,12 +474,11 @@ describe('StoreService', () => {
             const callId = '2d6cd570-0584-41db-996a-e60b13020b35';
             const chatId = '1';
             const offer = 'sdp-offer-string';
-            const caller = new AccountDto();
 
-            service.initIncomingCall(callId, chatId, offer, caller);
+            service.initIncomingCall(callId, chatId, offer);
 
             expect(store.dispatch).toHaveBeenCalledWith(
-                videoCallActions.initIncomingCall({ callId, chatId, offer, caller }),
+                videoCallActions.initIncomingCall({ callId, chatId, offer }),
             );
         });
     });

@@ -21,7 +21,6 @@ import {
     IImagePreviewDto,
     IChatDto,
     ImageDto,
-    IAccountDto,
 } from '../api-client/api-client';
 
 describe('SignalrHandlerService', () => {
@@ -628,14 +627,12 @@ describe('SignalrHandlerService', () => {
                 const callId = 'callId';
                 const chatId = 'chatId';
                 const offer = 'mock-offer-string';
-                const caller = {} as IAccountDto;
 
                 await service.handleIncomingCallNotification(
                     mockChats,
                     callId,
                     chatId,
                     offer,
-                    caller,
                 );
 
                 expect(router.navigate).toHaveBeenCalledWith([
@@ -646,7 +643,6 @@ describe('SignalrHandlerService', () => {
                     callId,
                     chatId,
                     offer,
-                    caller,
                 );
                 expect(storeService.initChatStorage).not.toHaveBeenCalled();
             });
@@ -655,14 +651,12 @@ describe('SignalrHandlerService', () => {
                 const callId = 'callId';
                 const chatId = 'nonExistentChatId';
                 const offer = 'mock-offer-string';
-                const caller = {} as IAccountDto;
 
                 await service.handleIncomingCallNotification(
                     mockChats,
                     callId,
                     chatId,
                     offer,
-                    caller,
                 );
 
                 expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
@@ -674,7 +668,6 @@ describe('SignalrHandlerService', () => {
                     callId,
                     chatId,
                     offer,
-                    caller,
                 );
             });
 
@@ -682,14 +675,12 @@ describe('SignalrHandlerService', () => {
                 const callId = 'callId';
                 const chatId = 'chatId';
                 const offer = 'mock-offer-string';
-                const caller = {} as IAccountDto;
 
                 await service.handleIncomingCallNotification(
                     [],
                     callId,
                     chatId,
                     offer,
-                    caller,
                 );
 
                 expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
@@ -701,7 +692,6 @@ describe('SignalrHandlerService', () => {
                     callId,
                     chatId,
                     offer,
-                    caller,
                 );
             });
 
@@ -709,7 +699,6 @@ describe('SignalrHandlerService', () => {
                 const callId = 'callId';
                 const chatId = 'chatId';
                 const offer = 'mock-offer-string';
-                const caller = {} as IAccountDto;
 
                 router.navigate.mockReturnValue(
                     Promise.reject(new Error('Navigation failed')),
@@ -721,7 +710,6 @@ describe('SignalrHandlerService', () => {
                         callId,
                         chatId,
                         offer,
-                        caller,
                     ),
                 ).rejects.toThrow();
 
@@ -735,7 +723,6 @@ describe('SignalrHandlerService', () => {
                 const callId = 'callId';
                 const chatId = 'nonExistentChatId';
                 const offer = 'mock-offer-string';
-                const caller = {} as IAccountDto;
 
                 storeService.initChatStorage.mockReturnValue(
                     Promise.reject(new Error('Storage init failed')),
@@ -747,7 +734,6 @@ describe('SignalrHandlerService', () => {
                         callId,
                         chatId,
                         offer,
-                        caller,
                     ),
                 ).rejects.toThrow();
 
@@ -755,15 +741,12 @@ describe('SignalrHandlerService', () => {
             });
 
             it('should handle null/undefined parameters', async () => {
-                const caller = {} as IAccountDto;
-
                 await expect(
                     service.handleIncomingCallNotification(
                         null as any,
                         'callId',
                         'chatId',
                         'offer',
-                        caller,
                     ),
                 ).rejects.toThrow();
             });
@@ -772,14 +755,12 @@ describe('SignalrHandlerService', () => {
                 const callId = '';
                 const chatId = '';
                 const offer = '';
-                const caller = {} as IAccountDto;
 
                 await service.handleIncomingCallNotification(
                     mockChats,
                     callId,
                     chatId,
                     offer,
-                    caller,
                 );
 
                 expect(storeService.initChatStorage).toHaveBeenCalledWith(true);
@@ -791,7 +772,6 @@ describe('SignalrHandlerService', () => {
                     callId,
                     chatId,
                     offer,
-                    caller,
                 );
             });
         });
@@ -1066,7 +1046,6 @@ describe('SignalrHandlerService', () => {
         it('should handle multiple rapid RTC session offers', async () => {
             const callId = 'callId';
             const offers = ['offer1', 'offer2', 'offer3'];
-            const caller = {} as IAccountDto;
 
             const promises = offers.map((offer, index) =>
                 service.handleIncomingCallNotification(
@@ -1074,7 +1053,6 @@ describe('SignalrHandlerService', () => {
                     callId,
                     `chatId${index}`,
                     offer,
-                    caller,
                 ),
             );
 

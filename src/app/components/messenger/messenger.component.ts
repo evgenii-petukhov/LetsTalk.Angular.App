@@ -145,7 +145,6 @@ export class MessengerComponent implements OnInit, OnDestroy {
             data.callId,
             data.chatId,
             data.offer,
-            data.caller,
         );
     }
 

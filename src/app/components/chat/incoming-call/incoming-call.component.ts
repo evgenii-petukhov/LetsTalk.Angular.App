@@ -1,9 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
-import { map } from 'rxjs';
 import { StoreService } from 'src/app/services/store.service';
-import { selectVideoCall } from 'src/app/state/video-call/video-call.selectors';
+import { selectCaller } from 'src/app/state/video-call/video-call.selectors';
 
 @Component({
     selector: 'app-incoming-call',
@@ -15,23 +14,15 @@ export class IncomingCallComponent {
     private readonly storeService = inject(StoreService);
     private readonly store = inject(Store);
 
-    caller = toSignal(
-        this.store.select(selectVideoCall).pipe(
-            map(
-                (videoCall) =>
-                    videoCall?.caller && {
-                        urlOptions: [
-                            videoCall.caller.image,
-                            videoCall.caller.photoUrl,
-                        ],
-                        name:
-                            videoCall.caller.firstName +
-                            ' ' +
-                            videoCall.caller.lastName,
-                    },
-            ),
-        ),
-    );
+    caller = toSignal(this.store.select(selectCaller));
+
+    urlOptions = computed(() => {
+        const caller = this.caller();
+
+        return caller && [caller.image, caller.photoUrl];
+    });
+
+    callerName = computed(() => this.caller()?.chatName);
 
     onAcceptClicked(): void {
         this.storeService.acceptIncomingCall();

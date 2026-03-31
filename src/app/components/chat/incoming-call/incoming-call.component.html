@@ -1,6 +1,6 @@
 <div class="caller-info">
-    <app-avatar [urlOptions]="caller()?.urlOptions" class="caller-info__avatar"></app-avatar>
-    <div class="caller-info__name">{{caller()?.name}}</div>
+    <app-avatar [urlOptions]="urlOptions()" class="caller-info__avatar"></app-avatar>
+    <div class="caller-info__name">{{callerName()}}</div>
 </div>
 <div class="controls">
     <app-call-button [mode]="'accept-call'" (buttonClick)="onAcceptClicked()" class="accept-call"></app-call-button>
