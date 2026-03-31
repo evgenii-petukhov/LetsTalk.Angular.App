@@ -22,6 +22,7 @@ import { MediaToggleButtonComponent } from './media-toggle-button/media-toggle-b
 import { IncomingCallComponent } from './incoming-call/incoming-call.component';
 import { OngoingCallComponent } from './ongoing-call-panel/ongoing-call-panel.component';
 import { MinimizeButtonComponent } from './minimize-button/minimize-button.component';
+import { VideoWithAvatarFallbackComponent } from './video-with-avatar-fallback/video-with-avatar-fallback.component';
 
 @NgModule({
     declarations: [
@@ -43,6 +44,7 @@ import { MinimizeButtonComponent } from './minimize-button/minimize-button.compo
         IncomingCallComponent,
         OngoingCallComponent,
         MinimizeButtonComponent,
+        VideoWithAvatarFallbackComponent,
     ],
     imports: [
         CommonModule,

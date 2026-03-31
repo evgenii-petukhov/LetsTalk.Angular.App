@@ -1,0 +1,5 @@
+@if (isVideoMuted) {
+<app-avatar [urlOptions]="urlOptions"></app-avatar>
+} @else {
+<video #video autoplay playsinline [attr.muted]="isAudioMuted ? 'true' : null" [ngClass]="videoElementClass"></video>
+}

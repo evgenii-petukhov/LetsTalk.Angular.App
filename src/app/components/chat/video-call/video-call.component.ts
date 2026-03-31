@@ -1,9 +1,11 @@
 import {
     AfterViewInit,
     Component,
-    ElementRef,
+    computed,
     inject,
     OnDestroy,
+    OnInit,
+    signal,
     ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
@@ -17,6 +19,8 @@ import {
     selectVideoCall,
 } from '../../../state/video-call/video-call.selectors';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { VideoWithAvatarFallbackComponent } from '../video-with-avatar-fallback/video-with-avatar-fallback.component';
+import { IProfileDto } from 'src/app/api-client/api-client';
 
 @Component({
     selector: 'app-video-call',
@@ -24,11 +28,11 @@ import { toSignal } from '@angular/core/rxjs-interop';
     styleUrl: './video-call.component.scss',
     standalone: false,
 })
-export class VideoCallComponent implements OnDestroy, AfterViewInit {
+export class VideoCallComponent implements OnDestroy, AfterViewInit, OnInit {
     @ViewChild('localVideo', { static: false })
-    localVideo!: ElementRef<HTMLVideoElement>;
+    localVideo!: VideoWithAvatarFallbackComponent;
     @ViewChild('remoteVideo', { static: false })
-    remoteVideo!: ElementRef<HTMLVideoElement>;
+    remoteVideo!: VideoWithAvatarFallbackComponent;
 
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
     private readonly store = inject(Store);
@@ -38,6 +42,14 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
 
     captureVideo = toSignal(this.store.select(selectCaptureVideo));
     captureAudio = toSignal(this.store.select(selectCaptureAudio));
+
+    localAccount = signal<IProfileDto>(null);
+    localUrlOptions = computed(() => [this.localAccount()?.image, this.localAccount()?.photoUrl]);
+
+    async ngOnInit(): Promise<void> {
+        const loggedInUser = await this.storeService.getLoggedInUser();
+        this.localAccount.set(loggedInUser);
+    }
 
     ngAfterViewInit(): void {
         this.store
@@ -54,14 +66,14 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
                 if (prevState === null) {
                     if (this.connectionManager.isMediaCaptured) {
                         this.connectionManager.reconnectVideoElements({
-                            local: this.localVideo.nativeElement,
-                            remote: this.remoteVideo.nativeElement,
+                            local: this.localVideo.getVideoElement(),
+                            remote: this.remoteVideo.getVideoElement(),
                         });
                     } else {
                         try {
                             await this.connectionManager.startMediaCapture(
-                                this.localVideo.nativeElement,
-                                this.remoteVideo.nativeElement,
+                                this.localVideo.getVideoElement(),
+                                this.remoteVideo.getVideoElement(),
                             );
                             if (currentState.status === 'incoming-active') {
                                 await this.rtcConnectionService.handleIncomingCall(
@@ -113,7 +125,7 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
     }
 
     private disconnectVideoElements(): void {
-        this.localVideo.nativeElement.srcObject = null;
-        this.remoteVideo.nativeElement.srcObject = null;
+        this.localVideo.resetVideoElement();
+        this.remoteVideo.resetVideoElement();
     }
 }

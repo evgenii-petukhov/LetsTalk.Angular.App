@@ -1,5 +1,8 @@
-<video #remoteVideo class="remote-video" autoplay playsinline></video>
-<video #localVideo class="local-video" autoplay muted playsinline></video>
+<app-video-with-avatar-fallback #remoteVideo class="remote-video"
+    [videoElementClass]="'remote-video'"></app-video-with-avatar-fallback>
+<app-video-with-avatar-fallback #localVideo class="local-video" [videoElementClass]="'local-video'"
+    [isAudioMuted]="'local-video'" [isVideoMuted]="!captureVideo()"
+    [urlOptions]="localUrlOptions()"></app-video-with-avatar-fallback>
 <div class="minimize-button">
     <app-minimize-button (buttonClick)="minimizeCall()"></app-minimize-button>
 </div>
