@@ -8,4 +8,5 @@ export interface VideoCall {
     status: 'outgoing' | 'incoming-awaiting' | 'incoming-active';
     captureVideo: boolean;
     captureAudio: boolean;
+    isMinimized: boolean;
 }

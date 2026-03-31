@@ -11,6 +11,7 @@ export const videoCallReducer = createReducer(
         status: 'outgoing',
         captureVideo: true,
         captureAudio: true,
+        isMinimized: false,
     })),
     on(
         videoCallActions.initIncomingCall,
@@ -22,6 +23,7 @@ export const videoCallReducer = createReducer(
             status: 'incoming-awaiting',
             captureVideo: true,
             captureAudio: true,
+            isMinimized: false,
         }),
     ),
     on(videoCallActions.acceptIncomingCall, (state) => {
@@ -50,4 +52,18 @@ export const videoCallReducer = createReducer(
         };
     }),
     on(videoCallActions.reset, () => null),
+    on(videoCallActions.minimize, (state) => {
+        if (!state) return state;
+        return {
+            ...state,
+            isMinimized: true,
+        };
+    }),
+    on(videoCallActions.maximize, (state) => {
+        if (!state) return state;
+        return {
+            ...state,
+            isMinimized: false,
+        };
+    }),
 );

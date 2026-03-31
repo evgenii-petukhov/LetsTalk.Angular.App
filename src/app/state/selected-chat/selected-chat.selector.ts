@@ -18,6 +18,7 @@ export const selectIsOngoingCallScreenVisible = createSelector(
     selectSelectedChatId,
     (videoCall, chatId) =>
         videoCall != null &&
+        !videoCall.isMinimized &&
         videoCall.chatId === chatId &&
         videoCall.status !== 'incoming-awaiting',
 );
@@ -25,7 +26,9 @@ export const selectIsOngoingCallScreenVisible = createSelector(
 export const selectIsOngoingCallPanelVisible = createSelector(
     selectVideoCall,
     selectSelectedChatId,
-    (videoCall, chatId) => videoCall != null && videoCall.chatId !== chatId,
+    (videoCall, chatId) =>
+        videoCall != null &&
+        (videoCall.isMinimized || videoCall.chatId !== chatId),
 );
 
 export const selectIsAwaitingResponseScreenVisible = createSelector(
@@ -69,7 +72,9 @@ export const selectIsMessageListVisible = createSelector(
     (isCallInProgress, awaitingResponse, status) =>
         !isCallInProgress &&
         !awaitingResponse &&
-        [MessageFetchStatus.Unknown, MessageFetchStatus.Success].includes(status),
+        [MessageFetchStatus.Unknown, MessageFetchStatus.Success].includes(
+            status,
+        ),
 );
 
 export const selectIsComposeAreaVisible = createSelector(

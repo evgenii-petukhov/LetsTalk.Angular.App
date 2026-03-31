@@ -44,6 +44,20 @@
         }
     }
 
+    .minimize-button {
+        position: absolute;
+        left: 40px;
+        top: 40px;
+
+        app-minimize-button {
+            @include avatar-styles(42px, 54px);
+
+            @include media-breakpoint-down(sm) {
+                font-size: 20px;
+            }
+        }
+    }
+
     .controls {
         position: absolute;
         bottom: 20px;

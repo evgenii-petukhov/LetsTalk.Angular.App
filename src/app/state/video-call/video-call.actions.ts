@@ -11,5 +11,7 @@ export const videoCallActions = createActionGroup({
         toggleCaptureVideo: emptyProps(),
         toggleCaptureAudio: emptyProps(),
         reset: emptyProps(),
+        minimize: emptyProps(),
+        maximize: emptyProps(),
     },
 });

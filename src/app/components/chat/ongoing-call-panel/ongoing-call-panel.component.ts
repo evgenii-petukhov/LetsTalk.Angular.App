@@ -84,6 +84,7 @@ export class OngoingCallComponent implements OnDestroy, AfterViewInit {
 
     @HostListener('click')
     async onPanelClick(): Promise<void> {
+        this.storeService.maximizeCall();
         this.navigateToChat();
     }
 

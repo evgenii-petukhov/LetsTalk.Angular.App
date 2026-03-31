@@ -100,12 +100,16 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
         this.rtcConnectionService.endCall();
     }
 
-    toggleCaptureVideo() {
+    toggleCaptureVideo(): void {
         this.storeService.toggleCaptureVideo();
     }
 
-    toggleCaptureAudio() {
+    toggleCaptureAudio(): void {
         this.storeService.toggleCaptureAudio();
+    }
+
+    minimizeCall(): void {
+        this.storeService.minimizeCall();
     }
 
     private disconnectVideoElements(): void {

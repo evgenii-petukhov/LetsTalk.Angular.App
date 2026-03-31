@@ -183,6 +183,14 @@ export class StoreService {
         this.store.dispatch(videoCallActions.toggleCaptureAudio());
     }
 
+    minimizeCall(): void {
+        this.store.dispatch(videoCallActions.minimize());
+    }
+
+    maximizeCall(): void {
+        this.store.dispatch(videoCallActions.maximize());
+    }
+
     setSelectedChatMessageFetchStatus(status: MessageFetchStatus): void {
         this.store.dispatch(
             selectedChatInfoActions.setMessageFetchStatus({ status }),

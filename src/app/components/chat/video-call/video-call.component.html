@@ -1,5 +1,8 @@
 <video #remoteVideo class="remote-video" autoplay playsinline></video>
 <video #localVideo class="local-video" autoplay muted playsinline></video>
+<div class="minimize-button">
+    <app-minimize-button (buttonClick)="minimizeCall()"></app-minimize-button>
+</div>
 <div class="controls">
     <div class="controls-inner">
         <app-media-toggle-button [isMuted]="!captureVideo()" [mode]="'video'"
