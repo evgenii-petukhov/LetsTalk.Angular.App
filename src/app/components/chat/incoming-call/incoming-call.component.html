@@ -3,6 +3,6 @@
     <div class="caller-info__name">{{caller()?.name}}</div>
 </div>
 <div class="controls">
-    <app-call-button [mode]="'accept-call'" (buttonClick)="onAcceptClicked()"></app-call-button>
+    <app-call-button [mode]="'accept-call'" (buttonClick)="onAcceptClicked()" class="accept-call"></app-call-button>
     <app-call-button [mode]="'end-call'" (buttonClick)="onDeclineClicked()"></app-call-button>
 </div>

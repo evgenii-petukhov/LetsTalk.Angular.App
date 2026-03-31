@@ -51,6 +51,40 @@
             @include media-breakpoint-down(sm) {
                 font-size: 20px;
             }
+
+            &.accept-call {
+                animation: shake 1s linear infinite;
+            }
         }
+    }
+}
+
+@keyframes shake {
+    0% {
+        transform: none;
+    }
+
+    15% {
+        transform: translate3d(-12.5%, 0, 0) rotate3d(0, 0, 1, -2.5deg);
+    }
+
+    30% {
+        transform: translate3d(10%, 0, 0) rotate3d(0, 0, 1, 1.5deg);
+    }
+
+    45% {
+        transform: translate3d(-7.5%, 0, 0) rotate3d(0, 0, 1, -1.5deg);
+    }
+
+    60% {
+        transform: translate3d(5%, 0, 0) rotate3d(0, 0, 1, 1deg);
+    }
+
+    75% {
+        transform: translate3d(-2.5%, 0, 0) rotate3d(0, 0, 1, -0.5deg);
+    }
+
+    100% {
+        transform: none;
     }
 }
