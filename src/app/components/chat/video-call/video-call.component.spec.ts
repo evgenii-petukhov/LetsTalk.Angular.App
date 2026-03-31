@@ -38,6 +38,7 @@ describe('VideoCallComponent', () => {
         status: 'outgoing',
         captureVideo: true,
         captureAudio: true,
+        isMinimized: false,
     };
 
     const mockIncomingVideoCallState: VideoCall = {
@@ -47,24 +48,28 @@ describe('VideoCallComponent', () => {
         status: 'incoming-active',
         captureVideo: false,
         captureAudio: true,
+        isMinimized: false,
     };
 
     beforeEach(async () => {
         storeSubject = new Subject<VideoCall | null>();
 
         const storeSpy = {
-            select: vi.fn().mockName('Store.select').mockImplementation((selector: any) => {
-                if (selector === selectVideoCall) {
-                    return storeSubject.asObservable();
-                }
-                if (selector === selectCaptureVideo) {
-                    return of(true);
-                }
-                if (selector === selectCaptureAudio) {
-                    return of(true);
-                }
-                return of(null);
-            }),
+            select: vi
+                .fn()
+                .mockName('Store.select')
+                .mockImplementation((selector: any) => {
+                    if (selector === selectVideoCall) {
+                        return storeSubject.asObservable();
+                    }
+                    if (selector === selectCaptureVideo) {
+                        return of(true);
+                    }
+                    if (selector === selectCaptureAudio) {
+                        return of(true);
+                    }
+                    return of(null);
+                }),
         };
         const rtcConnectionServiceSpy = {
             handleIncomingCall: vi
@@ -94,8 +99,13 @@ describe('VideoCallComponent', () => {
             configurable: true,
         });
         const storeServiceSpy = {
-            toggleCaptureVideo: vi.fn().mockName('StoreService.toggleCaptureVideo'),
-            toggleCaptureAudio: vi.fn().mockName('StoreService.toggleCaptureAudio'),
+            toggleCaptureVideo: vi
+                .fn()
+                .mockName('StoreService.toggleCaptureVideo'),
+            toggleCaptureAudio: vi
+                .fn()
+                .mockName('StoreService.toggleCaptureAudio'),
+            minimizeCall: vi.fn().mockName('StoreService.minimizeCall'),
         };
 
         await TestBed.configureTestingModule({
@@ -221,8 +231,12 @@ describe('VideoCallComponent', () => {
                 local: expect.any(HTMLVideoElement),
                 remote: expect.any(HTMLVideoElement),
             });
-            expect((callArgs[0] as any).local.className).toContain('local-video');
-            expect((callArgs[0] as any).remote.className).toContain('remote-video');
+            expect((callArgs[0] as any).local.className).toContain(
+                'local-video',
+            );
+            expect((callArgs[0] as any).remote.className).toContain(
+                'remote-video',
+            );
         });
 
         it('should start media capture and handle incoming call when media is not captured and call is incoming', async () => {
@@ -473,14 +487,22 @@ describe('VideoCallComponent', () => {
             storeSubject.next(mockVideoCallState);
             await new Promise((resolve) => setTimeout(resolve, 0));
 
-            expect(mockConnectionManager.setVideoEnabled).toHaveBeenCalledWith(true);
-            expect(mockConnectionManager.setAudioEnabled).toHaveBeenCalledWith(true);
+            expect(mockConnectionManager.setVideoEnabled).toHaveBeenCalledWith(
+                true,
+            );
+            expect(mockConnectionManager.setAudioEnabled).toHaveBeenCalledWith(
+                true,
+            );
 
             storeSubject.next(mockIncomingVideoCallState);
             await new Promise((resolve) => setTimeout(resolve, 0));
 
-            expect(mockConnectionManager.setVideoEnabled).toHaveBeenCalledWith(false);
-            expect(mockConnectionManager.setAudioEnabled).toHaveBeenCalledWith(true);
+            expect(mockConnectionManager.setVideoEnabled).toHaveBeenCalledWith(
+                false,
+            );
+            expect(mockConnectionManager.setAudioEnabled).toHaveBeenCalledWith(
+                true,
+            );
         });
     });
 
@@ -504,8 +526,69 @@ describe('VideoCallComponent', () => {
             await new Promise((resolve) => setTimeout(resolve, 0));
 
             // setVideoEnabled/setAudioEnabled called with undefined from incomplete state
-            expect(mockConnectionManager.setVideoEnabled).toHaveBeenCalledWith(undefined);
-            expect(mockConnectionManager.setAudioEnabled).toHaveBeenCalledWith(undefined);
+            expect(mockConnectionManager.setVideoEnabled).toHaveBeenCalledWith(
+                undefined,
+            );
+            expect(mockConnectionManager.setAudioEnabled).toHaveBeenCalledWith(
+                undefined,
+            );
+        });
+    });
+
+    describe('minimizeCall', () => {
+        it('should call storeService.minimizeCall', () => {
+            component.minimizeCall();
+
+            expect(mockStoreService.minimizeCall).toHaveBeenCalled();
+        });
+    });
+
+    describe('template interactions', () => {
+        beforeEach(() => {
+            fixture.detectChanges();
+        });
+
+        it('should call endCall when call button emits buttonClick', () => {
+            vi.spyOn(component, 'endCall');
+
+            const callButton =
+                fixture.nativeElement.querySelector('app-call-button');
+            callButton.dispatchEvent(new Event('buttonClick'));
+
+            expect(component.endCall).toHaveBeenCalled();
+        });
+
+        it('should call minimizeCall when minimize button emits buttonClick', () => {
+            vi.spyOn(component, 'minimizeCall');
+
+            const minimizeButton = fixture.nativeElement.querySelector(
+                'app-minimize-button',
+            );
+            minimizeButton.dispatchEvent(new Event('buttonClick'));
+
+            expect(component.minimizeCall).toHaveBeenCalled();
+        });
+
+        it('should call toggleCaptureVideo when video media toggle button emits buttonClick', () => {
+            vi.spyOn(component, 'toggleCaptureVideo');
+
+            const mediaButtons = fixture.nativeElement.querySelectorAll(
+                'app-media-toggle-button',
+            );
+            mediaButtons[0].dispatchEvent(new Event('buttonClick'));
+
+            expect(component.toggleCaptureVideo).toHaveBeenCalled();
+        });
+
+        it('should call toggleCaptureAudio when audio media toggle button emits buttonClick', () => {
+            vi.spyOn(component, 'toggleCaptureAudio');
+
+            const mediaButtons = fixture.nativeElement.querySelectorAll(
+                'app-media-toggle-button',
+            );
+            mediaButtons[1].dispatchEvent(new Event('buttonClick'));
+
+            expect(component.toggleCaptureAudio).toHaveBeenCalled();
         });
     });
 
