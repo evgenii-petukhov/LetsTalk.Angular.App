@@ -12,19 +12,19 @@ import { Router } from '@angular/router';
 import { faPhoneVolume } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
 import { filter, Subject, takeUntil } from 'rxjs';
-import { RtcConnectionService } from 'src/app/services/rtc-connection.service';
-import { RtcPeerConnectionManager } from 'src/app/services/rtc-peer-connection-manager';
-import { StoreService } from 'src/app/services/store.service';
+import { RtcConnectionService } from '../../../services/rtc-connection.service';
+import { RtcPeerConnectionManager } from '../../../services/rtc-peer-connection-manager';
+import { StoreService } from '../../../services/store.service';
 import {
     selectIsAwaitingResponseButtonVisible,
     selectIsOngoingCallControlSetVisible,
-} from 'src/app/state/selected-chat/selected-chat.selector';
+} from '../../../state/selected-chat/selected-chat.selector';
 import {
     selectCaptureAudio,
     selectCaptureVideo,
     selectVideoCall,
     selectVideoCallChat,
-} from 'src/app/state/video-call/video-call.selectors';
+} from '../../../state/video-call/video-call.selectors';
 
 @Component({
     selector: 'app-ongoing-call-panel',
