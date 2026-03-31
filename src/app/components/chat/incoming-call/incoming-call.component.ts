@@ -1,8 +1,8 @@
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
-import { StoreService } from 'src/app/services/store.service';
-import { selectCaller } from 'src/app/state/video-call/video-call.selectors';
+import { StoreService } from '../../../services/store.service';
+import { selectCaller } from '../../../state/video-call/video-call.selectors';
 
 @Component({
     selector: 'app-incoming-call',
