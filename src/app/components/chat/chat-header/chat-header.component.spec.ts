@@ -19,6 +19,7 @@ import { By } from '@angular/platform-browser';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { IChatDto, ImageDto } from '../../../api-client/api-client';
 import { selectSelectedChat } from '../../../state/selected-chat/selected-chat.selector';
+import { selectIsAnyCallInProgress } from '../../../state/video-call/video-call.selectors';
 import { UserDetailsStubComponent } from '../../shared/user-details/user-details.component.stub';
 import { ApiService } from '../../../services/api.service';
 import { IdGeneratorService } from '../../../services/id-generator.service';
@@ -35,6 +36,11 @@ describe('ChatHeaderComponent', () => {
         object,
         IChatDto,
         DefaultProjectorFn<IChatDto>
+    >;
+    let mockSelectIsAnyCallInProgress: MemoizedSelector<
+        object,
+        boolean,
+        DefaultProjectorFn<boolean>
     >;
 
     const mockChat = {
@@ -106,6 +112,10 @@ describe('ChatHeaderComponent', () => {
         mockSelectSelectedChat = store.overrideSelector(
             selectSelectedChat,
             null,
+        );
+        mockSelectIsAnyCallInProgress = store.overrideSelector(
+            selectIsAnyCallInProgress,
+            false,
         );
     });
 
@@ -229,6 +239,90 @@ describe('ChatHeaderComponent', () => {
         expect(apiService.createIndividualChat).not.toHaveBeenCalled();
     });
 
+    it('should pass backButton input to app-top-panel', () => {
+        // Arrange
+        fixture.componentInstance.backButton = 'visible';
+
+        // Act
+        fixture.detectChanges();
+
+        // Assert
+        const topPanel = fixture.debugElement.query(
+            By.directive(TopPanelStubComponent),
+        );
+        expect(topPanel.componentInstance.backButton).toBe('visible');
+    });
+
+    it('should not render app-avatar when chat is null', () => {
+        // Arrange
+        mockSelectSelectedChat.setResult(null);
+
+        // Act
+        store.refreshState();
+        fixture.detectChanges();
+
+        // Assert
+        expect(getAvatarElement()).toBeNull();
+    });
+
+    it('should render app-avatar when chat is set', () => {
+        // Arrange
+        mockSelectSelectedChat.setResult(mockChat);
+
+        // Act
+        store.refreshState();
+        fixture.detectChanges();
+
+        // Assert
+        expect(getAvatarElement()).not.toBeNull();
+    });
+
+    it('should hide call button when a call is in progress', () => {
+        // Arrange
+        mockSelectSelectedChat.setResult(mockChat);
+        mockSelectIsAnyCallInProgress.setResult(true);
+
+        // Act
+        store.refreshState();
+        fixture.detectChanges();
+
+        // Assert
+        expect(getCallButtonElement()).toBeNull();
+    });
+
+    it('should show call button when no call is in progress', () => {
+        // Arrange
+        mockSelectSelectedChat.setResult(mockChat);
+        mockSelectIsAnyCallInProgress.setResult(false);
+
+        // Act
+        store.refreshState();
+        fixture.detectChanges();
+
+        // Assert
+        expect(getCallButtonElement()).not.toBeNull();
+    });
+
+    it('should call onCallClicked when call button emits buttonClick', async () => {
+        // Arrange
+        mockSelectSelectedChat.setResult(mockChat);
+        mockSelectIsAnyCallInProgress.setResult(false);
+        store.refreshState();
+        fixture.detectChanges();
+
+        const onCallClickedSpy = vi.spyOn(
+            fixture.componentInstance,
+            'onCallClicked',
+        );
+
+        // Act
+        getCallButtonElement().componentInstance.buttonClick.emit();
+        fixture.detectChanges();
+
+        // Assert
+        expect(onCallClickedSpy).toHaveBeenCalled();
+    });
+
     function getAvatarElement() {
         return fixture.debugElement.query(By.directive(AvatarStubComponent));
     }
@@ -237,5 +331,11 @@ describe('ChatHeaderComponent', () => {
         return fixture.debugElement.query(
             By.directive(UserDetailsStubComponent),
         ).componentInstance as UserDetailsStubComponent;
+    }
+
+    function getCallButtonElement() {
+        return fixture.debugElement.query(
+            By.directive(CallButtonStubComponent),
+        );
     }
 });
