@@ -11,7 +11,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { faPhoneVolume } from '@fortawesome/free-solid-svg-icons';
 import { Store } from '@ngrx/store';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { RtcConnectionService } from 'src/app/services/rtc-connection.service';
 import { RtcPeerConnectionManager } from 'src/app/services/rtc-peer-connection-manager';
 import { StoreService } from 'src/app/services/store.service';
@@ -58,7 +58,10 @@ export class OngoingCallComponent implements OnDestroy, AfterViewInit {
     ngAfterViewInit(): void {
         this.store
             .select(selectVideoCall)
-            .pipe(takeUntil(this.unsubscribe$))
+            .pipe(
+                filter((videoCall) => !!videoCall),
+                takeUntil(this.unsubscribe$),
+            )
             .subscribe((currentState) => {
                 if (this.connectionManager.isMediaCaptured) {
                     this.connectionManager.reconnectVideoElements({
