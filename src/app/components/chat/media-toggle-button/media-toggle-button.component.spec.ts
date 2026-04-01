@@ -92,7 +92,7 @@ describe('MediaToggleButtonComponent', () => {
             const button = fixture.debugElement.query(By.css('button'));
             button.nativeElement.click();
 
-            expect(component.buttonClick.emit).toHaveBeenCalledWith();
+            expect(component.buttonClick.emit).toHaveBeenCalled();
         });
 
         it('should call onButtonClicked when button is clicked', () => {
@@ -106,10 +106,11 @@ describe('MediaToggleButtonComponent', () => {
 
         it('should emit buttonClick event when onButtonClicked is called directly', () => {
             vi.spyOn(component.buttonClick, 'emit');
+            const mockEvent = new MouseEvent('click');
 
-            component.onButtonClicked();
+            component.onButtonClicked(mockEvent);
 
-            expect(component.buttonClick.emit).toHaveBeenCalledWith();
+            expect(component.buttonClick.emit).toHaveBeenCalledWith(mockEvent);
         });
     });
 
@@ -190,11 +191,12 @@ describe('MediaToggleButtonComponent', () => {
 
         it('should emit void type', () => {
             let emittedValue: any;
+            const mockEvent = new MouseEvent('click');
             component.buttonClick.subscribe((value) => (emittedValue = value));
 
-            component.onButtonClicked();
+            component.onButtonClicked(mockEvent);
 
-            expect(emittedValue).toBeUndefined();
+            expect(emittedValue).toBe(mockEvent);
         });
     });
 });

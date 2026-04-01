@@ -1,0 +1,45 @@
+@use "bootstrap/scss/bootstrap" as *;
+@use "../../../shared-styles/mixins/avatar-styles" as *;
+@use "../../../shared-styles/variables" as *;
+
+:host {
+    background: #000;
+    color: #fff;
+    display: flex;
+    padding: 10px;
+    gap: 10px;
+    align-items: center;
+
+    fa-icon {
+        color: rgba(255, 0, 0, 0.85);
+        font-size: 20px;
+    }
+
+    app-avatar,
+    app-call-button,
+    app-media-toggle-button {
+        @include avatar-styles($avatar-size-desktop, 42px);
+    }
+
+    app-call-button {
+        &.accept,
+        &.decline {
+            ::ng-deep button {
+                padding: 0 18px;
+            }
+        }
+    }
+
+    app-avatar,
+    app-user-details {
+        cursor: pointer;
+    }
+
+    video {
+        display: none;
+    }
+
+    @include media-breakpoint-down(sm) {
+        padding: 8px 10px;
+    }
+}

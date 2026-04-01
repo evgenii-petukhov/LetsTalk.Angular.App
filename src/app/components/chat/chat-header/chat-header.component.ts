@@ -1,6 +1,8 @@
 import { Component, computed, inject, Input } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectSelectedChat } from '../../../state/selected-chat/selected-chat.selector';
+import {
+    selectSelectedChat,
+} from '../../../state/selected-chat/selected-chat.selector';
 import { IChatDto } from '../../../api-client/api-client';
 import { BackButtonStatus } from '../../../models/back-button-status';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
@@ -9,7 +11,7 @@ import { IdGeneratorService } from '../../../services/id-generator.service';
 import { ApiService } from '../../../services/api.service';
 import { Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { selectIsCallInProgress } from '../../../state/video-call/video-call.selectors';
+import { selectIsAnyCallInProgress } from '../../../state/video-call/video-call.selectors';
 
 @Component({
     selector: 'app-chat-header',
@@ -27,10 +29,12 @@ export class ChatHeaderComponent {
     private readonly apiService = inject(ApiService);
     private readonly router = inject(Router);
 
-    chat = toSignal(this.store.select(selectSelectedChat), { initialValue: null });
+    chat = toSignal(this.store.select(selectSelectedChat), {
+        initialValue: null,
+    });
 
-    isCallInProgress = toSignal(
-        this.store.select(selectIsCallInProgress),
+    isAnyCallInProgress = toSignal(
+        this.store.select(selectIsAnyCallInProgress),
     );
 
     urlOptions = computed(() => {

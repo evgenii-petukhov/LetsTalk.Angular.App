@@ -1,3 +1,4 @@
-<button (click)="onButtonClicked()" [ngClass]="mode === 'end-call' && 'end-call'">
+<button (click)="onButtonClicked($event)" [ngClass]="mode">
     <fa-icon [icon]="faPhone"></fa-icon>
+    {{text}}
 </button>

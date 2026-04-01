@@ -11,7 +11,7 @@ import {
 import { chatsActions } from '../state/chats/chats.actions';
 import { loggedInUserActions } from '../state/logged-in-user/logged-in-user.actions';
 import { messagesActions } from '../state/messages/messages.actions';
-import { selectedChatIdActions } from '../state/selected-chat/selected-chat-id.actions';
+import { selectedChatInfoActions } from '../state/selected-chat/selected-chat-info.actions';
 import { selectLoggedInUser } from '../state/logged-in-user/logged-in-user.selectors';
 import { ApiService } from './api.service';
 import { selectChats } from '../state/chats/chats.selector';
@@ -23,8 +23,7 @@ import { selectAccounts } from '../state/accounts/accounts.selector';
 import { accountsActions } from '../state/accounts/accounts.actions';
 import { firstValueFrom } from 'rxjs';
 import { videoCallActions } from '../state/video-call/video-call.actions';
-import { selectedChatUiActions } from '../state/selected-chat-ui/selected-chat-ui.actions';
-import { MessageListStatus } from '../models/message-list-status';
+import { MessageFetchStatus } from '../models/message-fetch-status';
 
 @Injectable({
     providedIn: 'root',
@@ -140,44 +139,58 @@ export class StoreService {
     }
 
     setSelectedChatId(chatId: string): void {
-        this.store.dispatch(selectedChatIdActions.init({ chatId }));
+        this.store.dispatch(selectedChatInfoActions.init({ chatId }));
     }
 
     initOutgoingCall(chatId: string): void {
         this.store.dispatch(videoCallActions.initOutgoingCall({ chatId }));
     }
 
-    initIncomingCall(callId: string, chatId: string, offer: string): void {
+    initIncomingCall(
+        callId: string,
+        chatId: string,
+        offer: string,
+    ): void {
         this.store.dispatch(
-            videoCallActions.initIncomingCall({ callId, chatId, offer }),
+            videoCallActions.initIncomingCall({
+                callId,
+                chatId,
+                offer,
+            }),
         );
     }
 
+    acceptIncomingCall(): void {
+        this.store.dispatch(videoCallActions.acceptIncomingCall());
+    }
+
     setCallId(callId: string): void {
-        this.store.dispatch(
-            videoCallActions.setCallId({ callId }),
-        );
+        this.store.dispatch(videoCallActions.setCallId({ callId }));
     }
 
     resetCall(): void {
         this.store.dispatch(videoCallActions.reset());
     }
 
-    toggleVideo(): void {
-        this.store.dispatch(videoCallActions.toggleVideo());
+    toggleCaptureVideo(): void {
+        this.store.dispatch(videoCallActions.toggleCaptureVideo());
     }
 
-    toggleAudio(): void {
-        this.store.dispatch(videoCallActions.toggleAudio());
+    toggleCaptureAudio(): void {
+        this.store.dispatch(videoCallActions.toggleCaptureAudio());
     }
 
-    setSelectedChatMessageListStatus(
-        messageListStatus: MessageListStatus,
-    ): void {
+    minimizeCall(): void {
+        this.store.dispatch(videoCallActions.minimize());
+    }
+
+    maximizeCall(): void {
+        this.store.dispatch(videoCallActions.maximize());
+    }
+
+    setSelectedChatMessageFetchStatus(status: MessageFetchStatus): void {
         this.store.dispatch(
-            selectedChatUiActions.setMessageListStatus({
-                messageListStatus,
-            }),
+            selectedChatInfoActions.setMessageFetchStatus({ status }),
         );
     }
 

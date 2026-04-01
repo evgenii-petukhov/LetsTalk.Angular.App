@@ -11,7 +11,12 @@ import { pairwise, startWith, Subject, takeUntil } from 'rxjs';
 import { RtcConnectionService } from '../../../services/rtc-connection.service';
 import { RtcPeerConnectionManager } from '../../../services/rtc-peer-connection-manager';
 import { StoreService } from '../../../services/store.service';
-import { selectVideoCall } from '../../../state/video-call/video-call.selectors';
+import {
+    selectCaptureAudio,
+    selectCaptureVideo,
+    selectVideoCall,
+} from '../../../state/video-call/video-call.selectors';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-video-call',
@@ -25,63 +30,62 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
     @ViewChild('remoteVideo', { static: false })
     remoteVideo!: ElementRef<HTMLVideoElement>;
 
-    captureVideo = true;
-    captureAudio = true;
-
     private readonly unsubscribe$: Subject<void> = new Subject<void>();
     private readonly store = inject(Store);
     private readonly rtcConnectionService = inject(RtcConnectionService);
     private readonly connectionManager = inject(RtcPeerConnectionManager);
     private readonly storeService = inject(StoreService);
 
+    captureVideo = toSignal(this.store.select(selectCaptureVideo));
+    captureAudio = toSignal(this.store.select(selectCaptureAudio));
+
     ngAfterViewInit(): void {
         this.store
             .select(selectVideoCall)
             .pipe(startWith(null), pairwise(), takeUntil(this.unsubscribe$))
             .subscribe(async ([prevState, currentState]) => {
-                if (prevState !== null && currentState === null) {
-                    this.disconnectVideoElements();
+                if (currentState === null) {
+                    if (prevState !== null) {
+                        this.disconnectVideoElements();
+                    }
                     return;
                 }
 
-                if (currentState === null) return;
-
-                try {
+                if (prevState === null) {
                     if (this.connectionManager.isMediaCaptured) {
-                        this.connectionManager.reconnectVideoElements(
-                            this.localVideo.nativeElement,
-                            this.remoteVideo.nativeElement,
-                        );
+                        this.connectionManager.reconnectVideoElements({
+                            local: this.localVideo.nativeElement,
+                            remote: this.remoteVideo.nativeElement,
+                        });
                     } else {
-                        await this.connectionManager.startMediaCapture(
-                            this.localVideo.nativeElement,
-                            this.remoteVideo.nativeElement,
-                        );
-                        if (currentState.type === 'incoming') {
-                            await this.rtcConnectionService.handleIncomingCall(
-                                currentState.callId,
-                                currentState.chatId,
-                                currentState.offer,
+                        try {
+                            await this.connectionManager.startMediaCapture(
+                                this.localVideo.nativeElement,
+                                this.remoteVideo.nativeElement,
                             );
-                        } else {
-                            await this.rtcConnectionService.startOutgoingCall(
-                                currentState.chatId,
-                            );
+                            if (currentState.status === 'incoming-active') {
+                                await this.rtcConnectionService.handleIncomingCall(
+                                    currentState.callId,
+                                    currentState.chatId,
+                                    currentState.offer,
+                                );
+                            } else if (currentState.status === 'outgoing') {
+                                await this.rtcConnectionService.startOutgoingCall(
+                                    currentState.chatId,
+                                );
+                            }
+                        } catch (error) {
+                            console.error('Video call error:', error);
                         }
                     }
-
-                    this.connectionManager.setVideoEnabled(
-                        currentState.captureVideo,
-                    );
-                    this.connectionManager.setAudioEnabled(
-                        currentState.captureAudio,
-                    );
-
-                    this.captureVideo = currentState.captureVideo;
-                    this.captureAudio = currentState.captureAudio;
-                } catch (error) {
-                    console.error('Video call error:', error);
                 }
+
+                this.connectionManager.setVideoEnabled(
+                    currentState.captureVideo,
+                );
+                this.connectionManager.setAudioEnabled(
+                    currentState.captureAudio,
+                );
             });
     }
 
@@ -96,12 +100,16 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
         this.rtcConnectionService.endCall();
     }
 
-    toggleVideo() {
-        this.storeService.toggleVideo();
+    toggleCaptureVideo(): void {
+        this.storeService.toggleCaptureVideo();
     }
 
-    toggleAudio() {
-        this.storeService.toggleAudio();
+    toggleCaptureAudio(): void {
+        this.storeService.toggleCaptureAudio();
+    }
+
+    minimizeCall(): void {
+        this.storeService.minimizeCall();
     }
 
     private disconnectVideoElements(): void {

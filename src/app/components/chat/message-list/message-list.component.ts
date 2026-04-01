@@ -12,14 +12,14 @@ import {
 } from '@angular/core';
 import { ApiService } from '../../../services/api.service';
 import { Store } from '@ngrx/store';
-import { selectSelectedChatId } from '../../../state/selected-chat/selected-chat-id.selectors';
+import { selectSelectedChatId } from '../../../state/selected-chat/selected-chat-info.selectors';
 import { selectMessages } from '../../../state/messages/messages.selector';
 import { StoreService } from '../../../services/store.service';
 import { Message } from '../../../models/message';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { IdGeneratorService } from '../../../services/id-generator.service';
 import { ProblemDetails } from '../../../api-client/api-client';
-import { MessageListStatus } from '../../../models/message-list-status';
+import { MessageFetchStatus } from '../../../models/message-fetch-status';
 
 @Component({
     selector: 'app-message-list',
@@ -51,7 +51,10 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit(): void {
         this.store
             .select(selectSelectedChatId)
-            .pipe(takeUntil(this.unsubscribe$))
+            .pipe(
+                filter((chatId) => !!chatId),
+                takeUntil(this.unsubscribe$),
+            )
             .subscribe(async (chatId) => {
                 this.chatId.set(chatId);
                 this.storeService.initMessages([]);
@@ -131,12 +134,12 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
             );
             if (isChatIdValid) {
                 this.isMessageListLoaded.set(true);
-                this.storeService.setSelectedChatMessageListStatus(
-                    MessageListStatus.Success,
+                this.storeService.setSelectedChatMessageFetchStatus(
+                    MessageFetchStatus.Success,
                 );
             } else {
-                this.storeService.setSelectedChatMessageListStatus(
-                    MessageListStatus.NotFound,
+                this.storeService.setSelectedChatMessageFetchStatus(
+                    MessageFetchStatus.NotFound,
                 );
             }
 
@@ -167,8 +170,8 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
                     lastMessageId,
                 );
                 this.isMessageListLoaded.set(true);
-                this.storeService.setSelectedChatMessageListStatus(
-                    MessageListStatus.Success,
+                this.storeService.setSelectedChatMessageFetchStatus(
+                    MessageFetchStatus.Success,
                 );
             }
             if (messageDtos.length === 0) {
@@ -178,12 +181,12 @@ export class MessageListComponent implements AfterViewInit, OnDestroy, OnInit {
             }
         } catch (e) {
             if (e instanceof ProblemDetails && e.status === 404) {
-                this.storeService.setSelectedChatMessageListStatus(
-                    MessageListStatus.NotFound,
+                this.storeService.setSelectedChatMessageFetchStatus(
+                    MessageFetchStatus.NotFound,
                 );
             } else {
-                this.storeService.setSelectedChatMessageListStatus(
-                    MessageListStatus.Error,
+                this.storeService.setSelectedChatMessageFetchStatus(
+                    MessageFetchStatus.Error,
                 );
             }
         }

@@ -1,37 +1,49 @@
 import { createReducer, on } from '@ngrx/store';
-import { VideoCallState } from '../../models/video-call-state';
+import { VideoCall } from '../../models/video-call';
 import { videoCallActions } from './video-call.actions';
 
-export const initialState: VideoCallState | null = null;
+export const initialState: VideoCall | null = null;
 
 export const videoCallReducer = createReducer(
     initialState,
     on(videoCallActions.initOutgoingCall, (_state, { chatId }) => ({
         chatId,
-        type: 'outgoing',
+        status: 'outgoing',
         captureVideo: true,
         captureAudio: true,
+        isMinimized: false,
     })),
-    on(videoCallActions.initIncomingCall, (_state, { callId, chatId, offer }) => ({
+    on(
+        videoCallActions.initIncomingCall,
+        (_state, { callId, chatId, offer }) => ({
+            callId,
+            chatId,
+            offer,
+            status: 'incoming-awaiting',
+            captureVideo: true,
+            captureAudio: true,
+            isMinimized: false,
+        }),
+    ),
+    on(videoCallActions.acceptIncomingCall, (state) => {
+        if (!state) return state;
+        return {
+            ...state,
+            status: 'incoming-active',
+        };
+    }),
+    on(videoCallActions.setCallId, (state, { callId }) => ({
+        ...state,
         callId,
-        chatId,
-        offer,
-        type: 'incoming',
-        captureVideo: true,
-        captureAudio: true,
     })),
-    on(videoCallActions.setCallId, (_state, { callId }) => ({
-        ..._state,
-        callId
-    })),
-    on(videoCallActions.toggleVideo, (state) => {
+    on(videoCallActions.toggleCaptureVideo, (state) => {
         if (!state) return state;
         return {
             ...state,
             captureVideo: !state.captureVideo,
         };
     }),
-    on(videoCallActions.toggleAudio, (state) => {
+    on(videoCallActions.toggleCaptureAudio, (state) => {
         if (!state) return state;
         return {
             ...state,
@@ -39,4 +51,18 @@ export const videoCallReducer = createReducer(
         };
     }),
     on(videoCallActions.reset, () => null),
+    on(videoCallActions.minimize, (state) => {
+        if (!state) return state;
+        return {
+            ...state,
+            isMinimized: true,
+        };
+    }),
+    on(videoCallActions.maximize, (state) => {
+        if (!state) return state;
+        return {
+            ...state,
+            isMinimized: false,
+        };
+    }),
 );

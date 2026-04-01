@@ -18,7 +18,7 @@ import {
     ILinkPreviewDto,
     IMessageDto,
 } from '../api-client/api-client';
-import { RtcSessionSettings } from '../models/rtc-sessions-settings';
+import { IncomingCall } from '../models/incoming-call';
 
 describe('SignalrService', () => {
     let service: SignalrService;
@@ -44,11 +44,11 @@ describe('SignalrService', () => {
         height: 100,
     } as IImagePreviewDto;
 
-    const mockRtcSessionSettings: RtcSessionSettings = {
+    const mockRtcSessionSettings: IncomingCall = {
         sessionId: 'session-123',
         offer: 'mock-offer-data',
         answer: 'mock-answer-data',
-    } as RtcSessionSettings;
+    } as IncomingCall;
 
     beforeEach(() => {
         // Create spies for HubConnection
@@ -273,7 +273,7 @@ describe('SignalrService', () => {
 
             const notificationHandler = vi.mocked(mockHubConnection.on).mock
                 .calls[0][1];
-            notificationHandler(mockRtcSessionSettings, 'RtcSessionOffer');
+            notificationHandler(mockRtcSessionSettings, 'IncomingCall');
 
             expect(rtcSessionOfferHandler).toHaveBeenCalledWith(
                 mockRtcSessionSettings,
@@ -291,7 +291,7 @@ describe('SignalrService', () => {
 
             const notificationHandler = vi.mocked(mockHubConnection.on).mock
                 .calls[0][1];
-            notificationHandler(mockRtcSessionSettings, 'RtcSessionAnswer');
+            notificationHandler(mockRtcSessionSettings, 'EstablishConnection');
 
             expect(rtcSessionAnswerHandler).toHaveBeenCalledWith(
                 mockRtcSessionSettings,
@@ -333,8 +333,8 @@ describe('SignalrService', () => {
                 MessageDto: null,
                 LinkPreviewDto: linkPreviewHandler,
                 ImagePreviewDto: imagePreviewHandler,
-                RtcSessionOffer: rtcSessionOfferHandler,
-                RtcSessionAnswer: rtcSessionAnswerHandler,
+                IncomingCall: rtcSessionOfferHandler,
+                EstablishConnection: rtcSessionAnswerHandler,
             };
 
             // This should not throw an error
@@ -726,8 +726,8 @@ describe('SignalrService', () => {
             await notificationHandler(mockMessageDto, 'MessageDto');
             notificationHandler(mockLinkPreviewDto, 'LinkPreviewDto');
             notificationHandler(mockImagePreviewDto, 'ImagePreviewDto');
-            notificationHandler(mockRtcSessionSettings, 'RtcSessionOffer');
-            notificationHandler(mockRtcSessionSettings, 'RtcSessionAnswer');
+            notificationHandler(mockRtcSessionSettings, 'IncomingCall');
+            notificationHandler(mockRtcSessionSettings, 'EstablishConnection');
 
             expect(messageHandler).toHaveBeenCalledWith(mockMessageDto);
             expect(linkPreviewHandler).toHaveBeenCalledWith(mockLinkPreviewDto);

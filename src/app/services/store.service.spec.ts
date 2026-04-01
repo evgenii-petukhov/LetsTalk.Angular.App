@@ -28,10 +28,9 @@ import {
 import { ImageCacheEntry } from '../models/image-cache-entry';
 import { accountsActions } from '../state/accounts/accounts.actions';
 import { messagesActions } from '../state/messages/messages.actions';
-import { selectedChatIdActions } from '../state/selected-chat/selected-chat-id.actions';
 import { videoCallActions } from '../state/video-call/video-call.actions';
-import { selectedChatUiActions } from '../state/selected-chat-ui/selected-chat-ui.actions';
 import { DownloadImageResponse } from '../protos/file_upload_pb';
+import { selectedChatInfoActions } from '../state/selected-chat/selected-chat-info.actions';
 
 describe('StoreService', () => {
     let service: StoreService;
@@ -453,7 +452,7 @@ describe('StoreService', () => {
             service.setSelectedChatId(chatId);
 
             expect(store.dispatch).toHaveBeenCalledWith(
-                selectedChatIdActions.init({ chatId }),
+                selectedChatInfoActions.init({ chatId }),
             );
         });
     });
@@ -494,35 +493,35 @@ describe('StoreService', () => {
         });
     });
 
-    describe('toggleVideo', () => {
-        it('should dispatch toggleVideo action', () => {
-            service.toggleVideo();
+    describe('toggleCaptureVideo', () => {
+        it('should dispatch toggleCaptureVideo action', () => {
+            service.toggleCaptureVideo();
 
             expect(store.dispatch).toHaveBeenCalledWith(
-                videoCallActions.toggleVideo(),
+                videoCallActions.toggleCaptureVideo(),
             );
         });
     });
 
-    describe('toggleAudio', () => {
-        it('should dispatch toggleAudio action', () => {
-            service.toggleAudio();
+    describe('toggleCaptureAudio', () => {
+        it('should dispatch toggleCaptureAudio action', () => {
+            service.toggleCaptureAudio();
 
             expect(store.dispatch).toHaveBeenCalledWith(
-                videoCallActions.toggleAudio(),
+                videoCallActions.toggleCaptureAudio(),
             );
         });
     });
 
-    describe('setSelectedChatMessageListStatus', () => {
-        it('should dispatch setMessageListStatus action', () => {
-            const messageListStatus = 'Success' as any; // Using 'as any' to avoid importing the enum
+    describe('setSelectedChatMessageFetchStatus', () => {
+        it('should dispatch setMessageFetchStatus action', () => {
+            const status = 'Success' as any; // Using 'as any' to avoid importing the enum
 
-            service.setSelectedChatMessageListStatus(messageListStatus);
+            service.setSelectedChatMessageFetchStatus(status);
 
             expect(store.dispatch).toHaveBeenCalledWith(
-                selectedChatUiActions.setMessageListStatus({
-                    messageListStatus,
+                selectedChatInfoActions.setMessageFetchStatus({
+                    status,
                 }),
             );
         });

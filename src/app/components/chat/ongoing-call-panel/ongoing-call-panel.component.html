@@ -1,0 +1,16 @@
+<fa-icon [icon]="faPhoneVolume"></fa-icon>
+<app-user-details [value]="chat()?.chatName"></app-user-details>
+@if (isAwaitingResponseButtonVisible()) {
+    <app-call-button [mode]="'accept-call'" text="Accept" class="accept"
+        (click)="onAcceptClicked($event)"></app-call-button>
+    <app-call-button [mode]="'end-call'" text="Decline" class="decline"
+        (click)="onDeclineClicked($event)"></app-call-button>
+}
+@if (isCallControlSetVisible()) {
+    <app-media-toggle-button [isMuted]="!captureVideo()" [mode]="'video'"
+        (buttonClick)="toggleCaptureVideo($event)"></app-media-toggle-button>
+    <app-media-toggle-button [isMuted]="!captureAudio()" [mode]="'audio'"
+        (buttonClick)="toggleCaptureAudio($event)"></app-media-toggle-button>
+    <app-call-button [mode]="'end-call'" (buttonClick)="endCall($event)"></app-call-button>
+    <video #remoteVideo class="remote-video" autoplay playsinline></video>
+}

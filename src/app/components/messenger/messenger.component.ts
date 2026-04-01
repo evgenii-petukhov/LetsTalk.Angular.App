@@ -22,12 +22,18 @@ import {
     Subject,
     takeUntil,
 } from 'rxjs';
-import { selectSelectedChat } from '../../state/selected-chat/selected-chat.selector';
+import {
+    selectIsOngoingCallPanelVisible,
+    selectSelectedChat,
+} from '../../state/selected-chat/selected-chat.selector';
 import { selectChats } from '../../state/chats/chats.selector';
 import { SignalrHandlerService } from '../../services/signalr-handler.service';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { IdGeneratorService } from '../../services/id-generator.service';
-import { RtcSessionSettings } from '../../models/rtc-sessions-settings';
+import { IncomingCall } from '../../models/incoming-call';
+import { EstablishConnection } from '../../models/establish-connection';
+import { RtcConnectionService } from '../../services/rtc-connection.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-messenger',
@@ -49,12 +55,17 @@ export class MessengerComponent implements OnInit, OnDestroy {
     private readonly activatedRoute = inject(ActivatedRoute);
     private readonly router = inject(Router);
     private readonly idGeneratorService = inject(IdGeneratorService);
+    private readonly rtcConnectionService = inject(RtcConnectionService);
 
     @HostListener('document:visibilitychange', ['$event'])
     onVisibilityChange(event: Event): void {
         this.isWindowActive = !(event.target as Document).hidden;
         this.storeService.markAllAsRead(this.selectedChat);
     }
+
+    isOngoingCallPanelVisible = toSignal(
+        this.store.select(selectIsOngoingCallPanelVisible),
+    );
 
     async ngOnInit(): Promise<void> {
         await this.storeService.initChatStorage();
@@ -94,8 +105,8 @@ export class MessengerComponent implements OnInit, OnDestroy {
             this.handleMessageNotification.bind(this),
             this.handleLinkPreviewNotification.bind(this),
             this.handleImagePreviewNotification.bind(this),
-            this.handleRtcSessionOfferNotification.bind(this),
-            this.handleRtcSessionAnswerNotification.bind(this),
+            this.handleIncomingCallNotification.bind(this),
+            this.handleEstablishConnectionNotification.bind(this),
         );
     }
 
@@ -128,22 +139,16 @@ export class MessengerComponent implements OnInit, OnDestroy {
         );
     }
 
-    async handleRtcSessionOfferNotification(
-        sessionSettings: RtcSessionSettings,
-    ): Promise<void> {
-        this.signalrHandlerService.handleRtcSessionOfferNotification(
+    async handleIncomingCallNotification(data: IncomingCall): Promise<void> {
+        this.signalrHandlerService.handleIncomingCallNotification(
             this.chats,
-            sessionSettings.callId,
-            sessionSettings.chatId,
-            sessionSettings.offer,
+            data.callId,
+            data.chatId,
+            data.offer,
         );
     }
 
-    handleRtcSessionAnswerNotification(
-        sessionSettings: RtcSessionSettings,
-    ): void {
-        this.signalrHandlerService.handleRtcSessionAnswerNotification(
-            sessionSettings.answer,
-        );
+    handleEstablishConnectionNotification(data: EstablishConnection): void {
+        this.rtcConnectionService.establishConnection(data.answer);
     }
 }

@@ -5,8 +5,18 @@
         flex: 1;
         border: none;
         background: rgb(248, 248, 248);
-        border-radius: 50%;
+        border-radius: 50vh;
         box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.35);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 4px;
+        font-size: 14px;
+
+        &.accept-call {
+            background: #44b351;
+            color: white;
+        }
 
         &.end-call {
             background: red;
@@ -15,6 +25,10 @@
             ::ng-deep svg {
                 transform: rotate(135deg);
             }
+        }
+
+        fa-icon {
+            font-size: 16px;
         }
     }
 }

@@ -13,7 +13,7 @@ import { errorMessages } from '../../constants/errors';
 import { ErrorService } from '../../services/error.service';
 import { StoreService } from '../../services/store.service';
 import { Location } from '@angular/common';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 
 @Component({
     selector: 'app-image-viewer',
@@ -45,10 +45,8 @@ export class ImageViewerComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.route.params
-            .pipe(takeUntil(this.unsubscribe$))
+            .pipe(filter(params => params && params['imageKey']), takeUntil(this.unsubscribe$))
             .subscribe(async (params) => {
-                if (!params || !params['imageKey']) return;
-
                 const [id, fileStorageTypeId] = params['imageKey'].split('_');
                 this.imageKey = {
                     id,

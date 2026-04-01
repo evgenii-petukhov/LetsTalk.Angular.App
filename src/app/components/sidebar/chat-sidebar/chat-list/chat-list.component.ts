@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { IChatDto } from '../../../../api-client/api-client';
-import { selectSelectedChatId } from '../../../../state/selected-chat/selected-chat-id.selectors';
+import { selectSelectedChatId } from '../../../../state/selected-chat/selected-chat-info.selectors';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { selectChats } from '../../../../state/chats/chats.selector';
 
