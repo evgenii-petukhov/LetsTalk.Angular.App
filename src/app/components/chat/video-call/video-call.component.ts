@@ -113,7 +113,10 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
     }
 
     switchCamera(): Promise<void> {
-        return this.connectionManager.switchCamera();
+        return this.connectionManager.switchCamera(
+            this.localVideo.nativeElement,
+            this.remoteVideo.nativeElement,
+        );
     }
 
     private disconnectVideoElements(): void {

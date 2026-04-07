@@ -103,11 +103,19 @@ export class RtcPeerConnectionManager {
     async startMediaCapture(
         localVideo: HTMLVideoElement,
         remoteVideo: HTMLVideoElement,
+        facingMode: ConstrainDOMString = 'user',
     ): Promise<void> {
         for (const constraints of mediaStreamConstraintFallbacks) {
             try {
+                const videoConstraint =
+                    typeof constraints.video === 'object'
+                        ? { ...constraints.video, facingMode }
+                        : { facingMode };
                 this.localMediaStream =
-                    await navigator.mediaDevices.getUserMedia(constraints);
+                    await navigator.mediaDevices.getUserMedia({
+                        ...constraints,
+                        video: videoConstraint,
+                    });
                 this.connectLocalVideo(localVideo);
                 this.localMediaStream
                     .getTracks()
@@ -158,13 +166,15 @@ export class RtcPeerConnectionManager {
         }
     }
 
+    stopMediaCapture() {
+        if (this.localMediaStream) {
+            this.localMediaStream.getTracks().forEach((track) => track.stop());
+        }
+    }
+
     reinitialize(): void {
         if (this.connection) {
-            if (this.localMediaStream) {
-                this.localMediaStream
-                    .getTracks()
-                    .forEach((track) => track.stop());
-            }
+            this.stopMediaCapture();
             this.connection.close();
             this.connection = new RTCPeerConnection();
             this.connection.onicecandidate =
@@ -185,34 +195,12 @@ export class RtcPeerConnectionManager {
         );
     }
 
-    async switchCamera(): Promise<void> {
-        if (!this.localMediaStream) return;
-
-        const videoTrack = this.localMediaStream.getVideoTracks()[0];
-        if (!videoTrack) return;
-
-        const settings = videoTrack.getSettings();
-        const nextFacingMode =
-            settings.facingMode === 'user' ? 'environment' : 'user';
-
-        const newStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: { exact: nextFacingMode } },
-            audio: false,
-        });
-
-        const newVideoTrack = newStream.getVideoTracks()[0];
-
-        const sender = this.connection
-            .getSenders()
-            .find((s) => s.track?.kind === 'video');
-
-        if (sender) {
-            await sender.replaceTrack(newVideoTrack);
-        }
-
-        this.localMediaStream.removeTrack(videoTrack);
-        this.localMediaStream.addTrack(newVideoTrack);
-        videoTrack.stop();
+    async switchCamera(
+        localVideo: HTMLVideoElement,
+        remoteVideo: HTMLVideoElement,
+    ): Promise<void> {
+        this.stopMediaCapture();
+        this.startMediaCapture(localVideo, remoteVideo, 'environment');
     }
 
     private connectLocalVideo(localVideo: HTMLVideoElement): void {
