@@ -9,6 +9,7 @@
             (buttonClick)="toggleCaptureVideo()"></app-media-toggle-button>
         <app-media-toggle-button [isMuted]="!captureAudio()" [mode]="'audio'"
             (buttonClick)="toggleCaptureAudio()"></app-media-toggle-button>
+        <app-camera-rotate-button (buttonClick)="switchCamera()"></app-camera-rotate-button>
         <app-call-button [mode]="'end-call'" (buttonClick)="endCall()"></app-call-button>
     </div>
 </div>

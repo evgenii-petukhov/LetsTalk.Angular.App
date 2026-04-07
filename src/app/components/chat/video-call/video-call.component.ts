@@ -112,6 +112,10 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
         this.storeService.minimizeCall();
     }
 
+    switchCamera(): Promise<void> {
+        return this.connectionManager.switchCamera();
+    }
+
     private disconnectVideoElements(): void {
         this.localVideo.nativeElement.srcObject = null;
         this.remoteVideo.nativeElement.srcObject = null;

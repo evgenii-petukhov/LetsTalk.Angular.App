@@ -128,8 +128,8 @@ export class RtcPeerConnectionManager {
     }
 
     reconnectVideoElements(elements: {
-        local?: HTMLVideoElement,
-        remote?: HTMLVideoElement,
+        local?: HTMLVideoElement;
+        remote?: HTMLVideoElement;
     }): void {
         if (elements.local) {
             this.connectLocalVideo(elements.local);
@@ -183,6 +183,36 @@ export class RtcPeerConnectionManager {
         return this.rtcConnectionDiagnosticsService.gatherConnectionDiagnostics(
             this.connection,
         );
+    }
+
+    async switchCamera(): Promise<void> {
+        if (!this.localMediaStream) return;
+
+        const videoTrack = this.localMediaStream.getVideoTracks()[0];
+        if (!videoTrack) return;
+
+        const settings = videoTrack.getSettings();
+        const nextFacingMode =
+            settings.facingMode === 'user' ? 'environment' : 'user';
+
+        const newStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { exact: nextFacingMode } },
+            audio: false,
+        });
+
+        const newVideoTrack = newStream.getVideoTracks()[0];
+
+        const sender = this.connection
+            .getSenders()
+            .find((s) => s.track?.kind === 'video');
+
+        if (sender) {
+            await sender.replaceTrack(newVideoTrack);
+        }
+
+        this.localMediaStream.removeTrack(videoTrack);
+        this.localMediaStream.addTrack(newVideoTrack);
+        videoTrack.stop();
     }
 
     private connectLocalVideo(localVideo: HTMLVideoElement): void {
