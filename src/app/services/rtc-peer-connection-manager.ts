@@ -127,6 +127,15 @@ export class RtcPeerConnectionManager {
                     this.connectRemoteVideo(remoteVideo);
                 };
                 this.isMediaCaptured = true;
+
+                if (facingMode === 'environment') {
+                    const newVideoTrack = this.localMediaStream.getVideoTracks()[0];
+                    const sender = this.connection
+                        .getSenders()
+                        .find((s) => s.track?.kind === 'video');
+                    if (sender) await sender.replaceTrack(newVideoTrack);
+                }
+
                 return;
             } catch (error) {
                 this.onConnectionError?.(undefined, error);
@@ -200,6 +209,10 @@ export class RtcPeerConnectionManager {
         remoteVideo: HTMLVideoElement,
     ): Promise<void> {
         this.stopMediaCapture();
+
+        const oldVideoTrack = this.localMediaStream.getVideoTracks()[0];
+        oldVideoTrack.stop();
+
         this.startMediaCapture(localVideo, remoteVideo, 'environment');
     }
 
