@@ -211,7 +211,10 @@ export class RtcPeerConnectionManager {
 
     private connectLocalVideo(localVideo: HTMLVideoElement): void {
         if (this.localMediaStream && localVideo) {
-            localVideo.srcObject = this.localMediaStream;
+            const videoOnlyStream = new MediaStream(
+                this.localMediaStream.getVideoTracks(),
+            );
+            localVideo.srcObject = videoOnlyStream;
         }
     }
 
