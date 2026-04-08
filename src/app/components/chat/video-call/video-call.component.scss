@@ -71,7 +71,8 @@
             align-items: center;
 
             app-call-button,
-            app-media-toggle-button {
+            app-media-toggle-button,
+            app-camera-rotate-button {
                 @include avatar-styles(42px, 54px);
 
                 @include media-breakpoint-down(sm) {
