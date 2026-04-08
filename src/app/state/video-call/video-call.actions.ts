@@ -12,5 +12,6 @@ export const videoCallActions = createActionGroup({
         reset: emptyProps(),
         minimize: emptyProps(),
         maximize: emptyProps(),
+        toggleFacingMode: emptyProps(),
     },
 });

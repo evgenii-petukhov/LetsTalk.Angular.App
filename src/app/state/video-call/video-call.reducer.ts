@@ -12,6 +12,7 @@ export const videoCallReducer = createReducer(
         captureVideo: true,
         captureAudio: true,
         isMinimized: false,
+        facingMode: 'user',
     })),
     on(
         videoCallActions.initIncomingCall,
@@ -23,6 +24,7 @@ export const videoCallReducer = createReducer(
             captureVideo: true,
             captureAudio: true,
             isMinimized: false,
+            facingMode: 'user',
         }),
     ),
     on(videoCallActions.acceptIncomingCall, (state) => {
@@ -63,6 +65,13 @@ export const videoCallReducer = createReducer(
         return {
             ...state,
             isMinimized: false,
+        };
+    }),
+    on(videoCallActions.toggleFacingMode, (state) => {
+        if (!state) return state;
+        return {
+            ...state,
+            facingMode: state.facingMode === 'user' ? 'environment' : 'user',
         };
     }),
 );

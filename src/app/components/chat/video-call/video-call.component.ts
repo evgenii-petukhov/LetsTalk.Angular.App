@@ -14,9 +14,11 @@ import { StoreService } from '../../../services/store.service';
 import {
     selectCaptureAudio,
     selectCaptureVideo,
+    selectFacingMode,
     selectVideoCall,
 } from '../../../state/video-call/video-call.selectors';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { VideoCall } from 'src/app/models/video-call';
 
 @Component({
     selector: 'app-video-call',
@@ -35,6 +37,9 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
     private readonly rtcConnectionService = inject(RtcConnectionService);
     private readonly connectionManager = inject(RtcPeerConnectionManager);
     private readonly storeService = inject(StoreService);
+    private facingMode = toSignal<VideoCall['facingMode']>(
+        this.store.select(selectFacingMode),
+    );
 
     captureVideo = toSignal(this.store.select(selectCaptureVideo));
     captureAudio = toSignal(this.store.select(selectCaptureAudio));
@@ -62,6 +67,7 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
                             await this.connectionManager.startMediaCapture(
                                 this.localVideo.nativeElement,
                                 this.remoteVideo.nativeElement,
+                                currentState.facingMode,
                             );
                             if (currentState.status === 'incoming-active') {
                                 await this.rtcConnectionService.handleIncomingCall(
@@ -113,9 +119,11 @@ export class VideoCallComponent implements OnDestroy, AfterViewInit {
     }
 
     switchCamera(): Promise<void> {
+        this.storeService.toggleFacingMode();
         return this.connectionManager.switchCamera(
             this.localVideo.nativeElement,
             this.remoteVideo.nativeElement,
+            this.facingMode(),
         );
     }
 

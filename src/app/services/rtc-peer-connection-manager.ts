@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
 import { mediaStreamConstraintFallbacks } from './media-stream-constraint-fallbacks';
 import { RtcConnectionDiagnosticsService } from './rtc-connection-diagnostics.service';
+import { VideoCall } from '../models/video-call';
 
 @Injectable({
     providedIn: 'root',
@@ -103,7 +104,7 @@ export class RtcPeerConnectionManager {
     async startMediaCapture(
         localVideo: HTMLVideoElement,
         remoteVideo: HTMLVideoElement,
-        facingMode: ConstrainDOMString = 'user',
+        facingMode: VideoCall['facingMode'],
     ): Promise<void> {
         for (const constraints of mediaStreamConstraintFallbacks) {
             try {
@@ -198,9 +199,10 @@ export class RtcPeerConnectionManager {
     async switchCamera(
         localVideo: HTMLVideoElement,
         remoteVideo: HTMLVideoElement,
+        facingMode: VideoCall['facingMode'],
     ): Promise<void> {
         this.stopMediaCapture();
-        await this.startMediaCapture(localVideo, remoteVideo, 'environment');
+        await this.startMediaCapture(localVideo, remoteVideo, facingMode);
 
         const newVideoTrack = this.localMediaStream.getVideoTracks()[0];
         const sender = this.connection
