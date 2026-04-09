@@ -1,7 +1,10 @@
 export const mediaStreamConstraintFallbacks: MediaStreamConstraints[] = [
+    // HD 720p — best quality
     {
         video: {
-            frameRate: { max: 30 },
+            width: { ideal: 1280, max: 1280 },
+            height: { ideal: 720, max: 720 },
+            frameRate: { ideal: 30, max: 30 },
         },
         audio: {
             echoCancellation: true,
@@ -16,7 +19,7 @@ export const mediaStreamConstraintFallbacks: MediaStreamConstraints[] = [
         video: {
             width: { ideal: 960, max: 960 },
             height: { ideal: 540, max: 540 },
-            frameRate: { max: 30 },
+            frameRate: { ideal: 30, max: 30 },
         },
         audio: {
             echoCancellation: true,
@@ -31,7 +34,7 @@ export const mediaStreamConstraintFallbacks: MediaStreamConstraints[] = [
         video: {
             width: { ideal: 640, max: 640 },
             height: { ideal: 480, max: 480 },
-            frameRate: { max: 30 },
+            frameRate: { ideal: 30, max: 30 },
         },
         audio: {
             echoCancellation: true,
@@ -46,7 +49,7 @@ export const mediaStreamConstraintFallbacks: MediaStreamConstraints[] = [
         video: {
             width: { ideal: 640 },
             height: { ideal: 480 },
-            frameRate: { max: 30 },
+            frameRate: { ideal: 15, max: 30 },
         },
         audio: {
             echoCancellation: true,
