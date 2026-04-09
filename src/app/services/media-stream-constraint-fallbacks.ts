@@ -1,4 +1,16 @@
 export const mediaStreamConstraintFallbacks: MediaStreamConstraints[] = [
+    {
+        video: {
+            frameRate: { max: 30 },
+        },
+        audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+            sampleRate: { ideal: 44100 },
+            channelCount: { ideal: 1 },
+        },
+    },
     // Standard enhanced
     {
         video: {
