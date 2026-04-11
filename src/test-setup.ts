@@ -32,6 +32,22 @@ Object.defineProperty(navigator, 'mediaDevices', {
     writable: true,
 });
 
+// Mock MediaStream
+Object.defineProperty(window, 'MediaStream', {
+    value: class MockMediaStream {
+        private tracks: MediaStreamTrack[];
+        constructor(tracks?: MediaStreamTrack[]) {
+            this.tracks = tracks ?? [];
+        }
+        getTracks = vi.fn(() => this.tracks);
+        getVideoTracks = vi.fn(() => this.tracks.filter((t) => t.kind === 'video'));
+        getAudioTracks = vi.fn(() => this.tracks.filter((t) => t.kind === 'audio'));
+        addTrack = vi.fn();
+        removeTrack = vi.fn();
+    },
+    writable: true,
+});
+
 // Enhanced RTCPeerConnection mock for better test compatibility
 Object.defineProperty(window, 'RTCPeerConnection', {
     value: class MockRTCPeerConnection {

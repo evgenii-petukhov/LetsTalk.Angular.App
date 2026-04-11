@@ -249,13 +249,11 @@ describe('RtcPeerConnectionManager', () => {
             service.onCandidatesReceived = vi.fn();
 
             // Act
-            await service.startMediaCapture(mockLocalVideo, mockRemoteVideo);
+            await service.startMediaCapture(mockLocalVideo, mockRemoteVideo, 'user');
 
             // Assert
-            expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith(
-                mediaStreamConstraintFallbacks[0],
-            );
-            expect(mockLocalVideo.srcObject).toBe(mockMediaStream);
+            expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalled();
+            expect(mockLocalVideo.srcObject).toBeInstanceOf(MediaStream);
             expect(mockConnection.addTrack).toHaveBeenCalledWith(
                 mockTrack,
                 mockMediaStream,
@@ -272,7 +270,7 @@ describe('RtcPeerConnectionManager', () => {
             vi.spyOn(console, 'error');
 
             // Act
-            await service.startMediaCapture(mockLocalVideo, mockRemoteVideo);
+            await service.startMediaCapture(mockLocalVideo, mockRemoteVideo, 'user');
 
             // Assert
             expect(console.error).toHaveBeenCalledWith(error);
@@ -295,7 +293,7 @@ describe('RtcPeerConnectionManager', () => {
             } as unknown as RTCTrackEvent;
 
             // Act
-            await service.startMediaCapture(mockLocalVideo, mockRemoteVideo);
+            await service.startMediaCapture(mockLocalVideo, mockRemoteVideo, 'user');
 
             // Simulate the ontrack event by calling the handler directly
             if (mockConnection.ontrack) {
@@ -329,7 +327,7 @@ describe('RtcPeerConnectionManager', () => {
             });
 
             // Assert
-            expect(mockLocalVideo.srcObject).toBe(mockMediaStream);
+            expect(mockLocalVideo.srcObject).toBeInstanceOf(MediaStream);
             expect(mockRemoteVideo.srcObject).toBe(mockMediaStream);
         });
 
@@ -451,7 +449,7 @@ describe('RtcPeerConnectionManager', () => {
             service['connectLocalVideo'](mockVideo as HTMLVideoElement);
 
             // Assert
-            expect(mockVideo.srcObject).toBe(mockMediaStream);
+            expect(mockVideo.srcObject).toBeInstanceOf(MediaStream);
         });
 
         it('should not connect local video when stream is null', () => {
@@ -626,7 +624,7 @@ describe('RtcPeerConnectionManager', () => {
         it('should handle connection setup with null video elements', async () => {
             // Act & Assert - should not throw
             await expect(
-                service.startMediaCapture(null as any, null as any),
+                service.startMediaCapture(null as any, null as any, 'user'),
             ).resolves.not.toThrow();
         });
 

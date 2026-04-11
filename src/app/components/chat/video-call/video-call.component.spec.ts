@@ -39,6 +39,7 @@ describe('VideoCallComponent', () => {
         captureVideo: true,
         captureAudio: true,
         isMinimized: false,
+        facingMode: 'user',
     };
 
     const mockIncomingVideoCallState: VideoCall = {
@@ -49,6 +50,7 @@ describe('VideoCallComponent', () => {
         captureVideo: false,
         captureAudio: true,
         isMinimized: false,
+        facingMode: 'user',
     };
 
     beforeEach(async () => {
@@ -255,7 +257,7 @@ describe('VideoCallComponent', () => {
             ).toHaveBeenCalledTimes(1);
             const callArgs = vi.mocked(mockConnectionManager.startMediaCapture)
                 .mock.calls[0];
-            expect(callArgs.length).toBe(2);
+            expect(callArgs.length).toBe(3);
             expect(callArgs[0]).toBeInstanceOf(HTMLVideoElement);
             expect(callArgs[1]).toBeInstanceOf(HTMLVideoElement);
             expect(callArgs[0].className).toContain('local-video');
@@ -285,7 +287,7 @@ describe('VideoCallComponent', () => {
             ).toHaveBeenCalledTimes(1);
             const callArgs = vi.mocked(mockConnectionManager.startMediaCapture)
                 .mock.calls[0];
-            expect(callArgs.length).toBe(2);
+            expect(callArgs.length).toBe(3);
             expect(callArgs[0]).toBeInstanceOf(HTMLVideoElement);
             expect(callArgs[1]).toBeInstanceOf(HTMLVideoElement);
             expect(callArgs[0].className).toContain('local-video');
