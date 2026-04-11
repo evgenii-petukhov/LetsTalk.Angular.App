@@ -493,6 +493,28 @@ describe('StoreService', () => {
         });
     });
 
+    describe('acceptIncomingCall', () => {
+        it('should dispatch acceptIncomingCall action', () => {
+            service.acceptIncomingCall();
+
+            expect(store.dispatch).toHaveBeenCalledWith(
+                videoCallActions.acceptIncomingCall(),
+            );
+        });
+    });
+
+    describe('setCallId', () => {
+        it('should dispatch setCallId action', () => {
+            const callId = 'call-123';
+
+            service.setCallId(callId);
+
+            expect(store.dispatch).toHaveBeenCalledWith(
+                videoCallActions.setCallId({ callId }),
+            );
+        });
+    });
+
     describe('toggleCaptureVideo', () => {
         it('should dispatch toggleCaptureVideo action', () => {
             service.toggleCaptureVideo();
@@ -509,6 +531,36 @@ describe('StoreService', () => {
 
             expect(store.dispatch).toHaveBeenCalledWith(
                 videoCallActions.toggleCaptureAudio(),
+            );
+        });
+    });
+
+    describe('minimizeCall', () => {
+        it('should dispatch minimize action', () => {
+            service.minimizeCall();
+
+            expect(store.dispatch).toHaveBeenCalledWith(
+                videoCallActions.minimize(),
+            );
+        });
+    });
+
+    describe('maximizeCall', () => {
+        it('should dispatch maximize action', () => {
+            service.maximizeCall();
+
+            expect(store.dispatch).toHaveBeenCalledWith(
+                videoCallActions.maximize(),
+            );
+        });
+    });
+
+    describe('toggleFacingMode', () => {
+        it('should dispatch toggleFacingMode action', () => {
+            service.toggleFacingMode();
+
+            expect(store.dispatch).toHaveBeenCalledWith(
+                videoCallActions.toggleFacingMode(),
             );
         });
     });
