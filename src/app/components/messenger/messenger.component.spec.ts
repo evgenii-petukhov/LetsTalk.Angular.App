@@ -27,6 +27,8 @@ import { CommonModule } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { RtcConnectionService } from '../../services/rtc-connection.service';
+import { IncomingCall } from '../../models/incoming-call';
+import { EstablishConnection } from '../../models/establish-connection';
 
 describe('MessengerComponent', () => {
     let component: MessengerComponent;
@@ -56,6 +58,11 @@ describe('MessengerComponent', () => {
                 .fn()
                 .mockName(
                     'SignalrHandlerService.handleImagePreviewNotification',
+                ),
+            handleIncomingCallNotification: vi
+                .fn()
+                .mockName(
+                    'SignalrHandlerService.handleIncomingCallNotification',
                 ),
         } as MockedObject<SignalrHandlerService>;
 
@@ -207,5 +214,66 @@ describe('MessengerComponent', () => {
         expect(
             signalrHandlerService.handleImagePreviewNotification,
         ).toHaveBeenCalledWith(imagePreviewDto, undefined);
+    });
+
+    it('should handle incoming call notification', async () => {
+        // Arrange
+        const incomingCall: IncomingCall = {
+            callId: 'call-1',
+            chatId: 'chat-1',
+            offer: 'sdp-offer',
+        };
+        component['chats'] = [{ id: 'chat-1' } as IChatDto];
+
+        // Act
+        await component.handleIncomingCallNotification(incomingCall);
+
+        // Assert
+        expect(
+            signalrHandlerService.handleIncomingCallNotification,
+        ).toHaveBeenCalledTimes(1);
+        expect(
+            signalrHandlerService.handleIncomingCallNotification,
+        ).toHaveBeenCalledWith(
+            component['chats'],
+            incomingCall.callId,
+            incomingCall.chatId,
+            incomingCall.offer,
+        );
+    });
+
+    it('should handle establish connection notification', () => {
+        // Arrange
+        const establishConnection: EstablishConnection = { answer: 'sdp-answer' };
+
+        // Act
+        component.handleEstablishConnectionNotification(establishConnection);
+
+        // Assert
+        expect(rtcConnectionService.establishConnection).toHaveBeenCalledTimes(1);
+        expect(rtcConnectionService.establishConnection).toHaveBeenCalledWith(
+            establishConnection.answer,
+        );
+    });
+
+    it('should show sidebar when no chat id in route params', async () => {
+        // Act
+        await component.ngOnInit();
+
+        // Assert
+        expect(component.isSidebarShown()).toBe(true);
+    });
+
+    it('should unsubscribe on ngOnDestroy', () => {
+        // Arrange
+        const nextSpy = vi.spyOn(component['unsubscribe$'], 'next');
+        const completeSpy = vi.spyOn(component['unsubscribe$'], 'complete');
+
+        // Act
+        component.ngOnDestroy();
+
+        // Assert
+        expect(nextSpy).toHaveBeenCalledTimes(1);
+        expect(completeSpy).toHaveBeenCalledTimes(1);
     });
 });
