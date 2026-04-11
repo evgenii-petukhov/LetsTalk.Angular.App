@@ -575,7 +575,7 @@ describe('VideoCallComponent', () => {
             vi.spyOn(component, 'minimizeCall');
 
             const minimizeButton = fixture.nativeElement.querySelector(
-                'app-minimize-button',
+                'app-icon-button',
             );
             minimizeButton.dispatchEvent(new Event('buttonClick'));
 

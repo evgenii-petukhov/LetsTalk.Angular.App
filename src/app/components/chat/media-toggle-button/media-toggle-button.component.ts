@@ -13,10 +13,10 @@ import {
     standalone: false,
 })
 export class MediaToggleButtonComponent {
-    faMicrophoneSlash = faMicrophoneSlash;
-    faMicrophone = faMicrophone;
-    faVideoSlash = faVideoSlash;
-    faVideo = faVideo;
+    private faMicrophoneSlash = faMicrophoneSlash;
+    private faMicrophone = faMicrophone;
+    private faVideoSlash = faVideoSlash;
+    private faVideo = faVideo;
 
     @Input() mode: 'audio' | 'video' = 'audio';
     @Input() isMuted = false;
