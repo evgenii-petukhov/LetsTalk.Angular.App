@@ -17,6 +17,8 @@ import {
     GenerateLoginCodeRequest,
     StartOutgoingCallRequest,
     HandleIncomingCallRequest,
+    LogConnectionEstablishedRequest,
+    LogRtcErrorRequest,
     LoginResponseDto,
     ChatDto,
     AccountDto,
@@ -24,6 +26,8 @@ import {
     ProfileDto,
     GenerateLoginCodeResponseDto,
     CallSettingsDto,
+    StartOutgoingCallDto,
+    RtcErrorType,
 } from '../api-client/api-client';
 import { UploadImageResponse } from '../protos/file_upload_pb';
 import { of } from 'rxjs';
@@ -68,6 +72,10 @@ describe('ApiService', () => {
             handleIncomingCall: vi
                 .fn()
                 .mockName('ApiClient.handleIncomingCall'),
+            logConnectionEstablished: vi
+                .fn()
+                .mockName('ApiClient.logConnectionEstablished'),
+            logRtcError: vi.fn().mockName('ApiClient.logRtcError'),
             callSettings: vi.fn().mockName('ApiClient.callSettings'),
         } as MockedObject<ApiClient>;
 
@@ -235,26 +243,41 @@ describe('ApiService', () => {
 
     it('should start outgoing call', async () => {
         // Arrange
-        apiClient.startOutgoingCall.mockReturnValue(of(undefined));
+        const mockResponse = new StartOutgoingCallDto();
+        const mockDiagnostics: ConnectionDiagnostics = {
+            connectionState: 'connected',
+            localCandidateTypes: { host: 1 },
+            remoteCandidateTypes: { srflx: 2 },
+            browser: 'Chrome',
+            platform: 'Win32',
+        };
+        apiClient.startOutgoingCall.mockReturnValue(of(mockResponse));
 
         // Act
         const result = await service.startOutgoingCall(
             'chatId',
             'offer-sdp',
-            {} as ConnectionDiagnostics,
-            0,
+            1500,
             true,
+            mockDiagnostics,
         );
 
         // Assert
         expect(apiClient.startOutgoingCall).toHaveBeenCalledWith(
             expect.any(StartOutgoingCallRequest),
         );
-        expect(result).toBeUndefined();
+        expect(result).toEqual(mockResponse);
     });
 
     it('should handle incoming call', async () => {
         // Arrange
+        const mockDiagnostics: ConnectionDiagnostics = {
+            connectionState: 'connected',
+            localCandidateTypes: { host: 1 },
+            remoteCandidateTypes: { srflx: 2 },
+            browser: 'Chrome',
+            platform: 'Win32',
+        };
         apiClient.handleIncomingCall.mockReturnValue(of(undefined));
 
         // Act
@@ -262,14 +285,68 @@ describe('ApiService', () => {
             'callId',
             'chatId',
             'answer-sdp',
-            {} as ConnectionDiagnostics,
-            0,
+            1500,
             true,
+            mockDiagnostics,
         );
 
         // Assert
         expect(apiClient.handleIncomingCall).toHaveBeenCalledWith(
             expect.any(HandleIncomingCallRequest),
+        );
+        expect(result).toBeUndefined();
+    });
+
+    it('should log connection established', async () => {
+        // Arrange
+        const mockDiagnostics: ConnectionDiagnostics = {
+            connectionState: 'connected',
+            localCandidateTypes: { host: 1 },
+            remoteCandidateTypes: { srflx: 2 },
+            browser: 'Chrome',
+            platform: 'Win32',
+        };
+        apiClient.logConnectionEstablished.mockReturnValue(of(undefined));
+
+        // Act
+        const result = await service.logConnectionEstablished(
+            'callId',
+            'chatId',
+            mockDiagnostics,
+        );
+
+        // Assert
+        expect(apiClient.logConnectionEstablished).toHaveBeenCalledWith(
+            expect.any(LogConnectionEstablishedRequest),
+        );
+        expect(result).toBeUndefined();
+    });
+
+    it('should log WebRTC error', async () => {
+        // Arrange
+        const mockDiagnostics: ConnectionDiagnostics = {
+            connectionState: 'failed',
+            localCandidateTypes: { host: 1 },
+            remoteCandidateTypes: {},
+            browser: 'Chrome',
+            platform: 'Win32',
+        };
+        const mockError = new Error('ICE failed');
+        apiClient.logRtcError.mockReturnValue(of(undefined));
+
+        // Act
+        const result = await service.logWebRtcError(
+            'callId',
+            'chatId',
+            mockDiagnostics,
+            RtcErrorType.IceServer,
+            mockError,
+            mockError.stack,
+        );
+
+        // Assert
+        expect(apiClient.logRtcError).toHaveBeenCalledWith(
+            expect.any(LogRtcErrorRequest),
         );
         expect(result).toBeUndefined();
     });
