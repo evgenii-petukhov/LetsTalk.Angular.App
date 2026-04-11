@@ -20,6 +20,7 @@ import { VideoCall } from '../../../models/video-call';
 import {
     selectCaptureAudio,
     selectCaptureVideo,
+    selectFacingMode,
     selectVideoCall,
 } from '../../../state/video-call/video-call.selectors';
 
@@ -70,6 +71,9 @@ describe('VideoCallComponent', () => {
                     if (selector === selectCaptureAudio) {
                         return of(true);
                     }
+                    if (selector === selectFacingMode) {
+                        return of('user');
+                    }
                     return of(null);
                 }),
         };
@@ -95,6 +99,9 @@ describe('VideoCallComponent', () => {
             setAudioEnabled: vi
                 .fn()
                 .mockName('RtcPeerConnectionManager.setAudioEnabled'),
+            switchCamera: vi
+                .fn()
+                .mockName('RtcPeerConnectionManager.switchCamera'),
         };
         Object.defineProperty(connectionManagerSpy, 'isMediaCaptured', {
             get: vi.fn().mockReturnValue(false),
@@ -108,6 +115,9 @@ describe('VideoCallComponent', () => {
                 .fn()
                 .mockName('StoreService.toggleCaptureAudio'),
             minimizeCall: vi.fn().mockName('StoreService.minimizeCall'),
+            toggleFacingMode: vi
+                .fn()
+                .mockName('StoreService.toggleFacingMode'),
         };
 
         await TestBed.configureTestingModule({
@@ -166,6 +176,7 @@ describe('VideoCallComponent', () => {
         mockConnectionManager.startMediaCapture.mockReturnValue(
             Promise.resolve(),
         );
+        mockConnectionManager.switchCamera.mockReturnValue(Promise.resolve());
     });
 
     afterEach(() => {
@@ -661,6 +672,37 @@ describe('VideoCallComponent', () => {
             expect(
                 mockRtcConnectionService.startOutgoingCall,
             ).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('switchCamera', () => {
+        it('should call storeService.toggleFacingMode and connectionManager.switchCamera', async () => {
+            await component.switchCamera();
+
+            expect(mockStoreService.toggleFacingMode).toHaveBeenCalledTimes(1);
+            expect(mockConnectionManager.switchCamera).toHaveBeenCalledTimes(1);
+            expect(mockConnectionManager.switchCamera).toHaveBeenCalledWith(
+                component.localVideo.nativeElement,
+                component.remoteVideo.nativeElement,
+                component['facingMode'](),
+            );
+        });
+
+        it('should return the promise from connectionManager.switchCamera', async () => {
+            const result = component.switchCamera();
+
+            expect(result).toBeInstanceOf(Promise);
+            await expect(result).resolves.toBeUndefined();
+        });
+
+        it('should pass updated facingMode after toggle', async () => {
+            // facingMode signal is seeded with 'user' from the store mock
+            await component.switchCamera();
+
+            const [, , passedFacingMode] = vi.mocked(
+                mockConnectionManager.switchCamera,
+            ).mock.calls[0];
+            expect(passedFacingMode).toBe('user');
         });
     });
 });
