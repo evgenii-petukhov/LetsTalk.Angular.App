@@ -188,6 +188,10 @@ export class StoreService {
         this.store.dispatch(videoCallActions.maximize());
     }
 
+    toggleFacingMode(): void {
+        this.store.dispatch(videoCallActions.toggleFacingMode());
+    }
+
     setSelectedChatMessageFetchStatus(status: MessageFetchStatus): void {
         this.store.dispatch(
             selectedChatInfoActions.setMessageFetchStatus({ status }),

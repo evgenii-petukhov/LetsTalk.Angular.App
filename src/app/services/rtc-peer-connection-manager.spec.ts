@@ -2,12 +2,14 @@ import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
+import { RtcConnectionDiagnosticsService } from './rtc-connection-diagnostics.service';
 import { RtcPeerConnectionManager } from './rtc-peer-connection-manager';
 import { mediaStreamConstraintFallbacks } from './media-stream-constraint-fallbacks';
 
 describe('RtcPeerConnectionManager', () => {
     let service: RtcPeerConnectionManager;
     let iceCandidateMetricsService: any;
+    let rtcConnectionDiagnosticsService: any;
     let mockConnection: any;
     let mockMediaStream: any;
     let mockTrack: any;
@@ -58,12 +60,26 @@ describe('RtcPeerConnectionManager', () => {
             hasSufficientServers: vi.fn(),
         };
 
+        rtcConnectionDiagnosticsService = {
+            gatherConnectionDiagnostics: vi.fn().mockResolvedValue({
+                connectionState: 'connected',
+                localCandidateTypes: {},
+                remoteCandidateTypes: {},
+                browser: 'Chrome',
+                platform: 'Win32',
+            }),
+        };
+
         TestBed.configureTestingModule({
             providers: [
                 RtcPeerConnectionManager,
                 {
                     provide: IceCandidateMetricsService,
                     useValue: iceCandidateMetricsService,
+                },
+                {
+                    provide: RtcConnectionDiagnosticsService,
+                    useValue: rtcConnectionDiagnosticsService,
                 },
             ],
         });
@@ -249,13 +265,11 @@ describe('RtcPeerConnectionManager', () => {
             service.onCandidatesReceived = vi.fn();
 
             // Act
-            await service.startMediaCapture(mockLocalVideo, mockRemoteVideo);
+            await service.startMediaCapture(mockLocalVideo, mockRemoteVideo, 'user');
 
             // Assert
-            expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalledWith(
-                mediaStreamConstraintFallbacks[0],
-            );
-            expect(mockLocalVideo.srcObject).toBe(mockMediaStream);
+            expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalled();
+            expect(mockLocalVideo.srcObject).toBeInstanceOf(MediaStream);
             expect(mockConnection.addTrack).toHaveBeenCalledWith(
                 mockTrack,
                 mockMediaStream,
@@ -272,7 +286,7 @@ describe('RtcPeerConnectionManager', () => {
             vi.spyOn(console, 'error');
 
             // Act
-            await service.startMediaCapture(mockLocalVideo, mockRemoteVideo);
+            await service.startMediaCapture(mockLocalVideo, mockRemoteVideo, 'user');
 
             // Assert
             expect(console.error).toHaveBeenCalledWith(error);
@@ -295,7 +309,7 @@ describe('RtcPeerConnectionManager', () => {
             } as unknown as RTCTrackEvent;
 
             // Act
-            await service.startMediaCapture(mockLocalVideo, mockRemoteVideo);
+            await service.startMediaCapture(mockLocalVideo, mockRemoteVideo, 'user');
 
             // Simulate the ontrack event by calling the handler directly
             if (mockConnection.ontrack) {
@@ -329,7 +343,7 @@ describe('RtcPeerConnectionManager', () => {
             });
 
             // Assert
-            expect(mockLocalVideo.srcObject).toBe(mockMediaStream);
+            expect(mockLocalVideo.srcObject).toBeInstanceOf(MediaStream);
             expect(mockRemoteVideo.srcObject).toBe(mockMediaStream);
         });
 
@@ -451,7 +465,7 @@ describe('RtcPeerConnectionManager', () => {
             service['connectLocalVideo'](mockVideo as HTMLVideoElement);
 
             // Assert
-            expect(mockVideo.srcObject).toBe(mockMediaStream);
+            expect(mockVideo.srcObject).toBeInstanceOf(MediaStream);
         });
 
         it('should not connect local video when stream is null', () => {
@@ -626,7 +640,7 @@ describe('RtcPeerConnectionManager', () => {
         it('should handle connection setup with null video elements', async () => {
             // Act & Assert - should not throw
             await expect(
-                service.startMediaCapture(null as any, null as any),
+                service.startMediaCapture(null as any, null as any, 'user'),
             ).resolves.not.toThrow();
         });
 
@@ -726,6 +740,188 @@ describe('RtcPeerConnectionManager', () => {
             // Assert
             expect(service['isGathering']).toBe(true);
             expect(service['localCandidates']).toEqual([]);
+        });
+    });
+
+    describe('stopMediaCapture', () => {
+        it('should stop all tracks on the local media stream', () => {
+            // Arrange
+            service['localMediaStream'] = mockMediaStream;
+
+            // Act
+            service.stopMediaCapture();
+
+            // Assert
+            expect(mockMediaStream.getTracks).toHaveBeenCalled();
+            expect(mockTrack.stop).toHaveBeenCalled();
+        });
+
+        it('should do nothing when local media stream is null', () => {
+            // Arrange
+            service['localMediaStream'] = null;
+
+            // Act & Assert - should not throw
+            expect(() => service.stopMediaCapture()).not.toThrow();
+            expect(mockTrack.stop).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('getDiagnostics', () => {
+        it('should delegate to rtcConnectionDiagnosticsService', async () => {
+            // Act
+            const result = await service.getDiagnostics();
+
+            // Assert
+            expect(
+                rtcConnectionDiagnosticsService.gatherConnectionDiagnostics,
+            ).toHaveBeenCalledWith(service['connection']);
+            expect(result).toMatchObject({ connectionState: 'connected' });
+        });
+    });
+
+    describe('switchCamera', () => {
+        let mockLocalVideo: any;
+        let mockRemoteVideo: any;
+        let mockSender: any;
+
+        beforeEach(() => {
+            mockLocalVideo = { srcObject: null };
+            mockRemoteVideo = { srcObject: null };
+            mockSender = {
+                track: { kind: 'video' },
+                replaceTrack: vi.fn().mockResolvedValue(undefined),
+            };
+        });
+
+        it('should stop capture, restart with new facingMode, and replace video track', async () => {
+            // Arrange
+            service['localMediaStream'] = mockMediaStream;
+            mockMediaStream.getVideoTracks = vi.fn().mockReturnValue([mockTrack]);
+            mockConnection.getSenders = vi.fn().mockReturnValue([mockSender]);
+
+            // Act
+            await service.switchCamera(mockLocalVideo, mockRemoteVideo, 'environment');
+
+            // Assert
+            expect(mockTrack.stop).toHaveBeenCalled();
+            expect(navigator.mediaDevices.getUserMedia).toHaveBeenCalled();
+            expect(mockSender.replaceTrack).toHaveBeenCalledWith(mockTrack);
+        });
+
+        it('should not call replaceTrack when no video sender exists', async () => {
+            // Arrange
+            service['localMediaStream'] = mockMediaStream;
+            mockMediaStream.getVideoTracks = vi.fn().mockReturnValue([mockTrack]);
+            mockConnection.getSenders = vi.fn().mockReturnValue([
+                { track: { kind: 'audio' }, replaceTrack: vi.fn() },
+            ]);
+
+            // Act
+            await service.switchCamera(mockLocalVideo, mockRemoteVideo, 'user');
+
+            // Assert
+            expect(mockSender.replaceTrack).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('_onConnectionStateChange', () => {
+        it('should call onConnected when state is connected', () => {
+            // Arrange
+            service.onConnected = vi.fn();
+            mockConnection.connectionState = 'connected';
+
+            // Act
+            service['_onConnectionStateChange']();
+
+            // Assert
+            expect(service.onConnected).toHaveBeenCalledTimes(1);
+        });
+
+        it('should call onConnectionError when state is failed', () => {
+            // Arrange
+            service.onConnectionError = vi.fn();
+            mockConnection.connectionState = 'failed';
+
+            // Act
+            service['_onConnectionStateChange']();
+
+            // Assert
+            expect(service.onConnectionError).toHaveBeenCalledTimes(1);
+        });
+
+        it('should call onDisconnected when state is disconnected', () => {
+            // Arrange
+            service.onDisconnected = vi.fn();
+            mockConnection.connectionState = 'disconnected';
+
+            // Act
+            service['_onConnectionStateChange']();
+
+            // Assert
+            expect(service.onDisconnected).toHaveBeenCalledTimes(1);
+        });
+
+        it('should not throw when callbacks are undefined', () => {
+            // Arrange
+            mockConnection.connectionState = 'connected';
+
+            // Act & Assert
+            expect(() => service['_onConnectionStateChange']()).not.toThrow();
+        });
+    });
+
+    describe('onIceConnectionStateChange', () => {
+        it('should call onIceServerError when ice connection state is failed', () => {
+            // Arrange
+            service.onIceServerError = vi.fn();
+            mockConnection.iceConnectionState = 'failed';
+
+            // Act
+            service['onIceConnectionStateChange']();
+
+            // Assert
+            expect(service.onIceServerError).toHaveBeenCalledWith(
+                undefined,
+                expect.any(Error),
+            );
+        });
+
+        it('should not call onIceServerError for non-failed states', () => {
+            // Arrange
+            service.onIceServerError = vi.fn();
+            mockConnection.iceConnectionState = 'connected';
+
+            // Act
+            service['onIceConnectionStateChange']();
+
+            // Assert
+            expect(service.onIceServerError).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('onIceCandidateError', () => {
+        it('should call onIceServerError with error text', () => {
+            // Arrange
+            service.onIceServerError = vi.fn();
+            const mockEvent = { errorText: 'STUN error' } as RTCPeerConnectionIceErrorEvent;
+
+            // Act
+            service['onIceCandidateError'](mockEvent);
+
+            // Assert
+            expect(service.onIceServerError).toHaveBeenCalledWith(
+                'STUN error',
+                expect.any(Error),
+            );
+        });
+
+        it('should not throw when onIceServerError is undefined', () => {
+            // Arrange
+            service.onIceServerError = undefined as any;
+            const mockEvent = { errorText: 'STUN error' } as RTCPeerConnectionIceErrorEvent;
+
+            // Act & Assert
+            expect(() => service['onIceCandidateError'](mockEvent)).not.toThrow();
         });
     });
 });

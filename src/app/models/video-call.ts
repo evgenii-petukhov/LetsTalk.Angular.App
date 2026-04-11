@@ -6,4 +6,5 @@ export interface VideoCall {
     captureVideo: boolean;
     captureAudio: boolean;
     isMinimized: boolean;
+    facingMode: 'user' | 'environment';
 }

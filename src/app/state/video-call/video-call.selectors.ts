@@ -30,6 +30,11 @@ export const selectCaptureAudio = createSelector(
     (videoCall) => videoCall && videoCall.captureAudio,
 );
 
+export const selectFacingMode = createSelector(
+    selectVideoCall,
+    (videoCall) => videoCall && videoCall.facingMode,
+);
+
 export const selectCaller = createSelector(
     selectVideoCall,
     selectChats,

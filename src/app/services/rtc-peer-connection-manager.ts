@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { IceCandidateMetricsService } from './ice-candidate-metrics.service';
 import { mediaStreamConstraintFallbacks } from './media-stream-constraint-fallbacks';
 import { RtcConnectionDiagnosticsService } from './rtc-connection-diagnostics.service';
+import { VideoCall } from '../models/video-call';
 
 @Injectable({
     providedIn: 'root',
@@ -103,11 +104,19 @@ export class RtcPeerConnectionManager {
     async startMediaCapture(
         localVideo: HTMLVideoElement,
         remoteVideo: HTMLVideoElement,
+        facingMode: VideoCall['facingMode'],
     ): Promise<void> {
         for (const constraints of mediaStreamConstraintFallbacks) {
             try {
+                const videoConstraint =
+                    typeof constraints.video === 'object'
+                        ? { ...constraints.video, facingMode }
+                        : { facingMode };
                 this.localMediaStream =
-                    await navigator.mediaDevices.getUserMedia(constraints);
+                    await navigator.mediaDevices.getUserMedia({
+                        ...constraints,
+                        video: videoConstraint,
+                    });
                 this.connectLocalVideo(localVideo);
                 this.localMediaStream
                     .getTracks()
@@ -128,8 +137,8 @@ export class RtcPeerConnectionManager {
     }
 
     reconnectVideoElements(elements: {
-        local?: HTMLVideoElement,
-        remote?: HTMLVideoElement,
+        local?: HTMLVideoElement;
+        remote?: HTMLVideoElement;
     }): void {
         if (elements.local) {
             this.connectLocalVideo(elements.local);
@@ -158,13 +167,15 @@ export class RtcPeerConnectionManager {
         }
     }
 
+    stopMediaCapture() {
+        if (this.localMediaStream) {
+            this.localMediaStream.getTracks().forEach((track) => track.stop());
+        }
+    }
+
     reinitialize(): void {
         if (this.connection) {
-            if (this.localMediaStream) {
-                this.localMediaStream
-                    .getTracks()
-                    .forEach((track) => track.stop());
-            }
+            this.stopMediaCapture();
             this.connection.close();
             this.connection = new RTCPeerConnection();
             this.connection.onicecandidate =
@@ -185,9 +196,27 @@ export class RtcPeerConnectionManager {
         );
     }
 
+    async switchCamera(
+        localVideo: HTMLVideoElement,
+        remoteVideo: HTMLVideoElement,
+        facingMode: VideoCall['facingMode'],
+    ): Promise<void> {
+        this.stopMediaCapture();
+        await this.startMediaCapture(localVideo, remoteVideo, facingMode);
+
+        const newVideoTrack = this.localMediaStream.getVideoTracks()[0];
+        const sender = this.connection
+            .getSenders()
+            .find((s) => s.track?.kind === 'video');
+        if (sender) await sender.replaceTrack(newVideoTrack);
+    }
+
     private connectLocalVideo(localVideo: HTMLVideoElement): void {
         if (this.localMediaStream && localVideo) {
-            localVideo.srcObject = this.localMediaStream;
+            const videoOnlyStream = new MediaStream(
+                this.localMediaStream.getVideoTracks(),
+            );
+            localVideo.srcObject = videoOnlyStream;
         }
     }
 

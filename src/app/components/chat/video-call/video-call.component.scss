@@ -49,7 +49,7 @@
         left: 40px;
         top: 40px;
 
-        app-minimize-button {
+        app-icon-button {
             @include avatar-styles(42px, 54px);
 
             @include media-breakpoint-down(sm) {
@@ -71,7 +71,8 @@
             align-items: center;
 
             app-call-button,
-            app-media-toggle-button {
+            app-media-toggle-button,
+            app-icon-button {
                 @include avatar-styles(42px, 54px);
 
                 @include media-breakpoint-down(sm) {

@@ -21,7 +21,7 @@ import { CallButtonComponent } from './call-button/call-button.component';
 import { MediaToggleButtonComponent } from './media-toggle-button/media-toggle-button.component';
 import { IncomingCallComponent } from './incoming-call/incoming-call.component';
 import { OngoingCallComponent } from './ongoing-call-panel/ongoing-call-panel.component';
-import { MinimizeButtonComponent } from './minimize-button/minimize-button.component';
+import { IconButtonComponent } from './icon-button/icon-button.component';
 
 @NgModule({
     declarations: [
@@ -42,7 +42,7 @@ import { MinimizeButtonComponent } from './minimize-button/minimize-button.compo
         VisibleOnlyPipe,
         IncomingCallComponent,
         OngoingCallComponent,
-        MinimizeButtonComponent,
+        IconButtonComponent,
     ],
     imports: [
         CommonModule,
