@@ -21,6 +21,11 @@ export class AutoResizeTextAreaComponent {
         element.focus();
     }
 
+    resetHeight(): void {
+        const element = this.textareaRef.nativeElement;
+        element.style.height = 'auto';
+    }
+
     onTextChanged(): void {
         const element = this.textareaRef.nativeElement;
         element.style.height = 'auto';
