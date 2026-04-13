@@ -67,7 +67,7 @@ export class ComposeAreaComponent implements OnInit, OnDestroy {
     async onSendMessage(@required message: string): Promise<void> {
         this.message.set('');
         this.isSending.set(true);
-        this.textareaRef?.focus();
+        //this.textareaRef?.focus();
         try {
             await this.processSendMessage(this.chat, message);
         } catch (e) {
