@@ -122,7 +122,7 @@
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
       "responseClass": "SwaggerResponse",
-      "namespace": "LetsTalk.Server.Infrastructure.ApiClient",
+      "namespace": "LetsTalk.Server.ApiClient",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTimeOffset",
       "jsonConverters": null,
@@ -162,7 +162,7 @@
       "templateDirectory": null,
       "serviceHost": null,
       "serviceSchemes": null,
-      "output": "../../../../LetsTalk.Server/LetsTalk.Server.Infrastructure.ApiClient/ApiClient.cs",
+      "output": "../../../../LetsTalk.Server/LetsTalk.Server.ApiClient/ApiClient.cs",
       "newLineBehavior": "Auto"
     }
   }
