@@ -7,7 +7,7 @@
 
 🔔 Please, also see the [back-end repository](https://github.com/evgenii-petukhov/LetsTalk.Server) 🙏
 
-![scheme](demo.gif)
+![scheme](images/demo.gif)
 
 🔴 [Live demo](https://chat.petukhov.fyi/)
 
@@ -31,7 +31,7 @@ This project showcases my technical skills for potential IT recruiters, employer
 
 ## Architecture
 
-![scheme](scheme-compressed.svg)
+![scheme](images/scheme-compressed.svg)
 
 The front-end is an Angular single-page application using NgRx for reactive state management.
 
